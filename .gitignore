@@ -1,8 +1,8 @@
 /content-processing/venv39/
 /content-processing/venv310/
 /content-processing/mlcp/src/logic_layer/knowledge_extraction/
-/content-processing/mlcp/testing/mlcp_job_tests/output
-/content-processing/mlcp/testing/functional_tests/output
+/content-processing/mlcp/testing/mlcp_job_tests/output/
+/content-processing/mlcp/testing/functional_tests/output/
 /content-processing/.idea/
 /cloud-logic/.idea/
 /masslaw-website/.idea/
