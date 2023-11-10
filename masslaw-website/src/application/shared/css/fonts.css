@@ -1,6 +1,6 @@
 :root {
     --masslaw-main-font: Trebuchet MS;
-    --masslaw-title-font: Verdana;
-    --masslaw-button-font: Gill Sans, sans-serif;
-    --masslaw-text-input-font: Trebuchet MS;
+    --masslaw-title-font: var(--masslaw-main-font);
+    --masslaw-button-font: var(--masslaw-main-font);
+    --masslaw-text-input-font: var(--masslaw-main-font);
 }

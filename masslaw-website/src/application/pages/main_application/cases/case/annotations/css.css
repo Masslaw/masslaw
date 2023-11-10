@@ -1,0 +1,105 @@
+@import url('../../../../../shared/css/global.css');
+
+:root {
+}
+
+.case-annotations-header {
+    position: relative;
+    width: calc(100% - 40px);
+    margin: 20px 20px 0 20px;
+    height: var(--case-files-list-header-height);
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: var(--secondary-top-z-index);
+}
+
+.case-annotations-page-title {
+    margin: 0;
+    padding: 0;
+    left: 20px;
+    width: 100%;
+}
+
+.case-annotations-text-input-container {
+    height: 100%;
+    width: calc(100% - 300px);
+}
+
+.case-annotations-submit-annotations-button-container {
+    padding-top: 13px;
+    right: 20px;
+    width: 150px;
+}
+
+.case-annotations-list-container {
+    width: calc(100% - 40px);
+    height: calc(100% - 130px);
+    margin: 20px;
+    background: var(--masslaw-secondary-background-shade);
+    overflow-y: scroll;
+}
+
+.annotations-result-container {
+    width: calc(100% - 20px - 40px);
+    border-bottom: 1px solid #b0b0b0;
+    padding: 10px;
+    margin: 20px;
+    border-radius: 5px;
+    transition: 0.15s height ease-out;
+    background: white;
+    filter: var(--masslaw-floating-shadow);
+}
+
+.annotations-result-container:hover {
+    filter: var(--masslaw-higher-floating-shadow);
+}
+
+.annotations-result-file-name {
+    color: var(--masslaw-light-text-color);
+    margin: 5px;
+    max-width: calc(100% - 50px);
+}
+
+.annotations-result-highlighted-text {
+     white-space: normal;
+     overflow: visible;
+}
+
+.annotations-result-highlighted-text.not-expanded {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.annotations-result-highlighted-text .highlighted-text-wrapper {
+    display: inline;
+}
+
+.annotations-result-highlighted-text.not-expanded .highlighted-text-wrapper {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.annotations-result-highlighted-text .highlighted-text {
+    background: var(--aqua-soft);
+}
+
+.annotations-result-go-to-file-container {
+    height: 30px;
+}
+
+.annotations-result-go-to-file-wrapper {
+    position: absolute;
+    right: 20px;
+}
+
+.case-annotations-no-results-message {
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    text-align: center;
+    color: var(--masslaw-light-text-color);
+}

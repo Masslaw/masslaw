@@ -1,0 +1,52 @@
+@import url('../../../shared/css/global.css');
+
+:root {
+    --masslaw-ellipsis-menu-item-height: 35px;
+}
+
+.masslaw-ellipsis-menu {
+    position: absolute;
+    width: 200px;
+    right: 0;
+    margin: 0;
+    padding: 0;
+    background: white;
+    z-index: 55;
+    filter: none;
+}
+
+.masslaw-ellipsis-menu-item {
+    position: relative;
+    height: var(--masslaw-ellipsis-menu-item-height);
+    font-size: calc(var(--masslaw-ellipsis-menu-item-height) - 20px);
+}
+
+.masslaw-ellipsis-menu-item:hover {
+    background: #efefef;
+}
+
+.masslaw-ellipsis-menu-item-caption {
+    position: absolute;
+    width: calc(100% - 50px);
+    left: 5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    align-items: center;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.masslaw-ellipsis-menu-item-icon-container {
+    position: absolute;
+    width: calc(var(--masslaw-ellipsis-menu-item-height) - 10px);
+    right: 5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    align-items: center;
+    font-weight: bold;
+    font-size: 19px;
+    top: 50%;
+    transform: translateY(-50%);
+}

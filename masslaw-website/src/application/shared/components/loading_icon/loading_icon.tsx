@@ -1,7 +1,6 @@
 // LoadingIcon.tsx
 import React, {CSSProperties, useState} from 'react';
-import AnimationFrameComponent from "../functional/AnimationFrameComponent";
-import {parseColor, rgbToHex} from "../../util/parse_color_string";
+import {AnimationFrameComponent} from "../functional/AnimationFrameComponent";
 
 export function LoadingIcon(props: {
         width?: number,
@@ -93,6 +92,4 @@ export function LoadingIcon(props: {
             </div>
         </>
     );
-};
-
-export default LoadingIcon;
+}

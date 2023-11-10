@@ -1,0 +1,149 @@
+@import url('../../../shared/css/global.css');
+
+
+:root {
+    --page-content-container-width: 900px;
+    --content-region-height: 400px;
+    --footer-height: 600px;
+}
+
+.landing-page-header {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    background: linear-gradient(30deg, var(--masslaw-primary-main) 0%, var(--masslaw-secondary-main) 100%);
+}
+
+.landing-page-main {
+    position: relative;
+    width: 100%;
+}
+
+.landing-page-footer {
+    position: relative;
+    width: 100%;
+    height: var(--footer-height);
+    background: #3b3b3b;
+}
+
+.landing-page-content-container {
+    position: relative;
+    left: 50%;
+    width: var(--page-content-container-width);
+    transform: translateX(-50%);
+    height: 100%;
+    color: white;
+}
+
+.landing-text-container {
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    transform: translateY(-50%);
+    color: white;
+}
+
+.landing-text-container > * {
+    margin: 0;
+}
+
+.landing-header-logo {
+    position: absolute;
+    top: 30px;
+    left: 0;
+    background-image: url("../../../../assets/Logos/Masslogo/black.png");
+    background-size: cover;
+    width: 300px;
+    height: 300px;
+    filter: invert();
+}
+
+.landing-text-container {
+    align-self: flex-start;
+}
+
+.landing-identity-buttons-container {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-content: center;
+    align-items: center;
+    background: white;
+    border-radius: 5px;
+}
+
+.landing-sign-up-button,
+.landing-log-in-button {
+    padding: 10px 20px;
+    border: none;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+    margin: 20px;
+}
+
+.landing-already-have-an-account {
+    color: var(--masslaw-light-text-color);
+}
+
+.landing-main-content-container {
+    display: flex;
+    position: relative;
+    width: var(--page-content-container-width);
+    flex-direction: column;
+}
+
+.landing-content-region {
+    position: relative;
+    display: flex;
+    height: var(--content-region-height);
+    width: 100%;
+}
+
+.landing-content-region.left {
+    flex-direction: row;
+    text-align: left;
+}
+
+.landing-content-region.right {
+    flex-direction: row-reverse;
+    text-align: right;
+}
+
+.landing-content-region-image {
+    margin: 20px;
+    height: calc(100% - 40px);
+    aspect-ratio: 1 / 1;
+    background-size: cover;
+}
+
+.landing-content-region-text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+    color: var(--masslaw-dark-text-color);
+    font-size: 30px;
+    line-height: 100%;
+    margin: 20px;
+}
+
+.landing-content-region-image.i1 {
+    background-image: url('../../../../assets/images/landing-page/1.png');
+}
+
+.landing-content-region-image.i2 {
+    background-image: url('../../../../assets/images/landing-page/2.png');
+}
+
+.landing-content-region-image.i3 {
+    background-image: url('../../../../assets/images/landing-page/3.png');
+}
+
+.landing-content-region-image.i4 {
+    background-image: url('../../../../assets/images/landing-page/4.png');
+}

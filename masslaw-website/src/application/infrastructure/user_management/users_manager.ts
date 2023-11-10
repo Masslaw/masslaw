@@ -1,7 +1,6 @@
-import {CognitoManager} from "../server_communication/cognito_client";
-import {ApiManager} from "../server_communication/api_client";
-import {UserData} from "./user_data";
-import {MasslawApiCallData, MasslawApiCalls} from "../server_communication/api_config";
+import {ApiManager, HTTPRequest} from "../server_communication/api/api_client";
+import {MasslawUserData} from "./user_data";
+import {MasslawApiCalls} from "../server_communication/api/api_config";
 
 export class UsersManager {
 
@@ -17,54 +16,31 @@ export class UsersManager {
         }
     }
 
-    private _cachedDataKey = 'my_cached_user_data';
-    private _cognitoManager = CognitoManager.getInstance();
-    private _myUserDataCached = {} as UserData;
+
+    private _myUserDataCached = {} as MasslawUserData;
 
 
-    public getMyCachedUserData() : UserData {
+    public getMyCachedUserData() : MasslawUserData {
         return this._myUserDataCached;
     }
 
-    public async setMyUserData(new_data: UserData) {
-        let callData : MasslawApiCallData = MasslawApiCalls.SET_USER_DATA;
-        let callRequest : typeof callData.requestShape = {
-            queryStringParameters: {},
-            headers: {},
-            payload: { user_data: new_data },
-        }
-        let response = await ApiManager.getInstance().MasslawAPICall(callData, callRequest);
-        let data = response.data as typeof callData.responseDataShape
-        this._myUserDataCached = data.user_data;
+    public async setMyUserData(new_data: MasslawUserData) {
+        let response= await ApiManager.getInstance().MakeApiHttpRequest<{user_data: MasslawUserData}>({
+            call: MasslawApiCalls.SET_USER_DATA,
+            body: {user_data: new_data} as {[key:string]: any},
+        } as HTTPRequest);
+        this._myUserDataCached = response.data.user_data;
     }
 
     public async updateMyCachedUserData() {
         this._myUserDataCached = await this.getUserData('');
     }
 
-    public async updateMyData(newData: UserData) {
-        let callData : MasslawApiCallData = MasslawApiCalls.SET_USER_DATA;
-        let callRequest : typeof callData.requestShape = {
-            queryStringParameters: {},
-            headers: {},
-            payload: {
-                user_data: newData
-            },
-        }
-        let response = await ApiManager.getInstance().MasslawAPICall(callData, callRequest);
-        let data = response.data as typeof callData.responseDataShape;
-        this._myUserDataCached = data.user_data;
-    }
-
-    public async getUserData(userId: string) : Promise<UserData> {
-        let callData : MasslawApiCallData = MasslawApiCalls.GET_USER_DATA;
-        let callRequest : typeof callData.requestShape = {
-            queryStringParameters: { user_id: userId, },
-            headers: {},
-            payload: {},
-        }
-        let response = await ApiManager.getInstance().MasslawAPICall(callData, callRequest);
-        let data = response.data as typeof callData.responseDataShape
-        return data.user_data;
+    public async getUserData(userId: string) : Promise<MasslawUserData> {
+        let response= await ApiManager.getInstance().MakeApiHttpRequest<{user_data: MasslawUserData}>({
+            call: MasslawApiCalls.GET_USER_DATA,
+            queryStringParameters: {user_id: userId} as {[key:string]: string},
+        } as HTTPRequest);
+        return response.data.user_data;
     }
 }

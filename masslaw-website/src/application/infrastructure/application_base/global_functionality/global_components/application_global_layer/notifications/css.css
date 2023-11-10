@@ -1,0 +1,73 @@
+@import url('../../../../../../shared/css/global.css');
+
+
+@keyframes slideDown {
+    from {
+        bottom: 0;
+        filter: opacity(0) var(--masslaw-floating-shadow);
+    }
+    to {
+        bottom: 20px;
+        filter: opacity(1) var(--masslaw-floating-shadow);
+    }
+}
+
+.global-notification {
+    position: fixed;
+    right: 20px;
+    bottom: 0;
+    animation: slideDown 0.2s ease-out 0.1s forwards;
+    background: #efefef;
+    border: none;
+    width: 450px;
+    height: 80px;
+    overflow: hidden;
+    z-index: calc(var(--popup-z-index) - 1);
+    filter: var(--masslaw-floating-shadow);
+    display: flex;
+    flex-direction: row;
+    border-radius: 5px;
+}
+
+.global-notification-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin-left: 10px;
+    width: 50px;
+    height: 80px;
+    padding: 0;
+    font-size: 30px;
+    color: var(--masslaw-dark-text-color);
+}
+
+.global-notification-content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.global-notification-title {
+    width: 100%;
+    color: var(--masslaw-darker-text-color);
+    padding-top: 10px;
+    overflow: hidden;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.global-notification-text {
+    width: 100%;
+    color: var(--masslaw-light-text-color);
+    padding-top: 8px;
+    white-space: normal;
+    overflow-y: hidden;
+    font-size: 12px;
+}
+
+.global-notification-close-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+}

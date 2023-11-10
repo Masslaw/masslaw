@@ -1,13 +1,17 @@
-import React, {Component, ReactNode, useEffect, useRef, useState} from "react";
+import React, {Component, ReactNode, useContext, useEffect, useRef, useState} from "react";
 import './css.css'
-import {ApplicationRoutes} from "../../../infrastructure/routing/application_routes";
-import {ApplicationRoutingManager} from "../../../infrastructure/routing/application_routing_manager";
+import {ApplicationRoutes} from "../../../infrastructure/application_base/routing/application_routes";
 import {UsersManager} from "../../../infrastructure/user_management/users_manager";
 import {UserPhoto} from "../user_photo/user_photo";
-import {Outlet} from "react-router-dom";
+import {
+    NavigationFunctionState
+} from "../../../infrastructure/application_base/routing/application_global_routing";
+import {useGlobalState} from "../../../infrastructure/application_base/global_functionality/global_states";
 
 
 export function MasslawLoggedInTop(props: {pageDisplayNode: ReactNode}) {
+    
+    const [navigate_function, setNavigateFunction] = useGlobalState(NavigationFunctionState);
 
     const [is_menu_open, setMenuOpen] = useState(false);
     const menuOpenRef = useRef<HTMLButtonElement>(null);
@@ -30,7 +34,7 @@ export function MasslawLoggedInTop(props: {pageDisplayNode: ReactNode}) {
                 <div className={`top-main-graphic`}>
                 </div>
                 <div className={`top-masslaw-icon`}
-                     onClick={e => {ApplicationRoutingManager.getInstance().navigateToRoute(ApplicationRoutes.HOME)}}>
+                     onClick={e => {navigate_function(ApplicationRoutes.HOME)}}>
                 </div>
                 <div className={`top-masslaw-account-container`}>
                     <button className={`top-masslaw-account-button`}
@@ -47,22 +51,19 @@ export function MasslawLoggedInTop(props: {pageDisplayNode: ReactNode}) {
                         <div className={`top-menu-divider`} />
                         <button className={`top-menu-button`}
                                 onClick={() => {
-                                    ApplicationRoutingManager
-                                        .getInstance().navigateToRoute(ApplicationRoutes.PROFILE)
+                                    navigate_function(ApplicationRoutes.PROFILE)
                                 }}>Profile</button>
                         <button className={`top-menu-button`}
                                 onClick={() => {}}>Settings</button>
                         <div className={`top-menu-divider`} />
                         <button className={`top-menu-button`}
                                 onClick={() => {
-                                    ApplicationRoutingManager
-                                        .getInstance().navigateToRoute(ApplicationRoutes.DASHBOARD)
+                                    navigate_function(ApplicationRoutes.DASHBOARD)
                                 }}>Dashboard</button>
                         <div className={`top-menu-divider`} />
                         <button className={`top-menu-button`}
                                 onClick={() => {
-                                    ApplicationRoutingManager
-                                        .getInstance().navigateToRoute(ApplicationRoutes.LOGOUT)
+                                    navigate_function(ApplicationRoutes.LOGOUT)
                                 }}>Log Out</button>
                     </div>
                 </div>

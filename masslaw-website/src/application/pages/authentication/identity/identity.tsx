@@ -1,49 +1,57 @@
-import React, {useState} from "react";
-import {PageProtector, StatusConditionType} from "../../../infrastructure/user_management/page_protector";
-import {UserStatus} from "../../../infrastructure/user_management/user_status";
-
+import React, {useCallback, useContext, useEffect, useState} from "react";
 import "./css.css";
-
 import {GoogleLogin} from "@leecheuk/react-google-login";
-
 import {
     CognitoManager,
     LoginMethods,
     LoginResult,
     SignupResult
-} from "../../../infrastructure/server_communication/cognito_client";
-
+} from "../../../infrastructure/server_communication/server_modules/cognito_client";
 import {InputField} from "../../../shared/components/input_field/input_field";
-
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faCheckCircle, faExclamationCircle} from '@fortawesome/free-solid-svg-icons'
 import {LoadingButton} from "../../../shared/components/loading_button/loading_button";
-import {ApplicationRoutingManager} from "../../../infrastructure/routing/application_routing_manager";
-import {ApplicationRoutes} from "../../../infrastructure/routing/application_routes";
-import {UserStatusManager} from "../../../infrastructure/user_management/user_status_manager";
+import {ApplicationRoutes} from "../../../infrastructure/application_base/routing/application_routes";
 import {MasslawButton, MasslawButtonTypes} from "../../../shared/components/masslaw_button/masslaw_button";
+import {ApplicationPage, ApplicationPageProps} from "../../../infrastructure/application_base/routing/application_page_renderer";
+import {UserStatusManager} from "../../../infrastructure/user_management/user_status_manager";
+import {
+    NavigationFunctionState,
+    QueryStringParamsState
+} from "../../../infrastructure/application_base/routing/application_global_routing";
+import {useGlobalState} from "../../../infrastructure/application_base/global_functionality/global_states";
 
-ApplicationRoutingManager.getInstance().setRoutePreloadFunction(ApplicationRoutes.IDENTITY, () => {
-    PageProtector.getInstance().updateStatusCondition(UserStatus.GUEST, StatusConditionType.MAXIMUM, null);
-    UserStatusManager.getInstance().fetchUserStatus().then();
-    return true;
-});
+export const Identity: ApplicationPage = (props: ApplicationPageProps) => {
 
-
-export function Identity() {
+    const [navigate_function, setNavigateFunction] = useGlobalState(NavigationFunctionState);
 
     let cognitoManager = CognitoManager.getInstance();
 
     const [display_form, setDisplayForm] = useState("login");
 
+    const [query_string_params, setQueryStringParams] = useGlobalState(QueryStringParamsState);
+
+    const setDisplayFormName = useCallback(async (displayForm: string) => {
+        setQueryStringParams({'choose': displayForm});
+    }, [display_form]);
+
+    useEffect(() => {
+        setDisplayForm((prev) => query_string_params['choose'] || prev);
+    }, [query_string_params]);
+
     const [submit_button_message, setSubmitMessage] = useState("");
 
-    const {email, password} = cognitoManager.getRememberedUserLoginCredentials();
-    const [email_value, setEmail] = useState(email == null ? '' : email);
-    const [password_value, setPassword] = useState(password == null ? '' : password);
-    const [remember_me_checked, setRememberMeChecked] = useState(false);
+    const [email_value, setEmail] = useState('');
+    const [password_value, setPassword] = useState('');
+    const [remember_me_checked, setRememberMeChecked] = useState(true);
 
-    const [login_credentials_valid, setLoginCredentialsValid] = useState("");
+    useEffect(() => {
+        const rememberedInfo = cognitoManager.getRememberedUserLoginAttributes();
+        setEmail(rememberedInfo.email || email_value);
+        setPassword(rememberedInfo.password || password_value);
+    }, []);
+
+    const [login_attributes_valid, setLoginAttributesValid] = useState("");
 
     const [signup_email, setSignupEmail] = useState("");
     const [signup_email_valid, setSignupEmailValid] = useState("");
@@ -60,30 +68,31 @@ export function Identity() {
     const [signup_password_valid_upper, setSignupPasswordValidUpper] = useState("");
     const [signup_password_valid_lower, setSignupPasswordValidLower] = useState("");
 
-    const loginToolkit = cognitoManager.getLoginToolkit(async (result: LoginResult, method: LoginMethods) => {
+    const loginToolkit = cognitoManager.getLoginToolkit(useCallback(async (result: LoginResult, method: LoginMethods) => {
         setSubmitLoading(false);
         if (result === LoginResult.SUCCEEDED) {
             setSubmitLoading(true);
-            setLoginCredentialsValid('valid');
-            if (remember_me_checked) cognitoManager.securelyRememberUserLoginCredentials(email_value, password_value)
-            ApplicationRoutingManager.getInstance().navigateToRoute(ApplicationRoutes.APP);
+            setLoginAttributesValid('valid');
+            if (remember_me_checked) cognitoManager.securelyRememberUserLoginAttributes(email_value, password_value);
         } else if (result === LoginResult.VERIFICATION_NEEDED) {
-            cognitoManager.securelyRememberUserLoginCredentials(email_value, '');
-            ApplicationRoutingManager.getInstance().navigateToRoute(ApplicationRoutes.VERIFICATION);
+            cognitoManager.securelyRememberUserLoginAttributes(email_value, remember_me_checked && password_value || '');
+            navigate_function(ApplicationRoutes.VERIFICATION);
         } else {
             if (method === LoginMethods.MASSLAW) {
-                setLoginCredentialsValid('invalid');
+                setLoginAttributesValid('invalid');
                 setSubmitMessage('An error occurred trying to log you in.')
             }
         }
-    });
+        await UserStatusManager.getInstance().forceResetStatus();
+    }, [email_value, password_value]));
 
-    const signupToolkit = cognitoManager.getSignupToolkit((result: SignupResult) => {
+    const signupToolkit = cognitoManager.getSignupToolkit(useCallback((result: SignupResult) => {
         setSubmitLoading(false);
         if (result === SignupResult.SUCCEEDED) {
             setSubmitLoading(true);
             setSignupEmailValid('valid');
             setSignupEmailMessage('');
+            if (remember_me_checked) cognitoManager.securelyRememberUserLoginAttributes(email_value, password_value);
             loginToolkit.loginDefault(signup_email, signup_password).then();
         } else if (result === SignupResult.FAILED_INVALID_EMAIL) {
             setSignupEmailValid('invalid');
@@ -91,7 +100,7 @@ export function Identity() {
         } else {
             setSubmitMessage('An error occurred trying to sign you up.')
         }
-    });
+    }, [signup_email, signup_password]));
 
     const [submit_loading, setSubmitLoading] = useState(false);
 
@@ -158,22 +167,25 @@ export function Identity() {
                 <div className={`form-container`}>
                     <div className={`form-select ${display_form}`}>
                         <div className={`form-selection-thingy`}></div>
-                        <button className={`form-selection-button login`} onClick={e => {setDisplayForm(`login`)}}>Login</button>
-                        <button className={`form-selection-button signup`} onClick={e => {setDisplayForm(`signup`)}}>Signup</button>
+                        <button className={`form-selection-button login`} onClick={e => {setDisplayFormName(`login`)}}>Login</button>
+                        <button className={`form-selection-button signup`} onClick={e => {setDisplayFormName(`signup`)}}>Signup</button>
                     </div>
                     <div className={`form-section ${display_form}`}>
-                        <form className={`form-section-section login-form-container`}>
+                        <form
+                            className={`form-section-section login-form-container`}
+                            onKeyDownCapture={e => e.key == 'Enter' && e.preventDefault()}
+                        >
                             <InputField id={'login-email-input'}
                                         placeHolder={'Email'}
                                         message={''}
-                                        valid={login_credentials_valid}
+                                        valid={login_attributes_valid}
                                         value={email_value}
                                         type={'text'}
                                         onChange={e => setEmail(e.target.value)} />
                             <InputField id={'login-password-input'}
                                         placeHolder={'Password'}
                                         message={''}
-                                        valid={login_credentials_valid}
+                                        valid={login_attributes_valid}
                                         value={password_value}
                                         type={'password'}
                                         hasPasswordShow={true}
@@ -187,7 +199,7 @@ export function Identity() {
                             <div className={'identity-forgot-password-container'}>
                                 <MasslawButton caption={'Forgot Password'}
                                                buttonType={MasslawButtonTypes.TEXTUAL}
-                                               onClick={e => ApplicationRoutingManager.getInstance().navigateToRoute(ApplicationRoutes.PASSWORD)} />
+                                               onClick={e => navigate_function(ApplicationRoutes.PASSWORD)} />
                             </div>
                         </form>
                         <form className={`form-section-section signup-form-container `}
@@ -228,28 +240,34 @@ export function Identity() {
                                         type={'password'}
                                         hasValidationIcon={true}
                                         onChange={ signupVerifyPasswordOnChange }/>
+                            <label style={{fontSize: '13px', marginLeft: '25px', color: 'var(--masslaw-light-text-color)'}}>
+                                <input type="checkbox"
+                                       checked={remember_me_checked}
+                                       onChange={e => setRememberMeChecked(e.target.checked)} />
+                                Remember me
+                            </label>
                         </form>
                     </div>
-                    <div>
+                    <div style={{padding: '20px'}}>
                         <LoadingButton clickable={(display_form === 'signup' &&(signup_email_valid ===  'valid' && signup_password_valid === 'valid' && signup_password_verify_valid === 'valid')) || ((display_form === 'login') && (email_value.length > 0 && password_value.length > 0))}
                                        onClick={(display_form === 'signup') ? submitSignup : submitLogin}
                                        loading={submit_loading}
                                        caption={'Continue'} />
                         <div className={`submit-button-message`}>{submit_button_message}</div>
                     </div>
-                    <div className={`or-element-cont`}>
-                        <div className={`or-element-text`}>OR</div>
-                    </div>
-                    <div className={`other-login-options`}>
-                        <div className={`other-login-option`} onClick={
-                            () => {document.getElementsByClassName('google-login-button')[0].dispatchEvent(new Event(`click`))}}>
-                            <GoogleLogin
-                                {...loginToolkit.googleLoginParams}
-                                className={'google-login-button'}
-                                buttonText="Continue with Google"
-                            />
-                        </div>
-                    </div>
+                    {/*<div className={`or-element-cont`}>*/}
+                    {/*    <div className={`or-element-text`}>OR</div>*/}
+                    {/*</div>*/}
+                    {/*<div className={`other-login-options`}>*/}
+                    {/*    <div className={`other-login-option`} onClick={*/}
+                    {/*        () => {document.getElementsByClassName('google-login-button')[0].dispatchEvent(new Event(`click`))}}>*/}
+                    {/*        <GoogleLogin*/}
+                    {/*            {...loginToolkit.googleLoginParams}*/}
+                    {/*            className={'google-login-button'}*/}
+                    {/*            buttonText="Continue with Google"*/}
+                    {/*        />*/}
+                    {/*    </div>*/}
+                    {/*</div>*/}
                 </div>
              </div>
         </>

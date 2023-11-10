@@ -3,7 +3,7 @@
 :root {
     --case-display-sidebar-width: 230px;
     --case-display-sidebar-closed-width: 50px;
-    --case-display-sidebar-transition: 0.15s all ease-out;
+    --case-display-sidebar-transition: 0.1s all ease-out;
 }
 
 .case-display-page {
@@ -19,9 +19,14 @@
     left: 0;
     height: 100%;
     background: var(--masslaw-dark-color);
+    border-right: 2px solid rgba(255, 255, 255, 0.48);
     color: white;
     transition: var(--case-display-sidebar-transition);
     z-index: var(--side-bar-z-index);
+    color: rgba(255, 255, 255, 0.95);
+}
+.case-display-side-bar > * {
+    color: inherit;
 }
 .case-display-side-bar.open {
     width: var(--case-display-sidebar-width);
@@ -31,7 +36,6 @@
 }
 .case-display-side-bar-close-button {
     position: absolute;
-    color: white;
     background: none;
     right: 0;
     margin: 10px;
@@ -52,6 +56,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     transition: var(--case-display-sidebar-transition);
+    min-height: 28px;
 }
 .case-display-side-bar-separator {
     position: relative;
@@ -67,13 +72,11 @@
     background: none;
     border: 0;
     border-radius: 5px;
-    color: white;
     margin: 5px;
     transition: var(--case-display-sidebar-transition);
 }
 .case-display-side-bar-button:hover {
-    background: rgba(255, 255, 255, 0.91);
-    color: var(--masslaw-dark-color);
+    background: rgba(255, 255, 255, 0.25);
 }
 .case-display-side-bar-button-icon {
     float: left;
@@ -84,7 +87,7 @@
 .case-display-side-bar-button-caption {
     position: absolute;
     max-width: calc(100% - 50px);
-    right: 15px;
+    left: 55px;
     margin-top: 3px;
     font-size: 15px;
     white-space: nowrap;

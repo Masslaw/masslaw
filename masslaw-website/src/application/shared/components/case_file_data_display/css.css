@@ -1,0 +1,44 @@
+/* css.css */
+
+.case-file-data-container {
+    padding: 0 20px 0 20px;
+    margin: 0;
+}
+
+.case-file-name {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.case-file-type,
+.case-file-upload-date,
+.case-file-modified-date,
+.case-file-stage,
+.case-file-description,
+.case-file-languages {
+    margin-bottom: 8px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.case-file-data-section-value {
+    color: var(--masslaw-light-text-color);
+    font-weight: normal;
+    margin-left: 5px;
+}
+
+.case-file-annotations-title {
+    font-size: 16px;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.case-file-annotations-list {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.case-file-annotation-item {
+    margin-bottom: 10px;
+}

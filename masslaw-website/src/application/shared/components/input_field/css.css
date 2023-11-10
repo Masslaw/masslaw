@@ -67,7 +67,7 @@
     font-family: var(--masslaw-main-font);
 }
 .input-field-container:focus-within .input-field-input{
-    border: 1px solid var(--masslaw-primary-main);
+    outline: 2px solid var(--masslaw-primary-soft);
 }
 .input-field-container.invalid {
     color: var(--masslaw-incorrect-red);
@@ -76,13 +76,13 @@
     color: var(--masslaw-incorrect-red);
 }
 .input-field-container.invalid .input-field-input {
-    border-color: var(--masslaw-incorrect-red);
+    outline: 2px solid var(--masslaw-incorrect-red-soft);
 }
 .input-field-container.valid .input-validation-icon{
     color: var(--masslaw-correct-green);
 }
 .input-field-container.valid .input-field-input {
-    border-color: var(--masslaw-correct-green);
+    outline: 2px solid var(--masslaw-correct-green-soft);
 }
 .input-field-container .input-field-tooltip {
     display: none;

@@ -1,0 +1,23 @@
+@import url('../../../shared/css/global.css');
+
+
+.files-list-file-type-container {
+    position: relative;
+    display: inline-flex;
+    height: calc(100% - 2px);
+    font-size: 15px;
+    padding-right: 7px;
+    background: none;
+    border-radius: 5px;
+    border: 1px solid var(--masslaw-light-border-color);
+    text-align: center;
+    line-height: calc(var(--data-table-item-height) - 20px);
+    align-items: center;
+    justify-content: center;
+}
+
+.files-list-file-type-container span {
+    margin-left: 5px;
+    margin-right: 5px;
+}
+

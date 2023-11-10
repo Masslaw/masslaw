@@ -1,4 +1,4 @@
-import React, {MouseEventHandler, useEffect, useState} from "react";
+import React, {MouseEventHandler, useContext, useEffect, useState} from "react";
 
 import "./css.css";
 import {InputField} from "../../../shared/components/input_field/input_field";
@@ -6,21 +6,21 @@ import {
     CognitoManager,
     EmailVerificationResult,
     LoginResult
-} from "../../../infrastructure/server_communication/cognito_client";
-import {PageProtector, StatusConditionType} from "../../../infrastructure/user_management/page_protector";
+} from "../../../infrastructure/server_communication/server_modules/cognito_client";
 import {LoadingButton} from "../../../shared/components/loading_button/loading_button";
-import {UserStatus} from "../../../infrastructure/user_management/user_status";
-import {ApplicationRoutingManager} from "../../../infrastructure/routing/application_routing_manager";
-import {ApplicationRoutes} from "../../../infrastructure/routing/application_routes";
-import {UsersManager} from "../../../infrastructure/user_management/users_manager";
+import {ApplicationRoutes} from "../../../infrastructure/application_base/routing/application_routes";
+import {
+    NavigationFunctionState
+} from "../../../infrastructure/application_base/routing/application_global_routing";
 
-ApplicationRoutingManager.getInstance().setRoutePreloadFunction(ApplicationRoutes.VERIFICATION, () => {
-    if (!PageProtector.getInstance().updateStatusCondition(UserStatus.UNVERIFIED, StatusConditionType.MAXIMUM, null)) return;
-    UsersManager.getInstance().updateMyCachedUserData().then();
-    return true;
-});
+import {ApplicationPage, ApplicationPageProps} from "../../../infrastructure/application_base/routing/application_page_renderer";
+import {
+    useGlobalState,
+} from "../../../infrastructure/application_base/global_functionality/global_states";
 
-export function Verification() {
+export const Verification: ApplicationPage = (props: ApplicationPageProps) => {
+    
+    const [navigate_function, setNavigateFunction] = useGlobalState(NavigationFunctionState);
 
     let cognitoManager = CognitoManager.getInstance();
 
@@ -45,18 +45,18 @@ export function Verification() {
 
     let loginToolkit = cognitoManager.getLoginToolkit((result: LoginResult) => { })
 
-    let {email, password} = cognitoManager.getRememberedUserLoginCredentials();
+    let {email, password} = cognitoManager.getRememberedUserLoginAttributes();
     email = cognitoManager.getLoggedInUserEmail() || email;
 
     if (email == null) {
-        ApplicationRoutingManager.getInstance().navigateToRoute(ApplicationRoutes.IDENTITY);
+        navigate_function(ApplicationRoutes.IDENTITY);
         return <></>;
     }
 
     let emailVerificationToolkit = cognitoManager.getEmailVerificationToolkit(email,async (result: EmailVerificationResult) => {
         if (result === EmailVerificationResult.SUCCEEDED) {
             if (password != null) await loginToolkit.loginDefault(email || '', password);
-            ApplicationRoutingManager.getInstance().navigateToRoute(ApplicationRoutes.IDENTITY);
+            navigate_function(ApplicationRoutes.IDENTITY);
             return <></>;
         } else if (result === EmailVerificationResult.FAILED_EXPIRED) {
             setInputValid('invalid');

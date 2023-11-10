@@ -1,0 +1,14 @@
+.three-dots-overflow {
+    overflow: hidden;
+    width:100px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
+
+.page-title {
+    font-size: 25px;
+    color: var(--masslaw-darker-text-color);
+    font-family: var(--masslaw-main-font);
+    font-weight: bold;
+}

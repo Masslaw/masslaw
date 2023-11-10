@@ -2,7 +2,7 @@ import React, {ReactNode, useEffect, useState} from "react";
 import {Outlet} from "react-router-dom";
 import {Simulate} from "react-dom/test-utils";
 import load = Simulate.load;
-import LoadingIcon from "../loading_icon/loading_icon";
+import {LoadingIcon} from "../loading_icon/loading_icon";
 
 import './css.css'
 

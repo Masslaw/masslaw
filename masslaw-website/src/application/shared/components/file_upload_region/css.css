@@ -1,0 +1,21 @@
+@import url('../../../shared/css/global.css');
+
+.file-upload-region {
+    width: calc(100% - 46px);
+    height: calc(100% - 46px);
+    margin: 20px;
+    border: 3px dashed #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border 0.3s ease-in-out;
+}
+
+.file-upload-region.dragging {
+    border: 3px dashed #4caf50;
+}
+
+.file-upload-region span {
+    font-size: 20px;
+    color: #ccc;
+}

@@ -1,11 +1,24 @@
-import {ChangeEvent, useState} from "react";
+import React, {ChangeEvent, useContext, useState} from "react";
 import {InputField} from "../../../../shared/components/input_field/input_field";
 import {LoadingButton} from "../../../../shared/components/loading_button/loading_button";
 import {CasesManager} from "../../../../infrastructure/cases_management/cases_manager";
-import {ApplicationRoutingManager} from "../../../../infrastructure/routing/application_routing_manager";
-import {ApplicationRoutes} from "../../../../infrastructure/routing/application_routes";
+import {ApplicationRoutes} from "../../../../infrastructure/application_base/routing/application_routes";
+import {CaseData} from "../../../../infrastructure/cases_management/data_structures";
+import {
+    NavigationFunctionState
+} from "../../../../infrastructure/application_base/routing/application_global_routing";
+import {
+    ApplicationPage,
+    ApplicationPageProps
+} from "../../../../infrastructure/application_base/routing/application_page_renderer";
+import {
+    useGlobalState,
+} from "../../../../infrastructure/application_base/global_functionality/global_states";
 
-export function CreateCase() {
+
+export const CreateCase: ApplicationPage = (props: ApplicationPageProps) => {
+    
+    const [navigate_function, setNavigateFunction] = useGlobalState(NavigationFunctionState);
 
     const [case_title, setCaseTitle] = useState('');
     const [case_title_valid, setCaseTitleValid] = useState('');
@@ -16,13 +29,13 @@ export function CreateCase() {
         let raw_name = e.target.value;
         let formatted_name : string = raw_name.replace(/\b\w/g, match => match.toUpperCase());
         setCaseTitle(formatted_name);
-        setCaseTitleValid(formatted_name.length > 4 ? 'valid' : 'invalid');
+        setCaseTitleValid(formatted_name.length > 2 ? 'valid' : 'invalid');
     }
 
     function onDescriptionChange(e: ChangeEvent<HTMLInputElement>) {
         let description = e.target.value;
         setCaseDescription(description);
-        setCaseDescriptionValid((description.length > 4 && description.length < 200) ? 'valid' : 'invalid');
+        setCaseDescriptionValid((description.length > 2 && description.length < 200) ? 'valid' : 'invalid');
     }
 
     const [submit_button_loading, submitButtonLoading] = useState(false);
@@ -31,11 +44,11 @@ export function CreateCase() {
     async function onSubmit() {
         submitButtonLoading(true);
         let case_id = await CasesManager.getInstance().createACase({
-            'title': case_title,
-            'description': case_description,
-        });
+            title: case_title,
+            description: case_description,
+        } as CaseData);
         if (case_id != null) {
-            ApplicationRoutingManager.getInstance().navigateToRoute(ApplicationRoutes.CASE, {'caseId': case_id})
+            navigate_function(ApplicationRoutes.CASE, {'caseId': case_id})
         }
         submitButtonLoading(false);
     }

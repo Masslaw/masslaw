@@ -4,10 +4,19 @@
     position: relative;
     border-radius: 3px;
     font-family: var(--masslaw-button-font);
+    font-weight: bold;
     padding: 0;
     left: 50%;
     transform: translateX(-50%);
 }
+
+.masslaw-generic-button.click-blocked {
+    background: none !important;
+    border: 1px solid var(--masslaw-dark-text-color) !important;
+    color: #9f9f9f !important;
+    pointer-events: none !important;
+}
+
 .masslaw-generic-button.main-button {
     background: var(--masslaw-main-ui);
     color: white;
@@ -17,12 +26,12 @@
     background: var(--masslaw-main-ui-hover);
 }
 .masslaw-generic-button.secondary-button {
-    background: white;
+    background: none;
     color: var(--masslaw-dark-text-color);
     border: 1px solid var(--masslaw-dark-text-color);
 }
 .masslaw-generic-button.secondary-button:hover {
-    background: #efefef;
+    background: #d3d3d3;
 }
 .masslaw-generic-button.textual-button {
     background: none;
@@ -32,4 +41,18 @@
 }
 .masslaw-generic-button.textual-button:hover {
     background: rgba(128, 198, 255, 0.51);
+}
+.masslaw-generic-button.clear-button {
+    background: none;
+    font-weight: bold;
+    border: none;
+}
+.masslaw-generic-button.clear-button:hover {
+}
+.masslaw-generic-button.destructive-button {
+    background: var(--red-main);
+    color: white;
+    border: none;
+}
+.masslaw-generic-button.clear-button:hover {
 }

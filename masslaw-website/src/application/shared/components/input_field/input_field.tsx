@@ -35,26 +35,32 @@ export function InputField(props: {
                     {
                         props.isParagraph ?
                         <>
-                            <textarea value={props.value}
-                                      placeholder={props.placeHolder || ''}
-                                      spellCheck="false"
-                                      onChange={e => {
-                                          e.preventDefault();
-                                          props.onChange(e);
-                                      }}
-                                      autoComplete={props.type === "password" ? "off" : "on"}/>
+                            <textarea
+                                dir={'auto'}
+                                value={props.value}
+                                placeholder={props.placeHolder || ''}
+                                spellCheck="false"
+                                onChange={e => {
+                                    e.preventDefault();
+                                    props.onChange(e);
+                                }}
+                                autoComplete={props.type === "password" ? "off" : "on"}
+                            />
                         </>
                         :
                         <>
-                            <input type={props.type === "password" && !isPasswordVisible ? "password" : "text"}
-                                   value={props.value}
-                                   placeholder={props.placeHolder || ''}
-                                   spellCheck="false"
-                                   onChange={e => {
-                                       e.preventDefault();
-                                       props.onChange(e);
-                                   }}
-                                   autoComplete={props.type === "password" ? "off" : "on"}/>
+                            <input
+                                dir={'auto'}
+                                type={props.type === "password" && !isPasswordVisible ? "password" : "text"}
+                                value={props.value}
+                                placeholder={props.placeHolder || ''}
+                                spellCheck="false"
+                                onChange={e => {
+                                    e.preventDefault();
+                                    props.onChange(e);
+                                }}
+                                autoComplete={props.type === "password" ? "off" : "on"}
+                            />
                         </>
                     }
                     {props.type === "password" && props.hasPasswordShow && (

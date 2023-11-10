@@ -1,18 +1,25 @@
-import React, {MouseEventHandler, useEffect, useState} from "react";
-
+import React, {MouseEventHandler, useContext, useEffect, useState} from "react";
 import './css.css'
-import {CognitoManager} from "../../../infrastructure/server_communication/cognito_client";
+import {CognitoManager} from "../../../infrastructure/server_communication/server_modules/cognito_client";
 import {LoadingButton} from "../../../shared/components/loading_button/loading_button";
-import {ApplicationRoutingManager} from "../../../infrastructure/routing/application_routing_manager";
-import {ApplicationRoutes} from "../../../infrastructure/routing/application_routes";
+import {ApplicationRoutes} from "../../../infrastructure/application_base/routing/application_routes";
 import {InputField} from "../../../shared/components/input_field/input_field";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCheckCircle, faExclamationCircle} from "@fortawesome/free-solid-svg-icons";
+import {
+    NavigationFunctionState
+} from "../../../infrastructure/application_base/routing/application_global_routing";
+import {ApplicationPage, ApplicationPageProps} from "../../../infrastructure/application_base/routing/application_page_renderer";
+import {
+    useGlobalState,
+} from "../../../infrastructure/application_base/global_functionality/global_states";
 
 
 let cognitoChangePasswordToolkit: { sendCode: any; attemptVerification: (verificationCode: string) => Promise<boolean>; } | null = null;
 
-export function Password() {
+export const Password: ApplicationPage = (props: ApplicationPageProps) => {
+    
+    const [navigate_function, setNavigateFunction] = useGlobalState(NavigationFunctionState);
 
     const [change_password_verify, setChangePasswordVerify] = useState(false);
 
@@ -107,7 +114,7 @@ export function Password() {
             await loginToolkit.loginDefault(email, password);
             setSubmitLoading(false);
             setSubmitButtonMessage('');
-            ApplicationRoutingManager.getInstance().navigateToRoute(ApplicationRoutes._);
+            navigate_function(ApplicationRoutes._);
             return;
         }
         setSubmitLoading(false);

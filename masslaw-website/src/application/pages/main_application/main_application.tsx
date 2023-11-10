@@ -1,21 +1,28 @@
-import React from 'react';
-import {PageProtector, StatusConditionType} from "../../infrastructure/user_management/page_protector";
-import {UsersManager} from "../../infrastructure/user_management/users_manager";
+import React, {useContext, useEffect} from 'react';
 import {Outlet} from "react-router-dom";
-import {UserStatus} from "../../infrastructure/user_management/user_status";
-import {ApplicationRoutingManager} from "../../infrastructure/routing/application_routing_manager";
-import {ApplicationRoutes} from "../../infrastructure/routing/application_routes";
 import {MasslawLoggedInTop} from "../../shared/components/masslaw_logged_in_top/masslaw_logged_in_top";
+import {NavigationFunctionState,RouteMatchState} from "../../infrastructure/application_base/routing/application_global_routing";
+import {
+    ApplicationPage,
+    ApplicationPageProps
+} from "../../infrastructure/application_base/routing/application_page_renderer";
+import {ApplicationRoutes} from "../../infrastructure/application_base/routing/application_routes";
+import {
+    useGlobalState,
+} from "../../infrastructure/application_base/global_functionality/global_states";
 
-ApplicationRoutingManager.getInstance().setRoutePreloadFunction(ApplicationRoutes.APP, () => {
-    if (ApplicationRoutingManager.getInstance().getCurrentRoute() === ApplicationRoutes.APP)
-        ApplicationRoutingManager.getInstance().navigateToRoute(ApplicationRoutes.DASHBOARD);
-    PageProtector.getInstance().updateStatusCondition(UserStatus.FULLY_APPROVED, StatusConditionType.MINIMUM, null);
-    UsersManager.getInstance().updateMyCachedUserData().then();
-    return true;
-});
 
-export function MainApplication() {
+export const MainApplication: ApplicationPage = (props: ApplicationPageProps) => {
+
+    const [navigate_function, setNavigateFunction] = useGlobalState(NavigationFunctionState);
+
+    const [route_match_function, setRoutMatchFunction] = useGlobalState(RouteMatchState);
+
+    useEffect(() => {
+        if (route_match_function(ApplicationRoutes.APP)) {
+            navigate_function(ApplicationRoutes.DASHBOARD);
+        }
+    }, [navigate_function, route_match_function]);
 
     return (
         <MasslawLoggedInTop pageDisplayNode={

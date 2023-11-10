@@ -1,0 +1,97 @@
+@import url('../../../../shared/css/global.css');
+
+.optical-document-render-container {
+    position: absolute;
+    background: #808080;
+    width: 100%;
+    height: 100%;
+    overflow: scroll;
+}
+
+.optical-document-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+}
+
+.optical-document-page-container {
+    position: relative;
+    width: calc(100% - 10px);
+    height: 0;
+    margin: 5px;
+}
+
+.optical-document-page-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: white;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.optical-document-page-image {
+    display: block;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: fill;
+    z-index: 10;
+    pointer-events: none;
+    user-select: none;
+}
+
+.loading-image-icon-container {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 100%;
+    z-index: 5;
+}
+
+.optical-document-character-element {
+    cursor: text;
+    z-index: 20;
+}
+
+.optical-document-text-marking {
+    background-color: rgba(255, 255, 255, 0.5);
+    mix-blend-mode: multiply;
+    transition: 0.1s border,top,left ease-out;
+}
+.optical-document-text-marking.user_selection {
+    opacity: 0.5;
+    border: none !important;
+    pointer-events: none;
+}
+
+.optical-document-text-marking.sticky_note {
+    border-bottom-width: 2px !important;
+    border-top-width: 0 !important;
+    border-left-width: 0 !important;
+    border-right-width: 0 !important;
+    background: #00000000 !important;
+    cursor: pointer;
+}
+
+.optical-document-text-marking.sticky_note.hovered {
+    margin-top: -1px !important;
+    border-bottom-width: 4px !important;
+}
+
+.optical-document-text-marking.highlight {
+    border-width: 1px !important;
+    cursor: pointer !important;
+}
+
+.optical-document-text-marking.highlight.hovered {
+    margin-top: -1px !important;
+    margin-left: -1px !important;
+    border-width: 2px !important;
+}

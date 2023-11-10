@@ -1,0 +1,45 @@
+.annotation-list-display-item {
+    border-left: 5px solid #00000000;
+    margin: 10px;
+    width: calc(100% - 20px - 10px);
+    background: white;
+    border-radius: 5px;
+    filter: var(--masslaw-floating-shadow);
+    padding: 5px;
+}
+
+.annotation-list-display-item:hover {
+    filter: var(--masslaw-higher-floating-shadow);
+}
+
+.annotation-display-annotation-type {
+    margin: 5px 10px 5px 10px;
+    color: var(--masslaw-light-text-color)
+}
+
+.annotation-display-annotated-text {
+    background: #efefef;
+    color: var(--masslaw-light-text-color);
+    border: 1px solid #afafaf;
+    margin: 10px;
+    width: calc(100% - 20px - 20px);
+    padding: 10px;
+    border-radius: 3px;
+    font-size: 13px;
+}
+
+.annotation-display-annotation-text {
+    background: #efefef;
+    color: var(--masslaw-dark-text-color);
+    border: 1px solid #afafaf;
+    margin: 10px;
+    width: calc(100% - 20px - 20px);
+    padding: 10px;
+    border-radius: 3px;
+    font-size: 13px;
+}
+
+.annotation-info-item {
+    margin: 5px;
+    font-size: 12px;
+}

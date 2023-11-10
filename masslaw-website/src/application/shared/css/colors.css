@@ -3,18 +3,21 @@
     /* custom elementary colors and shading */
     --blue-main: #2c74a1;
     --blue-dark: #0c4160;
-    --blue-light: #62a2de;
-    
+    --blue-light: #88bae7;
+    --blue-lighter: #bbd9ff;
+
     --green-main: #2ca174;
     --green-dark: #1f7954;
     --green-light: #70d7ad;
 
+    --aqua-soft: #23A8747F;
     --aqua-main: #23a874;
     --aqua-dark: #1f7954;
     --aqua-light: #70d7ad;
     --aqua-very-light: #aee7d0;
 
-    --red-main: #a12c2c;
+    --red-soft: #A12C2C82;
+    --red-main: #be2424;
     --red-dark: #600c0c;
     --red-light: #de6262;
 
@@ -28,6 +31,7 @@
 
 
     /* miscellaneous */
+    --soft-blue: #5698B777;
     --steel-blue: #447f9D;
     --formal-blue: #0c4969;
     --navy-blue: #063147;
@@ -39,19 +43,18 @@
 
     /* masslaw choices */
     --masslaw-incorrect-red: var(--red-main);
-    --masslaw-correct-green: var(--green-main);
+    --masslaw-incorrect-red-soft: var(--red-soft);
+    --masslaw-correct-green: var(--aqua-light);
+    --masslaw-correct-green-soft: var(--aqua-soft);
 
     --masslaw-primary-main: var(--formal-blue);
     --masslaw-primary-dark: var(--navy-blue);
     --masslaw-primary-light: var(--steel-blue);
+    --masslaw-primary-soft: var(--soft-blue);
 
     --masslaw-secondary-main: var(--aqua-main);
     --masslaw-secondary-dark: var(--aqua-dark);
     --masslaw-secondary-light: var(--aqua-light);
-
-    /*--masslaw-secondary-main: var(--orange-main);*/
-    /*--masslaw-secondary-dark: var(--orange-dark);*/
-    /*--masslaw-secondary-light: var(--orange-light);*/
 
     --masslaw-main-ui: var(--masslaw-secondary-main);
     --masslaw-main-ui-hover: var(--masslaw-secondary-dark);
@@ -62,23 +65,25 @@
     --masslaw-bg-color: var(--soft-grey);
 
     --masslaw-dark-text-color: #2f2f2f;
+    --masslaw-darker-text-color: var(--midnight-blue);
     --masslaw-light-text-color: #6c6c6c;
     --masslaw-very-light-text-color: #8c8c8c;
 
-    --masslaw-light-border-color: #cbcbcb;
+    --masslaw-light-border-color: #d9d9d9;
+    --masslaw-dark-border-color: #a4a4a4;
 
     --masslaw-background-shade: #989898;
-    --masslaw-secondary-background-shade: #f5f5f5;
-    --masslaw-tertiary-background-shade: #ebebeb;
+    --masslaw-secondary-background-shade: #ebebeb;
+    --masslaw-tertiary-background-shade: #dedede;
 
     --masslaw-case-owner-color: var(--masslaw-primary-main);
     --masslaw-case-manager-color: var(--masslaw-secondary-main);
     --masslaw-case-editor-color: var(--orange-main);
-    --masslaw-case-reader-color: var(--yellow-dark);
+    --masslaw-case-reader-color: var(--yellow-main);
 
     /* other */
-    --masslaw-soft-shadow: drop-shadow(0px 0px 2px #5E5E5E);
-    --masslaw-softer-shadow: drop-shadow(0px 0px 2px #9b9b9b);
+    --masslaw-soft-shadow: drop-shadow(0px 1px 1px rgba(0, 0, 0, 0.32));
+    --masslaw-softer-shadow: drop-shadow(0px 1px 1px rgba(0, 0, 0, 0.25));
     --masslaw-floating-shadow: drop-shadow(0px 3px 3px rgba(0, 0, 0, 0.24));;
     --masslaw-higher-floating-shadow: drop-shadow(0px 6px 6px rgba(0, 0, 0, 0.24));
 }

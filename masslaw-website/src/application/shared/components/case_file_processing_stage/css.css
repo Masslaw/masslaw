@@ -1,0 +1,22 @@
+@import url('../../../shared/css/global.css');
+
+.case-file-processing-completed, .case-file-processing-stage{
+    position: relative;
+    display: inline-flex;
+    color: white;
+    background: linear-gradient(90deg, var(--masslaw-primary-main) 0%, var(--masslaw-secondary-main) 100%);
+    border-radius: 5px;
+    line-height: 30px;
+    overflow: hidden;
+    white-space: nowrap;
+    align-content: center;
+    text-align: left;
+}
+
+.case-file-processing-stage {
+    padding-right: 7px;
+}
+
+.case-file-processing-completed span, .case-file-processing-stage span {
+    margin: 0 5px 0 5px;
+}

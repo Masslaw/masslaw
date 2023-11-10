@@ -1,5 +1,5 @@
 import React from 'react';
-import {Base} from "./infrastructure/application_base";
+import {Base} from "./infrastructure/application_base/application_base";
 
 export function WebApp() {
     return (<Base/>);

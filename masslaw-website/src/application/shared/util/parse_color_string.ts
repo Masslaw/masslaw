@@ -1,7 +1,8 @@
 export function parseColor(colorString: string): { r: number, g: number, b: number } {
-    const r = parseInt(colorString.slice(2, 4), 16);
-    const g = parseInt(colorString.slice(4, 6), 16);
-    const b = parseInt(colorString.slice(6, 8), 16);
+    colorString.replace('#', '');
+    const r = parseInt(colorString.slice(1, 3), 16);
+    const g = parseInt(colorString.slice(3, 5), 16);
+    const b = parseInt(colorString.slice(5, 7), 16);
     return { r, g, b };
 }
 

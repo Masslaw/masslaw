@@ -1,0 +1,143 @@
+.case-main-display-container {
+    padding: 20px;
+    overflow-y: scroll;
+    height: calc(100% - 40px);
+}
+
+.case-main-case-title {
+    font-size: 35px;
+    font-weight: bold;
+    width: 100%;
+    border-bottom: 1px solid var(--masslaw-light-border-color);
+    padding-bottom: 10px;
+    margin: 10px 0 10px 0;
+}
+
+.case-main-data-items-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+@keyframes fadeInFromRight {
+     0% {
+         opacity: 0;
+         transform: translateX(100px);
+     }
+     100% {
+         opacity: 1;
+         transform: translateX(0);
+     }
+ }
+
+.case-main-data-item {
+    animation: fadeInFromRight 0.7s ease-out forwards;
+}
+
+.case-main-data-item {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 200px;
+    max-width: 200px;
+    height: 250px;
+    box-sizing: border-box;
+    margin: 5px;
+    background-color: white;
+    border: 1px solid var(--masslaw-light-border-color);
+    text-align: center;
+    padding: 20px 0;
+    border-radius: 5px;
+    filter: var(--masslaw-soft-shadow);
+    font-weight: bold;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transform: translateX(100px);
+}
+
+.case-main-data-item-icon {
+    width: 100%;
+    font-size: 50px;
+    text-align: center;
+    color: var(--masslaw-dark-text-color);
+}
+
+.case-main-data-item-title {
+    width: 100%;
+    font-size: 15px;
+    text-align: center;
+    color: var(--masslaw-dark-text-color);
+    margin-top: 20px;
+}
+
+.case-main-data-item-value {
+    width: fit-content;
+    padding: 5px;
+    font-size: 17px;
+    text-align: center;
+    color: var(--masslaw-darker-text-color);
+    margin-top: 20px;
+    border-bottom: 1px solid var(--masslaw-dark-border-color);
+}
+
+.case-main-participants-list {
+    margin-top: 10px;
+    width: calc(100% - 20px);
+    height: 200px;
+    background: var(--masslaw-secondary-background-shade);
+    border-radius: 5px;
+    padding: 10px;
+}
+
+.case-main-participants-list-item {
+    height: 198px;
+    width: 150px;
+    background: white;
+    border: 1px solid var(--masslaw-light-border-color);
+    filter: var(--masslaw-soft-shadow);
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.case-main-participants-list-item-image {
+    height: 70px;
+    width: 70px;
+    border-radius: 50px 50px 0 0;
+    margin-top: 20px;
+}
+
+.case-main-participants-list-item-name {
+    width: fit-content;
+    border-radius: 50px 50px 0 0;
+    margin-top: 20px;
+}
+
+.case-main-participants-list-item-role {
+    height: auto;
+    color: white;
+    margin-top: 20px;
+    font-size: 12px;
+    padding: 5px 10px 5px 10px;
+    border-radius: 5px;
+    letter-spacing: 1px;
+    font-weight: bold;
+}
+
+.case-main-participants-list-item-role.owner {
+    background: var(--masslaw-case-owner-color);
+}
+
+.case-main-participants-list-item-role.manager {
+    background: var(--masslaw-case-manager-color);
+}
+
+.case-main-participants-list-item-role.editor {
+    background: var(--masslaw-case-editor-color);
+}
+
+.case-main-participants-list-item-role.reader {
+    background: var(--masslaw-case-reader-color);
+}

@@ -2,31 +2,46 @@
 
 :root {
     --masslaw-profile-image-container-width: 120 + 120 + 120;
+    --masslaw-profile-sections-gap: 30px;
 }
 
-.masslawyer-profile-user-photo-container {
-    position: absolute;
-    width: var(--masslaw-profile-image-container-width);
+.profile-page-container {
+    display: flex;
+    position: relative;
+    width: 100%;
     top: 0;
-    right: 0;
-    margin: 0 20px 20px 20px;
-    padding: 30px 60px 30px 60px;
-    border: 1px solid var(--masslaw-light-border-color);
-    background: white;
+    left: 0;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
 }
 
 .masslawyer-profile-form-container{
-    margin: 0 20px 20px 20px;
+    position: relative;
+    flex-grow: 1;
     border: 1px solid var(--masslaw-light-border-color);
-    width: 490px;
     background: white;
+    filter: var(--masslaw-soft-shadow);
+}
+
+.masslawyer-profile-user-photo-container {
+    position: relative;
+    width: var(--masslaw-profile-image-container-width);
+    margin-left: var(--masslaw-profile-sections-gap);
+    height: 200px;
+    top: 0;
+    left: 0;
+    padding: 30px 60px 30px 60px;
+    border: 1px solid var(--masslaw-light-border-color);
+    background: white;
+    filter: var(--masslaw-soft-shadow);
 }
 
 .masslaw-profile-input-field-container {
     position: relative;
-    left: 0;
-    width: 440px;
-    margin-left: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
 }
 
 .masslawyer-profile-upload-image-button-container {
@@ -43,6 +58,7 @@
     left: 280px;
     width: auto;
     height: auto;
+    padding: 20px;
 }
 
 .masslawyer-profile-form-section-title {

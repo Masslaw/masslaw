@@ -1,5 +1,5 @@
 import React, {MouseEventHandler} from "react";
-import LoadingIcon from "../loading_icon/loading_icon";
+import {LoadingIcon} from "../loading_icon/loading_icon";
 
 import './css.css';
 
@@ -9,11 +9,13 @@ export function LoadingButton(props: {
         size?: {h: number, w: number}
         id?: string,
         loading?: boolean,
-        caption?: string
+        caption?: string,
+        color?: string
     }) {
 
     let onClickInternal : MouseEventHandler<HTMLButtonElement> = (e) => {
         e.preventDefault();
+        if (props.loading) return;
         props.onClick(e);
     }
 
@@ -21,10 +23,12 @@ export function LoadingButton(props: {
         <>
             <button id={props.id}
                     className={`loading_button ${props.clickable ? 'clickable' : 'unclickable'}`}
-                    style={props.size != null ? {
-                        width: `${props.size.w}px`,
-                        height: `${props.size.h}px`,
-                        fontSize: `${Math.floor(props.size.h / 2.5)}px`} : {}}
+                    style={{
+                        width: props.size != null ? `${props.size.w}px` : undefined,
+                        height: props.size != null ? `${props.size.h}px` : undefined,
+                        fontSize: props.size != null ? `${Math.floor(props.size.h / 2.5)}px` : undefined,
+                        background: props.clickable && props.color ? props.color : undefined,
+                    }}
                     onClick={onClickInternal}>
                 <span style={{ display: `${(props.loading) ? 'none' : 'block'}`}}>{(props.caption != null) ? props.caption : ''}</span>
                 <div style={{ display: `${(props.loading) ? 'block' : 'none'}`,

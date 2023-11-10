@@ -1,44 +1,33 @@
-import React, {useEffect, useState} from "react";
-import {UsersManager} from "../../infrastructure/user_management/users_manager";
+import React, {useContext, useEffect, useState} from "react";
 import {Outlet} from "react-router-dom";
-import {ApplicationRoutes} from "../../infrastructure/routing/application_routes";
-import {ApplicationRoutingManager} from "../../infrastructure/routing/application_routing_manager";
-import {UserStatus} from "../../infrastructure/user_management/user_status";
-import {PageProtector, StatusConditionType} from "../../infrastructure/user_management/page_protector";
 import {MasslawLoggedInTop} from "../../shared/components/masslaw_logged_in_top/masslaw_logged_in_top";
-
 import './css.css'
-import {LoadingElement} from "../../shared/components/loaded_element/loading_element";
+import {NavigationFunctionState, RouteMatchState
+} from "../../infrastructure/application_base/routing/application_global_routing";
+import {ApplicationRoutes} from "../../infrastructure/application_base/routing/application_routes";
+import {
+    ApplicationPage,
+    ApplicationPageProps
+} from "../../infrastructure/application_base/routing/application_page_renderer";
+import {
+    useGlobalState,
+} from "../../infrastructure/application_base/global_functionality/global_states";
 
 
+export const Masslawyer: ApplicationPage = (props: ApplicationPageProps) => {
+    
+    const [navigate_function, setNavigateFunction] = useGlobalState(NavigationFunctionState);
 
-ApplicationRoutingManager.getInstance().setRoutePreloadFunction(ApplicationRoutes.MASSLAWYER, async () => {
-    currentRoute = ApplicationRoutingManager.getInstance().getCurrentRoute();
-    if (currentRoute === ApplicationRoutes.MASSLAWYER) {
-        ApplicationRoutingManager.getInstance().navigateToRoute(ApplicationRoutes.PROFILE);
-        return false;
-    }
-    if (!PageProtector.getInstance().updateStatusCondition(UserStatus.LOGGED_IN, StatusConditionType.MINIMUM, null))
-        return false;
+    const [route_match_function, setRoutMatchFunction] = useGlobalState(RouteMatchState);
 
-    await UsersManager.getInstance().updateMyCachedUserData();
+    const [currentPageName, setCurrentPageName] = useState('Account');
 
-    return true;
-});
-
-let currentRoute : string | null = null;
-let currentPageName = '';
-
-ApplicationRoutingManager.getInstance().addOnLocationChangedCallback((newRoute: string) => {
-    currentRoute = newRoute;
-    switch (currentRoute) {
-        case ApplicationRoutes.PROFILE:
-            currentPageName = 'Profile';
-            break;
-    }
-})
-
-export function Masslawyer() {
+    useEffect(() => {
+        if (route_match_function(ApplicationRoutes.PROFILE))
+            setCurrentPageName('Profile');
+        else
+            setCurrentPageName('Account');
+    }, [route_match_function]);
 
     return (
         <>
@@ -47,12 +36,26 @@ export function Masslawyer() {
                     <div className={'masslawyer-title-section'}>
                         <div>Masslawyer Account</div>
                     </div>
-                    <div className={'masslawyer-main-menu'}>
-                    </div>
-                    <div className={'page-container'}>
-                        <div className={'page-title'}>{currentPageName}</div>
-                        <div className={'page-content'}>
-                            <Outlet />
+                    <div className={'masslawyer-page-and-main-menu'}>
+                        <div className={'masslawyer-main-menu'}>
+                            <div
+                                className={'masslawyer-main-menu-item clickable'}
+                                onClick={e => {navigate_function(ApplicationRoutes.PROFILE)}}
+                            >{'Profile'}</div>
+                            <div
+                                className={'masslawyer-main-menu-item clickable'}
+                                onClick={e => {navigate_function(ApplicationRoutes.PROFILE)}}
+                            >{'Connections'}</div>
+                            <div
+                                className={'masslawyer-main-menu-item clickable'}
+                                onClick={e => {navigate_function(ApplicationRoutes.PROFILE)}}
+                            >{'Settings'}</div>
+                        </div>
+                        <div className={'page-container'}>
+                            <div className={'masslawyer-page-title page-title'}>{currentPageName}</div>
+                            <div className={'page-content'}>
+                                <Outlet />
+                            </div>
                         </div>
                     </div>
                 </div>

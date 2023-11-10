@@ -1,17 +1,14 @@
 @import url('../../../shared/css/global.css');
 
 :root {
-    --cases-list-container-height: 350px;
+    --cases-list-container-height: 400px;
     --case-thumbnail-width: 220px
 }
 
 .dashboard-page-title {
     margin: 40px;
-    font-size: 30px;
-    color: var(--masslaw-dark-text-color);
-    font-family: var(--masslaw-main-font);
-    font-weight: bold;
 }
+
 .dashboard-my-cases-container {
     position: relative;
     margin: 40px;
@@ -20,6 +17,7 @@
     border: 1px solid var(--masslaw-light-border-color);
     background: var(--masslaw-secondary-background-shade);
 }
+
 .dashboard-my-cases-title {
     margin: 20px;
     font-size: 20px;
@@ -27,12 +25,14 @@
     font-family: var(--masslaw-main-font);
     font-weight: bold;
 }
+
 .dashboard-case-create-button-container {
     position: absolute;
     margin: 15px;
     top: 0;
     right: 0;
 }
+
 .dashboard-no-cases-text {
     position: absolute;
     top: 50%;
@@ -43,30 +43,53 @@
     word-spacing: 5px;
     letter-spacing: 1px;
 }
+
 .dashboard-my-cases-list-container {
     position: relative;
     display: flex;
     top: 0;
     height: calc(100% - 60px);
     width: 100%;
+    overflow-x: scroll;
+}
+
+@keyframes fadeInFromTop {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.application-dashboard-case-thumbnail-container {
+    animation: fadeInFromTop 0.7s cubic-bezier(0.3, 0.2, 0.2, 1.4) forwards;
 }
 
 .application-dashboard-case-thumbnail-container {
     margin: 10px 15px 10px 15px;
     width: var(--case-thumbnail-width);
+    min-width: var(--case-thumbnail-width);
     height: calc(100% - 30px);
     background: white;
     border-radius: 2px;
     border: 1px solid var(--masslaw-light-border-color);
     filter: var(--masslaw-floating-shadow);
+    opacity: 0;
+    transform: translateY(20px);
 }
+
 .application-dashboard-case-thumbnail-container span {
     margin: 0 2px 0 2px;
 }
+
 .application-dashboard-case-thumbnail-container:hover {
     margin: 8px 15px 12px 15px;
     filter: var(--masslaw-higher-floating-shadow);
 }
+
 .application-dashboard-case-thumbnail-title {
     position: relative;
     width: calc(100% - 20px);
@@ -78,6 +101,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
 .application-dashboard-case-thumbnail-interaction {
     position: relative;
     width: calc(100% - 20px);
@@ -86,6 +110,7 @@
     color: var(--masslaw-light-text-color);
     font-size: 12px;
 }
+
 .application-dashboard-case-thumbnail-creation {
     position: relative;
     width: calc(100% - 20px);
@@ -94,6 +119,7 @@
     color: var(--masslaw-light-text-color);
     font-size: 12px;
 }
+
 .application-dashboard-case-thumbnail-users {
     position: relative;
     width: calc(100% - 20px);
@@ -102,6 +128,7 @@
     color: var(--masslaw-light-text-color);
     font-size: 12px;
 }
+
 .application-dashboard-case-thumbnail-files {
     position: relative;
     width: calc(100% - 20px);
@@ -110,6 +137,7 @@
     color: var(--masslaw-light-text-color);
     font-size: 12px;
 }
+
 .application-dashboard-case-thumbnail-permission {
     position: absolute;
     bottom: 0;
@@ -123,15 +151,19 @@
     letter-spacing: 1px;
     font-weight: bold;
 }
+
 .application-dashboard-case-thumbnail-permission.owner {
     background: var(--masslaw-case-owner-color);
 }
+
 .application-dashboard-case-thumbnail-permission.manager {
     background: var(--masslaw-case-manager-color);
 }
+
 .application-dashboard-case-thumbnail-permission.editor {
     background: var(--masslaw-case-editor-color);
 }
+
 .application-dashboard-case-thumbnail-permission.reader {
     background: var(--masslaw-case-reader-color);
 }

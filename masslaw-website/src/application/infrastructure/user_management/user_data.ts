@@ -1,6 +1,6 @@
 
-export class UserData {
-    public user_id: string = '';
+export class MasslawUserData {
+    public User_ID: string = '';
     public email: string = '';
     public first_name: string = '';
     public last_name: string = '';

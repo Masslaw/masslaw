@@ -1,18 +1,14 @@
 // AnimationFrameComponent.tsx
 import React, { useEffect, useRef } from 'react';
 
-interface AnimationFrameComponentProps {
-    onFrame: (deltaTime: number) => void;
-}
-
-const AnimationFrameComponent: React.FC<AnimationFrameComponentProps> = ({ onFrame }) => {
+export function AnimationFrameComponent(props: { onFrame: (deltaTime: number) => void }) {
     const frameRef = useRef<number>();
     const lastTimestampRef = useRef<number>();
 
     const animate = (timestamp: number) => {
         if (lastTimestampRef.current !== undefined) {
             const deltaTime = (timestamp - lastTimestampRef.current) / 1000;
-            onFrame(deltaTime);
+            props.onFrame(deltaTime);
         }
 
         lastTimestampRef.current = timestamp;
@@ -30,5 +26,3 @@ const AnimationFrameComponent: React.FC<AnimationFrameComponentProps> = ({ onFra
 
     return <></>;
 };
-
-export default AnimationFrameComponent;

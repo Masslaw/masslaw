@@ -8,44 +8,64 @@
 
 .masslawyer-main-container {
     position: relative;
+    display: block;
     width: var(--main-container-width);
     height: auto;
-    min-height: calc(100% - 40px);
     background: none;
-    overflow: hidden;
+    overflow: visible;
     left: 50%;
     transform: translateX(-50%);
     margin: 20px 0 20px 0;
-    border: 1px solid var(--masslaw-light-border-color);
-    border-radius: 2px;
     font-family: var(--masslaw-main-font);
-    background: var(--masslaw-secondary-background-shade);
+}
+
+.masslawyer-page-and-main-menu {
+    width: 100%;
+    display: flex;
+    position: relative;
+    top: 0;
+    left: 0;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
 }
 
 .masslawyer-main-menu {
-    position: absolute;
-    background: var(--masslaw-dark-color);
-    color: white;
+    position: relative;
+    align-self: flex-start;
     width: var(--left-main-menu-width);
-    height: 100%;
+    border-left: 1px solid var(--masslaw-light-border-color);
+    background: white;
     top: 0;
     left: 0;
     margin: 0;
     padding: 0;
 }
+.masslawyer-main-menu-item {
+    position: relative;
+    color: var(--masslaw-light-text-color);
+    width: calc(var(--left-main-menu-width) - 10px - 20px);
+    border-radius: 5px;
+    height: 30px;
+    line-height: 30px;
+    padding: 5px 10px 5px 10px;
+    margin: 5px;
+}
+.masslawyer-main-menu-item:hover {
+    background: var(--masslaw-tertiary-background-shade);
+}
 
 .masslawyer-title-section {
-    position: absolute;
-    width: calc(100% - var(--left-main-menu-width));
+    position: relative;
+    width: 100%;
     height: var(--title-section-height);
     top: 0;
-    left: var(--left-main-menu-width);
+    left: 0;
     margin: 0;
     padding: 0;
     border: 0;
-    background: white;
-    filter: var(--masslaw-soft-shadow);
     font-family: var(--masslaw-title-font);
+    z-index: 10;
 }
 .masslawyer-title-section div {
     display: flex;
@@ -63,16 +83,17 @@
 .page-container {
     position: relative;
     width: calc(100% - var(--left-main-menu-width));
-    height: auto;
-    top: var(--title-section-height);
-    left: var(--left-main-menu-width);
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+    overflow-y: scroll;
 }
 
-.page-title {
+.masslawyer-page-title {
     position: relative;
-    width: 100%;
+    width: calc(100% - 40px);
     height: auto;
-    padding: 30px;
+    margin: 20px;
     color: var(--masslaw-light-text-color);
     font-weight: bold;
     font-size: 25px;
@@ -81,8 +102,8 @@
 }
 .page-content {
     position: relative;
-    margin: 0;
+    margin: 20px;
     padding: 0;
     height: auto;
-    width: 100%;
+    width: calc(100% - 40px);
 }

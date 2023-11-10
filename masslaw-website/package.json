@@ -19,6 +19,7 @@
     "amazon-cognito-identity-js": "^6.1.2",
     "axios": "^1.3.4",
     "jwt-decode": "^3.1.2",
+    "lodash": "^4.17.21",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.9.0",
@@ -29,10 +30,11 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "start": "REACT_APP_DEVELOPMENT_STAGE=dev react-scripts start",
+    "build": "REACT_APP_DEVELOPMENT_STAGE=prod react-scripts build && javascript-obfuscator ./build/static/js/*.js",
+    "build-dev": "REACT_APP_DEVELOPMENT_STAGE=dev react-scripts build",
+    "test": "REACT_APP_DEVELOPMENT_STAGE=dev react-scripts test",
+    "eject": "REACT_APP_DEVELOPMENT_STAGE=prod react-scripts eject"
   },
   "eslintConfig": {
     "extends": [
@@ -51,5 +53,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.195",
+    "javascript-obfuscator": "^4.0.2"
   }
 }

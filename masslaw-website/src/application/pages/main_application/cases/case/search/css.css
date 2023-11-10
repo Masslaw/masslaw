@@ -1,0 +1,105 @@
+@import url('../../../../../shared/css/global.css');
+
+:root {
+}
+
+.case-search-header {
+    position: relative;
+    width: calc(100% - 40px);
+    margin: 20px 20px 0 20px;
+    height: var(--case-files-list-header-height);
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: var(--secondary-top-z-index);
+}
+
+.case-search-page-title {
+    margin: 0;
+    padding: 0;
+    left: 20px;
+    width: 150px;
+}
+
+.case-search-text-input-container {
+    height: 100%;
+    width: calc(100% - 300px);
+}
+
+.case-search-submit-search-button-container {
+    padding-top: 13px;
+    right: 20px;
+    width: 150px;
+}
+
+.case-search-results-container {
+    width: calc(100% - 40px);
+    height: calc(100% - 130px);
+    margin: 20px;
+    background: var(--masslaw-secondary-background-shade);
+    overflow-y: scroll;
+}
+
+.search-result-container {
+    width: calc(100% - 20px - 40px);
+    border-bottom: 1px solid #b0b0b0;
+    padding: 10px;
+    margin: 20px;
+    border-radius: 5px;
+    transition: 0.15s height ease-out;
+    background: white;
+    filter: var(--masslaw-floating-shadow);
+}
+
+.search-result-container:hover {
+    filter: var(--masslaw-higher-floating-shadow);
+}
+
+.search-result-file-name {
+    color: var(--masslaw-light-text-color);
+    margin: 5px;
+    max-width: calc(100% - 50px);
+}
+
+.search-result-highlighted-text {
+     white-space: normal;
+     overflow: visible;
+}
+
+.search-result-highlighted-text.not-expanded {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.search-result-highlighted-text .highlighted-text-wrapper {
+    display: inline;
+}
+
+.search-result-highlighted-text.not-expanded .highlighted-text-wrapper {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.search-result-highlighted-text .highlighted-text {
+    background: var(--aqua-soft);
+}
+
+.search-result-go-to-file-container {
+    height: 30px;
+}
+
+.search-result-go-to-file-wrapper {
+    position: absolute;
+    right: 20px;
+}
+
+.case-search-no-results-message {
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    text-align: center;
+    color: var(--masslaw-light-text-color);
+}
