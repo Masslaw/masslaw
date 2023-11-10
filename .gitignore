@@ -12,3 +12,4 @@
 /cloud-logic/venv310/
 __pycache__/
 *.pyc
+/content-processing/mlcp/testing/shared/neptune_stub/apache-tinkerpop-gremlin-server-3.7.0/
