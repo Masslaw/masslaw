@@ -9,3 +9,6 @@
 /masslaw-website/node_modules/
 /.idea/
 /masslaw.iml
+/cloud-logic/venv310/
+__pycache__/
+*.pyc
