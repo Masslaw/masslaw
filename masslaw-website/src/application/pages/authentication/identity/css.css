@@ -1,0 +1,194 @@
+@import url('../css.css');
+
+.form-select {
+    display: block;
+    position: relative;
+    overflow: hidden;
+    height: 50px;
+    background: none;
+    border: 1px solid grey;
+    border-radius: 15px;
+    margin: 20px;
+    padding: 0;
+    width: calc(100% - 2 * 20px);
+}
+.form-selection-thingy{
+    position: relative;
+    display: block;
+    width: 50%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    border-radius: 15px;
+    pointer-events: none;
+    background: var(--masslaw-main-ui);
+    transition: var(--form-switch-transition);
+}
+.form-select.login > .form-selection-thingy {
+    transform: translateX(-2px);
+}
+.form-select.signup > .form-selection-thingy {
+    transform: translateX(calc(100% + 2px));
+}
+.form-selection-button {
+    position: relative;
+    display: inline-block;
+    flex-direction: row;
+    z-index: 5;
+    width: 50%;
+    height: 100%;
+    border: none;
+    border-radius: 15px;
+    background: none;
+    transition: 0.2s background-color ease-out;
+    font-size: 17px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    top: -100%;
+    color: white;
+}
+.form-select.login > .form-selection-button.signup {
+    color: black;
+}
+.form-select.signup > .form-selection-button.login {
+    color: black;
+}
+.form-select.login > .form-selection-button.signup:hover {
+    background: #dedede;
+    cursor: pointer;
+}
+.form-select.signup > .form-selection-button.login:hover {
+    background: #dedede;
+    cursor: pointer;
+}
+
+.form-section {
+    position: relative;
+    display: block;
+    width: calc(2*var(--form-container-width));
+    height: var(--form-section-height);
+    background: none;
+    border: none;
+    margin: 0;
+    padding: 0;
+    transition: var(--form-switch-transition);
+}
+.form-section.login {
+    right: 0;
+}
+.form-section.login > div:nth-child(1) > *{
+    tab-index: -1;
+}
+.form-section.signup {
+    right: var(--form-container-width);
+}
+.form-section.signup > div:nth-child(0) > *{
+    tab-index: -1;
+}
+
+.form-section-section {
+    display: inline-block;
+    flex-direction: row;
+    width: var(--form-container-width);
+    height: 100%;
+    top: 0;
+    margin: 0;
+    padding: 0;
+    float: left;
+}
+
+.or-element-cont {
+    background: grey;
+    height: 2px;
+    margin: 20px;
+    width: calc(100% - 2*20px);
+}
+.or-element-text {
+    position: absolute;
+    background: white;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 10px;
+}
+
+.other-login-options {
+    height: auto;
+    padding: 20px;
+    width: calc(100% - 2*20px);
+}
+.other-login-option {
+    width: 100%;
+    height: 50px;
+    border: 1px solid grey;
+    border-radius: 10px;
+    overflow: hidden;
+    background: none;
+    transition: 0.3s ease-out;
+}
+.other-login-option:hover {
+    background: #e8e8e8;
+    cursor: pointer;
+}
+.google-login-button {
+    width: 100%;
+    height: 100%;
+}
+.google-login-button:hover {
+    cursor: pointer;
+    filter: brightness(0.85);
+}
+
+.signup-password-qualifications {
+    display: block;
+}
+.password-validation-element {
+    display: block;
+    margin: 5px;
+    color: var(--masslaw-incorrect-red);
+}
+.password-validation-icon {
+    position: absolute;
+    font-size: 15px;
+}
+.password-validation-message {
+    position: relative;
+    left: 20px;
+    font-size: 12px;
+    white-space: pre-wrap;
+    overflow: hidden;
+    width: calc(100% - 20px);
+}
+.password-validation-element.valid {
+    color: var(--masslaw-correct-green);
+}
+.password-validation-element.invalid {
+    color: var(--masslaw-incorrect-red);
+}
+.submit-button-message {
+    color: var(--masslaw-incorrect-red);
+    font-size: 12px;
+    width: calc(100% - 2*20px);
+    min-height: 20px;
+    text-align: center;
+    white-space: pre-wrap;
+    overflow: hidden;
+    margin: 0 20px 10px 20px;
+}
+.identity-forgot-password-container {
+    position: relative;
+    float: right;
+    right: 20px;
+}
+
+/*@media (max-width: 800px) {*/
+/*    :root {*/
+/*        --form-container-width: 100%;*/
+/*        --form-container-height: auto;*/
+/*    }*/
+
+/*    .form-container {*/
+/*        top: 0;*/
+/*        border-radius: 0;*/
+/*    }*/
+/*}*/
+

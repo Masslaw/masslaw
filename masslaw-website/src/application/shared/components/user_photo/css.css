@@ -1,0 +1,8 @@
+@import url('../../../shared/css/global.css');
+
+.masslaw-account-image {
+    display: block;
+    border-radius: 15px;
+    background-size: cover;
+    background-image: url("../../../../assets/images/default_user_image.png");
+}

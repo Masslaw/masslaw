@@ -1,0 +1,13 @@
+@import url('../../../../../../shared/css/global.css');
+
+:root {
+}
+
+.file-content-display-area {
+    position: relative;
+    width: 1100px;
+    height: calc(100% - 20px);
+    margin: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+}

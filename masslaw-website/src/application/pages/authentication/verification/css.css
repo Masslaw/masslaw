@@ -1,0 +1,47 @@
+@import url('../css.css');
+
+.form-headline {
+    white-space: pre-wrap;
+    overflow: hidden;
+    width: calc(100% - 2*20px);
+    margin: 20px;
+    font-family: var(--masslaw-main-font);
+    font-size: 22px;
+    font-weight: bold;
+    color: var(--masslaw-primary-dark);
+    border-bottom: 1px solid grey;
+}
+.dialog-text {
+    white-space: pre-wrap;
+    overflow: hidden;
+    width: calc(100% - 2*20px);
+    margin: 20px;
+    font-family: var(--masslaw-main-font);
+    font-size:  12px;
+    line-height: 17px;
+}
+
+.submit-button-message {
+    min-height: 40px;
+}
+
+.resend-verification-code {
+    margin: 20px;
+    background: none;
+    border: none;
+}
+.resend-verification-code Button{
+    color: var(--masslaw-main-ui);
+    background: none;
+    border: none;
+    font-size: 12px;
+    padding: 5px;
+    border-radius: 3px;
+    transition: 0.5s all ease-out;
+}
+.resend-verification-code Button.clickable{
+    cursor: pointer;
+}
+.resend-verification-code Button.clickable:hover{
+    background-color: rgba(var(--masslaw-main-ui-hover-light), 0.5);
+}

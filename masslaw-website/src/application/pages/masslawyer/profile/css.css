@@ -1,0 +1,59 @@
+@import url('../../../shared/css/global.css');
+
+:root {
+    --masslaw-profile-image-container-width: 120 + 120 + 120;
+}
+
+.masslawyer-profile-user-photo-container {
+    position: absolute;
+    width: var(--masslaw-profile-image-container-width);
+    top: 0;
+    right: 0;
+    margin: 0 20px 20px 20px;
+    padding: 30px 60px 30px 60px;
+    border: 1px solid var(--masslaw-light-border-color);
+    background: white;
+}
+
+.masslawyer-profile-form-container{
+    margin: 0 20px 20px 20px;
+    border: 1px solid var(--masslaw-light-border-color);
+    width: 490px;
+    background: white;
+}
+
+.masslaw-profile-input-field-container {
+    position: relative;
+    left: 0;
+    width: 440px;
+    margin-left: 20px;
+}
+
+.masslawyer-profile-upload-image-button-container {
+    position: relative;
+    padding: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    margin: 40px 0 10px 0;
+}
+
+.masslaw-profile-submit-button-container {
+    position: relative;
+    left: 280px;
+    width: auto;
+    height: auto;
+}
+
+.masslawyer-profile-form-section-title {
+    position: relative;
+    left: 20px;
+    color: var(--masslaw-light-text-color);
+    margin: 10px;
+}
+
+.masslawyer-profile-form-button-container {
+    position: relative;
+    width: 140px;
+    margin-left: 40px;
+}

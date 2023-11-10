@@ -1,0 +1,121 @@
+@import url('../../../shared/css/global.css');
+
+
+.input-field-container {
+    position: relative;
+    display: inline-block;
+    width: calc(100% - 2*20px);
+    padding: 0;
+    margin: 10px 20px 0 20px;
+    color: black;
+}
+.input-field-input{
+    position: relative;
+    width: calc(100% - 30px);
+    border-radius: 4px;
+    border: 1px solid grey;
+    background: white;
+    overflow: hidden;
+}
+.input-field-input input {
+    position: relative;
+    font-size: 15px;
+    padding: 10px 30px 10px 10px;
+    outline: None;
+    overflow: hidden;
+    background: none;
+    border: none;
+    width: calc(100% - 30px - 10px);
+    font-family: var(--masslaw-text-input-font);
+}
+.input-field-input textarea {
+    position: relative;
+    font-size: 15px;
+    padding: 10px 30px 10px 10px;
+    outline: None;
+    overflow-y: scroll;
+    background: none;
+    border: none;
+    width: calc(100% - 30px - 10px) !important;
+    height: 100px !important;
+    font-family: var(--masslaw-text-input-font);
+    resize: none;
+}
+.input-field-input input.paragraph {
+    height: 100px;
+}
+.input-field-label-outside {
+    font-size: 12px;
+    padding-bottom: 2px;
+    color: var(--masslaw-dark-text-color);
+    margin-left: 5px;
+    margin-bottom: 5px;
+}
+.input-validation-icon{
+    position: absolute;
+    font-size: 19px;
+    float: right;
+    top: 50%;
+    transform: translateY(calc(-50% - 11px));
+    right: 0;
+    color: #4b4b4b;
+}
+.input-message{
+    min-height: 20px;
+    padding: 5px;
+    font-size: 12px;
+    font-family: var(--masslaw-main-font);
+}
+.input-field-container:focus-within .input-field-input{
+    border: 1px solid var(--masslaw-primary-main);
+}
+.input-field-container.invalid {
+    color: var(--masslaw-incorrect-red);
+}
+.input-field-container.invalid .input-validation-icon{
+    color: var(--masslaw-incorrect-red);
+}
+.input-field-container.invalid .input-field-input {
+    border-color: var(--masslaw-incorrect-red);
+}
+.input-field-container.valid .input-validation-icon{
+    color: var(--masslaw-correct-green);
+}
+.input-field-container.valid .input-field-input {
+    border-color: var(--masslaw-correct-green);
+}
+.input-field-container .input-field-tooltip {
+    display: none;
+    position: absolute;
+    top: 50px;
+    margin: 0;
+    padding: 5px;
+    width: calc(100% - 30px - 10px);
+    border: 1px solid darkgray;
+    border-radius: 4px;
+    z-index: 10;
+    background: white;
+    filter: drop-shadow(2px 5px 7px rgba(0, 0, 0, 0.22));
+}
+.input-field-container:focus-within .input-field-tooltip.enabled {
+    display: block;
+}
+.password-toggle-icon {
+    position: absolute;
+    font-size: 14px;
+    top: calc(50% + 2px);
+    transform: translateY(-50%);
+    right: 10px;
+    color: #4b4b4b;
+    cursor: pointer;
+}
+.input-field-container.locked{
+    cursor: text;
+}
+.input-field-container.locked > .input-field-input-container{
+   pointer-events: none;
+}
+.input-field-container.locked .input-field-input input{
+    background: #ececec;
+    color: var(--masslaw-light-text-color);
+}

@@ -1,0 +1,469 @@
+{
+  "service": {
+    "service": "masslaw",
+    "serviceObject": {
+      "name": "masslaw"
+    },
+    "provider": {
+      "name": "aws",
+      "runtime": "python3.8",
+      "stage": "prod",
+      "region": "us-east-1",
+      "deploymentMethod": "direct",
+      "versionFunctions": true,
+      "compiledCloudFormationTemplate": {
+        "AWSTemplateFormatVersion": "2010-09-09",
+        "Description": "The AWS CloudFormation template for this Serverless application",
+        "Resources": {
+          "ServerlessDeploymentBucket": {
+            "Type": "AWS::S3::Bucket",
+            "Properties": {
+              "BucketEncryption": {
+                "ServerSideEncryptionConfiguration": [
+                  {
+                    "ServerSideEncryptionByDefault": {
+                      "SSEAlgorithm": "AES256"
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "ServerlessDeploymentBucketPolicy": {
+            "Type": "AWS::S3::BucketPolicy",
+            "Properties": {
+              "Bucket": {
+                "Ref": "ServerlessDeploymentBucket"
+              },
+              "PolicyDocument": {
+                "Statement": [
+                  {
+                    "Action": "s3:*",
+                    "Effect": "Deny",
+                    "Principal": "*",
+                    "Resource": [
+                      {
+                        "Fn::Join": [
+                          "",
+                          [
+                            "arn:",
+                            {
+                              "Ref": "AWS::Partition"
+                            },
+                            ":s3:::",
+                            {
+                              "Ref": "ServerlessDeploymentBucket"
+                            },
+                            "/*"
+                          ]
+                        ]
+                      },
+                      {
+                        "Fn::Join": [
+                          "",
+                          [
+                            "arn:",
+                            {
+                              "Ref": "AWS::Partition"
+                            },
+                            ":s3:::",
+                            {
+                              "Ref": "ServerlessDeploymentBucket"
+                            }
+                          ]
+                        ]
+                      }
+                    ],
+                    "Condition": {
+                      "Bool": {
+                        "aws:SecureTransport": false
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "UtilLambdaLayer1521035d47e2fc731f10d3caa317bee596b5c3c0": {
+            "Type": "AWS::Lambda::LayerVersion",
+            "Properties": {
+              "Content": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/masslaw/prod/1679681632344-2023-03-24T18:13:52.344Z/util.zip"
+              },
+              "LayerName": "util"
+            },
+            "DeletionPolicy": "Retain"
+          },
+          "S3UnderscoremanagerLambdaLayerb9bc45b902b5ed5a2a2088b50381ac9cb2f374e1": {
+            "Type": "AWS::Lambda::LayerVersion",
+            "Properties": {
+              "Content": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/masslaw/prod/1679681632344-2023-03-24T18:13:52.344Z/s3_manager.zip"
+              },
+              "LayerName": "s3_manager"
+            },
+            "DeletionPolicy": "Retain"
+          },
+          "NetworkingLambdaLayer6edab2afa79c5fe4853cb9fc40793f9f3afc42c0": {
+            "Type": "AWS::Lambda::LayerVersion",
+            "Properties": {
+              "Content": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/masslaw/prod/1679681632344-2023-03-24T18:13:52.344Z/networking.zip"
+              },
+              "LayerName": "networking"
+            },
+            "DeletionPolicy": "Retain"
+          },
+          "DynamoDBUnderscoremanagerLambdaLayere71781ded4a9dd21d9c020ced513b4fb05f781ec": {
+            "Type": "AWS::Lambda::LayerVersion",
+            "Properties": {
+              "Content": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/masslaw/prod/1679681632344-2023-03-24T18:13:52.344Z/dynamoDB_manager.zip"
+              },
+              "LayerName": "dynamoDB_manager"
+            },
+            "DeletionPolicy": "Retain"
+          },
+          "CognitoUnderscoremanagerLambdaLayerfa1a3e6dd1e8d1630b8c0339a531b07f9d207710": {
+            "Type": "AWS::Lambda::LayerVersion",
+            "Properties": {
+              "Content": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/masslaw/prod/1679681632344-2023-03-24T18:13:52.344Z/cognito_manager.zip"
+              },
+              "LayerName": "cognito_manager"
+            },
+            "DeletionPolicy": "Retain"
+          },
+          "MasslawUnderscoreusersLambdaLayer1767f5bd30442f32e55e38707018eb372f8df62f": {
+            "Type": "AWS::Lambda::LayerVersion",
+            "Properties": {
+              "Content": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/masslaw/prod/1679681632344-2023-03-24T18:13:52.344Z/masslaw_users.zip"
+              },
+              "LayerName": "masslaw_users"
+            },
+            "DeletionPolicy": "Retain"
+          }
+        },
+        "Outputs": {
+          "ServerlessDeploymentBucketName": {
+            "Value": {
+              "Ref": "ServerlessDeploymentBucket"
+            },
+            "Export": {
+              "Name": "sls-masslaw-prod-ServerlessDeploymentBucketName"
+            }
+          },
+          "UtilLambdaLayerQualifiedArn": {
+            "Description": "Current Lambda layer version",
+            "Value": {
+              "Ref": "UtilLambdaLayer1521035d47e2fc731f10d3caa317bee596b5c3c0"
+            },
+            "Export": {
+              "Name": "sls-masslaw-prod-UtilLambdaLayerQualifiedArn"
+            }
+          },
+          "UtilLambdaLayerHash": {
+            "Description": "Current Lambda layer hash",
+            "Value": "1521035d47e2fc731f10d3caa317bee596b5c3c0",
+            "Export": {
+              "Name": "sls-masslaw-prod-UtilLambdaLayerHash"
+            }
+          },
+          "UtilLambdaLayerS3Key": {
+            "Description": "Current Lambda layer S3Key",
+            "Value": "serverless/masslaw/prod/1679681632344-2023-03-24T18:13:52.344Z/util.zip",
+            "Export": {
+              "Name": "sls-masslaw-prod-UtilLambdaLayerS3Key"
+            }
+          },
+          "S3UnderscoremanagerLambdaLayerQualifiedArn": {
+            "Description": "Current Lambda layer version",
+            "Value": {
+              "Ref": "S3UnderscoremanagerLambdaLayerb9bc45b902b5ed5a2a2088b50381ac9cb2f374e1"
+            },
+            "Export": {
+              "Name": "sls-masslaw-prod-S3UnderscoremanagerLambdaLayerQualifiedArn"
+            }
+          },
+          "S3UnderscoremanagerLambdaLayerHash": {
+            "Description": "Current Lambda layer hash",
+            "Value": "b9bc45b902b5ed5a2a2088b50381ac9cb2f374e1",
+            "Export": {
+              "Name": "sls-masslaw-prod-S3UnderscoremanagerLambdaLayerHash"
+            }
+          },
+          "S3UnderscoremanagerLambdaLayerS3Key": {
+            "Description": "Current Lambda layer S3Key",
+            "Value": "serverless/masslaw/prod/1679681632344-2023-03-24T18:13:52.344Z/s3_manager.zip",
+            "Export": {
+              "Name": "sls-masslaw-prod-S3UnderscoremanagerLambdaLayerS3Key"
+            }
+          },
+          "NetworkingLambdaLayerQualifiedArn": {
+            "Description": "Current Lambda layer version",
+            "Value": {
+              "Ref": "NetworkingLambdaLayer6edab2afa79c5fe4853cb9fc40793f9f3afc42c0"
+            },
+            "Export": {
+              "Name": "sls-masslaw-prod-NetworkingLambdaLayerQualifiedArn"
+            }
+          },
+          "NetworkingLambdaLayerHash": {
+            "Description": "Current Lambda layer hash",
+            "Value": "6edab2afa79c5fe4853cb9fc40793f9f3afc42c0",
+            "Export": {
+              "Name": "sls-masslaw-prod-NetworkingLambdaLayerHash"
+            }
+          },
+          "NetworkingLambdaLayerS3Key": {
+            "Description": "Current Lambda layer S3Key",
+            "Value": "serverless/masslaw/prod/1679681632344-2023-03-24T18:13:52.344Z/networking.zip",
+            "Export": {
+              "Name": "sls-masslaw-prod-NetworkingLambdaLayerS3Key"
+            }
+          },
+          "DynamoDBUnderscoremanagerLambdaLayerQualifiedArn": {
+            "Description": "Current Lambda layer version",
+            "Value": {
+              "Ref": "DynamoDBUnderscoremanagerLambdaLayere71781ded4a9dd21d9c020ced513b4fb05f781ec"
+            },
+            "Export": {
+              "Name": "sls-masslaw-prod-DynamoDBUnderscoremanagerLambdaLayerQualifiedArn"
+            }
+          },
+          "DynamoDBUnderscoremanagerLambdaLayerHash": {
+            "Description": "Current Lambda layer hash",
+            "Value": "e71781ded4a9dd21d9c020ced513b4fb05f781ec",
+            "Export": {
+              "Name": "sls-masslaw-prod-DynamoDBUnderscoremanagerLambdaLayerHash"
+            }
+          },
+          "DynamoDBUnderscoremanagerLambdaLayerS3Key": {
+            "Description": "Current Lambda layer S3Key",
+            "Value": "serverless/masslaw/prod/1679681632344-2023-03-24T18:13:52.344Z/dynamoDB_manager.zip",
+            "Export": {
+              "Name": "sls-masslaw-prod-DynamoDBUnderscoremanagerLambdaLayerS3Key"
+            }
+          },
+          "CognitoUnderscoremanagerLambdaLayerQualifiedArn": {
+            "Description": "Current Lambda layer version",
+            "Value": {
+              "Ref": "CognitoUnderscoremanagerLambdaLayerfa1a3e6dd1e8d1630b8c0339a531b07f9d207710"
+            },
+            "Export": {
+              "Name": "sls-masslaw-prod-CognitoUnderscoremanagerLambdaLayerQualifiedArn"
+            }
+          },
+          "CognitoUnderscoremanagerLambdaLayerHash": {
+            "Description": "Current Lambda layer hash",
+            "Value": "fa1a3e6dd1e8d1630b8c0339a531b07f9d207710",
+            "Export": {
+              "Name": "sls-masslaw-prod-CognitoUnderscoremanagerLambdaLayerHash"
+            }
+          },
+          "CognitoUnderscoremanagerLambdaLayerS3Key": {
+            "Description": "Current Lambda layer S3Key",
+            "Value": "serverless/masslaw/prod/1679681632344-2023-03-24T18:13:52.344Z/cognito_manager.zip",
+            "Export": {
+              "Name": "sls-masslaw-prod-CognitoUnderscoremanagerLambdaLayerS3Key"
+            }
+          },
+          "MasslawUnderscoreusersLambdaLayerQualifiedArn": {
+            "Description": "Current Lambda layer version",
+            "Value": {
+              "Ref": "MasslawUnderscoreusersLambdaLayer1767f5bd30442f32e55e38707018eb372f8df62f"
+            },
+            "Export": {
+              "Name": "sls-masslaw-prod-MasslawUnderscoreusersLambdaLayerQualifiedArn"
+            }
+          },
+          "MasslawUnderscoreusersLambdaLayerHash": {
+            "Description": "Current Lambda layer hash",
+            "Value": "1767f5bd30442f32e55e38707018eb372f8df62f",
+            "Export": {
+              "Name": "sls-masslaw-prod-MasslawUnderscoreusersLambdaLayerHash"
+            }
+          },
+          "MasslawUnderscoreusersLambdaLayerS3Key": {
+            "Description": "Current Lambda layer S3Key",
+            "Value": "serverless/masslaw/prod/1679681632344-2023-03-24T18:13:52.344Z/masslaw_users.zip",
+            "Export": {
+              "Name": "sls-masslaw-prod-MasslawUnderscoreusersLambdaLayerS3Key"
+            }
+          }
+        }
+      },
+      "coreCloudFormationTemplate": {
+        "AWSTemplateFormatVersion": "2010-09-09",
+        "Description": "The AWS CloudFormation template for this Serverless application",
+        "Resources": {
+          "ServerlessDeploymentBucket": {
+            "Type": "AWS::S3::Bucket",
+            "Properties": {
+              "BucketEncryption": {
+                "ServerSideEncryptionConfiguration": [
+                  {
+                    "ServerSideEncryptionByDefault": {
+                      "SSEAlgorithm": "AES256"
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "ServerlessDeploymentBucketPolicy": {
+            "Type": "AWS::S3::BucketPolicy",
+            "Properties": {
+              "Bucket": {
+                "Ref": "ServerlessDeploymentBucket"
+              },
+              "PolicyDocument": {
+                "Statement": [
+                  {
+                    "Action": "s3:*",
+                    "Effect": "Deny",
+                    "Principal": "*",
+                    "Resource": [
+                      {
+                        "Fn::Join": [
+                          "",
+                          [
+                            "arn:",
+                            {
+                              "Ref": "AWS::Partition"
+                            },
+                            ":s3:::",
+                            {
+                              "Ref": "ServerlessDeploymentBucket"
+                            },
+                            "/*"
+                          ]
+                        ]
+                      },
+                      {
+                        "Fn::Join": [
+                          "",
+                          [
+                            "arn:",
+                            {
+                              "Ref": "AWS::Partition"
+                            },
+                            ":s3:::",
+                            {
+                              "Ref": "ServerlessDeploymentBucket"
+                            }
+                          ]
+                        ]
+                      }
+                    ],
+                    "Condition": {
+                      "Bool": {
+                        "aws:SecureTransport": false
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "Outputs": {
+          "ServerlessDeploymentBucketName": {
+            "Value": {
+              "Ref": "ServerlessDeploymentBucket"
+            }
+          }
+        }
+      }
+    },
+    "pluginsData": {},
+    "functions": {},
+    "configValidationMode": "warn",
+    "serviceFilename": "serverless.yml",
+    "initialServerlessConfig": {
+      "service": "masslaw",
+      "frameworkVersion": "3",
+      "app": "masslaw",
+      "org": "shinyshimi",
+      "provider": {
+        "$ref": "$[\"service\"][\"provider\"]"
+      },
+      "layers": {
+        "util": {
+          "path": "util",
+          "retain": true,
+          "package": {
+            "artifact": "D:\\MassLaw\\Server\\serverless\\lambda_layers\\.serverless\\util.zip"
+          }
+        },
+        "s3_manager": {
+          "path": "S3_manager",
+          "retain": true,
+          "package": {
+            "artifact": "D:\\MassLaw\\Server\\serverless\\lambda_layers\\.serverless\\s3_manager.zip"
+          }
+        },
+        "networking": {
+          "path": "networking",
+          "retain": true,
+          "package": {
+            "artifact": "D:\\MassLaw\\Server\\serverless\\lambda_layers\\.serverless\\networking.zip"
+          }
+        },
+        "dynamoDB_manager": {
+          "path": "dynamoDB_manager",
+          "retain": true,
+          "package": {
+            "artifact": "D:\\MassLaw\\Server\\serverless\\lambda_layers\\.serverless\\dynamoDB_manager.zip"
+          }
+        },
+        "cognito_manager": {
+          "path": "dynamoDB_manager",
+          "retain": true,
+          "package": {
+            "artifact": "D:\\MassLaw\\Server\\serverless\\lambda_layers\\.serverless\\cognito_manager.zip"
+          }
+        },
+        "masslaw_users": {
+          "path": "masslaw_users",
+          "retain": true,
+          "package": {
+            "artifact": "D:\\MassLaw\\Server\\serverless\\lambda_layers\\.serverless\\masslaw_users.zip"
+          }
+        }
+      }
+    },
+    "app": "masslaw",
+    "org": "shinyshimi",
+    "layers": {
+      "$ref": "$[\"service\"][\"initialServerlessConfig\"][\"layers\"]"
+    },
+    "isDashboardMonitoringPreconfigured": true,
+    "isDashboardAppPreconfigured": true,
+    "orgUid": "66684a3d-0bf6-480a-bbbb-1a74700b42da",
+    "appUid": "10dky5JxdgLq5td5V9"
+  },
+  "package": {
+    "artifactDirectoryName": "serverless/masslaw/prod/1679681632344-2023-03-24T18:13:52.344Z",
+    "artifact": ""
+  }
+}

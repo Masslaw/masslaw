@@ -1,0 +1,27 @@
+@import url('../../../shared/css/global.css');
+
+.loading_button {
+    position: relative;
+    margin: 20px;
+    width: calc(100% - 2*20px);
+    height: 50px;
+    font-size: 20px;
+    outline: none;
+    border-radius: 3px;
+    transition: 0.3s ease-out;
+}
+.loading_button.clickable {
+    background: var(--masslaw-main-ui);
+    color: white;
+    border: none;
+}
+.loading_button.clickable:hover {
+    background: var(--masslaw-main-ui-hover);
+    cursor: pointer;
+}
+.loading_button.unclickable {
+    background: white;
+    color: #4f4f4f;
+    border: 1px solid #4f4f4f;
+    pointer-events: none;
+}

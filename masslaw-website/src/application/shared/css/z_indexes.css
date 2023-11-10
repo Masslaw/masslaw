@@ -1,0 +1,7 @@
+:root {
+    --top-z-index: 100;
+    --dialog-z-index: 500;
+
+    --side-bar-z-index: 70;
+    --secondary-top-z-index: 50;
+}

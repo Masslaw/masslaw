@@ -1,0 +1,35 @@
+@import url('../../../shared/css/global.css');
+
+.masslaw-generic-button {
+    position: relative;
+    border-radius: 3px;
+    font-family: var(--masslaw-button-font);
+    padding: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+.masslaw-generic-button.main-button {
+    background: var(--masslaw-main-ui);
+    color: white;
+    border: none;
+}
+.masslaw-generic-button.main-button:hover {
+    background: var(--masslaw-main-ui-hover);
+}
+.masslaw-generic-button.secondary-button {
+    background: white;
+    color: var(--masslaw-dark-text-color);
+    border: 1px solid var(--masslaw-dark-text-color);
+}
+.masslaw-generic-button.secondary-button:hover {
+    background: #efefef;
+}
+.masslaw-generic-button.textual-button {
+    background: none;
+    color: var(--steel-blue);
+    font-weight: bold;
+    border: none;
+}
+.masslaw-generic-button.textual-button:hover {
+    background: rgba(128, 198, 255, 0.51);
+}

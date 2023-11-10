@@ -1,0 +1,5 @@
+from . import _exceptions as optical_text_structure_construction_exceptions
+from ._document_structure_constructor import OpticalTextStructureConstructor
+from . import _exceptions as optical_text_structure_construction_exceptions
+
+__all__ = ['OpticalTextStructureConstructor', 'optical_text_structure_construction_exceptions', 'optical_text_structure_construction_exceptions']

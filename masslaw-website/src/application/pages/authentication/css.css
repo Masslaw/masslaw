@@ -1,0 +1,35 @@
+@import url('../../shared/css/global.css');
+
+:root {
+    --form-container-width: 350px;
+    --form-or-thingie-width: 50px;
+    --form-section-height: 250px;
+
+    --form-switch-transition: 0.3s all cubic-bezier(.61,1.62,.33,.98)
+}
+
+.main-background {
+    display: block;
+    overflow: scroll;
+    background: linear-gradient(30deg, var(--masslaw-primary-main) 0%, var(--masslaw-secondary-main) 100%);
+}
+.main-background::-webkit-scrollbar {
+    display: none;
+}
+
+.form-container {
+    position: absolute;
+    display: block;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    padding: 0;
+    background: white;
+    border: 1px solid grey;
+    width: var(--form-container-width);
+    height: auto;
+    border-radius: 5px;
+    overflow: hidden;
+    filter: drop-shadow(5px 5px 20px rgba(0, 0, 0, 0.33));
+    font-family: var(--masslaw-main-font);
+}

@@ -1,0 +1,19 @@
+from typing import List
+
+from logic_layer.text_extraction.optical_character_recognition._types import OcrExtractedElement
+from logic_layer.text_extraction.optical_character_recognition.text_document_building._construction_logic import construct_optical_text_document_from_ocr_output_element_groups
+from logic_layer.text_extraction.optical_character_recognition.text_document_building._construction_logic import construct_optical_text_document_from_structured_ocr_output
+from logic_layer.text_structures.extracted_optical_text_structure import ExtractedOpticalTextDocument
+from logic_layer.text_structures.extracted_optical_text_structure import OpticalStructureHierarchyFormation
+
+
+class OpticalTextDocumentBuilder:
+
+    def __init__(self, hierarchy_formation: OpticalStructureHierarchyFormation):
+        self._hierarchy_formation = hierarchy_formation
+
+    def build_document_structure_from_ocr_extracted_elements(self, extracted_element_groups: List[List]) -> ExtractedOpticalTextDocument:
+        return construct_optical_text_document_from_ocr_output_element_groups(self._hierarchy_formation, extracted_element_groups)
+
+    def build_document_structure_from_structured_ocr_output(self, extracted_structured_element_groups) -> ExtractedOpticalTextDocument:
+        return construct_optical_text_document_from_structured_ocr_output(self._hierarchy_formation, extracted_structured_element_groups)

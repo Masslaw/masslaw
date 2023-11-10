@@ -1,0 +1,88 @@
+@import url('../../shared/css/global.css');
+
+:root {
+    --main-container-width: 1000px;
+    --left-main-menu-width: 200px;
+    --title-section-height: 70px;
+}
+
+.masslawyer-main-container {
+    position: relative;
+    width: var(--main-container-width);
+    height: auto;
+    min-height: calc(100% - 40px);
+    background: none;
+    overflow: hidden;
+    left: 50%;
+    transform: translateX(-50%);
+    margin: 20px 0 20px 0;
+    border: 1px solid var(--masslaw-light-border-color);
+    border-radius: 2px;
+    font-family: var(--masslaw-main-font);
+    background: var(--masslaw-secondary-background-shade);
+}
+
+.masslawyer-main-menu {
+    position: absolute;
+    background: var(--masslaw-dark-color);
+    color: white;
+    width: var(--left-main-menu-width);
+    height: 100%;
+    top: 0;
+    left: 0;
+    margin: 0;
+    padding: 0;
+}
+
+.masslawyer-title-section {
+    position: absolute;
+    width: calc(100% - var(--left-main-menu-width));
+    height: var(--title-section-height);
+    top: 0;
+    left: var(--left-main-menu-width);
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: white;
+    filter: var(--masslaw-soft-shadow);
+    font-family: var(--masslaw-title-font);
+}
+.masslawyer-title-section div {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    padding: 0 15px 0 15px;
+    overflow: hidden;
+    font-size: 25px;
+    font-weight: bold;
+    color: var(--masslaw-dark-text-color);
+    letter-spacing: 1px;
+}
+
+.page-container {
+    position: relative;
+    width: calc(100% - var(--left-main-menu-width));
+    height: auto;
+    top: var(--title-section-height);
+    left: var(--left-main-menu-width);
+}
+
+.page-title {
+    position: relative;
+    width: 100%;
+    height: auto;
+    padding: 30px;
+    color: var(--masslaw-light-text-color);
+    font-weight: bold;
+    font-size: 25px;
+    letter-spacing: 1px;
+    min-height: 29px;
+}
+.page-content {
+    position: relative;
+    margin: 0;
+    padding: 0;
+    height: auto;
+    width: 100%;
+}
