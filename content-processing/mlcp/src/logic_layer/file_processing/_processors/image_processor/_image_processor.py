@@ -42,6 +42,10 @@ class ImageProcessor(FileProcessor):
     def _export_assets(self, output_dir=""):
         file_system_utils.clear_directory(output_dir)
 
+        exporter = DocumentExporter(self._extracted_text_document)
+        with open(file_system_utils.join_paths(output_dir, "text_layer.html"), "wb") as f:
+            exporter.export_html(f)
+
         self._cached_image.save_to(file_system_utils.join_paths(output_dir, "image_0.png"))
 
     def _export_debug_data(self, output_dir=""):

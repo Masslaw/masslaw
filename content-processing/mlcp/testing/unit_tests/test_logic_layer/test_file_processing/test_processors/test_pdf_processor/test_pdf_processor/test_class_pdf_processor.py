@@ -6,7 +6,8 @@ from unittest.mock import patch
 
 import numpy as np
 
-from logic_layer.text_structures.extracted_optical_text_structure import ExtractedOpticalTextDocument
+from logic_layer.text_structures.extracted_optical_text_structure import ExtractedOpticalTextDocument, \
+    OpticalStructureHierarchyLevel
 from logic_layer.text_structures.extracted_optical_text_structure._hierarchy_levels import OpticalTextStructureWord
 from logic_layer.file_processing._processors.pdf_processor._pdf_processor import PdfProcessor
 from shared_layer.file_system_utils._exceptions import InvalidPathOrDirectory
@@ -53,7 +54,7 @@ class TestClassPdfProcessor(unittest.TestCase):
 
         with patch('logic_layer.file_processing._processors.pdf_processor._pdf_processor.PdfFileLoader.get_page_images_as_directories', return_value=image_directories):
             with patch('logic_layer.file_processing._processors.pdf_processor._pdf_processor.OpticalDocumentExtractor') as mock_document_extractor:
-                extracted_document = ExtractedOpticalTextDocument([OpticalTextStructureWord])
+                extracted_document = ExtractedOpticalTextDocument([OpticalStructureHierarchyLevel.WORD])
                 mock_document_extractor.return_value.extract_text_document.return_value = extracted_document
 
                 self.test_processor._process()
@@ -63,7 +64,7 @@ class TestClassPdfProcessor(unittest.TestCase):
     def test_export_text(self):
         output_dir = tempfile.TemporaryDirectory().name
 
-        self.test_processor._extracted_text_document = ExtractedOpticalTextDocument([OpticalTextStructureWord])
+        self.test_processor._extracted_text_document = ExtractedOpticalTextDocument([OpticalStructureHierarchyLevel.WORD])
 
         self.test_processor._export_text(output_dir=output_dir)
 
@@ -73,7 +74,9 @@ class TestClassPdfProcessor(unittest.TestCase):
     def test_export_assets(self):
         output_dir = tempfile.TemporaryDirectory().name
 
+        self.test_processor._extracted_text_document = ExtractedOpticalTextDocument([OpticalStructureHierarchyLevel.WORD])
+
         self.test_processor._export_assets(output_dir=output_dir)
 
-        self.assertSetEqual(set(os.listdir(output_dir)), {'image_0.png'})
+        self.assertSetEqual(set(os.listdir(output_dir)), {'image_0.png', 'text_layer.html'})
         shutil.rmtree(output_dir)
