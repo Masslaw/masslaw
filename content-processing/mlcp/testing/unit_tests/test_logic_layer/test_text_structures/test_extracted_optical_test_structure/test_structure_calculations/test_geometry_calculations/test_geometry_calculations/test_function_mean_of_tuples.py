@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 
-from logic_layer.text_structures.extracted_optical_text_structure._structure_calculations._geometry_calculations._geometry_calculations import mean_of_tuples
+from logic_layer.text_structures.extracted_optical_text_structure.structure_calculations._geometry_calculations._geometry_calculations import mean_of_tuples
 
 
 class TestFunctionMeanOfTuples(unittest.TestCase):

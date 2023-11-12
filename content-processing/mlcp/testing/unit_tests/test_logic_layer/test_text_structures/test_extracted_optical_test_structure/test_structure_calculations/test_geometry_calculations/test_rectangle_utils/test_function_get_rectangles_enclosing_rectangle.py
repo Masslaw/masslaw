@@ -1,5 +1,5 @@
 import unittest
-from logic_layer.text_structures.extracted_optical_text_structure._structure_calculations._geometry_calculations._rectangle_utils import get_rectangles_enclosing_rectangle
+from logic_layer.text_structures.extracted_optical_text_structure.structure_calculations._geometry_calculations._rectangle_utils import get_rectangles_enclosing_rectangle
 
 class TestFunctionGetRectanglesEnclosingRectangle(unittest.TestCase):
 

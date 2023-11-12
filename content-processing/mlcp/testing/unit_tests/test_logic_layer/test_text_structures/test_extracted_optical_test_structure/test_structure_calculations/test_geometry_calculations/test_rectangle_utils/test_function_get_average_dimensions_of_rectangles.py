@@ -1,5 +1,5 @@
 import unittest
-from logic_layer.text_structures.extracted_optical_text_structure._structure_calculations._geometry_calculations._rectangle_utils import get_average_dimensions_of_rectangles
+from logic_layer.text_structures.extracted_optical_text_structure.structure_calculations._geometry_calculations._rectangle_utils import get_average_dimensions_of_rectangles
 
 class TestFunctionGetAverageDimensionsOfRectangles(unittest.TestCase):
 

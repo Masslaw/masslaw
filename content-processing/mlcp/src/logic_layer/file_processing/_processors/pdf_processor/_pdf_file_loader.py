@@ -6,8 +6,19 @@ import numpy as np
 from pdf2image import convert_from_path
 from pdf2image import pdfinfo_from_path
 
+from logic_layer.file_processing._config import extracted_optical_text_structure_hierarchy_formation
+from logic_layer.text_extraction.file_specific_extractors.pdf import PdfTextExtractor
+from logic_layer.text_structures.extracted_optical_text_structure import ExtractedOpticalTextDocument, \
+    OpticalStructureHierarchyLevel
+from logic_layer.text_structures.extracted_optical_text_structure.structure_calculations import \
+    StructureGeometryCalculator
+from logic_layer.text_structures.extracted_optical_text_structure.structure_manipulation import \
+    OpticalTextStructureManipulator
+from logic_layer.text_structures.extracted_optical_text_structure.structure_scanning import OpticalTextStructureScanner
+from shared_layer.concurrency_utils import run_thread_batch
 from shared_layer.file_system_utils import file_system_utils
 from shared_layer.memory_utils.storage_cached_image import StorageCachedImage
+from shared_layer.mlcp_logger import logger
 
 _poppler_path = os.environ.get("poppler_path") or os.environ.get("POPPLER_PATH")
 
@@ -16,7 +27,7 @@ class PdfFileLoader:
 
     def __init__(self, file: str):
         self._file = file
-
+        self._text_document = None
         self._cache = {}
 
     def get_page_sizes(self) -> List[tuple]:
@@ -88,3 +99,34 @@ class PdfFileLoader:
             image = cv2.resize(image, (int(2_560), int(image.shape[0] * 2_560 / image.shape[1])), interpolation=cv2.INTER_LANCZOS4)
             directory = file_system_utils.join_paths(output_directory, f"{image_prefix}{i}.{export_format}")
             cv2.imwrite(directory, image)
+
+    @logger.process_function("Extracting existing PDF optical text structure")
+    def extract_existing_optical_text_document(self) -> ExtractedOpticalTextDocument:
+        text_extractor = PdfTextExtractor(self._file)
+        self._text_document = text_extractor.extract_optical_text_document(extracted_optical_text_structure_hierarchy_formation)
+        document_manipulator = OpticalTextStructureManipulator(self._text_document)
+        for page_num, page_size in enumerate(self.get_page_sizes()):
+            document_manipulator.scale_structure_child(page_num, page_size[::-1])
+        return self._text_document
+
+    @logger.process_function("Hiding exising elements in PDF page images")
+    def hide_existing_elements_in_images(self):
+        if not self._text_document:
+            logger.warn('Calling "hide_existing_elements_in_images" requires the function "extract_existing_optical_text_document" to be called before it - to extract the text document of the pdf')
+            return
+        run_thread_batch(func=self._hide_existing_elements_in_a_page, batch_inputs=list(range(self.get_num_pages())))
+
+    def _hide_existing_elements_in_a_page(self, page_num: int):
+        structure = self._text_document.get_structure_root()
+        page_elements = structure.get_children()
+        page_images = self._get_page_images()
+        page_element = page_elements[page_num]
+        page_scanner = OpticalTextStructureScanner(page_element)
+        page_words = page_scanner.collect_all_nested_children_of_type(OpticalStructureHierarchyLevel.WORD)
+        cached_page_image = page_images[page_num]
+        loaded_image = cached_page_image.get_image()
+        for word_element in page_words:
+            word_geometry_calculator = StructureGeometryCalculator(word_element)
+            word_bounding_rectangle = word_geometry_calculator.calculate_bounding_rect()
+            loaded_image = cv2.rectangle(loaded_image, (int(word_bounding_rectangle[0]) - 10, int(word_bounding_rectangle[1]) - 2), (int(word_bounding_rectangle[2]) + 10, int(word_bounding_rectangle[3]) + 2), (255, 255, 255), -1)
+        cached_page_image.set_image(loaded_image)

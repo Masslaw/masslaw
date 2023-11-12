@@ -1,5 +1,5 @@
 from logic_layer.text_structures.extracted_optical_text_structure._structure_element import OpticalTextStructureElement
-from logic_layer.text_structures.extracted_optical_text_structure._structure_calculations import StructureGeometryCalculator
+from logic_layer.text_structures.extracted_optical_text_structure.structure_calculations import StructureGeometryCalculator
 
 
 def line_continuity_check_function(element1: OpticalTextStructureElement, element2: OpticalTextStructureElement) -> bool:
