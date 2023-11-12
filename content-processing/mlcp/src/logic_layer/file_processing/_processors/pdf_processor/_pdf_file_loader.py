@@ -119,7 +119,7 @@ class PdfFileLoader:
     def _hide_existing_elements_in_a_page(self, page_num: int):
         structure = self._text_document.get_structure_root()
         page_elements = structure.get_children()
-        page_images = self._get_page_images()
+        page_images = self.get_page_images()
         page_element = page_elements[page_num]
         page_scanner = OpticalTextStructureScanner(page_element)
         page_words = page_scanner.collect_all_nested_children_of_type(OpticalStructureHierarchyLevel.WORD)
