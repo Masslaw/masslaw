@@ -115,6 +115,7 @@ class PdfFileLoader:
         if not self._text_document:
             logger.warn('Calling "hide_existing_elements_in_images" requires the function "extract_existing_optical_text_document" to be called before it - to extract the text document of the pdf')
             return
+        
         def _hide_existing_elements_in_a_page(page_num: int):
             structure = self._text_document.get_structure_root()
             page_elements = structure.get_children()
