@@ -17,6 +17,7 @@ class PdfProcessor(FileProcessor):
         self._pdf_loader = PdfFileLoader(self._file)
 
     def _process(self):
+        self._images_to_process = self._pdf_loader.get_page_images()
         self._extract_existing_text()
         self._extract_non_existent_text()
         self._merge_existing_into_non_existent_text_documents()
@@ -25,11 +26,11 @@ class PdfProcessor(FileProcessor):
     def _extract_existing_text(self):
         existing_text_document = self._pdf_loader.extract_existing_optical_text_document()
         self._existing_text_document = existing_text_document
-        self._pdf_loader.hide_existing_elements_in_images()
+        self._images_to_process = self._pdf_loader.hide_existing_elements_in_images()
 
     @logger.process_function("Extracting non existant text structure")
     def _extract_non_existent_text(self):
-        image_directories = self._pdf_loader.get_page_images_as_directories()
+        image_directories = [image.get_dir() for image in self._images_to_process]
         document_extractor = OpticalDocumentExtractor(self._languages)
         self._extracted_text_document = document_extractor.extract_text_document(image_directories)
 
