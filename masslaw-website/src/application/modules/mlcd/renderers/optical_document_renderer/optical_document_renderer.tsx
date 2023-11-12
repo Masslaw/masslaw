@@ -244,11 +244,15 @@ export const OpticalDocumentRenderer: MLCDContentRenderingComponent = (props: ML
 
                                     if (markingData.type == 'user_selection') {
                                         selectionText += character.textContent || character.getAttribute('v');
+                                        let characterX1 = characterRect[0];
+                                        let characterY2 = characterRect[3] + 10;
+                                        let toolkitX = characterX1;
+                                        let toolkitY = Math.min(characterY2, parseInt(page.structure.getAttribute('h') || `${characterY2}`) || characterY2);
                                         if (_characterCount == markingData.to_char) {
                                             setSelectionToolkitPosition({
                                                 page: pageNum,
-                                                x: characterRect[0],
-                                                y: Math.min(characterRect[3], parseInt(page.structure.getAttribute('h') || '0') || 0),
+                                                x: toolkitX,
+                                                y: toolkitY,
                                             })
                                         }
                                     }

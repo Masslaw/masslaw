@@ -60,8 +60,8 @@ class PdfProcessor(FileProcessor):
         file_system_utils.clear_directory(output_dir)
 
         exporter = DocumentExporter(self._extracted_text_document)
-        with open(file_system_utils.join_paths(output_dir, "text_layer.html"), "wb") as f:
-            exporter.export_html(f)
+        with open(file_system_utils.join_paths(output_dir, "display.html"), "wb") as f:
+            exporter.export_html(f, self._pdf_loader.get_page_images())
 
         self._pdf_loader.export_images(output_dir)
 

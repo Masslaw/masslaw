@@ -86,5 +86,5 @@ class TestClassPdfProcessor(unittest.TestCase):
 
         self.test_processor._export_assets(output_dir=output_dir)
 
-        self.assertSetEqual(set(os.listdir(output_dir)), {'image_0.png', 'text_layer.html'})
+        self.assertSetEqual(set(os.listdir(output_dir)), {'image_0.png', 'display.html'})
         shutil.rmtree(output_dir)
