@@ -8,7 +8,7 @@ from mlcp.testing.mlcp_job_tests._mlcp_job_test import MLCPJobTest
 from shared_layer.file_system_utils._file_system_utils import clear_directory
 from shared_layer.file_system_utils._file_system_utils import join_paths
 
-file_name = "ocr_text.pdf"
+file_name = "image_example_2.png"
 
 bucket_name = "mlcp-test-bucket"
 

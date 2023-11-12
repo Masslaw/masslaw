@@ -20,7 +20,7 @@ class PdfFileLoader:
         self._cache = {}
 
     def get_page_sizes(self) -> List[tuple]:
-        page_images = self._get_page_images()
+        page_images = self.get_page_images()
 
         image_sizes = []
         for page_image in page_images:
@@ -29,7 +29,7 @@ class PdfFileLoader:
         return image_sizes
 
     def get_page_images_as_numpy_arrays(self) -> List[np.array]:
-        page_images = self._get_page_images()
+        page_images = self.get_page_images()
 
         image_sizes = []
         for page_image in page_images:
@@ -38,7 +38,7 @@ class PdfFileLoader:
         return image_sizes
 
     def get_page_images_as_directories(self) -> List[str]:
-        page_images = self._get_page_images()
+        page_images = self.get_page_images()
 
         image_sizes = []
         for page_image in page_images:
@@ -46,7 +46,7 @@ class PdfFileLoader:
 
         return image_sizes
 
-    def _get_page_images(self) -> List[StorageCachedImage]:
+    def get_page_images(self) -> List[StorageCachedImage]:
         page_images_cache_key = 'page_images'
 
         cached_page_images = self._cache.get(page_images_cache_key)
@@ -82,7 +82,7 @@ class PdfFileLoader:
         return num_pages
 
     def export_images(self, output_directory: str, image_prefix='image_', export_format='png'):
-        page_images = self._get_page_images()
+        page_images = self.get_page_images()
         for i, page_image in enumerate(page_images):
             image = page_image.get_image()
             image = cv2.resize(image, (int(2_560), int(image.shape[0] * 2_560 / image.shape[1])), interpolation=cv2.INTER_LANCZOS4)

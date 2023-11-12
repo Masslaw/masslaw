@@ -30,7 +30,7 @@ class TestClassPdfProcessor(unittest.TestCase):
         self.page_image_cached_image = StorageCachedImage()
         self.page_image_cached_image.set_image(self.page_image_data)
 
-        self.pdf_loader_patcher = patch('logic_layer.file_processing._processors.pdf_processor._pdf_file_loader.PdfFileLoader._get_page_images', return_value=[self.page_image_cached_image])
+        self.pdf_loader_patcher = patch('logic_layer.file_processing._processors.pdf_processor._pdf_file_loader.PdfFileLoader.get_page_images', return_value=[self.page_image_cached_image])
         self.pdf_loader_patcher.start()
 
         self.pdfinfo_from_path_patcher = patch('logic_layer.file_processing._processors.pdf_processor._pdf_file_loader.pdfinfo_from_path')
@@ -78,5 +78,5 @@ class TestClassPdfProcessor(unittest.TestCase):
 
         self.test_processor._export_assets(output_dir=output_dir)
 
-        self.assertSetEqual(set(os.listdir(output_dir)), {'image_0.png', 'text_layer.html'})
+        self.assertSetEqual(set(os.listdir(output_dir)), {'image_0.png', 'display.html'})
         shutil.rmtree(output_dir)

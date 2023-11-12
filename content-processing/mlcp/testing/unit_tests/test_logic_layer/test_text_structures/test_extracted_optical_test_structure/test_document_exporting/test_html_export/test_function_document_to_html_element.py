@@ -11,7 +11,7 @@ class TestFunctionDocumentToHtmlElement(unittest.TestCase):
     def test_document_to_html_element_valid_conditions(self):
         optical_text_document = ExtractedOpticalTextDocument(
             structure_hierarchy_formation=[OpticalStructureHierarchyLevel.GROUP, OpticalStructureHierarchyLevel.LINE, OpticalStructureHierarchyLevel.WORD, OpticalStructureHierarchyLevel.CHARACTER, ])
-        result_element = _document_to_html_element(optical_text_document)
+        result_element = _document_to_html_element(optical_text_document, [])
 
         self.assertIsInstance(result_element, ElementTree.Element)
         self.assertEqual('div', result_element.tag)
@@ -20,7 +20,7 @@ class TestFunctionDocumentToHtmlElement(unittest.TestCase):
     def test_document_to_html_element_check_structure(self):
         optical_text_document = ExtractedOpticalTextDocument(
             structure_hierarchy_formation=[OpticalStructureHierarchyLevel.GROUP, OpticalStructureHierarchyLevel.LINE, OpticalStructureHierarchyLevel.WORD, OpticalStructureHierarchyLevel.CHARACTER, ])
-        result_element = _document_to_html_element(optical_text_document)
+        result_element = _document_to_html_element(optical_text_document, [])
 
         structure_element = next((child for child in result_element if child.tag == 'div' and child.attrib.get('class') == 'ml-document-structure'), None)
         self.assertIsNotNone(structure_element)
