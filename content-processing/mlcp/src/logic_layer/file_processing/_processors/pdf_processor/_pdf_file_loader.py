@@ -31,7 +31,7 @@ class PdfFileLoader:
         self._cache = {}
 
     def get_page_sizes(self) -> List[tuple]:
-        page_images = self._get_page_images()
+        page_images = self.get_page_images()
 
         image_sizes = []
         for page_image in page_images:
@@ -40,7 +40,7 @@ class PdfFileLoader:
         return image_sizes
 
     def get_page_images_as_numpy_arrays(self) -> List[np.array]:
-        page_images = self._get_page_images()
+        page_images = self.get_page_images()
 
         image_sizes = []
         for page_image in page_images:
@@ -49,7 +49,7 @@ class PdfFileLoader:
         return image_sizes
 
     def get_page_images_as_directories(self) -> List[str]:
-        page_images = self._get_page_images()
+        page_images = self.get_page_images()
 
         image_sizes = []
         for page_image in page_images:
@@ -57,7 +57,7 @@ class PdfFileLoader:
 
         return image_sizes
 
-    def _get_page_images(self) -> List[StorageCachedImage]:
+    def get_page_images(self) -> List[StorageCachedImage]:
         page_images_cache_key = 'page_images'
 
         cached_page_images = self._cache.get(page_images_cache_key)
@@ -93,7 +93,7 @@ class PdfFileLoader:
         return num_pages
 
     def export_images(self, output_directory: str, image_prefix='image_', export_format='png'):
-        page_images = self._get_page_images()
+        page_images = self.get_page_images()
         for i, page_image in enumerate(page_images):
             image = page_image.get_image()
             image = cv2.resize(image, (int(2_560), int(image.shape[0] * 2_560 / image.shape[1])), interpolation=cv2.INTER_LANCZOS4)
@@ -111,22 +111,23 @@ class PdfFileLoader:
 
     @logger.process_function("Hiding exising elements in PDF page images")
     def hide_existing_elements_in_images(self):
+        hidden_images = [image.duplicate() for image in self.get_page_images()]
         if not self._text_document:
             logger.warn('Calling "hide_existing_elements_in_images" requires the function "extract_existing_optical_text_document" to be called before it - to extract the text document of the pdf')
             return
-        run_thread_batch(func=self._hide_existing_elements_in_a_page, batch_inputs=list(range(self.get_num_pages())))
+        def _hide_existing_elements_in_a_page(page_num: int):
+            structure = self._text_document.get_structure_root()
+            page_elements = structure.get_children()
+            page_element = page_elements[page_num]
+            page_scanner = OpticalTextStructureScanner(page_element)
+            page_words = page_scanner.collect_all_nested_children_of_type(OpticalStructureHierarchyLevel.WORD)
+            cached_page_image = hidden_images[page_num]
+            loaded_image = cached_page_image.get_image()
+            for word_element in page_words:
+                word_geometry_calculator = StructureGeometryCalculator(word_element)
+                word_bounding_rectangle = word_geometry_calculator.calculate_bounding_rect()
+                loaded_image = cv2.rectangle(loaded_image, (int(word_bounding_rectangle[0]) - 10, int(word_bounding_rectangle[1]) - 2), (int(word_bounding_rectangle[2]) + 10, int(word_bounding_rectangle[3]) + 2), (255, 255, 255), -1)
+            cached_page_image.set_image(loaded_image)
 
-    def _hide_existing_elements_in_a_page(self, page_num: int):
-        structure = self._text_document.get_structure_root()
-        page_elements = structure.get_children()
-        page_images = self._get_page_images()
-        page_element = page_elements[page_num]
-        page_scanner = OpticalTextStructureScanner(page_element)
-        page_words = page_scanner.collect_all_nested_children_of_type(OpticalStructureHierarchyLevel.WORD)
-        cached_page_image = page_images[page_num]
-        loaded_image = cached_page_image.get_image()
-        for word_element in page_words:
-            word_geometry_calculator = StructureGeometryCalculator(word_element)
-            word_bounding_rectangle = word_geometry_calculator.calculate_bounding_rect()
-            loaded_image = cv2.rectangle(loaded_image, (int(word_bounding_rectangle[0]) - 10, int(word_bounding_rectangle[1]) - 2), (int(word_bounding_rectangle[2]) + 10, int(word_bounding_rectangle[3]) + 2), (255, 255, 255), -1)
-        cached_page_image.set_image(loaded_image)
+        run_thread_batch(func=_hide_existing_elements_in_a_page, batch_inputs=list(range(self.get_num_pages())))
+        return hidden_images

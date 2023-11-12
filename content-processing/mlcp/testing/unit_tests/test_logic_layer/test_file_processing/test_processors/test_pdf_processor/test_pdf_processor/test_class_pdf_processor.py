@@ -30,7 +30,7 @@ class TestClassPdfProcessor(unittest.TestCase):
         self.page_image_cached_image = StorageCachedImage()
         self.page_image_cached_image.set_image(self.page_image_data)
 
-        self.pdf_loader_patcher = patch('logic_layer.file_processing._processors.pdf_processor._pdf_file_loader.PdfFileLoader._get_page_images', return_value=[self.page_image_cached_image])
+        self.pdf_loader_patcher = patch('logic_layer.file_processing._processors.pdf_processor._pdf_file_loader.PdfFileLoader.get_page_images', return_value=[self.page_image_cached_image])
         self.pdf_loader_patcher.start()
 
         self.pdfinfo_from_path_patcher = patch('logic_layer.file_processing._processors.pdf_processor._pdf_file_loader.pdfinfo_from_path')
@@ -54,18 +54,20 @@ class TestClassPdfProcessor(unittest.TestCase):
 
         with patch('logic_layer.file_processing._processors.pdf_processor._pdf_processor.PdfFileLoader.get_page_images_as_directories', return_value=image_directories):
             with patch('logic_layer.file_processing._processors.pdf_processor._pdf_processor.PdfFileLoader.extract_existing_optical_text_document') as mock_exising_document_extraction:
-                with patch('logic_layer.file_processing._processors.pdf_processor._pdf_processor.OpticalDocumentExtractor') as mock_extracted_document_extraction:
-                    extracted_document = ExtractedOpticalTextDocument([OpticalStructureHierarchyLevel.WORD])
-                    existing_document = ExtractedOpticalTextDocument([OpticalStructureHierarchyLevel.WORD])
-                    mock_extracted_document_extraction.return_value.extract_text_document.return_value = extracted_document
-                    mock_exising_document_extraction.return_value.extract_text_document.return_value = existing_document
+                with patch('logic_layer.file_processing._processors.pdf_processor._pdf_processor.PdfFileLoader.hide_existing_elements_in_images') as mock_hide_existing_elements_in_images:
+                    with patch('logic_layer.file_processing._processors.pdf_processor._pdf_processor.OpticalDocumentExtractor') as mock_extracted_document_extraction:
+                        extracted_document = ExtractedOpticalTextDocument([OpticalStructureHierarchyLevel.WORD])
+                        existing_document = ExtractedOpticalTextDocument([OpticalStructureHierarchyLevel.WORD])
+                        mock_extracted_document_extraction.return_value.extract_text_document.return_value = extracted_document
+                        mock_exising_document_extraction.return_value.extract_text_document.return_value = existing_document
+                        mock_hide_existing_elements_in_images.return_value = []
 
-                    self.test_processor._process()
+                        self.test_processor._process()
 
-                    merged_document = extracted_document
-                    merged_document.get_structure_root().set_children(merged_document.get_structure_root().get_children() + existing_document.get_structure_root().get_children())
+                        merged_document = extracted_document
+                        merged_document.get_structure_root().set_children(merged_document.get_structure_root().get_children() + existing_document.get_structure_root().get_children())
 
-                    self.assertEqual(self.test_processor._extracted_text_document, merged_document)
+                        self.assertEqual(self.test_processor._extracted_text_document, merged_document)
 
     def test_export_text(self):
         output_dir = tempfile.TemporaryDirectory().name
