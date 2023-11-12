@@ -1,26 +1,46 @@
-from logic_layer.text_structures.extracted_optical_text_structure import ExtractedOpticalTextDocument
-from logic_layer.text_structures.extracted_optical_text_structure.document_exporting import DocumentExporter
-from logic_layer.text_structures.extracted_optical_text_structure.structure_visualizing import StructureVisualizer
 from logic_layer.file_processing._processors import FileProcessor
 from logic_layer.file_processing._processors._optical_shared import OpticalDocumentExtractor
 from logic_layer.file_processing._processors.pdf_processor._pdf_file_loader import PdfFileLoader
+from logic_layer.text_structures.extracted_optical_text_structure import ExtractedOpticalTextDocument
+from logic_layer.text_structures.extracted_optical_text_structure.document_exporting import DocumentExporter
+from logic_layer.text_structures.extracted_optical_text_structure.structure_visualizing import StructureVisualizer
 from shared_layer.file_system_utils import file_system_utils
+from shared_layer.mlcp_logger import logger
 
 
 class PdfProcessor(FileProcessor):
     _extracted_text_document: ExtractedOpticalTextDocument
+    _existing_text_document: ExtractedOpticalTextDocument
 
     def __init__(self, *args, **kwargs):
         FileProcessor.__init__(self, *args, **kwargs)
-
         self._pdf_loader = PdfFileLoader(self._file)
 
     def _process(self):
+        self._extract_existing_text()
+        self._extract_non_existent_text()
+        self._merge_existing_into_non_existent_text_documents()
+
+    @logger.process_function("Extracting existing text structure")
+    def _extract_existing_text(self):
+        existing_text_document = self._pdf_loader.extract_existing_optical_text_document()
+        self._existing_text_document = existing_text_document
+        self._pdf_loader.hide_existing_elements_in_images()
+
+    @logger.process_function("Extracting non existant text structure")
+    def _extract_non_existent_text(self):
         image_directories = self._pdf_loader.get_page_images_as_directories()
-
         document_extractor = OpticalDocumentExtractor(self._languages)
-
         self._extracted_text_document = document_extractor.extract_text_document(image_directories)
+
+    def _merge_existing_into_non_existent_text_documents(self):
+        existing_document_page_elements = self._existing_text_document.get_structure_root().get_children()
+        extracted_document_page_elements = self._extracted_text_document.get_structure_root().get_children()
+        for i in range(len(extracted_document_page_elements)):
+            existing_page_element = existing_document_page_elements[i]
+            extracted_page_element = extracted_document_page_elements[i]
+            total_children = existing_page_element.get_children() + extracted_page_element.get_children()
+            extracted_page_element.set_children(total_children)
 
     def _export_metadata(self, output_dir=""):
         return  # this is a placeholder
@@ -56,7 +76,8 @@ class PdfProcessor(FileProcessor):
 
         self._pdf_loader.export_images(output_dir)
 
-        image_directories = [file_system_utils.join_paths(output_dir, f) for f in file_system_utils.list_dir(output_dir)]
+        image_directories = [file_system_utils.join_paths(output_dir, f) for f in
+                             file_system_utils.list_dir(output_dir)]
         image_directories.sort()
 
         visualizer = StructureVisualizer(self._extracted_text_document)

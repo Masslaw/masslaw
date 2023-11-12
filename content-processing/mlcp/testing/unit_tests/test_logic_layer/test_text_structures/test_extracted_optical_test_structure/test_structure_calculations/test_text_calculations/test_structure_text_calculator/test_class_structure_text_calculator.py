@@ -3,7 +3,7 @@ import unittest
 from logic_layer.bidi import ReadDirection
 from logic_layer.text_structures.extracted_optical_text_structure._hierarchy_levels import OpticalTextStructureLine
 from logic_layer.text_structures.extracted_optical_text_structure._hierarchy_levels import OpticalTextStructureWord
-from logic_layer.text_structures.extracted_optical_text_structure._structure_calculations import StructureTextCalculator
+from logic_layer.text_structures.extracted_optical_text_structure.structure_calculations import StructureTextCalculator
 
 
 class TestClassStructureTextCalculator(unittest.TestCase):

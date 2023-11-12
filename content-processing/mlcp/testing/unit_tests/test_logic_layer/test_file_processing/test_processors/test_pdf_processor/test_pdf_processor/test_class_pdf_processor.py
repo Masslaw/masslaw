@@ -6,10 +6,10 @@ from unittest.mock import patch
 
 import numpy as np
 
+from logic_layer.file_processing._processors.pdf_processor._pdf_processor import PdfProcessor
 from logic_layer.text_structures.extracted_optical_text_structure import ExtractedOpticalTextDocument, \
     OpticalStructureHierarchyLevel
-from logic_layer.text_structures.extracted_optical_text_structure._hierarchy_levels import OpticalTextStructureWord
-from logic_layer.file_processing._processors.pdf_processor._pdf_processor import PdfProcessor
+from logic_layer.text_structures.extracted_optical_text_structure.structure_manipulation import OpticalTextStructureManipulator
 from shared_layer.file_system_utils._exceptions import InvalidPathOrDirectory
 from shared_layer.memory_utils.storage_cached_image import StorageCachedImage
 
@@ -53,13 +53,19 @@ class TestClassPdfProcessor(unittest.TestCase):
         image_directories = ["image_dir1", "image_dir2"]
 
         with patch('logic_layer.file_processing._processors.pdf_processor._pdf_processor.PdfFileLoader.get_page_images_as_directories', return_value=image_directories):
-            with patch('logic_layer.file_processing._processors.pdf_processor._pdf_processor.OpticalDocumentExtractor') as mock_document_extractor:
-                extracted_document = ExtractedOpticalTextDocument([OpticalStructureHierarchyLevel.WORD])
-                mock_document_extractor.return_value.extract_text_document.return_value = extracted_document
+            with patch('logic_layer.file_processing._processors.pdf_processor._pdf_processor.PdfFileLoader.extract_existing_optical_text_document') as mock_exising_document_extraction:
+                with patch('logic_layer.file_processing._processors.pdf_processor._pdf_processor.OpticalDocumentExtractor') as mock_extracted_document_extraction:
+                    extracted_document = ExtractedOpticalTextDocument([OpticalStructureHierarchyLevel.WORD])
+                    existing_document = ExtractedOpticalTextDocument([OpticalStructureHierarchyLevel.WORD])
+                    mock_extracted_document_extraction.return_value.extract_text_document.return_value = extracted_document
+                    mock_exising_document_extraction.return_value.extract_text_document.return_value = existing_document
 
-                self.test_processor._process()
+                    self.test_processor._process()
 
-                self.assertEqual(self.test_processor._extracted_text_document, extracted_document)
+                    merged_document = extracted_document
+                    merged_document.get_structure_root().set_children(merged_document.get_structure_root().get_children() + existing_document.get_structure_root().get_children())
+
+                    self.assertEqual(self.test_processor._extracted_text_document, merged_document)
 
     def test_export_text(self):
         output_dir = tempfile.TemporaryDirectory().name

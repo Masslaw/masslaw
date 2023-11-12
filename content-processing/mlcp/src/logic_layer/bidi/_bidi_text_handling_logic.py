@@ -41,3 +41,13 @@ def swap_ordering_between_read_direction_and_ltr(text_parts: List, custom_text_d
     if text_direction == ReadDirection.RTL:
         result_parts = result_parts[::-1]
     return result_parts
+
+
+def correct_ltr_sequenced_text(text: str):
+    if len(text) == 0:
+        return text
+    words = text.split()
+    words = [word[::-1] if get_text_direction(word) == ReadDirection.RTL else word for word in words]
+    words = swap_ordering_between_read_direction_and_ltr(words)
+    text = ' '.join(words)
+    return text

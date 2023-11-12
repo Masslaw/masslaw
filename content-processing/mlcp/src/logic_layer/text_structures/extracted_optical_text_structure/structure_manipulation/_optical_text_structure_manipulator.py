@@ -1,8 +1,12 @@
+from typing import Tuple
+
 from logic_layer.text_structures.extracted_optical_text_structure import ExtractedOpticalTextDocument
 from logic_layer.text_structures.extracted_optical_text_structure.structure_manipulation._structure_cleanups._structure_cleanup_logic import cleanup_structure
 from logic_layer.text_structures.extracted_optical_text_structure.structure_manipulation._structure_merging import OpticalTextStructureElementMerger
+from logic_layer.text_structures.extracted_optical_text_structure.structure_manipulation._geometry_manipulations import geometry_manipulation_logic
 from shared_layer.concurrency_utils import run_thread_batch
 from shared_layer.mlcp_logger import logger
+from shared_layer.mlcp_logger import common_formats
 
 
 class OpticalTextStructureManipulator:
@@ -27,3 +31,10 @@ class OpticalTextStructureManipulator:
     def clean_document_structure(self):
         cleaned_structure = cleanup_structure(self._document.get_structure_root())
         self._document.set_structure_root(cleaned_structure)
+
+    @logger.process_function("Scaling a structure child")
+    def scale_structure_child(self, child_num: int, scale_factor: Tuple[float, float]):
+        logger.debug(f"scale factor {common_formats.value(str(scale_factor))}")
+        structure_children = self._document.get_structure_root().get_children()
+        structure_child = structure_children[child_num]
+        geometry_manipulation_logic.scale_element(structure_child, scale_factor)

@@ -6,7 +6,7 @@ from xml.etree import ElementTree
 from PIL import Image
 
 from logic_layer.text_structures.extracted_optical_text_structure import ExtractedOpticalTextDocument
-from logic_layer.text_structures.extracted_optical_text_structure._structure_calculations import \
+from logic_layer.text_structures.extracted_optical_text_structure.structure_calculations import \
     StructureGeometryCalculator
 from logic_layer.text_structures.extracted_optical_text_structure._structure_element import OpticalTextStructureElement
 from logic_layer.text_structures.extracted_optical_text_structure._structure_root import OpticalTextStructureRoot
