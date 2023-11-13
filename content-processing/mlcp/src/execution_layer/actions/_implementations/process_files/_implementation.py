@@ -2,6 +2,7 @@ import os
 
 from execution_layer.actions._application_action import ApplicationAction
 from logic_layer.file_processing import create_processor
+from logic_layer.file_processing import convert_file_to_a_processable_file
 from shared_layer.mlcp_logger import logger
 from shared_layer.mlcp_logger import common_formats
 
@@ -31,9 +32,13 @@ class ProcessFiles(ApplicationAction):
         if (not file_name) or (not languages):
             logger.warning(f"Skipping file due to missing data")
             return False
+
+        converted_file_output_directory = file_data.get("converted_file_output_dir", "converted_file")
+        logger.info(f"Converting file to a processable format")
+        processable_file = convert_file_to_a_processable_file(file_path=file_name, output_directory=converted_file_output_directory)
         
         logger.info(f"Creating file processor")
-        file_processor = create_processor(file_name, languages)
+        file_processor = create_processor(processable_file, languages)
         logger.positive(f"Created file processor | type: {common_formats.value(file_processor.__class__.__name__)}")
 
         logger.info(f"Performing file processing...")

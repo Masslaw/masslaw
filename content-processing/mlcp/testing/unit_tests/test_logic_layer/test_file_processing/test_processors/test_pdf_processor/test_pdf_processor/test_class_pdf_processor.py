@@ -2,14 +2,13 @@ import os
 import shutil
 import tempfile
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, Mock, MagicMock
 
 import numpy as np
 
 from logic_layer.file_processing._processors.pdf_processor._pdf_processor import PdfProcessor
 from logic_layer.text_structures.extracted_optical_text_structure import ExtractedOpticalTextDocument, \
     OpticalStructureHierarchyLevel
-from logic_layer.text_structures.extracted_optical_text_structure.structure_manipulation import OpticalTextStructureManipulator
 from shared_layer.file_system_utils._exceptions import InvalidPathOrDirectory
 from shared_layer.memory_utils.storage_cached_image import StorageCachedImage
 
@@ -53,21 +52,23 @@ class TestClassPdfProcessor(unittest.TestCase):
         image_directories = ["image_dir1", "image_dir2"]
 
         with patch('logic_layer.file_processing._processors.pdf_processor._pdf_processor.PdfFileLoader.get_page_images_as_directories', return_value=image_directories):
-            with patch('logic_layer.file_processing._processors.pdf_processor._pdf_processor.PdfFileLoader.extract_existing_optical_text_document') as mock_exising_document_extraction:
-                with patch('logic_layer.file_processing._processors.pdf_processor._pdf_processor.PdfFileLoader.hide_existing_elements_in_images') as mock_hide_existing_elements_in_images:
-                    with patch('logic_layer.file_processing._processors.pdf_processor._pdf_processor.OpticalDocumentExtractor') as mock_extracted_document_extraction:
-                        extracted_document = ExtractedOpticalTextDocument([OpticalStructureHierarchyLevel.WORD])
-                        existing_document = ExtractedOpticalTextDocument([OpticalStructureHierarchyLevel.WORD])
-                        mock_extracted_document_extraction.return_value.extract_text_document.return_value = extracted_document
-                        mock_exising_document_extraction.return_value.extract_text_document.return_value = existing_document
-                        mock_hide_existing_elements_in_images.return_value = []
+            with patch('logic_layer.file_processing._processors.pdf_processor._pdf_processor.PdfFileLoader.extract_existing_optical_text_document') as mock_extract_existing_optical_text_document:
+                with patch('logic_layer.file_processing._processors.pdf_processor._pdf_processor.PdfFileLoader.create_page_images_with_no_text_elements') as mock_create_page_images_with_no_text_elements:
+                    with patch('logic_layer.file_processing._processors.pdf_processor._pdf_processor.PdfFileLoader.get_optical_text_document') as mock_get_optical_text_document:
+                        with patch('logic_layer.file_processing._processors.pdf_processor._pdf_processor.OpticalDocumentExtractor') as mock_extracted_document_extraction:
+                            extracted_document = ExtractedOpticalTextDocument([OpticalStructureHierarchyLevel.WORD])
+                            existing_document = ExtractedOpticalTextDocument([OpticalStructureHierarchyLevel.WORD])
+                            mock_extracted_document_extraction.return_value.extract_text_document.return_value = extracted_document
+                            mock_get_optical_text_document.return_value = existing_document
+                            mock_extract_existing_optical_text_document.side_effect = lambda: ...
+                            mock_create_page_images_with_no_text_elements.return_value = []
 
-                        self.test_processor._process()
+                            self.test_processor._process()
 
-                        merged_document = extracted_document
-                        merged_document.get_structure_root().set_children(merged_document.get_structure_root().get_children() + existing_document.get_structure_root().get_children())
+                            merged_document = extracted_document
+                            merged_document.get_structure_root().set_children(merged_document.get_structure_root().get_children() + existing_document.get_structure_root().get_children())
 
-                        self.assertEqual(self.test_processor._extracted_text_document, merged_document)
+                            self.assertEqual(self.test_processor._extracted_text_document, merged_document)
 
     def test_export_text(self):
         output_dir = tempfile.TemporaryDirectory().name
@@ -84,7 +85,13 @@ class TestClassPdfProcessor(unittest.TestCase):
 
         self.test_processor._extracted_text_document = ExtractedOpticalTextDocument([OpticalStructureHierarchyLevel.WORD])
 
-        self.test_processor._export_assets(output_dir=output_dir)
+        with patch('logic_layer.file_processing._processors.pdf_processor._pdf_file_loader.pypdf') as mock_pypdf:
+            mock_pypdf.PdfReader.return_value = MagicMock()
+            mock_pypdf.PdfWriter.return_value = MagicMock()
+            mock_pypdf.PdfWriter.return_value.add_page = MagicMock()
+            mock_pypdf.PdfWriter.return_value.write.return_value = lambda f: f.write("hi")
 
-        self.assertSetEqual(set(os.listdir(output_dir)), {'image_0.png', 'display.html'})
+            self.test_processor._export_assets(output_dir=output_dir)
+
+        self.assertSetEqual(set(os.listdir(output_dir)), {'page_0.pdf', 'page_0.png', 'display.html'})
         shutil.rmtree(output_dir)

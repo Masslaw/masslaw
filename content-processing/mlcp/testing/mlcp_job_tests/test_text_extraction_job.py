@@ -1,5 +1,4 @@
 import os
-import time
 import unittest
 from datetime import datetime
 
@@ -8,7 +7,7 @@ from mlcp.testing.mlcp_job_tests._mlcp_job_test import MLCPJobTest
 from shared_layer.file_system_utils._file_system_utils import clear_directory
 from shared_layer.file_system_utils._file_system_utils import join_paths
 
-file_name = "image_example_2.png"
+file_name = "ההליך_הפלילי_והזכות_לפרטיות_בעידן_הטלפונים.pdf"
 
 bucket_name = "mlcp-test-bucket"
 
@@ -58,9 +57,15 @@ class MLCPTextExtractionJobTest(unittest.TestCase, MLCPJobTest):
             }, {
                 "name": "process_files", "params": {
                     "files_data": [{
-                        "file_name": self.in_temporary_storage(file_name), "languages": languages, "case_id": case_id, "file_id": case_id,
-                        "file_metadata_output_dir": os.path.join(self.test_output_directory, "file_metadata"), "extracted_text_output_dir": os.path.join(self.test_output_directory, "extracted_text"),
-                        "assets_output_dir": os.path.join(self.test_output_directory, "processed_assets"), "debug_data_dir": os.path.join(self.test_output_directory, "debug_data"),
+                        "file_name": self.in_temporary_storage(file_name),
+                        "languages": languages,
+                        "case_id": case_id,
+                        "file_id": case_id,
+                        "file_metadata_output_dir": os.path.join(self.test_output_directory, "file_metadata"),
+                        "extracted_text_output_dir": os.path.join(self.test_output_directory, "extracted_text"),
+                        "assets_output_dir": os.path.join(self.test_output_directory, "processed_assets"),
+                        "debug_data_dir": os.path.join(self.test_output_directory, "debug_data"),
+                        "converted_file_output_dir": os.path.join(self.test_output_directory, "converted_files"),
                     }]
                 }, "required": "True"
             }, {

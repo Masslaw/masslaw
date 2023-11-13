@@ -1,5 +1,5 @@
 from logic_layer.file_processing._processors import FileProcessor
-from logic_layer.file_processing._processors._optical_shared import OpticalDocumentExtractor
+from logic_layer.file_processing._processors.pdf_processor._optical_document_extraction import OpticalDocumentExtractor
 from logic_layer.file_processing._processors.pdf_processor._pdf_file_loader import PdfFileLoader
 from logic_layer.text_structures.extracted_optical_text_structure import ExtractedOpticalTextDocument
 from logic_layer.text_structures.extracted_optical_text_structure.document_exporting import DocumentExporter
@@ -24,16 +24,17 @@ class PdfProcessor(FileProcessor):
 
     @logger.process_function("Extracting existing text structure")
     def _extract_existing_text(self):
-        existing_text_document = self._pdf_loader.extract_existing_optical_text_document()
-        self._existing_text_document = existing_text_document
-        self._images_to_process = self._pdf_loader.hide_existing_elements_in_images()
+        self._pdf_loader.extract_existing_optical_text_document()
+        self._existing_text_document = self._pdf_loader.get_optical_text_document()
 
-    @logger.process_function("Extracting non existant text structure")
+    @logger.process_function("Extracting non existent text structure")
     def _extract_non_existent_text(self):
-        image_directories = [image.get_dir() for image in self._images_to_process]
+        images_to_process = self._pdf_loader.create_page_images_with_no_text_elements()
+        image_directories = [image.get_dir() for image in images_to_process]
         document_extractor = OpticalDocumentExtractor(self._languages)
         self._extracted_text_document = document_extractor.extract_text_document(image_directories)
 
+    @logger.process_function("Merging existing text document into extracted text document")
     def _merge_existing_into_non_existent_text_documents(self):
         existing_document_page_elements = self._existing_text_document.get_structure_root().get_children()
         extracted_document_page_elements = self._extracted_text_document.get_structure_root().get_children()
@@ -63,7 +64,8 @@ class PdfProcessor(FileProcessor):
         with open(file_system_utils.join_paths(output_dir, "display.html"), "wb") as f:
             exporter.export_html(f, self._pdf_loader.get_page_images())
 
-        self._pdf_loader.export_images(output_dir)
+        self._pdf_loader.export_pages_as_images(output_dir)
+        self._pdf_loader.export_pages_as_pdf_files(output_dir)
 
     def _export_debug_data(self, output_dir=""):
         file_system_utils.clear_directory(output_dir)
@@ -75,7 +77,7 @@ class PdfProcessor(FileProcessor):
     def _visualize_structure(self, output_dir=""):
         file_system_utils.clear_directory(output_dir)
 
-        self._pdf_loader.export_images(output_dir)
+        self._pdf_loader.export_pages_as_images(output_dir)
 
         image_directories = [file_system_utils.join_paths(output_dir, f) for f in
                              file_system_utils.list_dir(output_dir)]

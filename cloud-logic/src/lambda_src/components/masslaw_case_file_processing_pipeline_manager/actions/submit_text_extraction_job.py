@@ -36,7 +36,8 @@ def submit_text_extraction_job(file_instance: MasslawCaseFileInstance, stage='pr
                     "case_id": case_id,
                     "file_id": case_id,
                     "extracted_text_output_dir": "extracted_text",
-                    "assets_output_dir": "processed_assets"
+                    "assets_output_dir": "processed_assets",
+                    "converted_file_output_dir": "converted_file"
                 }
             ]
         },
@@ -54,6 +55,10 @@ def submit_text_extraction_job(file_instance: MasslawCaseFileInstance, stage='pr
                 {
                     "key": f"{file_id}/client_exposed/processed_assets",
                     "saved_as": "processed_assets"
+                },
+                {
+                    "key": f"{file_id}/client_exposed/converted_file",
+                    "saved_as": "converted_file"
                 }
             ]
         },

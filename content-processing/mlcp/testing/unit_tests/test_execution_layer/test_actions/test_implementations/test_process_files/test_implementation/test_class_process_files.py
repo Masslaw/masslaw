@@ -20,11 +20,13 @@ class TestClassProcessFiles(unittest.TestCase):
         action._handle_arguments()
         self.assertEqual(action._files_data, ['some_file_data'])
 
+    @patch('execution_layer.actions._implementations.process_files._implementation.convert_file_to_a_processable_file')
     @patch('execution_layer.actions._implementations.process_files._implementation.create_processor')
-    def test_execution(self, mock_create_processor):
+    def test_execution(self, mock_create_processor, mock_convert_file_to_a_processable_file):
 
         mock_processor = Mock()
         mock_create_processor.return_value = mock_processor
+        mock_convert_file_to_a_processable_file.side_effect = lambda file_path, output_directory: file_path
 
         action = ProcessFiles(params={'files_data': [{'file_name': 'file1', 'languages': ['eng', 'heb']}, {'file_name': 'file2', 'languages': ['eng']}]})
         action._handle_arguments()

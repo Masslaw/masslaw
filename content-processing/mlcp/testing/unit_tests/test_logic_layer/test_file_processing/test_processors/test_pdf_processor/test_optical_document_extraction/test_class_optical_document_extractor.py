@@ -2,9 +2,9 @@ import unittest
 from unittest.mock import Mock
 from unittest.mock import patch
 
+from logic_layer.file_processing._processors.pdf_processor._optical_document_extraction import OpticalDocumentExtractor
 from logic_layer.text_extraction.optical_character_recognition import OcrExtractedElement
 from logic_layer.text_structures.extracted_optical_text_structure import ExtractedOpticalTextDocument
-from logic_layer.file_processing._processors._optical_shared._optical_document_extraction import OpticalDocumentExtractor
 
 
 class TestClassOpticalDocumentExtractor(unittest.TestCase):
@@ -13,7 +13,7 @@ class TestClassOpticalDocumentExtractor(unittest.TestCase):
         self.languages = ['eng']
         self.test_extractor = OpticalDocumentExtractor(languages=self.languages)
 
-    @patch('logic_layer.file_processing._processors._optical_shared._optical_document_extraction.TesseractWrapper')
+    @patch('logic_layer.file_processing._processors.pdf_processor._optical_document_extraction.TesseractWrapper')
     def test_extract_data_using_ocr(self, mocked_tesseract_wrapper):
         image_directories = ['test_dir']
         mocked_ocr_data = [[Mock(spec=OcrExtractedElement)]]
@@ -27,7 +27,7 @@ class TestClassOpticalDocumentExtractor(unittest.TestCase):
         instance.set_image_directories.assert_called_with(image_directories=image_directories)
         instance.perform_text_extraction.assert_called_once()
 
-    @patch('logic_layer.file_processing._processors._optical_shared._optical_document_extraction.OpticalTextDocumentBuilder')
+    @patch('logic_layer.file_processing._processors.pdf_processor._optical_document_extraction.OpticalTextDocumentBuilder')
     def test_build_text_document(self, mocked_document_builder):
         ocr_output_data = [[Mock(spec=OcrExtractedElement)]]
         mocked_document = Mock(spec=ExtractedOpticalTextDocument)
@@ -40,7 +40,7 @@ class TestClassOpticalDocumentExtractor(unittest.TestCase):
         self.assertEqual(result, mocked_document)
 
     @patch('cv2.imread')
-    @patch('logic_layer.file_processing._processors._optical_shared._optical_document_extraction.DocumentMetadataHandler')
+    @patch('logic_layer.file_processing._processors.pdf_processor._optical_document_extraction.DocumentMetadataHandler')
     def test_put_image_sizes_in_document_metadata(self, mocked_document_metadata_handler, mocked_imread):
         extracted_text_document = Mock(spec=ExtractedOpticalTextDocument)
 

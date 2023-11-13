@@ -5,9 +5,9 @@ FROM --platform=linux/amd64 python:3.10
 RUN apt-get update
 
 # Install necessary packages
-RUN apt-get install -y libgl1-mesa-glx
-RUN apt-get install -y poppler-utils
-RUN apt-get install -y \
+RUN apt-get install -y libgl1-mesa-glx  # for cv2
+RUN apt-get install -y poppler-utils  # for pdf processing
+RUN apt-get install -y \  # tesseract
     curl \
     libtesseract-dev \
     libleptonica-dev \
@@ -17,6 +17,7 @@ RUN apt-get install -y \
     tesseract-ocr-ara
 RUN apt-get clean && \
     rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y libreoffice  # process office documents
 
 # Copy the requirements.txt first to leverage Docker cache
 COPY /src/requirements.txt /src/requirements.txt

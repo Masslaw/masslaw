@@ -32,9 +32,7 @@ class OpticalTextStructureManipulator:
         cleaned_structure = cleanup_structure(self._document.get_structure_root())
         self._document.set_structure_root(cleaned_structure)
 
-    @logger.process_function("Scaling a structure child")
     def scale_structure_child(self, child_num: int, scale_factor: Tuple[float, float]):
-        logger.debug(f"scale factor {common_formats.value(str(scale_factor))}")
         structure_children = self._document.get_structure_root().get_children()
         structure_child = structure_children[child_num]
         geometry_manipulation_logic.scale_element(structure_child, scale_factor)

@@ -49,7 +49,7 @@ class ApplicationActionLoader:
         action_name = action_name.lower()
         module_name = f'execution_layer.actions._implementations.{action_name}'
         logger.debug(f'Attempting to load module {common_formats.value(module_name)}')
-        try: action_module = importlib.import_module(module_name)
+        try: action_module =  importlib.import_module(module_name)
         except ImportError as e: raise ApplicationActionLoadingException(e)
         mlcp_action_class = None
         for name, obj in inspect.getmembers(action_module):
