@@ -3,7 +3,7 @@ import tempfile
 import unittest
 
 from logic_layer.file_processing._file_type_conversion import get_converter_for_file
-from logic_layer.file_processing._file_type_conversion._to_pdf import PdfToPdf, ImageToPdf, DocxToPdf
+from logic_layer.file_processing._file_type_conversion._to_pdf import PdfToPdf, ImageToPdf, OfficeToPdf
 
 
 class TestFunctionGetConverterForFile(unittest.TestCase):
@@ -38,9 +38,24 @@ class TestFunctionGetConverterForFile(unittest.TestCase):
         converter = get_converter_for_file(png_file)
         self.assertEqual(converter, ImageToPdf)
 
-    def test_with_docx(self):
-        docx_file = self._create_file_of_type(".docx")
-        converter = get_converter_for_file(docx_file)
-        self.assertEqual(converter, DocxToPdf)
+    def test_with_office_files(self):
+        file = self._create_file_of_type(".doc")
+        converter = get_converter_for_file(file)
+        self.assertEqual(converter, OfficeToPdf)
+        file = self._create_file_of_type(".docx")
+        converter = get_converter_for_file(file)
+        self.assertEqual(converter, OfficeToPdf)
+        file = self._create_file_of_type(".ppt")
+        converter = get_converter_for_file(file)
+        self.assertEqual(converter, OfficeToPdf)
+        file = self._create_file_of_type(".pptx")
+        converter = get_converter_for_file(file)
+        self.assertEqual(converter, OfficeToPdf)
+        file = self._create_file_of_type(".xls")
+        converter = get_converter_for_file(file)
+        self.assertEqual(converter, OfficeToPdf)
+        file = self._create_file_of_type(".xlsx")
+        converter = get_converter_for_file(file)
+        self.assertEqual(converter, OfficeToPdf)
 
 
