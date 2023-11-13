@@ -17,7 +17,12 @@ export const case_supported_file_types: string[] = [
     'hdr',
     'pic',
     'webp',
+    'doc',
     'docx',
+    'ppt',
+    'pptx',
+    'xls',
+    'xlsx',
 ]
 
 export enum CaseAccessLevels {

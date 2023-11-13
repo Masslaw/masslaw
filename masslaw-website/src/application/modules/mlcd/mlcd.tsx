@@ -40,7 +40,12 @@ export function MasslawContentDisplay(props: MLCDProps) {
             case ('hdr'):
             case ('pic'):
             case ('webp'):
+            case ('doc'):
             case ('docx'):
+            case ('ppt'):
+            case ('pptx'):
+            case ('xls'):
+            case ('xlsx'):
                 RendererComponent = OpticalDocumentRenderer;
                 break;
         }
