@@ -14,7 +14,7 @@ class DocxToPdf(FileConverter):
     def _do_convert(cls, doc_path: str, output_file_path: str):
         output_dir = file_system_utils.get_parent_dir(output_file_path)
         command = [
-            "libreoffice",
+            "soffice",
             "--headless",
             "--convert-to",
             "pdf",
