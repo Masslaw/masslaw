@@ -98,11 +98,11 @@ export const OpticalDocumentRenderer: MLCDContentRenderingComponent = (props: ML
         let urls = await CasesManager.getInstance().getFileContentDownloadURL(
             props.fileData.case_id,
             props.fileData.id,
-            groupElements.map((_, pageNum) => `processed_assets/image_${pageNum}.png`)
+            groupElements.map((_, pageNum) => `processed_assets/page_${pageNum}.png`)
         );
         let pageImageDownloadUrls = {} as { [key: string]: string };
         for (let pageNum in groupElements) {
-            pageImageDownloadUrls[pageNum] = urls[`processed_assets/image_${pageNum}.png`]
+            pageImageDownloadUrls[pageNum] = urls[`processed_assets/page_${pageNum}.png`]
         }
         setPageImageDownloadUrls(pageImageDownloadUrls);
     }
