@@ -3,7 +3,7 @@ import json
 from lambda_src.modules.aws_clients.batch_client import BatchJob
 
 
-class MLCPInstance:
+class MLCPSubmission:
     def __init__(self, stage='prod'):
         self.stage = stage
         self.env_variables = []

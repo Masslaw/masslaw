@@ -7,7 +7,7 @@ from .._types import AWSSessionKeys
 
 
 class CognitoUserPoolManager(AWSServiceClient):
-    def __init__(self, user_pool_name: str, region_name: str, session_keys: AWSSessionKeys = None):
+    def __init__(self, user_pool_name: str, region_name: str = 'us-east-1', session_keys: AWSSessionKeys = None):
         super().__init__(service_name='cognito-idp', region_name=region_name, session_keys=session_keys, )
         self.user_pool_name = user_pool_name
         self.user_pool_id = self.get_user_pool_id()

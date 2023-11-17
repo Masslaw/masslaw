@@ -6,7 +6,7 @@ from .._aws_service_client import AWSServiceClient
 
 
 class S3BucketManager(AWSServiceClient):
-    def __init__(self, bucket_name: str, region_name: str, session_keys: AWSSessionKeys = None):
+    def __init__(self, bucket_name: str, region_name: str = 'us-east-1', session_keys: AWSSessionKeys = None):
         super().__init__(service_name='s3', region_name=region_name, session_keys=session_keys, )
         self._bucket_name = bucket_name
         self._bucket = self._resource.Bucket(bucket_name)
@@ -29,20 +29,20 @@ class S3BucketManager(AWSServiceClient):
 
     def get_object(self, key):
         try:
-            obj = self._resource.Object(self.__bucket_name, key).get()
+            obj = self._resource.Object(self._bucket_name, key).get()
             return (obj['Body'].read()).decode()
         except:
             return None
 
     def get_bucket_id(self):
-        return self.__bucket_name
+        return self._bucket_name
 
     def create_bucket(self, region=None, CORS=None):
         if self.check_exists(): return False
         if region is not None:
-            self._client.create_bucket(Bucket=self.__bucket_name, CreateBucketConfiguration={'LocationConstraint': region})
+            self._client.create_bucket(Bucket=self._bucket_name, CreateBucketConfiguration={'LocationConstraint': region})
         else:
-            self._client.create_bucket(Bucket=self.__bucket_name)
+            self._client.create_bucket(Bucket=self._bucket_name)
 
         if CORS:
             self.put_bucket_cors(CORS)
@@ -51,7 +51,7 @@ class S3BucketManager(AWSServiceClient):
 
     def start_multipart_upload(self, file_key, num_parts):
         mp_upload = self._client.create_multipart_upload(
-            Bucket=self.__bucket_name,
+            Bucket=self._bucket_name,
             Key=file_key,
         )
 
@@ -63,7 +63,7 @@ class S3BucketManager(AWSServiceClient):
             upload_urls.append(self._client.generate_presigned_url(
                 'upload_part',
                 {
-                    'Bucket': self.__bucket_name,
+                    'Bucket': self._bucket_name,
                     'Key': file_key,
                     'PartNumber': i + 1,
                     'UploadId': upload_id,
@@ -76,7 +76,7 @@ class S3BucketManager(AWSServiceClient):
 
     def complete_multipart_upload(self, file_key, parts_list, upload_id):
         self._client.complete_multipart_upload(
-            Bucket=self.__bucket_name,
+            Bucket=self._bucket_name,
             Key=file_key,
             MultipartUpload=parts_list,
             UploadId=upload_id,
@@ -84,16 +84,16 @@ class S3BucketManager(AWSServiceClient):
 
     def put_bucket_cors(self, CORS):
         self._client.put_bucket_cors(
-            Bucket=self.__bucket_name,
+            Bucket=self._bucket_name,
             CORSConfiguration=CORS
         )
 
     def put_bucket_policy(self, policy):
-        self._client.put_bucket_policy(Bucket=self.__bucket_name, Policy=policy)
+        self._client.put_bucket_policy(Bucket=self._bucket_name, Policy=policy)
 
     def check_exists(self):
         try:
-            self._client.head_bucket(Bucket=self.__bucket_name)
+            self._client.head_bucket(Bucket=self._bucket_name)
             return True
         except botocore.exceptions.ClientError as e:
             error_code = int(e.response['Error']['Code'])
@@ -107,7 +107,7 @@ class S3BucketManager(AWSServiceClient):
 
     def get_bucket_location(self):
         try:
-            response = self._client.get_bucket_location(Bucket=self.__bucket_name)
+            response = self._client.get_bucket_location(Bucket=self._bucket_name)
             return response['LocationConstraint']
         except:
             return None
@@ -117,17 +117,17 @@ class S3BucketManager(AWSServiceClient):
 
     def get_bucket_acl(self):
         try:
-            response = self._client.get_bucket_acl(Bucket=self.__bucket_name)
+            response = self._client.get_bucket_acl(Bucket=self._bucket_name)
             return response['Grants']
         except:
             return None
 
     def set_object_acl(self, key, acl):
-        self._client.ObjectAcl(self.__bucket_name, key).put(ACL=acl)
+        self._client.ObjectAcl(self._bucket_name, key).put(ACL=acl)
 
     def get_object_acl(self, key):
         try:
-            response = self._client.get_object_acl(Bucket=self.__bucket_name, Key=key)
+            response = self._client.get_object_acl(Bucket=self._bucket_name, Key=key)
             return response['Grants']
         except:
             return None
@@ -136,7 +136,7 @@ class S3BucketManager(AWSServiceClient):
         return [bucket.name for bucket in self._client.buckets.all()]
 
     def delete_object(self, key):
-        self._client.Object(self.__bucket_name, key).delete()
+        self._client.Object(self._bucket_name, key).delete()
 
     def delete_folder(self, folder_name):
         for obj in self._bucket.objects.filter(Prefix=folder_name):
@@ -145,7 +145,7 @@ class S3BucketManager(AWSServiceClient):
 
     def copy_object(self, source_key, destination_key):
         copy_source = {
-            'Bucket': self.__bucket_name,
+            'Bucket': self._bucket_name,
             'Key': source_key
         }
         self._bucket.copy(copy_source, destination_key)
@@ -179,13 +179,13 @@ class S3BucketManager(AWSServiceClient):
     def get_object_presigned_url(self, key, expiration=3600):
         return self._client.generate_presigned_url(
             'get_object',
-            Params={'Bucket': self.__bucket_name, 'Key': key},
+            Params={'Bucket': self._bucket_name, 'Key': key},
             ExpiresIn=expiration,
             HttpMethod='GET'
         )
 
     def get_key_for_unknown_type(self, key):
-        response = self._client.list_objects_v2(Bucket=self.__bucket_name, Prefix=key)
+        response = self._client.list_objects_v2(Bucket=self._bucket_name, Prefix=key)
         for obj in response.get('Contents', []):
             if obj['Key'].startswith(key):
                 return obj['Key']

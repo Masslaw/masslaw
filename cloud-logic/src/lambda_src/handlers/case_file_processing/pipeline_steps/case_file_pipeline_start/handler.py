@@ -1,11 +1,10 @@
-from lambda_src.components.masslaw_case_file_processing_pipeline_manager.lambda_templates.masslaw_step_functions_case_file_pipeline_node_handler import *
-from lambda_src.components.masslaw_cases.masslaw_data_instances.masslaw_case_file_instance import *
+from lambda_src.modules.lambda_handler_template_step_functions_lambda_node_case_file_pipiline import MasslawStepFunctionCaseFilePipelineNodeHandler
+from lambda_src.modules.masslaw_cases_objects import MasslawCaseFileInstance
 
 
 class CaseFilePipelineStart(MasslawStepFunctionCaseFilePipelineNodeHandler):
 
     def _execute(self):
-
         self.__file_instance = MasslawCaseFileInstance(self._file_id)
 
         if not self.__file_instance.is_valid():

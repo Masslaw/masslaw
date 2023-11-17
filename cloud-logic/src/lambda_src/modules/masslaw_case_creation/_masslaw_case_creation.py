@@ -1,8 +1,9 @@
 import secrets
-
-from src.lambda_src.modules.masslaw_case_users_management._masslaw_case_user_access_manager import *
-from src.lambda_src.modules.masslaw_cases_objects.masslaw_case import *
 import time
+
+from lambda_src.modules.masslaw_case_users_management import MasslawCaseUserAccessManager
+from lambda_src.modules.masslaw_cases_config import access_config
+from lambda_src.modules.masslaw_cases_objects import MasslawCaseInstance
 
 
 def create_a_new_case(creator_user_id, case_creation_data):
@@ -27,7 +28,7 @@ def create_a_new_case(creator_user_id, case_creation_data):
     case_user_access_manager = MasslawCaseUserAccessManager(case_instance)
     case_user_access_manager.set_case_user_permissions(
         creator_user_id,
-        CaseAccessEntities.OWNER_CLIENT,
+        access_config.CaseAccessEntities.OWNER_CLIENT,
         {}
     )
 

@@ -1,5 +1,5 @@
-from lambda_src.components.masslaw_cloud_configurations.config.names import *
-from lambda_src.components.util.dynamodb_data_holder import *
+from lambda_src.modules.masslaw_cloud_configurations._config import GLOBAL_VALUES_DYNAMODB_TABLE_NAME
+from lambda_src.modules.remote_data_management_dynamodb import DynamodbDataHolder
 
 
 def get_configuration_value(key: str):

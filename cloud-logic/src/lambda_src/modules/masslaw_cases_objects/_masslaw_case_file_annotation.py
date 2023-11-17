@@ -1,11 +1,11 @@
-from .masslaw_case_file import *
-from src.lambda_src.modules.masslaw_cases_config._annotations_config import *
-from src.lambda_src.modules.masslaw_cases_config._opensearch_config import *
-from ...opensearch_client._index_manager import *
-from src.lambda_src.modules.remote_data_management._dynamodb_data_holder import *
+import time
 
-
-class MasslawCaseFileAnnotationDataUpdateException(Exception): pass
+from lambda_src.modules.aws_clients.open_search_client import OpenSearchIndexManager
+from lambda_src.modules.masslaw_cases_config import annotations_config
+from lambda_src.modules.masslaw_cases_config import opensearch_config
+from lambda_src.modules.masslaw_cases_objects import MasslawCaseFileInstance
+from lambda_src.modules.masslaw_cases_objects._exceptions import MasslawCaseFileAnnotationDataUpdateException
+from lambda_src.modules.remote_data_management_dynamodb import DynamodbDataHolder
 
 
 class MasslawCaseFileAnnotationInstance(DynamodbDataHolder):
@@ -47,12 +47,12 @@ class MasslawCaseFileAnnotationInstance(DynamodbDataHolder):
         to_char = int(self.get_data_property(['to_char'], -1))
         if not to_char >= from_char > -1:
             raise MasslawCaseFileAnnotationDataUpdateException('invalid char range')
-        if abs(to_char - from_char) > ANNOTATION_LENGTH_HARD_LIMIT:
-            raise MasslawCaseFileAnnotationDataUpdateException(F'invalid annotated text length. Passed the hard limit of {ANNOTATION_LENGTH_HARD_LIMIT} characters')
+        if abs(to_char - from_char) > annotations_config.ANNOTATION_LENGTH_HARD_LIMIT:
+            raise MasslawCaseFileAnnotationDataUpdateException(F'invalid annotated text length. Passed the hard limit of {annotations_config.ANNOTATION_LENGTH_HARD_LIMIT} characters')
 
         text = self.get_data_property(['text'], '')
-        if len(text) > ANNOTATION_TEXT_LENGTH_HARD_LIMIT:
-            raise MasslawCaseFileAnnotationDataUpdateException(F'invalid annotation text length. Passed the hard limit of {ANNOTATION_TEXT_LENGTH_HARD_LIMIT} characters')
+        if len(text) > annotations_config.ANNOTATION_TEXT_LENGTH_HARD_LIMIT:
+            raise MasslawCaseFileAnnotationDataUpdateException(F'invalid annotation text length. Passed the hard limit of {annotations_config.ANNOTATION_TEXT_LENGTH_HARD_LIMIT} characters')
 
         color = self.get_data_property(['color'], '')
         if (color[0] != '#') or (len(color) != 7):
@@ -63,8 +63,8 @@ class MasslawCaseFileAnnotationInstance(DynamodbDataHolder):
         annotated_text = self.get_data_property(['annotated_text'])
         file_id = self.get_data_property(['file_id'])
         case_id = self.get_data_property(['case_id'])
-        open_search_index_name = f'{case_id}{MASSLAW_CASE_ANNOTATIONS_SEARCH_INDEX_SUFFIX}'
-        case_search_index_manager = OpenSearchIndexManager(MASSLAW_CASES_ES_ENDPOINT, open_search_index_name)
+        open_search_index_name = f'{case_id}{opensearch_config.MASSLAW_CASE_ANNOTATIONS_SEARCH_INDEX_SUFFIX}'
+        case_search_index_manager = OpenSearchIndexManager(opensearch_config.MASSLAW_CASES_ES_ENDPOINT, open_search_index_name)
         case_search_index_manager.ensure_exists()
         case_search_index_manager.add_document(self.get_item_id(), {
                 'text': self.get_data_property(['text']),
@@ -86,8 +86,8 @@ class MasslawCaseFileAnnotationInstance(DynamodbDataHolder):
 
     def delete(self):
         case_id = self.get_data_property(['case_id'])
-        open_search_index_name = f'{case_id}{MASSLAW_CASE_ANNOTATIONS_SEARCH_INDEX_SUFFIX}'
-        case_search_index_manager = OpenSearchIndexManager(MASSLAW_CASES_ES_ENDPOINT, open_search_index_name)
+        open_search_index_name = f'{case_id}{opensearch_config.MASSLAW_CASE_ANNOTATIONS_SEARCH_INDEX_SUFFIX}'
+        case_search_index_manager = OpenSearchIndexManager(opensearch_config.MASSLAW_CASES_ES_ENDPOINT, open_search_index_name)
         case_search_index_manager.remove_document(self.get_item_id())
 
         annotation_id = self.get_item_id()

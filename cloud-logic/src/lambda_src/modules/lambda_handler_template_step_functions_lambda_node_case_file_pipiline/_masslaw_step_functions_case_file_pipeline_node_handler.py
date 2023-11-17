@@ -1,20 +1,10 @@
-from lambda_src.modules.lambda_handler_template_step_functions_lambda_node._step_functions_lambda_node_handler import *
+from lambda_src.modules.lambda_handler_template_step_functions_lambda_node import StepFunctionLambdaNodeHandler
 
 
 class MasslawStepFunctionCaseFilePipelineNodeHandler(StepFunctionLambdaNodeHandler):
-    def __init__(
-            self,
-            name=None,
-            default_response=None,
-            event_structure=None,
-    ):
-        StepFunctionLambdaNodeHandler.__init__(
-            self,
-            name=name,
-            default_response=default_response,
-            event_structure=event_structure
-        )
-        
+    def __init__(self, name=None, default_response=None, event_structure=None, ):
+        StepFunctionLambdaNodeHandler.__init__(self, name=name, default_response=default_response, event_structure=event_structure)
+
         self._file_id = ''
 
     def _handle_event(self):

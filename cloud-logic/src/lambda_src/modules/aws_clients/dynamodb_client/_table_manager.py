@@ -19,9 +19,9 @@ class DynamoDBTableManager(AWSServiceClient):
             item = saved_item
         self.table.put_item(Item=item)
 
-    def get_item(self, key=None):
+    def get_item(self, key=None, default=None):
         response = self.table.get_item(Key=self.__ensure_key_object(key))
-        item = response.get('Item') or self.get_empty_item()
+        item = response.get('Item') or default or self.get_empty_item()
         return item
 
     def get_items_by_attribute(self, key: dict):

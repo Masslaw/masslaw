@@ -1,6 +1,6 @@
-from lambda_src.modules.masslaw_users_objects._masslaw_user_instance import MasslawUserInstance
-from ...util import json_utils
-from ...masslaw_users_objects._config.user_data_access_config import *
+from lambda_src.modules.masslaw_users_objects import MasslawUserInstance
+from lambda_src.modules.dictionary_utils import dictionary_utils
+from lambda_src.modules.masslaw_users_config import user_data_access_config
 
 
 class MasslawUserDataAccessManager:
@@ -9,14 +9,14 @@ class MasslawUserDataAccessManager:
         self.__user_instance = user_instance
 
     def update_user_data(self, update_obj):
-        update_obj = json_utils.select_keys(update_obj, CLIENT_WRITE_KEYS)
+        update_obj = dictionary_utils.select_keys(update_obj, user_data_access_config.CLIENT_WRITE_KEYS)
         self.__user_instance.update_data(update_obj)
 
     def get_data_formatted_for_user_client(self):
-        keys = USER_OWN_CLIENT_KEYS
+        keys = user_data_access_config.USER_OWN_CLIENT_KEYS
         return self.__user_instance.get_data_properties(keys)
 
     def get_data_formatted_for_other_user_client(self):
-        keys = USER_OTHER_CLIENT_KEYS
+        keys = user_data_access_config.USER_OTHER_CLIENT_KEYS
         return self.__user_instance.get_data_properties(keys)
 

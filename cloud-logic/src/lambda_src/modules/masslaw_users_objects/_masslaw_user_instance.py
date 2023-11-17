@@ -1,13 +1,13 @@
 import re
-from ..cognito_client._cognito_manager import CognitoUserPoolManager
-from ..masslaw_users_objects._config.read_only_user_attributes import *
-from src.lambda_src.modules.remote_data_management._data_holder import DataHolder
-from ..util import json_utils
+
+from lambda_src.modules.aws_clients.cognito_client import CognitoUserPoolManager
+from lambda_src.modules.masslaw_users_objects._exceptions import MasslawUserDataUpdateException
+from lambda_src.modules.remote_data_management import DataHolder
+from lambda_src.modules.dictionary_utils import dictionary_utils
+from lambda_src.modules.masslaw_users_config import read_only_user_attributes
+
 
 cognitoManager = CognitoUserPoolManager("MasslawUsers")
-
-
-class MasslawUserDataUpdateException(Exception): pass
 
 
 class MasslawUserInstance(DataHolder):
@@ -24,14 +24,14 @@ class MasslawUserInstance(DataHolder):
         user_data = cognitoManager.get_user_by_id(self.__user_id)
         if not user_data:
             return False
-        user_data = json_utils.ensure_dict(user_data)
+        user_data = dictionary_utils.ensure_dict(user_data)
         self._set_data(user_data)
         return True
 
     def save_data(self):
         DataHolder.save_data(self)
         write_user_data = self._get_write_data_object()
-        write_user_data = json_utils.ensure_flat(write_user_data)
+        write_user_data = dictionary_utils.ensure_flat(write_user_data)
         cognitoManager.update_user_data(self.__user_id, write_user_data)
         self._valid = True
 
@@ -40,7 +40,7 @@ class MasslawUserInstance(DataHolder):
 
     def _get_write_data_object(self):
         user_data = self._get_data()
-        for attr in READ_ONLY_USER_ATTRIBUTES:
+        for attr in read_only_user_attributes.READ_ONLY_USER_ATTRIBUTES:
             if attr in user_data:
                 del user_data[attr]
         return user_data

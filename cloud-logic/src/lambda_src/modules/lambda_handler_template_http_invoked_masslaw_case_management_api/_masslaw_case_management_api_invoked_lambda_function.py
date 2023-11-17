@@ -1,37 +1,24 @@
-from src.lambda_src.modules.masslaw_case_users_management._masslaw_case_user_access_manager import MasslawCaseUnauthorizedUserActionException
-from src.lambda_src.modules.masslaw_cases_objects.masslaw_case import *
-from lambda_src.modules.lambda_handler_template_step_functions_lambda_node_case_file_pipiline._authenticated_masslaw_user_http_invoked_lambda_function import *
-from src.lambda_src.modules.masslaw_users_objects._config.user_statuses import *
+from lambda_src.modules.lambda_base import lambda_constants
+from lambda_src.modules.lambda_handler_template_http_invoked_authenticated_masslaw_user import AuthenticatedMasslawUserHttpInvokedLambdaFunction
+from lambda_src.modules.masslaw_case_users_management import masslaw_case_users_management_exceptions
+from lambda_src.modules.masslaw_cases_objects import MasslawCaseDataUpdateException
+from lambda_src.modules.masslaw_users_config import user_statuses
 
 
 class MasslawCaseManagementApiInvokedLambdaFunction(AuthenticatedMasslawUserHttpInvokedLambdaFunction):
-    def __init__(
-            self,
-            name=None,
-            default_response_body=None,
-            request_query_string_parameters_structure=None,
-            request_body_structure=None
-    ):
-        AuthenticatedMasslawUserHttpInvokedLambdaFunction.__init__(
-            self,
-            name=name,
-            default_response_body=default_response_body,
-            request_query_string_parameters_structure=request_query_string_parameters_structure,
-            request_body_structure=request_body_structure,
-            minimum_user_status_level=UserStatuses.FULLY_APPROVED
-        )
+    def __init__(self, name=None, default_response_body=None, request_query_string_parameters_structure=None, request_body_structure=None):
+        AuthenticatedMasslawUserHttpInvokedLambdaFunction.__init__(self, name=name, default_response_body=default_response_body, request_query_string_parameters_structure=request_query_string_parameters_structure, request_body_structure=request_body_structure,
+            minimum_user_status_level=user_statuses.UserStatuses.FULLY_APPROVED)
 
     def _handle_exception(self, exception: Exception):
         if isinstance(exception, MasslawCaseDataUpdateException):
-            self._set_response_attribute([EventKeys.STATUS_CODE], StatusCodes.BAD_REQUEST)
-            self._set_response_attribute([EventKeys.BODY, EventKeys.RESPONSE_MESSAGE],
-                                         f'Invalid Case Data: {exception}')
+            self._set_response_attribute([lambda_constants.EventKeys.STATUS_CODE], lambda_constants.StatusCodes.BAD_REQUEST)
+            self._set_response_attribute([lambda_constants.EventKeys.BODY, lambda_constants.EventKeys.RESPONSE_MESSAGE], f'Invalid Case Data: {exception}')
             return
 
-        if isinstance(exception, MasslawCaseUnauthorizedUserActionException):
-            self._set_response_attribute([EventKeys.STATUS_CODE], StatusCodes.UNAUTHORIZED)
-            self._set_response_attribute([EventKeys.BODY, EventKeys.RESPONSE_MESSAGE],
-                                         ResponseMessages.UNAUTHORIZED_REQUEST)
+        if isinstance(exception, masslaw_case_users_management_exceptions.MasslawCaseUnauthorizedUserActionException):
+            self._set_response_attribute([lambda_constants.EventKeys.STATUS_CODE], lambda_constants.StatusCodes.UNAUTHORIZED)
+            self._set_response_attribute([lambda_constants.EventKeys.BODY, lambda_constants.EventKeys.RESPONSE_MESSAGE], lambda_constants.ResponseMessages.UNAUTHORIZED_REQUEST)
             return
 
         AuthenticatedMasslawUserHttpInvokedLambdaFunction._handle_exception(self, exception)

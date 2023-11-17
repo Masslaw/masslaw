@@ -1,10 +1,6 @@
-import time
-
-from src.lambda_src.modules.masslaw_cases_config._files_config import FILE_DESCRIPTION_LENGTH_HARD_LIMIT
-from src.lambda_src.modules.remote_data_management._dynamodb_data_holder import DynamodbDataHolder
-
-
-class MasslawCaseFileDataUpdateException(Exception): pass
+from lambda_src.modules.masslaw_cases_config import files_config
+from lambda_src.modules.masslaw_cases_objects._exceptions import MasslawCaseFileDataUpdateException
+from lambda_src.modules.remote_data_management_dynamodb import DynamodbDataHolder
 
 
 class MasslawCaseFileInstance(DynamodbDataHolder):
@@ -25,5 +21,5 @@ class MasslawCaseFileInstance(DynamodbDataHolder):
         DynamodbDataHolder._assert_valid_data(self)
 
         description = self.get_data_property(['description'], '')
-        if len(description) > FILE_DESCRIPTION_LENGTH_HARD_LIMIT:
-            raise MasslawCaseFileDataUpdateException(f'description length exceeds hard limit {FILE_DESCRIPTION_LENGTH_HARD_LIMIT}')
+        if len(description) > files_config.FILE_DESCRIPTION_LENGTH_HARD_LIMIT:
+            raise MasslawCaseFileDataUpdateException(f'description length exceeds hard limit {files_config.FILE_DESCRIPTION_LENGTH_HARD_LIMIT}')

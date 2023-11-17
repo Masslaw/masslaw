@@ -5,9 +5,6 @@ from ...masslaw_users_objects._config.user_statuses import *
 cognitoManager = CognitoUserPoolManager("MasslawUsers")
 
 
-class MasslawUserStatusAssertFailed(Exception): pass
-
-
 class MasslawUserStatusManager:
 
     def __init__(self, user_instance: MasslawUserInstance):

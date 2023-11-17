@@ -1,11 +1,10 @@
 import time
-from ...dynamoDB_client._table_manager import *
-from src.lambda_src.modules.remote_data_management._dynamodb_data_holder import DynamodbDataHolder
+
+from lambda_src.modules.aws_clients.dynamodb_client import DynamoDBTableManager
+from lambda_src.modules.masslaw_cases_objects._exceptions import MasslawCaseDataUpdateException
+from lambda_src.modules.remote_data_management_dynamodb import DynamodbDataHolder
 
 dbManager = DynamoDBTableManager("MasslawCases")
-
-
-class MasslawCaseDataUpdateException(Exception): pass
 
 
 class MasslawCaseInstance(DynamodbDataHolder):

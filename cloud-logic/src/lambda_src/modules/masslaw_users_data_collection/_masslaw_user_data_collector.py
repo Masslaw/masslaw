@@ -1,5 +1,5 @@
-from ...masslaw_users_objects.masslaw_user_instance import MasslawUserInstance
-from lambda_src.modules.masslaw_users_data_access_management._masslaw_user_data_access_manager import MasslawUserDataAccessManager
+from lambda_src.modules.masslaw_users_data_access_management import MasslawUserDataAccessManager
+from lambda_src.modules.masslaw_users_objects import MasslawUserInstance
 
 
 class MasslawUserDataCollector:

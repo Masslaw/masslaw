@@ -108,3 +108,11 @@ def check_structure(d: dict, validation: dict):
         if not any(isinstance(dict_value, t) for t in validation_value if t is not None):
             return False
     return True
+
+
+def ensure_dict(d):
+    d = isinstance(d, dict) and d or isinstance(d, str) and try_loads(str(d)) or d
+    if isinstance(d, dict):
+        for key in list(d.keys()):
+            d[key] = ensure_dict(d[key])
+    return d

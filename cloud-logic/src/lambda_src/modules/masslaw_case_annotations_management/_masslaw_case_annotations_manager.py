@@ -1,6 +1,10 @@
 import secrets
-from src.lambda_src.modules.masslaw_cases_objects.masslaw_case_file_annotation import *
-from src.lambda_src.modules.masslaw_case_users_management._masslaw_case_user_access_manager import *
+
+from lambda_src.modules.masslaw_case_users_management import MasslawCaseUserAccessManager
+from lambda_src.modules.masslaw_case_users_management import masslaw_case_users_management_exceptions
+from lambda_src.modules.masslaw_cases_config import access_config
+from lambda_src.modules.masslaw_cases_objects import MasslawCaseFileAnnotationInstance
+from lambda_src.modules.masslaw_cases_objects import MasslawCaseInstance
 
 
 class MasslawCaseAnnotationUnauthorizedAccessException(Exception): pass
@@ -13,19 +17,7 @@ class MasslawCaseAnnotationsManager:
 
         self.__case_user_access_manager = MasslawCaseUserAccessManager(self.__case_instance)
 
-    def put_annotation(
-            self,
-            user_id,
-            file_id,
-            annotation_type,
-            beginning_character,
-            ending_character,
-            annotation_text,
-            annotated_text,
-            color,
-            annotation_id=None
-    ):
-
+    def put_annotation(self, user_id, file_id, annotation_type, beginning_character, ending_character, annotation_text, annotated_text, color, annotation_id=None):
         if not annotation_id:
             while True:
                 annotation_id = secrets.token_hex(16)
@@ -63,19 +55,15 @@ class MasslawCaseAnnotationsManager:
         case_annotation_instance.delete()
 
     def assert_user_annotation_access(self, case_annotation_instance: MasslawCaseFileAnnotationInstance, user_id, file_id=None):
-
         file_id = file_id or case_annotation_instance.get_data_property(['file_id'])
 
         if case_annotation_instance.get_data_property(['creator'], user_id) != user_id:
-            raise MasslawCaseAnnotationUnauthorizedAccessException(
-                'Attempting to edit an annotation that was created by another user')
+            raise MasslawCaseAnnotationUnauthorizedAccessException('Attempting to edit an annotation that was created by another user')
 
         user_access_files = self.__case_user_access_manager.get_user_access_files(user_id)
         if file_id not in user_access_files:
-            raise MasslawCaseUnauthorizedUserActionException(
-                'Attempting to edit an annotation in a file the user has no access to')
+            raise masslaw_case_users_management_exceptions.MasslawCaseUnauthorizedUserActionException('Attempting to edit an annotation in a file the user has no access to')
 
         user_access_level = self.__case_user_access_manager.get_user_access_level_name(user_id)
-        if user_access_level in (CaseAccessEntities.READER_CLIENT):
-            raise MasslawCaseUnauthorizedUserActionException(
-                'Attempting to edit an annotation in a file the user has no write access to')
+        if user_access_level in (access_config.CaseAccessEntities.READER_CLIENT):
+            raise masslaw_case_users_management_exceptions.MasslawCaseUnauthorizedUserActionException('Attempting to edit an annotation in a file the user has no write access to')

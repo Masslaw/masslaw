@@ -4,7 +4,7 @@ from .._types import AWSSessionKeys
 
 
 class StateMachineManager(AWSServiceClient):
-    def __init__(self, state_machine_name: str, region_name: str, session_keys: AWSSessionKeys = None):
+    def __init__(self, state_machine_name: str, region_name: str = 'us-east-1', session_keys: AWSSessionKeys = None):
         super().__init__(service_name='stepfunctions', region_name=region_name, session_keys=session_keys, )
         self.state_machine_arn = self._get_state_machine_arn(state_machine_name)
 

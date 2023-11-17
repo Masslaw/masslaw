@@ -2,11 +2,8 @@ import logging
 import os
 import time
 import traceback
-from ..util import json_utils
-
-
-class InvalidEventLambdaException(Exception): pass
-
+from lambda_src.modules.dictionary_utils import dictionary_utils
+from lambda_src.modules.lambda_base._exceptions import InvalidEventLambdaException
 
 LOGGING_FORMAT = '[%(name)s] %(asctime)s :::: [%(levelname)s] %(message)s'
 
@@ -59,7 +56,7 @@ class LambdaHandler:
         return final_response
 
     def __handle_event(self, event):
-        self.__event = json_utils.ensure_dict(event)
+        self.__event = dictionary_utils.ensure_dict(event)
         self._log(f'Event: \n {self.__event}', level=logging.DEBUG)
         self._assert_event_structure()
         self._handle_event()
@@ -90,9 +87,9 @@ class LambdaHandler:
 
     def _set_response_attribute(self, key_path, value):
         if value is None:
-            self.__response = json_utils.delete_at(self.__response, key_path)
+            self.__response = dictionary_utils.delete_at(self.__response, key_path)
         else:
-            self.__response = json_utils.set_at(self.__response, key_path, value)
+            self.__response = dictionary_utils.set_at(self.__response, key_path, value)
 
     def _prepare_final_response(self, response):
         self._log(f'Preparing final response')
@@ -100,7 +97,7 @@ class LambdaHandler:
         return response
 
     def _assert_event_structure(self):
-        if not json_utils.check_structure(self.__event, self.__event_structure):
+        if not dictionary_utils.check_structure(self.__event, self.__event_structure):
             raise InvalidEventLambdaException(f'Invalid event structure. Expected: {self.__event_structure} Got: {self.__event}')
 
     def __init_logger(self):

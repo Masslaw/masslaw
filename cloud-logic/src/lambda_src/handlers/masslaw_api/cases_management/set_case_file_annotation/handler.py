@@ -1,31 +1,17 @@
-from lambda_src.components.masslaw_cases.lambda_templates.masslaw_case_management_api_invoked_lambda_function import *
-from lambda_src.components.masslaw_cases.management.masslaw_case_annotations_manager import *
-from lambda_src.components.masslaw_cases.management.masslaw_case_data_collector import *
+from lambda_src.modules.lambda_handler_template_http_invoked_masslaw_case_management_api import MasslawCaseManagementApiInvokedLambdaFunction
+from lambda_src.modules.masslaw_case_annotations_management import MasslawCaseAnnotationsManager
+from lambda_src.modules.masslaw_case_users_management import MasslawCaseUserAccessManager
+from lambda_src.modules.masslaw_case_users_management import masslaw_case_users_management_exceptions
+from lambda_src.modules.masslaw_cases_objects import MasslawCaseInstance
 
 
 class SetCaseFileAnnotation(MasslawCaseManagementApiInvokedLambdaFunction):
     def __init__(self):
-        MasslawCaseManagementApiInvokedLambdaFunction.__init__(
-            self,
-            request_query_string_parameters_structure={
-                'case_id': [str],
-                'file_id': [str],
-                'annotation_id': [str, None],
-            },
-            request_body_structure={
-                'type': [str],
-                'from_char': [str, int],
-                'to_char': [str, int],
-                'annotation_text': [str, None],
-                'annotated_text': [str, None],
-                'color': [str],
-            }
-        )
-
+        MasslawCaseManagementApiInvokedLambdaFunction.__init__(self, request_query_string_parameters_structure={'case_id': [str], 'file_id': [str], 'annotation_id': [str, None], },
+                                                               request_body_structure={'type': [str], 'from_char': [str, int], 'to_char': [str, int], 'annotation_text': [str, None], 'annotated_text': [str, None], 'color': [str], })
         self.__case_id = ''
         self.__file_id = ''
         self.__annotation_id = ''
-
         self.__type = ''
         self.__from_char = 0
         self.__to_char = 0
@@ -50,22 +36,13 @@ class SetCaseFileAnnotation(MasslawCaseManagementApiInvokedLambdaFunction):
 
     def _execute(self):
         MasslawCaseManagementApiInvokedLambdaFunction._execute(self)
-
         user_id = self._caller_user_instance.get_user_id()
-
         case_instance = MasslawCaseInstance(case_id=self.__case_id)
-
         case_user_access = MasslawCaseUserAccessManager(case_instance=case_instance)
-
         user_access_files = case_user_access.get_user_access_files(user_id)
-
         if self.__file_id not in user_access_files:
-            raise MasslawCaseUnauthorizedUserActionException(
-                f"An attempt was made to create or change an annotation of a file which is"
-                f" not included in a user's case permissions")
-
+            raise masslaw_case_users_management_exceptions.MasslawCaseUnauthorizedUserActionException(f"An attempt was made to create or change an annotation of a file which is not included in a user's case permissions")
         annotations_manager = MasslawCaseAnnotationsManager(case_instance=case_instance)
-
         annotations_manager.put_annotation(
             user_id=user_id,
             file_id=self.__file_id,
