@@ -8,8 +8,8 @@ from logic_layer.remote_graph_database._graph_database_manager import GraphDatab
 from logic_layer.remote_graph_database._graph_database_node import GraphDatabaseNode
 from logic_layer.remote_graph_database.neptune_manager._neptune_data_parsing import parse_raw_neptune_edge_object
 from logic_layer.remote_graph_database.neptune_manager._neptune_data_parsing import parse_raw_neptune_node_object
-from resources_layer.aws.neptune_client import NeptuneClient
-from resources_layer.aws.neptune_client import NeptuneConnection
+from resources_layer.aws_clients.neptune_client import NeptuneClient
+from resources_layer.aws_clients.neptune_client import NeptuneConnection
 
 
 class NeptuneDatabaseManager(GraphDatabaseManager):

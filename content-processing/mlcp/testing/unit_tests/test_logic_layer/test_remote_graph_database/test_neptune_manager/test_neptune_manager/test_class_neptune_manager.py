@@ -3,7 +3,7 @@ import unittest
 import gremlin_python
 
 from logic_layer.remote_graph_database.neptune_manager import NeptuneDatabaseManager
-from mlcp.testing.shared.neptune_stub import NeptuneStubTestLoader
+from mlcp.testing.stubs.neptune_stub import NeptuneStubTestLoader
 
 
 class TestClassNeptuneDatabaseManager(unittest.TestCase):

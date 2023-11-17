@@ -56,19 +56,20 @@ inside it. The *resources layer* doesn't expose any functionality directly, but 
 that implement their own, in other words the interface of this large component is made up of the interfaces of the
 components inside it. 
 An example for the usage of the *resources layer* from an external component:
+
 ```python
-from mlcp.src.resources_layer.aws.s3_client import S3BucketManager
+from mlcp.src.resources_layer.aws_clients.s3_client import S3BucketManager
 
 # create an instance of a manager that manages an S3 bucket in a certain region 
 bucket_manager = S3BucketManager(
-    bucket_name = 'some-s3-bucket',
-    region_name = 'us-east-1',
+  bucket_name='some-s3-bucket',
+  region_name='us-east-1',
 )
 
 # use the manager to get a file from the bucket with a specific key to a local path
 bucket_manager.get_file_from_bucket(
-    file_name = 'some-file.txt',
-    target_path = '/some/local/path/to/file.txt'
+  file_name='some-file.txt',
+  target_path='/some/local/path/to/file.txt'
 )
 ```
 

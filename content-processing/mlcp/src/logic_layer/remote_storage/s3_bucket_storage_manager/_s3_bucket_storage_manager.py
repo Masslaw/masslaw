@@ -1,4 +1,4 @@
-from resources_layer.aws.s3_client import S3BucketManager
+from resources_layer.aws_clients.s3_client import S3BucketManager
 
 
 class S3BucketStorageManager:

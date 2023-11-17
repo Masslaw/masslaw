@@ -2,7 +2,7 @@ import json
 import os
 import tempfile
 
-from mlcp.testing.shared.s3_stub import S3StubTestLoader
+from mlcp.testing.stubs.s3_stub import S3StubTestLoader
 
 
 class MLCPJobTest(S3StubTestLoader):

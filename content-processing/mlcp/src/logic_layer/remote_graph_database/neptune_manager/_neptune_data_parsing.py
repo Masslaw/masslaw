@@ -1,7 +1,7 @@
 from logic_layer.remote_graph_database._graph_database_edge import GraphDatabaseEdge
 from logic_layer.remote_graph_database._graph_database_node import GraphDatabaseNode
-from resources_layer.aws.neptune_client._neptune_edge import NeptuneEdge
-from resources_layer.aws.neptune_client._neptune_node import NeptuneNode
+from resources_layer.aws_clients.neptune_client._neptune_edge import NeptuneEdge
+from resources_layer.aws_clients.neptune_client._neptune_node import NeptuneNode
 
 
 def parse_raw_neptune_node_object(neptune_node: NeptuneNode) -> GraphDatabaseNode:

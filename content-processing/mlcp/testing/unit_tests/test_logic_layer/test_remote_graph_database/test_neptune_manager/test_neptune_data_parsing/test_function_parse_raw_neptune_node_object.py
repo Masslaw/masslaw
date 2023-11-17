@@ -2,7 +2,7 @@ import unittest
 
 from logic_layer.remote_graph_database import GraphDatabaseNode
 from logic_layer.remote_graph_database.neptune_manager._neptune_data_parsing import parse_raw_neptune_node_object
-from resources_layer.aws.neptune_client import NeptuneNode
+from resources_layer.aws_clients.neptune_client import NeptuneNode
 
 
 class TestFunctionParseRawNeptuneNodeObject(unittest.TestCase):
