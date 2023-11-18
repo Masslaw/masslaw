@@ -1,0 +1,556 @@
+# this cloud formation stack will consist of all the masslaw http rest api handlers
+# serverless deploy --config deploy-lambda-masslawApiHandlers.yml --stage {stage}
+
+service: masslawApiHandlers
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: python3.8
+  region: us-east-1
+  deploymentMethod: direct
+  stage: ${opt:stage, 'dev'}
+  environment:
+    STAGE: ${self:provider.stage}
+
+package:
+  individually: true
+  patterns:
+    - '!**'
+
+functions:
+  get-user-status:
+    handler: lambda_src/handlers/masslaw_api/users_management/get_user_status.handler.handler
+    role: arn:aws:iam::746826375642:role/LambdaFullyAccessingCognito
+    package:
+      patterns:
+        - lambda_src/handlers/masslaw_api/users_management/get_user_status/**
+        - lambda_src/components/lambda_base/**
+        - lambda_src/components/cloudwatch_manager/**
+        - lambda_src/components/networking/**
+        - lambda_src/components/util/**
+        - lambda_src/components/cognito_manager/**
+        - lambda_src/components/masslaw_users/**
+    environment:
+      deployed: true
+    events:
+      - http:
+          path: /users/me/status
+          method: GET
+          cors: true
+
+  get-user-data:
+    handler: lambda_src/handlers/masslaw_api/users_management/get_user_data.handler.handler
+    role: arn:aws:iam::746826375642:role/LambdaFullyAccessingCognito
+    package:
+      patterns:
+        - lambda_src/handlers/masslaw_api/users_management/get_user_data/**
+        - lambda_src/components/lambda_base/**
+        - lambda_src/components/cloudwatch_manager/**
+        - lambda_src/components/networking/**
+        - lambda_src/components/util/**
+        - lambda_src/components/cognito_manager/**
+        - lambda_src/components/masslaw_users/**
+    environment:
+      deployed: true
+    events:
+      - http:
+          path: /users/user-data
+          method: GET
+          cors: true
+
+  set-user-data:
+    handler: lambda_src/handlers/masslaw_api/users_management/set_user_data.handler.handler
+    role: arn:aws:iam::746826375642:role/LambdaFullyAccessingCognito
+    environment:
+      deployed: true
+    package:
+      patterns:
+        - lambda_src/handlers/masslaw_api/users_management/set_user_data/**
+        - lambda_src/components/lambda_base/**
+        - lambda_src/components/cloudwatch_manager/**
+        - lambda_src/components/networking/**
+        - lambda_src/components/util/**
+        - lambda_src/components/cognito_manager/**
+        - lambda_src/components/masslaw_users/**
+    events:
+      - http:
+          path: /users/user-data
+          method: POST
+          cors: true
+
+  create-case:
+    handler: lambda_src/handlers/masslaw_api/cases_management/create_case.handler.handler
+    role: arn:aws:iam::746826375642:role/LambdaMasslawCasesHandlerRole
+    environment:
+      deployed: true
+    package:
+      patterns:
+        - lambda_src/handlers/masslaw_api/cases_management/create_case/**
+        - lambda_src/components/lambda_base/**
+        - lambda_src/components/cloudwatch_manager/**
+        - lambda_src/components/networking/**
+        - lambda_src/components/util/**
+        - lambda_src/components/cognito_manager/**
+        - lambda_src/components/masslaw_users/**
+        - lambda_src/components/masslaw_cases/**
+        - lambda_src/components/masslaw_cloud_configurations/**
+        - lambda_src/components/opensearch_manager/**
+        - lambda_src/components/mlcp/**
+        - lambda_src/components/dynamoDB_manager/**
+        - lambda_src/components/S3_manager/**
+        - lambda_src/components/iam_manager/**
+        - lambda_src/components/step_functions_manager/**
+    events:
+      - http:
+          path: /cases/create
+          method: POST
+          cors: true
+
+  get-my-cases:
+    handler: lambda_src/handlers/masslaw_api/cases_management/get_my_cases.handler.handler
+    role: arn:aws:iam::746826375642:role/LambdaMasslawCasesHandlerRole
+    environment:
+      deployed: true
+    package:
+      patterns:
+        - lambda_src/handlers/masslaw_api/cases_management/get_my_cases/**
+        - lambda_src/components/lambda_base/**
+        - lambda_src/components/cloudwatch_manager/**
+        - lambda_src/components/networking/**
+        - lambda_src/components/util/**
+        - lambda_src/components/cognito_manager/**
+        - lambda_src/components/masslaw_users/**
+        - lambda_src/components/masslaw_cases/**
+        - lambda_src/components/masslaw_cloud_configurations/**
+        - lambda_src/components/opensearch_manager/**
+        - lambda_src/components/mlcp/**
+        - lambda_src/components/dynamoDB_manager/**
+        - lambda_src/components/S3_manager/**
+        - lambda_src/components/iam_manager/**
+        - lambda_src/components/step_functions_manager/**
+    events:
+      - http:
+          path: /cases/get-mine
+          method: GET
+          cors: true
+
+  get-case-data--deprecated:
+    handler: lambda_src/handlers/masslaw_api/cases_management/get_case_data.handler.handler
+    role: arn:aws:iam::746826375642:role/LambdaMasslawCasesHandlerRole
+    environment:
+      deployed: true
+    package:
+      patterns:
+        - lambda_src/handlers/masslaw_api/cases_management/get_case_data/**
+        - lambda_src/components/lambda_base/**
+        - lambda_src/components/cloudwatch_manager/**
+        - lambda_src/components/networking/**
+        - lambda_src/components/util/**
+        - lambda_src/components/cognito_manager/**
+        - lambda_src/components/masslaw_users/**
+        - lambda_src/components/masslaw_cases/**
+        - lambda_src/components/masslaw_cloud_configurations/**
+        - lambda_src/components/opensearch_manager/**
+        - lambda_src/components/mlcp/**
+        - lambda_src/components/dynamoDB_manager/**
+        - lambda_src/components/S3_manager/**
+        - lambda_src/components/iam_manager/**
+        - lambda_src/components/step_functions_manager/**
+    events:
+      - http:
+          path: /cases/case/get-data
+          method: GET
+          cors: true
+
+  get-case-data:
+    handler: lambda_src/handlers/masslaw_api/cases_management/get_case_data.handler.handler
+    role: arn:aws:iam::746826375642:role/LambdaMasslawCasesHandlerRole
+    environment:
+      deployed: true
+    package:
+      patterns:
+        - lambda_src/handlers/masslaw_api/cases_management/get_case_data/**
+        - lambda_src/components/lambda_base/**
+        - lambda_src/components/cloudwatch_manager/**
+        - lambda_src/components/networking/**
+        - lambda_src/components/util/**
+        - lambda_src/components/cognito_manager/**
+        - lambda_src/components/masslaw_users/**
+        - lambda_src/components/masslaw_cases/**
+        - lambda_src/components/masslaw_cloud_configurations/**
+        - lambda_src/components/opensearch_manager/**
+        - lambda_src/components/mlcp/**
+        - lambda_src/components/dynamoDB_manager/**
+        - lambda_src/components/S3_manager/**
+        - lambda_src/components/iam_manager/**
+        - lambda_src/components/step_functions_manager/**
+    events:
+      - http:
+          path: /cases/case/data
+          method: GET
+          cors: true
+
+  set-case-data:
+    handler: lambda_src/handlers/masslaw_api/cases_management/set_case_data.handler.handler
+    role: arn:aws:iam::746826375642:role/LambdaMasslawCasesHandlerRole
+    environment:
+      deployed: true
+    package:
+      patterns:
+        - lambda_src/handlers/masslaw_api/cases_management/set_case_data/**
+        - lambda_src/components/lambda_base/**
+        - lambda_src/components/cloudwatch_manager/**
+        - lambda_src/components/networking/**
+        - lambda_src/components/util/**
+        - lambda_src/components/cognito_manager/**
+        - lambda_src/components/masslaw_users/**
+        - lambda_src/components/masslaw_cases/**
+        - lambda_src/components/masslaw_cloud_configurations/**
+        - lambda_src/components/opensearch_manager/**
+        - lambda_src/components/mlcp/**
+        - lambda_src/components/dynamoDB_manager/**
+        - lambda_src/components/S3_manager/**
+        - lambda_src/components/iam_manager/**
+        - lambda_src/components/step_functions_manager/**
+    events:
+      - http:
+          path: /cases/case/data
+          method: POST
+          cors: true
+
+  get-case-files:
+    handler: lambda_src/handlers/masslaw_api/cases_management/get_case_files_data.handler.handler
+    role: arn:aws:iam::746826375642:role/LambdaMasslawCasesHandlerRole
+    environment:
+      deployed: true
+    package:
+      patterns:
+        - lambda_src/handlers/masslaw_api/cases_management/get_case_files_data/**
+        - lambda_src/components/lambda_base/**
+        - lambda_src/components/cloudwatch_manager/**
+        - lambda_src/components/networking/**
+        - lambda_src/components/util/**
+        - lambda_src/components/cognito_manager/**
+        - lambda_src/components/masslaw_users/**
+        - lambda_src/components/masslaw_cases/**
+        - lambda_src/components/masslaw_cloud_configurations/**
+        - lambda_src/components/opensearch_manager/**
+        - lambda_src/components/mlcp/**
+        - lambda_src/components/dynamoDB_manager/**
+        - lambda_src/components/S3_manager/**
+        - lambda_src/components/iam_manager/**
+        - lambda_src/components/step_functions_manager/**
+    events:
+      - http:
+          path: /cases/case/files
+          method: GET
+          cors: true
+
+  start-case-file-upload:
+    handler: lambda_src/handlers/masslaw_api/cases_management/start_case_file_upload.handler.handler
+    role: arn:aws:iam::746826375642:role/LambdaMasslawCasesHandlerRole
+    environment:
+      deployed: true
+    package:
+      patterns:
+        - lambda_src/handlers/masslaw_api/cases_management/start_case_file_upload/**
+        - lambda_src/components/lambda_base/**
+        - lambda_src/components/cloudwatch_manager/**
+        - lambda_src/components/networking/**
+        - lambda_src/components/util/**
+        - lambda_src/components/cognito_manager/**
+        - lambda_src/components/masslaw_users/**
+        - lambda_src/components/masslaw_cases/**
+        - lambda_src/components/masslaw_cloud_configurations/**
+        - lambda_src/components/opensearch_manager/**
+        - lambda_src/components/mlcp/**
+        - lambda_src/components/dynamoDB_manager/**
+        - lambda_src/components/S3_manager/**
+        - lambda_src/components/iam_manager/**
+        - lambda_src/components/step_functions_manager/**
+    events:
+      - http:
+          path: /cases/case/files/start-file-upload
+          method: POST
+          cors: true
+
+  finish-case-file-upload:
+    handler: lambda_src/handlers/masslaw_api/cases_management/finish_case_file_upload.handler.handler
+    role: arn:aws:iam::746826375642:role/LambdaMasslawCasesHandlerRole
+    environment:
+      deployed: true
+    package:
+      patterns:
+        - lambda_src/handlers/masslaw_api/cases_management/finish_case_file_upload/**
+        - lambda_src/components/lambda_base/**
+        - lambda_src/components/cloudwatch_manager/**
+        - lambda_src/components/networking/**
+        - lambda_src/components/util/**
+        - lambda_src/components/cognito_manager/**
+        - lambda_src/components/masslaw_users/**
+        - lambda_src/components/masslaw_cases/**
+        - lambda_src/components/masslaw_cloud_configurations/**
+        - lambda_src/components/opensearch_manager/**
+        - lambda_src/components/mlcp/**
+        - lambda_src/components/dynamoDB_manager/**
+        - lambda_src/components/S3_manager/**
+        - lambda_src/components/iam_manager/**
+        - lambda_src/components/step_functions_manager/**
+    events:
+      - http:
+          path: /cases/case/files/finish-file-upload
+          method: POST
+          cors: true
+
+  get-case-file-content:
+    handler: lambda_src/handlers/masslaw_api/cases_management/get_case_file_content.handler.handler
+    role: arn:aws:iam::746826375642:role/LambdaMasslawCasesHandlerRole
+    environment:
+      deployed: true
+    package:
+      patterns:
+        - lambda_src/handlers/masslaw_api/cases_management/get_case_file_content/**
+        - lambda_src/components/lambda_base/**
+        - lambda_src/components/cloudwatch_manager/**
+        - lambda_src/components/networking/**
+        - lambda_src/components/util/**
+        - lambda_src/components/cognito_manager/**
+        - lambda_src/components/masslaw_users/**
+        - lambda_src/components/masslaw_cases/**
+        - lambda_src/components/masslaw_cloud_configurations/**
+        - lambda_src/components/opensearch_manager/**
+        - lambda_src/components/mlcp/**
+        - lambda_src/components/dynamoDB_manager/**
+        - lambda_src/components/S3_manager/**
+        - lambda_src/components/iam_manager/**
+        - lambda_src/components/step_functions_manager/**
+    events:
+      - http:
+          path: /cases/case/files/get-content
+          method: GET
+          cors: true
+
+  get-case-file-data:
+    handler: lambda_src/handlers/masslaw_api/cases_management/get_case_file_data.handler.handler
+    role: arn:aws:iam::746826375642:role/LambdaMasslawCasesHandlerRole
+    environment:
+      deployed: true
+    package:
+      patterns:
+        - lambda_src/handlers/masslaw_api/cases_management/get_case_file_data/**
+        - lambda_src/components/lambda_base/**
+        - lambda_src/components/cloudwatch_manager/**
+        - lambda_src/components/networking/**
+        - lambda_src/components/util/**
+        - lambda_src/components/cognito_manager/**
+        - lambda_src/components/masslaw_users/**
+        - lambda_src/components/masslaw_cases/**
+        - lambda_src/components/masslaw_cloud_configurations/**
+        - lambda_src/components/opensearch_manager/**
+        - lambda_src/components/mlcp/**
+        - lambda_src/components/dynamoDB_manager/**
+        - lambda_src/components/S3_manager/**
+        - lambda_src/components/iam_manager/**
+        - lambda_src/components/step_functions_manager/**
+    events:
+      - http:
+          path: /cases/case/files/get-file-data
+          method: GET
+          cors: true
+
+  delete-case-file:
+    handler: lambda_src/handlers/masslaw_api/cases_management/delete_case_file.handler.handler
+    role: arn:aws:iam::746826375642:role/LambdaMasslawCasesHandlerRole
+    environment:
+      deployed: true
+    package:
+      patterns:
+        - lambda_src/handlers/masslaw_api/cases_management/delete_case_file/**
+        - lambda_src/components/lambda_base/**
+        - lambda_src/components/cloudwatch_manager/**
+        - lambda_src/components/networking/**
+        - lambda_src/components/util/**
+        - lambda_src/components/cognito_manager/**
+        - lambda_src/components/masslaw_users/**
+        - lambda_src/components/masslaw_cases/**
+        - lambda_src/components/masslaw_cloud_configurations/**
+        - lambda_src/components/opensearch_manager/**
+        - lambda_src/components/mlcp/**
+        - lambda_src/components/dynamoDB_manager/**
+        - lambda_src/components/S3_manager/**
+        - lambda_src/components/iam_manager/**
+        - lambda_src/components/step_functions_manager/**
+    events:
+      - http:
+          path: /cases/case/files/delete-file
+          method: DELETE
+          cors: true
+
+  search-case-files-text:
+    handler: lambda_src/handlers/masslaw_api/cases_management/search_case_files_text.handler.handler
+    role: arn:aws:iam::746826375642:role/LambdaMasslawCasesHandlerRole
+    environment:
+      deployed: true
+    package:
+      patterns:
+        - lambda_src/handlers/masslaw_api/cases_management/search_case_files_text/**
+        - lambda_src/components/lambda_base/**
+        - lambda_src/components/cloudwatch_manager/**
+        - lambda_src/components/networking/**
+        - lambda_src/components/util/**
+        - lambda_src/components/cognito_manager/**
+        - lambda_src/components/masslaw_users/**
+        - lambda_src/components/masslaw_cases/**
+        - lambda_src/components/masslaw_cloud_configurations/**
+        - lambda_src/components/opensearch_manager/**
+        - lambda_src/components/mlcp/**
+        - lambda_src/components/dynamoDB_manager/**
+        - lambda_src/components/S3_manager/**
+        - lambda_src/components/iam_manager/**
+        - lambda_src/components/step_functions_manager/**
+    events:
+      - http:
+          path: /cases/case/files/search-text
+          method: GET
+          cors: true
+
+  get-case-annotations:
+    handler: lambda_src/handlers/masslaw_api/cases_management/get_case_annotations.handler.handler
+    role: arn:aws:iam::746826375642:role/LambdaMasslawCasesHandlerRole
+    environment:
+      deployed: true
+    package:
+      patterns:
+        - lambda_src/handlers/masslaw_api/cases_management/get_case_annotations/**
+        - lambda_src/components/lambda_base/**
+        - lambda_src/components/cloudwatch_manager/**
+        - lambda_src/components/networking/**
+        - lambda_src/components/util/**
+        - lambda_src/components/cognito_manager/**
+        - lambda_src/components/masslaw_users/**
+        - lambda_src/components/masslaw_cases/**
+        - lambda_src/components/masslaw_cloud_configurations/**
+        - lambda_src/components/opensearch_manager/**
+        - lambda_src/components/mlcp/**
+        - lambda_src/components/dynamoDB_manager/**
+        - lambda_src/components/S3_manager/**
+        - lambda_src/components/iam_manager/**
+        - lambda_src/components/step_functions_manager/**
+    events:
+      - http:
+          path: /cases/case/annotations
+          method: GET
+          cors: true
+
+  set-case-annotation:
+    handler: lambda_src/handlers/masslaw_api/cases_management/set_case_file_annotation.handler.handler
+    role: arn:aws:iam::746826375642:role/LambdaMasslawCasesHandlerRole
+    environment:
+      deployed: true
+    package:
+      patterns:
+        - lambda_src/handlers/masslaw_api/cases_management/set_case_file_annotation/**
+        - lambda_src/components/lambda_base/**
+        - lambda_src/components/cloudwatch_manager/**
+        - lambda_src/components/networking/**
+        - lambda_src/components/util/**
+        - lambda_src/components/cognito_manager/**
+        - lambda_src/components/masslaw_users/**
+        - lambda_src/components/masslaw_cases/**
+        - lambda_src/components/masslaw_cloud_configurations/**
+        - lambda_src/components/opensearch_manager/**
+        - lambda_src/components/mlcp/**
+        - lambda_src/components/dynamoDB_manager/**
+        - lambda_src/components/S3_manager/**
+        - lambda_src/components/iam_manager/**
+        - lambda_src/components/step_functions_manager/**
+    events:
+      - http:
+          path: /cases/case/annotations
+          method: POST
+          cors: true
+
+  delete-case-annotation:
+    handler: lambda_src/handlers/masslaw_api/cases_management/delete_case_file_annotation.handler.handler
+    role: arn:aws:iam::746826375642:role/LambdaMasslawCasesHandlerRole
+    environment:
+      deployed: true
+    package:
+      patterns:
+        - lambda_src/handlers/masslaw_api/cases_management/delete_case_file_annotation/**
+        - lambda_src/components/lambda_base/**
+        - lambda_src/components/cloudwatch_manager/**
+        - lambda_src/components/networking/**
+        - lambda_src/components/util/**
+        - lambda_src/components/cognito_manager/**
+        - lambda_src/components/masslaw_users/**
+        - lambda_src/components/masslaw_cases/**
+        - lambda_src/components/masslaw_cloud_configurations/**
+        - lambda_src/components/opensearch_manager/**
+        - lambda_src/components/mlcp/**
+        - lambda_src/components/dynamoDB_manager/**
+        - lambda_src/components/S3_manager/**
+        - lambda_src/components/iam_manager/**
+        - lambda_src/components/step_functions_manager/**
+    events:
+      - http:
+          path: /cases/case/annotations
+          method: DELETE
+          cors: true
+
+  search-case-annotations:
+    handler: lambda_src/handlers/masslaw_api/cases_management/set_case_file_annotation.handler.handler
+    role: arn:aws:iam::746826375642:role/LambdaMasslawCasesHandlerRole
+    environment:
+      deployed: true
+    package:
+      patterns:
+        - lambda_src/handlers/masslaw_api/cases_management/set_case_file_annotation/**
+        - lambda_src/components/lambda_base/**
+        - lambda_src/components/cloudwatch_manager/**
+        - lambda_src/components/networking/**
+        - lambda_src/components/util/**
+        - lambda_src/components/cognito_manager/**
+        - lambda_src/components/masslaw_users/**
+        - lambda_src/components/masslaw_cases/**
+        - lambda_src/components/masslaw_cloud_configurations/**
+        - lambda_src/components/opensearch_manager/**
+        - lambda_src/components/mlcp/**
+        - lambda_src/components/dynamoDB_manager/**
+        - lambda_src/components/S3_manager/**
+        - lambda_src/components/iam_manager/**
+        - lambda_src/components/step_functions_manager/**
+    events:
+      - http:
+          path: /cases/case/annotations/search
+          method: GET
+          cors: true
+
+  set-case-file-description:
+    handler: lambda_src/handlers/masslaw_api/cases_management/set_case_file_description.handler.handler
+    role: arn:aws:iam::746826375642:role/LambdaMasslawCasesHandlerRole
+    environment:
+      deployed: true
+    package:
+      patterns:
+        - lambda_src/handlers/masslaw_api/cases_management/set_case_file_description/**
+        - lambda_src/components/lambda_base/**
+        - lambda_src/components/cloudwatch_manager/**
+        - lambda_src/components/networking/**
+        - lambda_src/components/util/**
+        - lambda_src/components/cognito_manager/**
+        - lambda_src/components/masslaw_users/**
+        - lambda_src/components/masslaw_cases/**
+        - lambda_src/components/masslaw_cloud_configurations/**
+        - lambda_src/components/opensearch_manager/**
+        - lambda_src/components/mlcp/**
+        - lambda_src/components/dynamoDB_manager/**
+        - lambda_src/components/S3_manager/**
+        - lambda_src/components/iam_manager/**
+        - lambda_src/components/step_functions_manager/**
+    events:
+      - http:
+          path: /cases/case/files/set-description
+          method: POST
+          cors: true
