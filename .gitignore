@@ -18,3 +18,4 @@ content-processing/mlcp/testing/shared/neptune_stub/apache-tinkerpop-gremlin-ser
 *.log
 *.iml
 .serverless
+/cloud-logic/lambda/__build__/
