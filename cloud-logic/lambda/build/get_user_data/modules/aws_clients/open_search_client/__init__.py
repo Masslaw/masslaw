@@ -1,1 +1,0 @@
-from ._opensearch_index_mager import OpenSearchIndexManager

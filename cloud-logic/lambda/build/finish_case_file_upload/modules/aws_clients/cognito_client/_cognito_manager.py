@@ -1,19 +1,16 @@
-import json
-
+import boto3
 from botocore.exceptions import ClientError
+from finish_case_file_upload.modules.dictionary_utils import dictionary_utils
 
-from .._aws_service_client import AWSServiceClient
-from .._types import AWSSessionKeys
+client = boto3.client('cognito-idp')
 
 
-class CognitoUserPoolManager(AWSServiceClient):
-    def __init__(self, user_pool_name: str, region_name: str = 'us-east-1', session_keys: AWSSessionKeys = None):
-        super().__init__(service_name='cognito-idp', region_name=region_name, session_keys=session_keys, )
+class CognitoUserPoolManager:
+    def __init__(self, user_pool_name: str):
         self.user_pool_name = user_pool_name
         self.user_pool_id = self.get_user_pool_id()
-
     def get_user_pool_id(self):
-        response = self._client.list_user_pools(MaxResults=60)
+        response = client.list_user_pools(MaxResults=60)
         user_pools = response['UserPools']
         for user_pool in user_pools:
             if user_pool['Name'] == self.user_pool_name:
@@ -27,7 +24,7 @@ class CognitoUserPoolManager(AWSServiceClient):
 
     def get_user_id_by_access_token(self, access_token):
         try:
-            response = self._client.get_user(
+            response = client.get_user(
                 AccessToken=access_token,
             )
             return response['Username']
@@ -36,18 +33,18 @@ class CognitoUserPoolManager(AWSServiceClient):
 
     def get_user_by_id(self, user_id):
         try:
-            response = self._client.admin_get_user(
+            response = client.admin_get_user(
                 Username=user_id,
                 UserPoolId=self.user_pool_id,
             )
             user_data = self.__parse_get_user_response(response)
-            user_data = self.__ensure_dict(user_data)
+            user_data = dictionary_utils.ensure_dict(user_data)
             return user_data
         except ClientError as e:
             return None
 
     def get_user_by_email(self, email):
-        response = self._client.list_users(
+        response = client.list_users(
             UserPoolId=self.user_pool_id,
             Filter=f"email = \"{email}\""
         )
@@ -58,7 +55,7 @@ class CognitoUserPoolManager(AWSServiceClient):
 
     def check_user_verified(self, user_name):
         try:
-            response = self._client.admin_get_user(
+            response = client.admin_get_user(
                 Username=user_name,
                 UserPoolId=self.user_pool_id,
             )
@@ -67,9 +64,9 @@ class CognitoUserPoolManager(AWSServiceClient):
             return False
 
     def update_user_data(self, user_id, new_data):
-        new_data = self.__ensure_flat(new_data)
+        new_data = dictionary_utils.ensure_flat(new_data)
         attributes = self.__format_user_data_for_write(new_data)
-        response = self._client.admin_update_user_attributes(
+        response = client.admin_update_user_attributes(
             UserPoolId=self.user_pool_id,
             Username=user_id,
             UserAttributes=attributes,
@@ -77,14 +74,14 @@ class CognitoUserPoolManager(AWSServiceClient):
         return response['ResponseMetadata']['HTTPStatusCode'] == 200
 
     def delete_user(self, user_id):
-        response = self._client.admin_delete_user(
+        response = client.admin_delete_user(
             UserPoolId=self.user_pool_id,
             Username=user_id
         )
         return response
 
     def list_users(self):
-        response = self._client.list_users(
+        response = client.list_users(
             UserPoolId=self.user_pool_id,
             AttributesToGet=[
                 'email'
@@ -122,25 +119,6 @@ class CognitoUserPoolManager(AWSServiceClient):
         return writable_attributes
 
     def __get_pool_attributes_data(self):
-        describe_user_pool_response = self._client.describe_user_pool(UserPoolId=self.user_pool_id)
+        describe_user_pool_response = client.describe_user_pool(UserPoolId=self.user_pool_id)
         attributes = describe_user_pool_response['UserPool']['SchemaAttributes']
         return attributes
-
-    def __ensure_dict(self, data):
-        if isinstance(data, str):
-            try:
-                return json.loads(data)
-            except json.JSONDecodeError:
-                return None
-        elif isinstance(data, dict):
-            return data
-        return None
-
-    def __ensure_flat(self, d: dict):
-        for key, value in d.items():
-            if isinstance(value, dict):
-                d[key] = json.dumps(value)
-            elif isinstance(value, list):
-                d[key] = [isinstance(v, dict) and json.dumps(v) or v for v in value]
-            else:
-                d[key] = value
