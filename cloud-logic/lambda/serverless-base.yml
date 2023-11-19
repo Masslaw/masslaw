@@ -1,0 +1,16 @@
+service: masslaw-lambda-functions
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: python3.10
+  region: us-east-1
+  deploymentMethod: direct
+  stage: ${opt:stage, 'dev'}
+  environment:
+    STAGE: ${self:provider.stage}
+
+package:
+  individually: true
+  patterns:
+    - '!**'

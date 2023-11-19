@@ -2,26 +2,50 @@ import ast
 import os
 import re
 import shutil
+from _ast import Module
 from typing import Set
 
-from _ast import Module
+
+def run_build(handler_implementations_dir: str, target_build_dir: str, source_parent: str, base_yaml_file: str):
+    build_lambda_handlers(handler_implementations_dir, target_build_dir, source_parent)
+    generate_serverless_deployment_yaml(base_yaml_file, target_build_dir)
 
 
-def build_lambda_handlers(handler_implementations_dir: str, target_build_dir: str, build_parent: str):
+def build_lambda_handlers(handler_implementations_dir: str, target_build_dir: str, source_parent: str):
     handler_implementations_dir_absolute = os.path.abspath(handler_implementations_dir)
     target_build_dir_absolute = os.path.abspath(target_build_dir)
-    build_parent_absolute = os.path.abspath(build_parent)
-    build_parent_as_module = format_build_parent(build_parent)
+    source_parent_absolute = os.path.abspath(source_parent)
+    source_parent_as_module = format_source_parent(source_parent)
     clear_directory(target_build_dir_absolute)
     init_files = collect_init_files(handler_implementations_dir_absolute)
     print(f"Collected {len(init_files)} handlers.")
     for index, init_file in enumerate(init_files):
-        process_handler(init_file, target_build_dir_absolute, build_parent_absolute, build_parent_as_module, index, len(init_files))
+        process_handler(init_file, target_build_dir_absolute, source_parent_absolute, source_parent_as_module, index, len(init_files))
     update_progress_bar(len(init_files), len(init_files), "Complete")
 
 
-def format_build_parent(build_parent: str) -> str:
-    return build_parent.strip("./").replace("/", ".")
+def generate_serverless_deployment_yaml(base_yaml_file: str, target_build_dir: str):
+    generated_yaml_content = ''
+    with open(base_yaml_file, 'r') as f:
+        generated_yaml_content += f.read()
+    generated_yaml_content += "\n\nfunctions:"
+    for handler_package in os.listdir(target_build_dir):
+        handler_package_path = os.path.join(target_build_dir, handler_package)
+        if not os.path.isdir(handler_package_path): continue
+        handler_package_serverless_file = os.path.join(handler_package_path, 'serverless.yml')
+        if not os.path.exists(handler_package_serverless_file): continue
+        formatted_handler_name = re.sub(r'(?<!^)(?=[A-Z])|_| ', '-', handler_package).lower()
+        generated_yaml_content += f"\n  {formatted_handler_name}:\n    handler: {handler_package}.handler\n    package:\n      patterns:\n        - {handler_package}/**"
+        with open(handler_package_serverless_file, 'r') as f:
+            handler_package_serverless_yaml_content = f.read()
+            generated_yaml_content += "\n    " + handler_package_serverless_yaml_content.replace("\n", "\n    ")
+    generated_yaml_file = os.path.abspath(os.path.join(target_build_dir, "serverless.yml"))
+    with open(generated_yaml_file, 'w+') as f:
+        f.write(generated_yaml_content)
+
+
+def format_source_parent(source_parent: str) -> str:
+    return source_parent.strip("./").replace("/", ".")
 
 
 def clear_directory(directory: str):
@@ -34,7 +58,7 @@ def collect_init_files(directory: str) -> list:
     return [os.path.join(subdir, file) for subdir, _, files in os.walk(directory) for file in files if file == '__init__.py']
 
 
-def process_handler(init_file: str, target_build_dir: str, build_parent: str, build_parent_as_module: str, index: int, total: int):
+def process_handler(init_file: str, target_build_dir: str, source_parent: str, source_parent_as_module: str, index: int, total: int):
     parent_dir_path = os.path.dirname(init_file)
     parent_dir_name = os.path.basename(parent_dir_path)
     update_progress_bar(index, total, parent_dir_name)
@@ -43,14 +67,14 @@ def process_handler(init_file: str, target_build_dir: str, build_parent: str, bu
     handler_build_dir = os.path.join(target_build_dir, parent_dir_name)
     shutil.copytree(parent_dir_path, handler_build_dir, dirs_exist_ok=True)
 
-    copy_dependencies(dependencies, handler_build_dir, build_parent, parent_dir_name)
-    update_import_statements(handler_build_dir, build_parent_as_module, parent_dir_name)
+    copy_dependencies(dependencies, handler_build_dir, source_parent, parent_dir_name)
+    update_import_statements(handler_build_dir, source_parent_as_module, parent_dir_name)
     update_progress_bar(index + 1, total, parent_dir_name)
 
 
-def copy_dependencies(dependencies: Set[str], handler_build_dir: str, build_parent: str, parent_dir_name: str):
+def copy_dependencies(dependencies: Set[str], handler_build_dir: str, source_parent: str, parent_dir_name: str):
     for dep in dependencies:
-        rel_path = os.path.relpath(dep, build_parent)
+        rel_path = os.path.relpath(dep, source_parent)
         dest_path = os.path.join(handler_build_dir, rel_path)
         if not os.path.exists(os.path.dirname(dest_path)):
             os.makedirs(os.path.dirname(dest_path))
@@ -60,14 +84,14 @@ def copy_dependencies(dependencies: Set[str], handler_build_dir: str, build_pare
             shutil.copy(dep, dest_path)
 
 
-def update_import_statements(handler_build_dir: str, build_parent_as_module: str, parent_dir_name: str):
+def update_import_statements(handler_build_dir: str, source_parent_as_module: str, parent_dir_name: str):
     for subdir, _, files in os.walk(handler_build_dir):
         for file in files:
             if file.endswith('.py'):
                 file_path = os.path.join(subdir, file)
                 with open(file_path, 'r') as f:
                     content = f.read()
-                content = re.sub(rf"from\s+{re.escape(build_parent_as_module)}", f"from {parent_dir_name}", content)
+                content = re.sub(rf"from\s+{re.escape(source_parent_as_module)}", f"from {parent_dir_name}", content)
                 with open(file_path, 'w') as f:
                     f.write(content)
 
@@ -156,6 +180,7 @@ def get_module_containing_script(script_path: str) -> str:
 
 if __name__ == "__main__":
     handler_implementations_parent_dir = './src/handlers'
-    target_build_directory = './__build__'
-    build_parent = './src'
-    build_lambda_handlers(handler_implementations_parent_dir, target_build_directory, build_parent)
+    target_build_directory = './build'
+    source_parent = './src'
+    base_yaml_file = './serverless-base.yml'
+    run_build(handler_implementations_parent_dir, target_build_directory, source_parent, base_yaml_file)

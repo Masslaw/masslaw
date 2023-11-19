@@ -1,0 +1,3 @@
+
+
+class InvalidEventLambdaException(Exception): pass

@@ -1,0 +1,5 @@
+
+
+
+class MasslawFileTypeNotSupportedException(Exception):
+    pass

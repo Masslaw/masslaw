@@ -1,0 +1,346 @@
+service: masslaw-lambda-functions
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: python3.10
+  region: us-east-1
+  deploymentMethod: direct
+  stage: ${opt:stage, 'dev'}
+  environment:
+    STAGE: ${self:provider.stage}
+
+package:
+  individually: true
+  patterns:
+    - '!**'
+
+
+functions:
+  delete-case-file:
+    handler: delete_case_file.handler
+    package:
+      patterns:
+        - delete_case_file/**
+    role: arn:aws:iam::746826375642:role/LambdaMasslawCasesHandlerRole
+    environment:
+      deployed: true
+    events:
+      - http:
+          path: /cases/case/files/delete-file
+          method: DELETE
+          cors: true
+  text-extraction-start:
+    handler: text_extraction_start.handler
+    package:
+      patterns:
+        - text_extraction_start/**
+    role: arn:aws:iam::746826375642:role/MasslawCaseFilePipelineLambdaLogicHandler
+    environment:
+      deployed: true
+  get-my-cases:
+    handler: get_my_cases.handler
+    package:
+      patterns:
+        - get_my_cases/**
+    role: arn:aws:iam::746826375642:role/LambdaMasslawCasesHandlerRole
+    environment:
+      deployed: true
+    events:
+      - http:
+          path: /cases/get-mine
+          method: GET
+          cors: true
+  get-case-data:
+    handler: get_case_data.handler
+    package:
+      patterns:
+        - get_case_data/**
+    role: arn:aws:iam::746826375642:role/LambdaMasslawCasesHandlerRole
+    environment:
+      deployed: true
+    events:
+      - http:
+          path: /cases/case/get-data
+          method: GET
+          cors: true
+  case-file-pipeline-start:
+    handler: case_file_pipeline_start.handler
+    package:
+      patterns:
+        - case_file_pipeline_start/**
+    role: arn:aws:iam::746826375642:role/MasslawCaseFilePipelineLambdaLogicHandler
+    environment:
+      deployed: true
+  set-case-file-description:
+    handler: set_case_file_description.handler
+    package:
+      patterns:
+        - set_case_file_description/**
+    role: arn:aws:iam::746826375642:role/LambdaMasslawCasesHandlerRole
+    environment:
+      deployed: true
+    events:
+      - http:
+          path: /cases/case/files/set-description
+          method: POST
+          cors: true
+  text-processing-fail:
+    handler: text_processing_fail.handler
+    package:
+      patterns:
+        - text_processing_fail/**
+    role: arn:aws:iam::746826375642:role/MasslawCaseFilePipelineLambdaLogicHandler
+    environment:
+      deployed: true
+  start-case-file-upload:
+    handler: start_case_file_upload.handler
+    package:
+      patterns:
+        - start_case_file_upload/**
+    role: arn:aws:iam::746826375642:role/LambdaMasslawCasesHandlerRole
+    environment:
+      deployed: true
+    events:
+      - http:
+          path: /cases/case/files/start-file-upload
+          method: POST
+          cors: true
+  get-user-data:
+    handler: get_user_data.handler
+    package:
+      patterns:
+        - get_user_data/**
+    role: arn:aws:iam::746826375642:role/LambdaFullyAccessingCognito
+    environment:
+      deployed: true
+    events:
+      - http:
+          path: /users/user-data
+          method: GET
+          cors: true
+  get-case-file-data:
+    handler: get_case_file_data.handler
+    package:
+      patterns:
+        - get_case_file_data/**
+    role: arn:aws:iam::746826375642:role/LambdaMasslawCasesHandlerRole
+    environment:
+      deployed: true
+    events:
+      - http:
+          path: /cases/case/files/get-file-data
+          method: GET
+          cors: true
+  get-case-files-data:
+    handler: get_case_files_data.handler
+    package:
+      patterns:
+        - get_case_files_data/**
+    role: arn:aws:iam::746826375642:role/LambdaMasslawCasesHandlerRole
+    environment:
+      deployed: true
+    events:
+      - http:
+          path: /cases/case/files
+          method: GET
+          cors: true
+  text-processing-success:
+    handler: text_processing_success.handler
+    package:
+      patterns:
+        - text_processing_success/**
+    role: arn:aws:iam::746826375642:role/MasslawCaseFilePipelineLambdaLogicHandler
+    environment:
+      deployed: true
+  get-case-annotations:
+    handler: get_case_annotations.handler
+    package:
+      patterns:
+        - get_case_annotations/**
+    role: arn:aws:iam::746826375642:role/LambdaMasslawCasesHandlerRole
+    environment:
+      deployed: true
+    events:
+      - http:
+          path: /cases/case/annotations
+          method: GET
+          cors: true
+  search-case-files-text:
+    handler: search_case_files_text.handler
+    package:
+      patterns:
+        - search_case_files_text/**
+    role: arn:aws:iam::746826375642:role/LambdaMasslawCasesHandlerRole
+    environment:
+      deployed: true
+    events:
+      - http:
+          path: /cases/case/files/search-text
+          method: GET
+          cors: true
+  get-user-status:
+    handler: get_user_status.handler
+    package:
+      patterns:
+        - get_user_status/**
+    role: arn:aws:iam::746826375642:role/LambdaFullyAccessingCognito
+    environment:
+      deployed: true
+    events:
+      - http:
+          path: /users/me/status
+          method: GET
+          cors: true
+  delete-case-file-annotation:
+    handler: delete_case_file_annotation.handler
+    package:
+      patterns:
+        - delete_case_file_annotation/**
+    role: arn:aws:iam::746826375642:role/LambdaMasslawCasesHandlerRole
+    environment:
+      deployed: true
+    events:
+      - http:
+          path: /cases/case/annotations
+          method: DELETE
+          cors: true
+  set-user-data:
+    handler: set_user_data.handler
+    package:
+      patterns:
+        - set_user_data/**
+    role: arn:aws:iam::746826375642:role/LambdaFullyAccessingCognito
+    environment:
+      deployed: true
+    events:
+      - http:
+          path: /users/user-data
+          method: POST
+          cors: true
+  case-file-pipeline-success:
+    handler: case_file_pipeline_success.handler
+    package:
+      patterns:
+        - case_file_pipeline_success/**
+    role: arn:aws:iam::746826375642:role/MasslawCaseFilePipelineLambdaLogicHandler
+    environment:
+      deployed: true
+  text-processing-start:
+    handler: text_processing_start.handler
+    package:
+      patterns:
+        - text_processing_start/**
+    role: arn:aws:iam::746826375642:role/MasslawCaseFilePipelineLambdaLogicHandler
+    environment:
+      deployed: true
+  submit-to-search-index:
+    handler: submit_to_search_index.handler
+    package:
+      patterns:
+        - submit_to_search_index/**
+    role: arn:aws:iam::746826375642:role/MasslawCaseFilePipelineLambdaLogicHandler
+    environment:
+      deployed: true
+  case-file-pipeline-fail:
+    handler: case_file_pipeline_fail.handler
+    package:
+      patterns:
+        - case_file_pipeline_fail/**
+    role: arn:aws:iam::746826375642:role/MasslawCaseFilePipelineLambdaLogicHandler
+    environment:
+      deployed: true
+  get-case-file-content:
+    handler: get_case_file_content.handler
+    package:
+      patterns:
+        - get_case_file_content/**
+    role: arn:aws:iam::746826375642:role/LambdaMasslawCasesHandlerRole
+    environment:
+      deployed: true
+    events:
+      - http:
+          path: /cases/case/files/get-content
+          method: GET
+          cors: true
+  create-case:
+    handler: create_case.handler
+    package:
+      patterns:
+        - create_case/**
+    role: arn:aws:iam::746826375642:role/LambdaMasslawCasesHandlerRole
+    environment:
+      deployed: true
+    events:
+      - http:
+          path: /cases/create
+          method: POST
+          cors: true
+  text-extraction-success:
+    handler: text_extraction_success.handler
+    package:
+      patterns:
+        - text_extraction_success/**
+    role: arn:aws:iam::746826375642:role/MasslawCaseFilePipelineLambdaLogicHandler
+    environment:
+      deployed: true
+  text-extraction-fail:
+    handler: text_extraction_fail.handler
+    package:
+      patterns:
+        - text_extraction_fail/**
+    role: arn:aws:iam::746826375642:role/MasslawCaseFilePipelineLambdaLogicHandler
+    environment:
+      deployed: true
+  set-case-file-annotation:
+    handler: set_case_file_annotation.handler
+    package:
+      patterns:
+        - set_case_file_annotation/**
+    role: arn:aws:iam::746826375642:role/LambdaMasslawCasesHandlerRole
+    environment:
+      deployed: true
+    events:
+      - http:
+          path: /cases/case/annotations
+          method: POST
+          cors: true
+  set-case-data:
+    handler: set_case_data.handler
+    package:
+      patterns:
+        - set_case_data/**
+    role: arn:aws:iam::746826375642:role/LambdaMasslawCasesHandlerRole
+    environment:
+      deployed: true
+    events:
+      - http:
+          path: /cases/case/data
+          method: POST
+          cors: true
+  search-case-annotations:
+    handler: search_case_annotations.handler
+    package:
+      patterns:
+        - search_case_annotations/**
+    role: arn:aws:iam::746826375642:role/LambdaMasslawCasesHandlerRole
+    environment:
+      deployed: true
+    events:
+      - http:
+          path: /cases/case/annotations/search
+          method: GET
+          cors: true
+  finish-case-file-upload:
+    handler: finish_case_file_upload.handler
+    package:
+      patterns:
+        - finish_case_file_upload/**
+    role: arn:aws:iam::746826375642:role/LambdaMasslawCasesHandlerRole
+    environment:
+      deployed: true
+    events:
+      - http:
+          path: /cases/case/files/finish-file-upload
+          method: POST
+          cors: true

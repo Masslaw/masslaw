@@ -1,0 +1,3 @@
+role: arn:aws:iam::746826375642:role/MasslawCaseFilePipelineLambdaLogicHandler
+environment:
+  deployed: true

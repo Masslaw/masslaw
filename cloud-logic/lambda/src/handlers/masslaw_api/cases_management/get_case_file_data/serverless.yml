@@ -1,0 +1,8 @@
+role: arn:aws:iam::746826375642:role/LambdaMasslawCasesHandlerRole
+environment:
+  deployed: true
+events:
+  - http:
+      path: /cases/case/files/get-file-data
+      method: GET
+      cors: true

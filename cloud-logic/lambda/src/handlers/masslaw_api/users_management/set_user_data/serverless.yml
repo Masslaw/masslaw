@@ -1,0 +1,8 @@
+role: arn:aws:iam::746826375642:role/LambdaFullyAccessingCognito
+environment:
+  deployed: true
+events:
+  - http:
+      path: /users/user-data
+      method: POST
+      cors: true

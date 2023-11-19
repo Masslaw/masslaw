@@ -1,0 +1,4 @@
+from ._authenticated_masslaw_user_http_invoked_lambda_function import AuthenticatedMasslawUserHttpInvokedLambdaFunction
+
+
+__all__ = ["AuthenticatedMasslawUserHttpInvokedLambdaFunction"]
