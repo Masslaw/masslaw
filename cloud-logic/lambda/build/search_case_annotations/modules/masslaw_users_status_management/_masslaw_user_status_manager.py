@@ -1,6 +1,7 @@
 from search_case_annotations.modules.aws_clients.cognito_client import CognitoUserPoolManager
 from search_case_annotations.modules.masslaw_users_objects import MasslawUserInstance
 from search_case_annotations.modules.masslaw_users_config import user_statuses
+from search_case_annotations.modules.masslaw_users_status_management._exceptions import MasslawUserStatusAssertFailed
 
 cognitoManager = CognitoUserPoolManager("MasslawUsers")
 
@@ -28,7 +29,7 @@ class MasslawUserStatusManager:
             raise MasslawUserStatusAssertFailed(str(user_status))
 
     def __check_credentials(self):
-        for required_credential in REQUIRED_CREDENTIALS:
+        for required_credential in user_statuses.REQUIRED_CREDENTIALS:
             if not self.__user_instance.get_data_property(required_credential, None):
                 return False
         return True

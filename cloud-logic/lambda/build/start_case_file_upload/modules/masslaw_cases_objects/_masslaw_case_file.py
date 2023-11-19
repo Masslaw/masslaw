@@ -1,3 +1,5 @@
+import time
+
 from start_case_file_upload.modules.masslaw_cases_config import files_config
 from start_case_file_upload.modules.masslaw_cases_objects._exceptions import MasslawCaseFileDataUpdateException
 from start_case_file_upload.modules.remote_data_management_dynamodb import DynamodbDataHolder

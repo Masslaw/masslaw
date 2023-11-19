@@ -50,10 +50,10 @@ def submit_job_pipeline(jobs: list):
     job_ids = []
     for i, job in enumerate(jobs):
         if i == 0:
-            job_id = BatchManager.submit_job(job)
+            job_id = submit_job(job)
         else:
             prev_job_id = job_ids[i - 1]
             depends_on = [{'jobId': prev_job_id}]
-            job_id = BatchManager.submit_job(job, depends_on)
+            job_id = submit_job(job, depends_on)
         job_ids.append(job_id)
     return job_ids

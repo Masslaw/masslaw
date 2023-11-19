@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-from shared_layer.memory_utils.controlled_data_loading._controlled_data_loader import MemoryControlledDataLoader
+from src.modules.memory_utils.controlled_data_loading._controlled_data_loader import MemoryControlledDataLoader
 
 
 class MemoryControlledOpenCVImageLoader(MemoryControlledDataLoader):

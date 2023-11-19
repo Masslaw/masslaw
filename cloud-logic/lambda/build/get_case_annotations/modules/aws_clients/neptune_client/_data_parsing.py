@@ -7,8 +7,8 @@ from gremlin_python.statics import long
 from gremlin_python.structure.graph import Edge
 from gremlin_python.structure.graph import Vertex
 
-from resources_layer.aws_clients.neptune_client._neptune_edge import NeptuneEdge
-from resources_layer.aws_clients.neptune_client._neptune_node import NeptuneNode
+from get_case_annotations.modules.aws_clients.neptune_client._neptune_edge import NeptuneEdge
+from get_case_annotations.modules.aws_clients.neptune_client._neptune_node import NeptuneNode
 
 
 def parse_raw_neptune_node_data(raw_data: Dict) -> NeptuneNode:

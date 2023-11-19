@@ -1,7 +1,7 @@
 from delete_case_file_annotation.modules.lambda_base import lambda_constants
 from delete_case_file_annotation.modules.lambda_handler_template_http_invoked_authenticated_masslaw_user import AuthenticatedMasslawUserHttpInvokedLambdaFunction
 from delete_case_file_annotation.modules.masslaw_case_users_management import masslaw_case_users_management_exceptions
-from delete_case_file_annotation.modules.masslaw_cases_objects import MasslawCaseDataUpdateException
+from delete_case_file_annotation.modules.masslaw_cases_objects import masslaw_cases_objects_exceptions
 from delete_case_file_annotation.modules.masslaw_users_config import user_statuses
 
 
@@ -11,7 +11,7 @@ class MasslawCaseManagementApiInvokedLambdaFunction(AuthenticatedMasslawUserHttp
             minimum_user_status_level=user_statuses.UserStatuses.FULLY_APPROVED)
 
     def _handle_exception(self, exception: Exception):
-        if isinstance(exception, MasslawCaseDataUpdateException):
+        if isinstance(exception, masslaw_cases_objects_exceptions.MasslawCaseDataUpdateException):
             self._set_response_attribute([lambda_constants.EventKeys.STATUS_CODE], lambda_constants.StatusCodes.BAD_REQUEST)
             self._set_response_attribute([lambda_constants.EventKeys.BODY, lambda_constants.EventKeys.RESPONSE_MESSAGE], f'Invalid Case Data: {exception}')
             return

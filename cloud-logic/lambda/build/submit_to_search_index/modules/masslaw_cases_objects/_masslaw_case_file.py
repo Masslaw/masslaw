@@ -1,3 +1,5 @@
+import time
+
 from submit_to_search_index.modules.masslaw_cases_config import files_config
 from submit_to_search_index.modules.masslaw_cases_objects._exceptions import MasslawCaseFileDataUpdateException
 from submit_to_search_index.modules.remote_data_management_dynamodb import DynamodbDataHolder

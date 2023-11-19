@@ -31,7 +31,7 @@ class MasslawUserInstance(DataHolder):
     def save_data(self):
         DataHolder.save_data(self)
         write_user_data = self._get_write_data_object()
-        write_user_data = dictionary_utils.ensure_flat(write_user_data)
+        dictionary_utils.ensure_flat(write_user_data)
         cognitoManager.update_user_data(self.__user_id, write_user_data)
         self._valid = True
 

@@ -1,3 +1,5 @@
+import time
+
 from text_processing_start.modules.masslaw_cases_config import files_config
 from text_processing_start.modules.masslaw_cases_objects._exceptions import MasslawCaseFileDataUpdateException
 from text_processing_start.modules.remote_data_management_dynamodb import DynamodbDataHolder

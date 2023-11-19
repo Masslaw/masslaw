@@ -184,3 +184,4 @@ if __name__ == "__main__":
     source_parent = './src'
     base_yaml_file = './serverless-base.yml'
     run_build(handler_implementations_parent_dir, target_build_directory, source_parent, base_yaml_file)
+    os.system("cd build; serverless deploy --stage dev")

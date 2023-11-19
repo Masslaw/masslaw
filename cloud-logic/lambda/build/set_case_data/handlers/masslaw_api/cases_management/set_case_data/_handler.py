@@ -35,9 +35,9 @@ class SetCaseData(MasslawCaseManagementApiInvokedLambdaFunction):
     def __build_update_object(self):
         update_object = self.__new_data.copy()
         if new_title := dictionary_utils.get_from(self.__new_data, ['title']):
-            update_object = dictionary_utils.set_at(update_object, ['information', 'title'], new_title)
+            dictionary_utils.set_at(update_object, ['information', 'title'], new_title)
         if new_description := dictionary_utils.get_from(self.__new_data, ['description']):
-            update_object = dictionary_utils.set_at(update_object, ['information', 'description'], new_description)
+            dictionary_utils.set_at(update_object, ['information', 'description'], new_description)
         return update_object
 
 

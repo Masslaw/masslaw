@@ -1,4 +1,6 @@
 import json
+from datetime import datetime
+from decimal import Decimal
 
 
 def get_from(d: dict, path: list, default=None):
@@ -18,7 +20,7 @@ def set_at(d: dict, path: list, element):
     if len(path) == 1:
         d[path[0]] = element
         return
-    sub_value = d.get(path[0], {})
+    sub_value = d.get(path[0]) or {}
     if not isinstance(sub_value, dict):
         sub_value = {}
     set_at(sub_value, path[1:], element)
@@ -116,3 +118,32 @@ def ensure_dict(d):
         for key in list(d.keys()):
             d[key] = ensure_dict(d[key])
     return d
+
+
+def try_loads(d: str):
+    try:
+        return json.loads(d)
+    except:
+        pass
+    try:
+        with open(d, 'r') as f:
+            return json.load(f)
+    except:
+        pass
+    return None
+
+
+def ensure_serializable(val):
+    if isinstance(val, dict):
+        new_dict = {}
+        for key, value in val.items():
+            new_dict[key] = ensure_serializable(value)
+        return new_dict
+    elif isinstance(val, (list, tuple)):
+        return [isinstance(v, dict) and ensure_serializable(v) or v for v in val]
+    elif isinstance(val, Decimal):
+        return float(val)
+    elif isinstance(val, datetime):
+        return val.isoformat()
+    else:
+        return val

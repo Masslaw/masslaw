@@ -60,6 +60,6 @@ export const MasslawApiCalls = {
 export const ApiRoots: {[key in APIs]: {[key in DevelopmentStages]: string}} = {
     [APIs.MASSLAW]: {
         [DevelopmentStages.PRODUCTION]: 'https://uoubb15jdd.execute-api.us-east-1.amazonaws.com/prod',
-        [DevelopmentStages.DEVELOPMENT]: 'https://7vqubkawoi.execute-api.us-east-1.amazonaws.com/dev',
+        [DevelopmentStages.DEVELOPMENT]: 'https://68yfmtv8od.execute-api.us-east-1.amazonaws.com/dev',
     },
 };

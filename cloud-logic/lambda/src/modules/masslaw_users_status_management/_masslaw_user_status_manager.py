@@ -1,6 +1,7 @@
-from ...masslaw_users_objects.masslaw_user_instance import MasslawUserInstance
-from ...cognito_client import CognitoUserPoolManager
-from ...masslaw_users_objects._config.user_statuses import *
+from src.modules.aws_clients.cognito_client import CognitoUserPoolManager
+from src.modules.masslaw_users_objects import MasslawUserInstance
+from src.modules.masslaw_users_config import user_statuses
+from src.modules.masslaw_users_status_management._exceptions import MasslawUserStatusAssertFailed
 
 cognitoManager = CognitoUserPoolManager("MasslawUsers")
 
@@ -12,15 +13,15 @@ class MasslawUserStatusManager:
 
     def get_user_status(self):
         if not self.__user_instance.is_valid():
-            return UserStatuses.GUEST
+            return user_statuses.UserStatuses.GUEST
 
         if not cognitoManager.check_user_verified(self.__user_instance.get_user_id()):
-            return UserStatuses.UNVERIFIED
+            return user_statuses.UserStatuses.UNVERIFIED
 
         if not self.__check_credentials():
-            return UserStatuses.MISSING_CREDENTIALS
+            return user_statuses.UserStatuses.MISSING_CREDENTIALS
 
-        return UserStatuses.FULLY_APPROVED
+        return user_statuses.UserStatuses.FULLY_APPROVED
 
     def assert_status(self, min_status_level: int):
         user_status = self.get_user_status()
@@ -28,7 +29,7 @@ class MasslawUserStatusManager:
             raise MasslawUserStatusAssertFailed(str(user_status))
 
     def __check_credentials(self):
-        for required_credential in REQUIRED_CREDENTIALS:
+        for required_credential in user_statuses.REQUIRED_CREDENTIALS:
             if not self.__user_instance.get_data_property(required_credential, None):
                 return False
         return True

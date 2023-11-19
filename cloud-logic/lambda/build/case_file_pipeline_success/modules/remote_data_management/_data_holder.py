@@ -37,7 +37,7 @@ class DataHolder:
 
     def delete_data_properties(self, keys):
         data = self._get_data()
-        data = dictionary_utils.delete_keys(data, keys)
+        dictionary_utils.delete_keys(data, keys)
         self._set_data(data)
 
     def delete_data_property(self, key):
@@ -64,7 +64,7 @@ class DataHolder:
         if not create_new_keys:
             existing_keys = list(self.get_data_copy().keys())
             update_obj = dictionary_utils.select_keys(update_obj, existing_keys)
-        update_obj = dictionary_utils.delete_keys(update_obj, self._locked_attributes)
+        dictionary_utils.delete_keys(update_obj, self._locked_attributes)
         for key in list(update_obj.keys()):
             self.set_data_property([key], update_obj[key])
 

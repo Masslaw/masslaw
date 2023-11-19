@@ -1,6 +1,6 @@
 import os
 
-from shared_layer.file_system_utils._exceptions import InvalidPathOrDirectory
+from src.modules.file_system_utils._exceptions import InvalidPathOrDirectory
 
 
 def assert_directory_exists(directory: str):

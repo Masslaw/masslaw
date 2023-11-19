@@ -9,6 +9,7 @@ class CognitoUserPoolManager:
     def __init__(self, user_pool_name: str):
         self.user_pool_name = user_pool_name
         self.user_pool_id = self.get_user_pool_id()
+
     def get_user_pool_id(self):
         response = client.list_user_pools(MaxResults=60)
         user_pools = response['UserPools']
@@ -64,7 +65,7 @@ class CognitoUserPoolManager:
             return False
 
     def update_user_data(self, user_id, new_data):
-        new_data = dictionary_utils.ensure_flat(new_data)
+        dictionary_utils.ensure_flat(new_data)
         attributes = self.__format_user_data_for_write(new_data)
         response = client.admin_update_user_attributes(
             UserPoolId=self.user_pool_id,

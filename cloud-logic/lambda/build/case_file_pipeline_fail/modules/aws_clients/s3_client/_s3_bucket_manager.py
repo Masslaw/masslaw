@@ -7,7 +7,7 @@ from .._aws_service_client import AWSServiceClient
 
 class S3BucketManager(AWSServiceClient):
     def __init__(self, bucket_name: str, region_name: str = 'us-east-1', session_keys: AWSSessionKeys = None):
-        super().__init__(service_name='s3', region_name=region_name, session_keys=session_keys, )
+        super().__init__(service_name='s3', region_name=region_name, session_keys=session_keys)
         self._bucket_name = bucket_name
         self._bucket = self._resource.Bucket(bucket_name)
 

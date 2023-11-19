@@ -61,7 +61,7 @@ functions:
       deployed: true
     events:
       - http:
-          path: /cases/case/get-data
+          path: /cases/case/data
           method: GET
           cors: true
   case-file-pipeline-start:

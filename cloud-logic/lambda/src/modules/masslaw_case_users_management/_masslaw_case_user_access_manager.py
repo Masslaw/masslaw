@@ -62,7 +62,7 @@ class MasslawCaseUserAccessManager:
 
     def get_user_access_files(self, user_id):
         access_level = self.determine_user_access_level(user_id)
-        if access_level in [access_config.CaseAccessEntities.OWNER_CLIENT, access_config.CaseAccessEntities.MANAGER_CLIENT]:
+        if access_level in (access_config.CaseAccessEntities.OWNER_CLIENT, access_config.CaseAccessEntities.MANAGER_CLIENT):
             all_files = self.__case_instance.get_data_property(['files'], [])
             return all_files
         if access_level in [access_config.CaseAccessEntities.EXTERNAL_CLIENT]:

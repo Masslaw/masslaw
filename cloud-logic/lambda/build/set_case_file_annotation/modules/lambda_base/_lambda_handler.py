@@ -18,7 +18,7 @@ class LambdaHandler:
         self.name = name or str(self.__class__.__name__)
         self.__event_structure = event_structure or {}
         self.__default_response = default_response or {}
-        self.__response = self.__default_response
+        self.__response = self.__default_response or {}
         self.__event = {}
         self.__context = None
         self._stage = os.environ.get('STAGE', 'prod')
@@ -87,9 +87,9 @@ class LambdaHandler:
 
     def _set_response_attribute(self, key_path, value):
         if value is None:
-            self.__response = dictionary_utils.delete_at(self.__response, key_path)
+            dictionary_utils.delete_at(self.__response, key_path)
         else:
-            self.__response = dictionary_utils.set_at(self.__response, key_path, value)
+            dictionary_utils.set_at(self.__response, key_path, value)
 
     def _prepare_final_response(self, response):
         self._log(f'Preparing final response')
