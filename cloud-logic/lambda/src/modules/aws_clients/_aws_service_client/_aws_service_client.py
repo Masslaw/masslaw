@@ -1,3 +1,4 @@
+import logging
 import os
 
 import boto3
@@ -18,8 +19,21 @@ class AWSServiceClient:
 
     def _start_session(self):
         self._session = boto3.Session(aws_access_key_id=self._session_keys[0], aws_secret_access_key=self._session_keys[1], aws_session_token=self._session_keys[2])
-        self._client = self._session.client(self._service_name, region_name=self._region_name)
-        self._resource = self._session.resource(self._service_name, region_name=self._region_name)
+        self._try_initiating_a_client()
+        self._try_initiating_a_resource()
+
+    def _try_initiating_a_client(self):
+        try:
+            self._client = self._session.client(self._service_name, region_name=self._region_name)
+        except Exception as e:  # the exact error is inaccessable
+            logging.getLogger().warning(f"A client could not be created :: {e}")
+
+    def _try_initiating_a_resource(self):
+        try:
+            self._resource = self._session.resource(self._service_name, region_name=self._region_name)
+        except Exception as e:  # the exact error is inaccessable
+            logging.getLogger().warning(f"A resource could not be created :: {e}")
+
 
     def _load_environment_session_keys(self):
         access_key_id = os.environ.get(f"{self._service_name}{service_access_key_id_suffix}", '')
