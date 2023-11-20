@@ -11,6 +11,7 @@ from src.modules.masslaw_cases_config import security_config
 from src.modules.masslaw_cases_config import storage_config
 from src.modules.masslaw_cases_objects import MasslawCaseFileInstance
 from src.modules.masslaw_cases_objects import MasslawCaseInstance
+from src.modules.masslaw_cloud_configurations import configuration_keys
 from src.modules.masslaw_cloud_configurations import get_configuration_value
 from src.modules.remote_data_management_dynamodb import DynamodbDataHolder
 
@@ -126,6 +127,6 @@ class MasslawCaseStorageManager:
         pipeline_state_machine_manger.start_execution({"file_id": file_instance.get_file_id(), "stage": stage})
 
     def assert_file_type_supported(self, file_type):
-        supported_file_types = list(get_configuration_value(key=storage_config.SUPPORTED_MLCP_FILE_TYPES))
+        supported_file_types = list(get_configuration_value(key=configuration_keys.SUPPORTED_MLCP_FILE_TYPES))
         if not file_type in supported_file_types:
             raise MasslawFileTypeNotSupportedException("The provided file is not supported in masslaw services")
