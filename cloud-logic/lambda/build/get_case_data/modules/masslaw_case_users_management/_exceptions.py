@@ -1,2 +1,0 @@
-class MasslawCaseUnauthorizedUserActionException(Exception):
-    pass

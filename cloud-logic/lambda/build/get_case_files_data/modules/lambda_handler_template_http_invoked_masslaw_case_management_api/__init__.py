@@ -1,4 +1,0 @@
-from ._masslaw_case_management_api_invoked_lambda_function import MasslawCaseManagementApiInvokedLambdaFunction
-
-
-__all__ = ["MasslawCaseManagementApiInvokedLambdaFunction"]

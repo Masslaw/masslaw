@@ -1,1 +1,0 @@
-class MasslawUserDataUpdateException(Exception): pass

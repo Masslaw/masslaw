@@ -1,4 +1,0 @@
-
-
-class MasslawUserStatusAssertFailed(Exception):
-    pass

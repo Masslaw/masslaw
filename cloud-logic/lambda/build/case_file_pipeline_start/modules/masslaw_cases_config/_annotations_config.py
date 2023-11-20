@@ -1,2 +1,0 @@
-ANNOTATION_LENGTH_HARD_LIMIT = 2000  # annotations can have a maximum length of 250 characters marked
-ANNOTATION_TEXT_LENGTH_HARD_LIMIT = 500  # annotations' text can have a maximum length of 500 characters

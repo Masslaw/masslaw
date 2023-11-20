@@ -1,8 +1,0 @@
-role: arn:aws:iam::746826375642:role/LambdaMasslawCasesHandlerRole
-environment:
-  deployed: true
-events:
-  - http:
-      path: /cases/case/files/delete-file
-      method: DELETE
-      cors: true
