@@ -1,8 +1,9 @@
 import math
 import threading
+from concurrent.futures import ThreadPoolExecutor
 
-from src.modules.aws_clients._types import AWSSessionKeys
 from src.modules.aws_clients._aws_service_client import AWSServiceClient
+from src.modules.aws_clients._types import AWSSessionKeys
 from src.modules.dictionary_utils import dictionary_utils
 
 
@@ -25,12 +26,7 @@ class DynamoDBTableManager(AWSServiceClient):
         expression_attribute_names = {f"#{k}": k for k in data}
         expression_attribute_values = {f":{k}": v for k, v in data.items()}
 
-        self.table.update_item(
-            Key=self.__ensure_key_object(item_id),
-            UpdateExpression=update_expression,
-            ExpressionAttributeNames=expression_attribute_names,
-            ExpressionAttributeValues=expression_attribute_values
-        )
+        self.table.update_item(Key=self.__ensure_key_object(item_id), UpdateExpression=update_expression, ExpressionAttributeNames=expression_attribute_names, ExpressionAttributeValues=expression_attribute_values)
 
     def item_exists(self, key):
         return self.get_item(key, None) is not None
@@ -51,21 +47,29 @@ class DynamoDBTableManager(AWSServiceClient):
         response = self._resource.scan(TableName=self.table_name, FilterExpression=filter_expression, ExpressionAttributeValues=expression_attribute_values)
         return response.get('Items', [])
 
-    def batch_get_items(self, keys):
-        if len(keys) == 0: return []
+    def batch_get_items(self, keys, timeout: int | None = None):
+        if len(keys) == 0:
+            return []
+        if len(keys) == 1:
+            return [self.get_item(keys[0])]
+
+        def fetch_items(block_keys):
+            return self._batch_get_items(block_keys)
         num_keys = len(keys)
-        num_blocks = math.ceil(len(keys) / 100)
-        block_size = math.floor(num_keys / num_blocks)
-        key_blocks = [keys[i:min(i+block_size, len(keys))] for i in range(0, len(keys), block_size)]
+        num_blocks = min(math.ceil(num_keys / 100), 10)
+        block_size = math.ceil(num_keys / num_blocks)
+        key_blocks = [keys[i:i + block_size] for i in range(0, num_keys, block_size)]
         items = []
-        item_fetching_threads = [
-            threading.Thread(target=lambda block_keys: items.extend(self._batch_get_itmes(block_keys)), args=(_keys,))
-            for _keys in key_blocks]
-        for t in item_fetching_threads: t.start()
-        for t in item_fetching_threads: t.join()
+        with ThreadPoolExecutor(max_workers=num_blocks) as executor:
+            futures = [executor.submit(fetch_items, block) for block in key_blocks]
+            for future in futures:
+                try:
+                    items.extend(future.result(timeout=timeout / 1000 if timeout else None))
+                except TimeoutError:
+                    break
         return items
 
-    def _batch_get_itmes(self, keys):
+    def _batch_get_items(self, keys):
         keys = [self.__ensure_key_object(key) for key in keys]
         query_data = {self.table_name: {'Keys': keys}}
         items = []
