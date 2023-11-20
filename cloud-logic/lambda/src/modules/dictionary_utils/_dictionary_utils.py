@@ -15,7 +15,11 @@ def get_from(d: dict, path: list, default=None):
 
 
 def set_at(d: dict, path: list, element):
-    if not path:
+    if len(path) == 0:
+        if not isinstance(element, dict):
+            return
+        for key, value in element.items():
+            d[key] = value
         return
     if len(path) == 1:
         d[path[0]] = element
