@@ -1,3 +1,5 @@
+import logging
+
 from src.modules.lambda_base import lambda_constants
 from src.modules.lambda_handler_template_http_invoked_masslaw_case_management_api import MasslawCaseManagementApiInvokedLambdaFunction
 from src.modules.masslaw_case_data_collection import MasslawCaseDataCollector
@@ -23,9 +25,10 @@ class GetCaseAnnotations(MasslawCaseManagementApiInvokedLambdaFunction):
         case_data_collector = MasslawCaseDataCollector(case_instance=case_instance, access_user_id=user_id)
         case_user_access = MasslawCaseUserAccessManager(case_instance=case_instance)
         user_access_files = case_user_access.get_user_access_files(user_id)
-        file_ids = list(set(self.__files or user_access_files) & set(user_access_files))
-        case_file_annotations = [annotation_data for f_id in file_ids for annotation_data in case_data_collector.get_file_annotations(f_id)]
-        self._set_response_attribute([lambda_constants.EventKeys.BODY, 'annotations'], case_file_annotations)
+        file_ids = set(self.__files or user_access_files) & set(user_access_files)
+        case_annotations = case_data_collector.get_files_annotations(file_ids)
+        logging.getLogger().info(f'Annotations for case {self.__case_id} and files {file_ids} are {case_annotations}')
+        self._set_response_attribute([lambda_constants.EventKeys.BODY, 'annotations'], case_annotations)
 
 
 handler = GetCaseAnnotations()
