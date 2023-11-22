@@ -1,6 +1,6 @@
 import unittest
 
-from logic_layer.knowledge_record._data_merging._entity_merging_logic import merge_entity_properties
+from logic_layer.knowledge_record.data_merging._entity_merging_logic import merge_entity_properties
 
 
 class TestFunctionMergeEntityProperties(unittest.TestCase):

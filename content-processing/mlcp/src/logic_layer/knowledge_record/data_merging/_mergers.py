@@ -1,8 +1,8 @@
 from logic_layer.knowledge_record import KnowledgeRecord
 from logic_layer.knowledge_record._connection import KnowledgeRecordConnection
-from logic_layer.knowledge_record._data_merging._connection_merging_logic import merge_connections
-from logic_layer.knowledge_record._data_merging._entity_merging_logic import merge_entities
-from logic_layer.knowledge_record._data_merging._record_merging_logic import merge_records
+from logic_layer.knowledge_record.data_merging._connection_merging_logic import merge_connections
+from logic_layer.knowledge_record.data_merging._entity_merging_logic import merge_entities
+from logic_layer.knowledge_record.data_merging._record_merging_logic import merge_records
 from logic_layer.knowledge_record._entity import KnowledgeRecordEntity
 
 

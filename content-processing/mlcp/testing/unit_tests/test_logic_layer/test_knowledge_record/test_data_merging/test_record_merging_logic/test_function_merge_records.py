@@ -3,7 +3,7 @@ import unittest
 from logic_layer.knowledge_record import KnowledgeRecord
 from logic_layer.knowledge_record import KnowledgeRecordConnection
 from logic_layer.knowledge_record import KnowledgeRecordEntity
-from logic_layer.knowledge_record._data_merging._record_merging_logic import merge_records
+from logic_layer.knowledge_record.data_merging._record_merging_logic import merge_records
 
 
 class TestFunctionMergerRecords(unittest.TestCase):

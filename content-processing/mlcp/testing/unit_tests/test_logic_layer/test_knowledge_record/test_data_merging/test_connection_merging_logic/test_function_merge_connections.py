@@ -2,7 +2,7 @@ import unittest
 
 from logic_layer.knowledge_record import KnowledgeRecordConnection
 from logic_layer.knowledge_record import KnowledgeRecordEntity
-from logic_layer.knowledge_record._data_merging._connection_merging_logic import merge_connections
+from logic_layer.knowledge_record.data_merging._connection_merging_logic import merge_connections
 
 
 class TestFunctionMergeConnections(unittest.TestCase):
