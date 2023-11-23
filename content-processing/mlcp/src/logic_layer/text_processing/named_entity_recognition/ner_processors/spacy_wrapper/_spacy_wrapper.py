@@ -1,9 +1,7 @@
 from typing import List
 
-from logic_layer.knowledge_record import KnowledgeRecord
-from logic_layer.knowledge_record.data_merging import RecordMerger
 from logic_layer.text_processing.named_entity_recognition._ner_processor import NERProcessor
-from logic_layer.text_processing.named_entity_recognition.ner_processors.spacy_wrapper._spacy_model_wrapper import SpacyKnowledgeExtractor
+from logic_layer.text_processing.named_entity_recognition.ner_processors.spacy_wrapper._spacy_model_wrapper import SpacyModelWrapper
 from logic_layer.text_processing.named_entity_recognition.ner_processors.spacy_wrapper._models import load_spacy_model_for_language
 from logic_layer.text_structures.extracted_optical_text_structure import ExtractedOpticalTextDocument
 from shared_layer.mlcp_logger import logger
@@ -14,7 +12,7 @@ class SpacyWrapper(NERProcessor):
 
     def __init__(self, languages: List[str]):
         super().__init__(languages)
-        self._knowledge_extractors = {}
+        self._model_wrappers = {}
 
     def _load_languages(self):
         for language in self._languages:
@@ -23,21 +21,20 @@ class SpacyWrapper(NERProcessor):
             if spacy_model is None:
                 logger.warning(f'No model found for language {common_formats.value(language)}.')
                 continue
-            knowledge_extractor = SpacyKnowledgeExtractor(spacy_model)
-            self._knowledge_extractors[language] = knowledge_extractor
+            knowledge_extractor = SpacyModelWrapper(spacy_model)
+            self._model_wrappers[language] = knowledge_extractor
 
     def _process_text(self, text: str):
-        for language in self._knowledge_extractors.keys():
+        for language in self._model_wrappers.keys():
             self._process_text_in_language(text, language)
 
     def _process_text_in_language(self, text: str, language: str):
-        extractor = self._knowledge_extractors.get(language)
-        if not extractor:
+        model_wrapper = self._model_wrappers.get(language)
+        if not model_wrapper:
             logger.warning(f'Trying to process text in a language that failed loading: {common_formats.value(language)}.')
             return
         logger.info(f'Processing text for language {common_formats.value(language)}.')
-        extractor.load_text(text)
-        extracted_record = extractor.get_record()
+        extracted_record = model_wrapper.process_text(text)
         self._merge_data_from_record(extracted_record)
 
     def _process_optical_text_document(self, document: ExtractedOpticalTextDocument):
