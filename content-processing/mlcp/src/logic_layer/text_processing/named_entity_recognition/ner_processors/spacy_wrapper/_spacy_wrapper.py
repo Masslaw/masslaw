@@ -4,8 +4,8 @@ from logic_layer.text_processing.named_entity_recognition._ner_processor import 
 from logic_layer.text_processing.named_entity_recognition.ner_processors.spacy_wrapper._models import load_spacy_model_for_language
 from logic_layer.text_processing.named_entity_recognition.ner_processors.spacy_wrapper._spacy_document_processing import SpacyDocumentProcessor
 from logic_layer.text_structures.extracted_optical_text_structure import ExtractedOpticalTextDocument
-from shared_layer.mlcp_logger import logger
 from shared_layer.mlcp_logger import common_formats
+from shared_layer.mlcp_logger import logger
 
 
 class SpacyWrapper(NERProcessor):
@@ -15,13 +15,20 @@ class SpacyWrapper(NERProcessor):
         self._spacy_models = {}
 
     def _load_languages(self):
+        self._load_models()
+
+    def _load_models(self):
         for language in self._languages:
             logger.info(f'Loading model for language {common_formats.value(language)}.')
             spacy_model = load_spacy_model_for_language(language)
             if spacy_model is None:
                 logger.warning(f'No model found for language {common_formats.value(language)}.')
                 continue
+            self._prepare_model(spacy_model)
             self._spacy_models[language] = spacy_model
+
+    def _prepare_model(self, spacy_model):
+        spacy_model.add_pipe('coreferee')
 
     def _process_text(self, text: str):
         for language in self._spacy_models.keys():
