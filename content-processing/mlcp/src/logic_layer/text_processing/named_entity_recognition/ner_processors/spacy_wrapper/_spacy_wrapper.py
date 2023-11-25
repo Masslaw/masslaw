@@ -49,3 +49,9 @@ class SpacyWrapper(NERProcessor):
         document_structure = document.get_structure_root()
         document_text = ''.join([child.get_value() for child in document_structure.get_children()])
         self._process_text(document_text)
+
+
+if __name__ == "__main__":
+    with open('../../_examples/example3.txt', 'r') as f:
+        text = f.read()
+    SpacyWrapper(['en'])._process_text(text)

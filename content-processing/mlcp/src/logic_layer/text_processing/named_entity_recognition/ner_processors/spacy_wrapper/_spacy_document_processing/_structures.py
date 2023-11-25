@@ -14,6 +14,7 @@ class CoreferenceChain:
 
 class DocumentEntity:
     entity_spans: Set[Span] = set()
+    entity_type: str = None
     entity_data: dict = {}
     entity_appearances: Set[int]
     coreference_chains: Set[CoreferenceChain]

@@ -26,13 +26,14 @@ class SpacyEntitiesExtractor:
         for entity_span in spacy_document.ents:
             document_entity = DocumentEntity()
             document_entity.entity_spans = {entity_span}
+            document_entity.entity_type = entity_span.label_
             self._entities.append(document_entity)
 
     def _release_useless_entities(self):
         self._entities = [entity for entity in self._entities if not self._detereine_entity_useless(entity)]
 
     def _detereine_entity_useless(self, entity: DocumentEntity) -> bool:
-        if list(entity.entity_spans)[0].label_ in ("DATE", ) and any(span for span in entity.entity_spans if 'old' in span.text): return True;
+        if entity.entity_type in ("DATE", ) and any(span for span in entity.entity_spans if 'old' in span.text): return True;
         return False
 
     def _load_entities_coreference_chains(self):
@@ -52,7 +53,7 @@ class SpacyEntitiesExtractor:
         list_utils.merge_mergeable(self._entities, self._mergeable, self._do_merge_entities)
 
     def _mergeable(self, entity1: DocumentEntity, entity2: DocumentEntity) -> bool:
-        if list(entity1.entity_spans)[0].label_ != list(entity2.entity_spans)[0].label_:
+        if entity1.entity_type != entity2.entity_type:
             return False
 
         entity1_name_components = set()
