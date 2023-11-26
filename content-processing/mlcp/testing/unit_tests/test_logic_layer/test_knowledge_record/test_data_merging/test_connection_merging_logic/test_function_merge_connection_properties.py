@@ -1,6 +1,6 @@
 import unittest
 
-from logic_layer.knowledge_record._data_merging._connection_merging_logic import merge_connection_properties
+from logic_layer.knowledge_record.data_merging._connection_merging_logic import merge_connection_properties
 
 
 class TestFunctionMergeConnectionProperties(unittest.TestCase):

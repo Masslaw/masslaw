@@ -1,7 +1,7 @@
 import unittest
 
 from logic_layer.knowledge_record import KnowledgeRecordEntity
-from logic_layer.knowledge_record._data_merging import EntityMerger
+from logic_layer.knowledge_record.data_merging import EntityMerger
 
 
 class TestClassEntityMerger(unittest.TestCase):

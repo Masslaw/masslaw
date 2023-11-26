@@ -1,8 +1,8 @@
 from typing import List
 
 from logic_layer.knowledge_record._connection import KnowledgeRecordConnection
-from logic_layer.knowledge_record._data_merging import ConnectionMerger
-from logic_layer.knowledge_record._data_merging import EntityMerger
+from logic_layer.knowledge_record.data_merging import ConnectionMerger
+from logic_layer.knowledge_record.data_merging import EntityMerger
 from logic_layer.knowledge_record._entity import KnowledgeRecordEntity
 from logic_layer.knowledge_record._record import KnowledgeRecord
 from logic_layer.knowledge_record.data_loading import graph_database_loading
