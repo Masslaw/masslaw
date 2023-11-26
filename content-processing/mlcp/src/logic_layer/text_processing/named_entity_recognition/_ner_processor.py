@@ -1,12 +1,9 @@
 from abc import abstractmethod
-from typing import Dict
 from typing import List
-from typing import Tuple
 
 from mlcp.src.logic_layer.knowledge_record import KnowledgeRecord
 from mlcp.src.logic_layer.knowledge_record.data_merging import RecordMerger
 from mlcp.src.logic_layer.text_structures.extracted_optical_text_structure import ExtractedOpticalTextDocument
-from mlcp.src.logic_layer.text_structures.extracted_optical_text_structure._structure_root import OpticalTextStructureRoot
 
 
 class NERProcessor:
@@ -35,5 +32,3 @@ class NERProcessor:
     @abstractmethod
     def _process_optical_text_document(self, document: ExtractedOpticalTextDocument):
         pass
-
-
