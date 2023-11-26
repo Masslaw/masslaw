@@ -1,11 +1,6 @@
 from typing import List
-from typing import Set
 
-from spacy.tokens.span import Span
-from spacy.tokens.token import Token
-
-from logic_layer.text_processing.named_entity_recognition.ner_processors.spacy_wrapper._spacy_document_processing._common import get_compound_chain
-from logic_layer.text_processing.named_entity_recognition.ner_processors.spacy_wrapper._spacy_document_processing._common import get_entity_span_for_token
+from logic_layer.text_processing.named_entity_recognition.ner_processors.spacy_wrapper._spacy import common
 from logic_layer.text_processing.named_entity_recognition.ner_processors.spacy_wrapper._spacy_document_processing._structures import CoreferenceChain
 from logic_layer.text_processing.named_entity_recognition.ner_processors.spacy_wrapper._spacy_document_processing._structures import SpacyDocumentData
 
@@ -38,6 +33,6 @@ class SpacyCoreferencesResolver:
             chain.chain_entities = set()
             spacy_document = self._document_data.spacy_document
             for token in chain.chain_tokens:
-                entity_span = get_entity_span_for_token(spacy_document, token)
+                entity_span = common.get_entity_span_for_token(token)
                 if not entity_span: continue
                 chain.chain_entities.add(entity_span)

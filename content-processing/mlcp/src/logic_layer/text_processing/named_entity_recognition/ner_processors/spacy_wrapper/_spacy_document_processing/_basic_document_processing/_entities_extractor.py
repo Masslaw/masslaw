@@ -1,8 +1,5 @@
 from typing import List
 
-from spacy.tokens.span import Span
-
-from logic_layer.text_processing.named_entity_recognition.ner_processors.spacy_wrapper._spacy_document_processing._common import get_compound_chain
 from logic_layer.text_processing.named_entity_recognition.ner_processors.spacy_wrapper._spacy_document_processing._structures import DocumentEntity
 from logic_layer.text_processing.named_entity_recognition.ner_processors.spacy_wrapper._spacy_document_processing._structures import SpacyDocumentData
 from shared_layer.list_utils import list_utils
@@ -27,6 +24,7 @@ class SpacyEntitiesExtractor:
             document_entity = DocumentEntity()
             document_entity.entity_spans = {entity_span}
             document_entity.entity_type = entity_span.label_
+            document_entity.entity_data = {}
             self._entities.append(document_entity)
 
     def _release_useless_entities(self):
@@ -45,9 +43,9 @@ class SpacyEntitiesExtractor:
 
     def _resolve_entity_appearances(self):
         for entity in self._entities:
-            entity.entity_appearances = set([span.root.i for span in entity.entity_spans])
+            entity.entity_appearances = set([span.root for span in entity.entity_spans])
             for chain in entity.coreference_chains:
-                entity.entity_appearances.update([token.i for token in chain.chain_tokens if token.pos_ == "PRON"])
+                entity.entity_appearances.update([token for token in chain.chain_tokens if token.pos_ == "PRON"])
 
     def _merge_entities(self):
         list_utils.merge_mergeable(self._entities, self._mergeable, self._do_merge_entities)
@@ -70,7 +68,9 @@ class SpacyEntitiesExtractor:
 
     def _do_merge_entities(self, entity1: DocumentEntity, entity2: DocumentEntity) -> DocumentEntity:
         merged_entity = DocumentEntity()
+        merged_entity.entity_type = entity1.entity_type
         merged_entity.entity_spans = entity1.entity_spans | entity2.entity_spans
         merged_entity.coreference_chains = entity1.coreference_chains.copy() | entity2.coreference_chains.copy()
         merged_entity.entity_appearances = entity1.entity_appearances.copy() | entity2.entity_appearances.copy()
+        merged_entity.entity_data = {**entity1.entity_data, **entity2.entity_data}
         return merged_entity

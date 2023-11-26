@@ -16,15 +16,17 @@ class DocumentEntity:
     entity_spans: Set[Span] = set()
     entity_type: str = None
     entity_data: dict = {}
-    entity_appearances: Set[int]
+    entity_appearances: Set[Token]
     coreference_chains: Set[CoreferenceChain]
 
 
 class DocumentEntityRelation:
+    relation_type: str = 'connection'
     from_entity: DocumentEntity = None
     to_entity: DocumentEntity = None
     relating_tokens: Set[Token]
     relation_data: dict = {}
+    relation_strength: float = 0.0
 
 
 class SpacyDocumentData:

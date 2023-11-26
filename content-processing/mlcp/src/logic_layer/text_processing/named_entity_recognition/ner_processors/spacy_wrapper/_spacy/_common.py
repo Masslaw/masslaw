@@ -5,8 +5,8 @@ from spacy.tokens.span import Span
 from spacy.tokens.token import Token
 
 
-def get_entity_span_for_token(doc: Doc, token: Token) -> Span | None:
-    for ent in doc.ents:
+def get_entity_span_for_token(token: Token) -> Span | None:
+    for ent in token.doc.ents:
         if ent.start <= token.i <= ent.end:
             return ent
 
@@ -43,6 +43,22 @@ def find_common_ancestor(token1: Token, token2: Token) -> Token | None:
     common_ancestors = set(token1_chain) & set(token2_chain)
     if not common_ancestors: return None
     return min(common_ancestors, key=lambda t: token1_chain.index(t))
+
+
+def get_dependency_distance_between_tokens(token1: Token, token2: Token) -> int:
+    common_ancestor = find_common_ancestor(token1, token2)
+    if not common_ancestor: return None
+    distance1 = 0
+    current = token1
+    while current != common_ancestor:
+        current = current.head
+        distance1 += 1
+    distance2 = 0
+    current = token2
+    while current != common_ancestor:
+        current = current.head
+        distance2 += 1
+    return distance1 + distance2
 
 
 def get_subtree(token: Token):
