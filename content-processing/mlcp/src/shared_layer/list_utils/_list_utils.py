@@ -28,3 +28,15 @@ def set_list_length(lst: List, length: int, default: Type = None):
 def get_element_at(lst: List, idx: int, default: any = None):
     if idx >= len(lst): return default
     return lst[idx]
+
+
+def merge_mergeable(lst: List, mergeable: callable, merge: callable):
+    i = 0
+    while i < len(lst):
+        for j in range(i + 1, len(lst)):
+            if not mergeable(lst[i], lst[j]): continue
+            lst[i] = merge(lst[i], lst[j])
+            del lst[j]
+            break
+        else:
+            i += 1

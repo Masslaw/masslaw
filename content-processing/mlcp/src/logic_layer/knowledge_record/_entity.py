@@ -1,6 +1,5 @@
 from typing import List
-
-from spacy.pipeline.morphologizer import Dict
+from typing import Dict
 
 
 class KnowledgeRecordEntity:
