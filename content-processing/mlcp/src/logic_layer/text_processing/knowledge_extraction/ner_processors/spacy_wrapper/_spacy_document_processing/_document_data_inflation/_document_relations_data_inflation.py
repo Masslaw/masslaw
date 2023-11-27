@@ -1,6 +1,6 @@
 from typing import List
 
-from logic_layer.text_processing.named_entity_recognition.ner_processors.spacy_wrapper._spacy_document_processing._structures import DocumentEntityRelation
+from logic_layer.text_processing.knowledge_extraction.ner_processors.spacy_wrapper._spacy_document_processing._structures import DocumentEntityRelation
 
 
 def inflate_relations_data(relations: List[DocumentEntityRelation]):

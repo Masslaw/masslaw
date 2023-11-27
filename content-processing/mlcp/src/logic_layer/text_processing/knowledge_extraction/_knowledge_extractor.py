@@ -6,7 +6,7 @@ from mlcp.src.logic_layer.knowledge_record.data_merging import RecordMerger
 from mlcp.src.logic_layer.text_structures.extracted_optical_text_structure import ExtractedOpticalTextDocument
 
 
-class NERProcessor:
+class KnowledgeExtractor:
 
     def __init__(self, languages: List[str]):
         self._languages = languages
