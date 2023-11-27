@@ -22,7 +22,8 @@ def find_matching_entity_in_record(entity: KnowledgeRecordEntity, record: Knowle
     record_entities = record.get_entities()
     for record_entity in record_entities:
         if record_entity.get_label() != entity.get_label(): continue
-        matching_unique_properties = [record_entity.get_properties().get(unique_property) == entity.get_properties().get(unique_property)
-                                      for unique_property in entity.get_unique_properties()]
-        if not any(matching_unique_properties): continue
-        return record_entity
+        for unique_property in entity.get_unique_properties():
+            entity_unique_property_value = entity.get_properties().get(unique_property)
+            other_entity_unique_property_value = record_entity.get_properties().get(unique_property)
+            if entity_unique_property_value and other_entity_unique_property_value and entity_unique_property_value == other_entity_unique_property_value:
+                return record_entity

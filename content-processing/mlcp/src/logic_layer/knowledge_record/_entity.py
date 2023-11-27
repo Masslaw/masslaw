@@ -32,4 +32,4 @@ class KnowledgeRecordEntity:
         self._unique_properties.append(property_key)
 
     def get_unique_properties(self) -> Dict:
-        return {key: self._properties[key] for key in self._unique_properties}
+        return {key: self._properties[key] for key in self._unique_properties if key in self._properties}

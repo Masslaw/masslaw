@@ -1,3 +1,4 @@
+import tempfile
 import unittest
 from unittest.mock import Mock
 
@@ -11,8 +12,8 @@ class TestClassGraphDatabaseVisualizer(unittest.TestCase):
     ...
 
     def setUp(self):
-        self.nodes = [GraphDatabaseNode(node_id='1', label='Person', properties={'value': 'Bob'}), GraphDatabaseNode(node_id='2', label='Person', properties={'value': 'Alice'}),
-                      GraphDatabaseNode(node_id='3', label='Company', properties={'value': 'Google'}), GraphDatabaseNode(node_id='4', label='Company', properties={'value': 'Facebook'}), ]
+        self.nodes = [GraphDatabaseNode(node_id='1', label='Person', properties={'title': 'Bob'}), GraphDatabaseNode(node_id='2', label='Person', properties={'title': 'Alice'}),
+                      GraphDatabaseNode(node_id='3', label='Company', properties={'title': 'Google'}), GraphDatabaseNode(node_id='4', label='Company', properties={'title': 'Facebook'}), ]
         self.connections = [GraphDatabaseEdge(edge_id='1', edge_label='Related', properties={}, from_node='1', to_node='2'),
                             GraphDatabaseEdge(edge_id='1', edge_label='Related', properties={}, from_node='2', to_node='1'),
                             GraphDatabaseEdge(edge_id='2', edge_label='Works', properties={}, from_node='1', to_node='3'),
@@ -28,16 +29,9 @@ class TestClassGraphDatabaseVisualizer(unittest.TestCase):
     def test_mermaid_graph_generation(self):
         visualizer = GraphDatabaseVisualizer(self.graph_database_manager)
 
-        mermaid_output = ''
+        handle, path = tempfile.mkstemp()
 
-        def set_output(output):
-            nonlocal mermaid_output
-            mermaid_output = output
-
-        output_file = Mock()
-        output_file.write.side_effect = set_output
-
-        visualizer.visualize_database_content_using_mermaid(output_file)
+        visualizer.visualize_database_content_using_mermaid(path)
 
         expected_output = ('graph LR\n' \
                            '1(Bob)\n' \
@@ -50,5 +44,5 @@ class TestClassGraphDatabaseVisualizer(unittest.TestCase):
                            '2 --> | Works | 4\n' \
                            '3 --> | Compete | 4\n'
                            '4 --> | Compete | 3\n')
-
-        self.assertEqual(mermaid_output, expected_output)
+        with open(path, 'r') as f:
+            self.assertEqual(f.read(), expected_output)
