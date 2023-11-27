@@ -21,7 +21,7 @@ The extracted knowledge is loaded to a neptune db.
         "write": {
           "endpoint": "some-write-endpoint",
           "port": "8182",
-          "type": "sparql"
+          "type": "gremlin"
         }
       },
       "knowledge_record_data": {
