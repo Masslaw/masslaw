@@ -2,6 +2,8 @@ import os
 import unittest
 from datetime import datetime
 
+from logic_layer.remote_graph_database.graph_visualization import GraphDatabaseVisualizer
+from logic_layer.remote_graph_database.neptune_manager import NeptuneDatabaseManager
 from mlcp.testing.content.content_management import content_management
 from mlcp.testing.mlcp_job_tests._mlcp_job_test import MLCPJobTest
 from mlcp.testing.stubs.neptune_stub import NeptuneStubTestLoader
@@ -13,7 +15,7 @@ file_name = "text_example4.txt"
 
 bucket_name = "mlcp-test-bucket"
 
-languages = ["eng", "heb"]
+languages = ["en", "he"]
 
 case_id = 'aH7CFNTa9stf7n8anF78anADV324gnoF'
 
@@ -96,4 +98,8 @@ class MLCPTextExtractionJobTest(unittest.TestCase, MLCPJobTest):
         })
 
     def _after_application_finished(self):
-        pass
+        db_manager = NeptuneDatabaseManager(neptune_write_connection_data={'endpoint': 'localhost', 'port': '8182', 'type': 'gremlin'}, neptune_read_connection_data={'endpoint': 'localhost', 'port': '8182', 'type': 'gremlin'}, )
+
+        visualizer = GraphDatabaseVisualizer(db_manager)
+        visualizer.visualize_database_content_using_mermaid(os.path.join(self.test_output_directory, "graph.mermaid"))
+        visualizer.visualize_database_content_using_matplotlib(os.path.join(self.test_output_directory, "graph.png"))
