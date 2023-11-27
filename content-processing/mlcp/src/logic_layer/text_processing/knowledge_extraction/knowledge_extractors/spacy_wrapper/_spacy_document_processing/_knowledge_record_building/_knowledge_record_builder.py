@@ -1,7 +1,7 @@
 from logic_layer.knowledge_record import KnowledgeRecord
 from logic_layer.knowledge_record import KnowledgeRecordConnection
 from logic_layer.knowledge_record import KnowledgeRecordEntity
-from logic_layer.text_processing.knowledge_extraction.ner_processors.spacy_wrapper._spacy_document_processing._structures import SpacyDocumentData
+from logic_layer.text_processing.knowledge_extraction.knowledge_extractors.spacy_wrapper._spacy_document_processing._structures import SpacyDocumentData
 
 
 class SpacyDocumentKnowledgeRecordBuilder:
