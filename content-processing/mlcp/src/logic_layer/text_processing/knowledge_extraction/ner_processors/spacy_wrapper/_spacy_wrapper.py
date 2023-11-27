@@ -1,14 +1,14 @@
 from typing import List
 
-from logic_layer.text_processing.named_entity_recognition._ner_processor import NERProcessor
-from logic_layer.text_processing.named_entity_recognition.ner_processors.spacy_wrapper._models import load_spacy_model_for_language
-from logic_layer.text_processing.named_entity_recognition.ner_processors.spacy_wrapper._spacy_document_processing import SpacyDocumentProcessor
+from logic_layer.text_processing.knowledge_extraction._knowledge_extractor import KnowledgeExtractor
+from logic_layer.text_processing.knowledge_extraction.ner_processors.spacy_wrapper._models import load_spacy_model_for_language
+from logic_layer.text_processing.knowledge_extraction.ner_processors.spacy_wrapper._spacy_document_processing import SpacyDocumentProcessor
 from logic_layer.text_structures.extracted_optical_text_structure import ExtractedOpticalTextDocument
 from shared_layer.mlcp_logger import common_formats
 from shared_layer.mlcp_logger import logger
 
 
-class SpacyWrapper(NERProcessor):
+class SpacyWrapper(KnowledgeExtractor):
 
     def __init__(self, languages: List[str]):
         super().__init__(languages)

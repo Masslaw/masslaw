@@ -1,7 +1,7 @@
 from typing import List
 
-from logic_layer.text_processing.named_entity_recognition.ner_processors.spacy_wrapper._spacy_document_processing._structures import DocumentEntity
-from logic_layer.text_processing.named_entity_recognition.ner_processors.spacy_wrapper._spacy_document_processing._structures import SpacyDocumentData
+from logic_layer.text_processing.knowledge_extraction.ner_processors.spacy_wrapper._spacy_document_processing._structures import DocumentEntity
+from logic_layer.text_processing.knowledge_extraction.ner_processors.spacy_wrapper._spacy_document_processing._structures import SpacyDocumentData
 from shared_layer.list_utils import list_utils
 
 
