@@ -5,7 +5,7 @@ import tempfile
 from mlcp.testing.stubs.s3_stub import S3StubTestLoader
 
 
-class MLCPJobTest(S3StubTestLoader):
+class MLCPJobTest:
 
     def test_run(self):
         from multiprocessing import freeze_support
@@ -14,6 +14,7 @@ class MLCPJobTest(S3StubTestLoader):
             from interface_layer.application import Application
             Application()()
         self.assertEqual(cm.exception.code, 0)
+        self._after_application_finished()
 
     def _open_temporary_storage(self):
         self._tempdir = tempfile.mkdtemp()
@@ -35,3 +36,6 @@ class MLCPJobTest(S3StubTestLoader):
 
     def _set_stage(self, stage: str):
         os.environ['__mlcp_stage__'] = stage
+
+    def _after_application_finished(self):
+        pass
