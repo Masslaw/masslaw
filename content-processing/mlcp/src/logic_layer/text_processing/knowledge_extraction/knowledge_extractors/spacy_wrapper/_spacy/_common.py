@@ -48,21 +48,16 @@ def find_common_ancestor(token1: Token, token2: Token) -> Token | None:
 def get_dependency_distance_between_tokens(token1: Token, token2: Token) -> int:
     common_ancestor = find_common_ancestor(token1, token2)
     if not common_ancestor: return None
-    distance1 = 0
+    connecting_tokens = {token1, token2}
     current = token1
     while current != common_ancestor:
         current = current.head
-        distance1 += 1
-    distance2 = 0
+        connecting_tokens.add(current)
     current = token2
     while current != common_ancestor:
         current = current.head
-        distance2 += 1
-    return distance1 + distance2
-
-
-def get_subtree(token: Token):
-    return traverse_downward(token, stop_condition=lambda token: False)
+        connecting_tokens.add(current)
+    return len(connecting_tokens)
 
 
 def sort_tokens(tokens: List[Token]):
