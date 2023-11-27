@@ -40,8 +40,8 @@ class ExtractKnowledge(ApplicationAction):
             return False
 
         extractor: KnowledgeExtractor = SpacyWrapper(languages)
-
-        knowledge_record: KnowledgeRecord = extractor.load_file(file_name)
+        extractor.load_file(file_name)
+        knowledge_record: KnowledgeRecord = extractor.get_record()
 
         graph_database_sync_manager = RecordDatabaseSyncManager(knowledge_record)
 
