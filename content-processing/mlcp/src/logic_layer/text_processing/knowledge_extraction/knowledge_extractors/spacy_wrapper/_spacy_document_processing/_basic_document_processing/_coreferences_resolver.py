@@ -1,8 +1,8 @@
 from typing import List
 
-from logic_layer.text_processing.knowledge_extraction.ner_processors.spacy_wrapper._spacy import common
-from logic_layer.text_processing.knowledge_extraction.ner_processors.spacy_wrapper._spacy_document_processing._structures import CoreferenceChain
-from logic_layer.text_processing.knowledge_extraction.ner_processors.spacy_wrapper._spacy_document_processing._structures import SpacyDocumentData
+from logic_layer.text_processing.knowledge_extraction.knowledge_extractors.spacy_wrapper._spacy import common
+from logic_layer.text_processing.knowledge_extraction.knowledge_extractors.spacy_wrapper._spacy_document_processing._structures import CoreferenceChain
+from logic_layer.text_processing.knowledge_extraction.knowledge_extractors.spacy_wrapper._spacy_document_processing._structures import SpacyDocumentData
 
 
 class SpacyCoreferencesResolver:
