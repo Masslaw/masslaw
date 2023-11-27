@@ -27,7 +27,7 @@ class KnowledgeExtractor:
         self._process_optical_text_document(document)
 
     def load_file(self, file_path: str):
-        file_type = file_system_utils.get_file_type(file_path)
+        file_type = file_system_utils.get_file_type(file_path).replace(".", "")
         if file_type in ('txt', 'text'):
             with open(file_path, 'r') as f:
                 self._process_text(f.read())
