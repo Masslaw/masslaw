@@ -40,3 +40,7 @@ def merge_mergeable(lst: List, mergeable: callable, merge: callable):
             break
         else:
             i += 1
+
+
+def remove_duplicates(lst: List, check_equal: callable = lambda x, y: x == y):
+    merge_mergeable(lst, lambda x, y: check_equal(x, y), lambda x, y: x)
