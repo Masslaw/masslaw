@@ -30,7 +30,7 @@ class ProcessFiles(ApplicationAction):
         languages = file_data.get("languages")
 
         if (not file_name) or (not languages):
-            logger.warning(f"Skipping file due to missing data")
+            logger.warn(f"Skipping file due to missing data")
             return False
 
         converted_file_output_directory = file_data.get("converted_file_output_dir", "converted_file")

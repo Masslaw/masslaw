@@ -36,7 +36,7 @@ class ExtractKnowledge(ApplicationAction):
         knowledge_record_data = file_data.get("knowledge_record_data", {})
 
         if (not file_name) or (not languages) or (not neptune_read_endpoint_data) or (not neptune_write_endpoint_data):
-            logger.warning(f"Skipping file due to missing data")
+            logger.warn(f"Skipping file due to missing data")
             return False
 
         extractor: KnowledgeExtractor = SpacyWrapper(languages)
