@@ -5,12 +5,11 @@ from shared_layer.mlcp_logger import common_formats
 from shared_layer.mlcp_logger import logger
 from shared_layer.list_utils import list_utils
 
-entity_property_specific_merging_functions = {'value': lambda name1, name2: max(name1, name2, key=len), }
+entity_property_specific_merging_functions = {'title': lambda name1, name2: max(name1, name2, key=len), }
 
 entity_property_type_specific_merging_functions = {list: lambda list1, list2: list_utils.remove_duplicates(list1 + list2), }
 
 
-@logger.process_function('Merging knowledge record entities')
 def merge_entities(merge_to: KnowledgeRecordEntity, to_merge: KnowledgeRecordEntity):
     merged_properties = merge_entity_properties(merge_to.get_properties(), to_merge.get_properties())
     merge_to.set_id(to_merge.get_id())
@@ -18,7 +17,6 @@ def merge_entities(merge_to: KnowledgeRecordEntity, to_merge: KnowledgeRecordEnt
     merge_to.set_properties(merged_properties)
 
 
-@logger.process_function('Merging knowledge record entity properties')
 def merge_entity_properties(entity1_properties: Dict, entity2_properties: Dict) -> Dict:
     merged_properties = {}
     total_keys = list(set(list(entity1_properties.keys()) + list(entity2_properties.keys())))

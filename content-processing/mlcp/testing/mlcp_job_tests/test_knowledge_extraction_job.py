@@ -23,6 +23,8 @@ file_id = 'ajva0SF08m8sFM09HM809fmh0CM0fhm0asF8'
 
 parent_output_directory = 'output/knowledge_extraction_job'
 
+reset_database = True
+
 
 class MLCPTextExtractionJobTest(unittest.TestCase, MLCPJobTest):
 
@@ -103,3 +105,12 @@ class MLCPTextExtractionJobTest(unittest.TestCase, MLCPJobTest):
         visualizer = GraphDatabaseVisualizer(db_manager)
         visualizer.visualize_database_content_using_mermaid(os.path.join(self.test_output_directory, "graph.mermaid"))
         visualizer.visualize_database_content_using_matplotlib(os.path.join(self.test_output_directory, "graph.png"))
+
+        if reset_database:
+            all_nodes = db_manager.get_nodes_by_properties({})
+            for node in all_nodes:
+                db_manager.delete_node_if_exists(node_id=node.get_id())
+
+            all_edges = db_manager.get_edges_by_properties({})
+            for edge in all_edges:
+                db_manager.delete_edge_if_exists(edge_id=edge.get_id())

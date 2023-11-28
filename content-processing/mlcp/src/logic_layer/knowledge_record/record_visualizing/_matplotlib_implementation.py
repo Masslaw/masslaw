@@ -15,7 +15,6 @@ FONT_SIZE = 4
 
 def knowledge_record_to_graph_image(record: KnowledgeRecord, filename: str = 'record.png', entity_title_generator: Callable[[KnowledgeRecordEntity], str] = None):
     G = networkx.Graph()
-    print(len(record.get_connections()))
     for connenction in record.get_connections():
         from_entity = connenction.get_from_entity()
         to_entity = connenction.get_to_entity()

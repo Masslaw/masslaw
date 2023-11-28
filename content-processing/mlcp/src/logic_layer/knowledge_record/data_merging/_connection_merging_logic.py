@@ -5,12 +5,11 @@ from shared_layer.mlcp_logger import common_formats
 from shared_layer.mlcp_logger import logger
 from shared_layer.list_utils import list_utils
 
-connection_property_specific_merging_functions = {'value': lambda v1, v2: max(v1, v2, key=len), 'strength': lambda v1, v2: v1 + v2, }
+connection_property_specific_merging_functions = {'title': lambda v1, v2: max(v1, v2, key=len), 'strength': lambda v1, v2: v1 + v2, }
 
 connection_property_type_specific_merging_functions = {list: lambda list1, list2: list_utils.remove_duplicates(list1 + list2), }
 
 
-@logger.process_function('Merging knowledge record connections')
 def merge_connections(merge_to: KnowledgeRecordConnection, to_merge: KnowledgeRecordConnection):
     merged_properties = merge_connection_properties(merge_to.get_properties(), to_merge.get_properties())
     merge_to.set_id(to_merge.get_id())
@@ -18,7 +17,6 @@ def merge_connections(merge_to: KnowledgeRecordConnection, to_merge: KnowledgeRe
     merge_to.set_properties(merged_properties)
 
 
-@logger.process_function('Merging knowledge record connection properties')
 def merge_connection_properties(connection1_properties: Dict, connection2_properties: Dict) -> Dict:
     merged_properties = {}
     total_keys = list(set(list(connection1_properties.keys()) + list(connection2_properties.keys())))

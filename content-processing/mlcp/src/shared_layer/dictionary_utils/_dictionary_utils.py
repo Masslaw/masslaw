@@ -57,6 +57,26 @@ def ensure_flat(d: dict):
             d[key] = value
 
 
+def ensure_dict(d):
+    d = isinstance(d, dict) and d or isinstance(d, str) and try_loads(str(d)) or d
+    if isinstance(d, dict):
+        for key in list(d.keys()):
+            d[key] = ensure_dict(d[key])
+    return d
+
+def try_loads(d: str):
+    try:
+        return json.loads(d)
+    except:
+        pass
+    try:
+        with open(d, 'r') as f:
+            return json.load(f)
+    except:
+        pass
+    return None
+
+
 def delete_nested_keys(d: dict, k: str):
     if isinstance(d, dict):
         for key in list(d.keys()):
