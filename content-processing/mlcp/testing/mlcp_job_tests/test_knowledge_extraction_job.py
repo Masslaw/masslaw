@@ -15,7 +15,7 @@ file_name = "text_example4.txt"
 
 bucket_name = "mlcp-test-bucket"
 
-languages = ["en", "he"]
+languages = ["eng", "heb"]
 
 case_id = 'aH7CFNTa9stf7n8anF78anADV324gnoF'
 
