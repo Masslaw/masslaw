@@ -108,3 +108,7 @@ def check_structure(d: dict, validation: dict):
         if not any(isinstance(dict_value, t) for t in validation_value if t is not None):
             return False
     return True
+
+
+def invert_dict(d: dict):
+    return {v: k for k, v in d.items()}
