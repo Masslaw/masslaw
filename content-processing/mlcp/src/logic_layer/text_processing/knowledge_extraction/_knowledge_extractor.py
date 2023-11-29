@@ -1,10 +1,10 @@
 from abc import abstractmethod
 from typing import List
 
-from mlcp.src.logic_layer.knowledge_record import KnowledgeRecord
-from mlcp.src.logic_layer.knowledge_record.data_merging import RecordMerger
-from mlcp.src.logic_layer.text_structures.extracted_optical_text_structure import ExtractedOpticalTextDocument
-from mlcp.src.shared_layer.file_system_utils import file_system_utils
+from logic_layer.knowledge_record import KnowledgeRecord
+from logic_layer.knowledge_record.data_merging import RecordMerger
+from logic_layer.text_structures.extracted_optical_text_structure import ExtractedOpticalTextDocument
+from shared_layer.file_system_utils import file_system_utils
 from shared_layer.mlcp_logger import logger
 from shared_layer.mlcp_logger import common_formats
 

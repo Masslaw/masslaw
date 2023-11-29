@@ -1,5 +1,3 @@
-import os
-
 from execution_layer.actions._application_action import ApplicationAction
 from logic_layer.knowledge_record import KnowledgeRecord
 from logic_layer.knowledge_record.database_sync import RecordDatabaseSyncManager

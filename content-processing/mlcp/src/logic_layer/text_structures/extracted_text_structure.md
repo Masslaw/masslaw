@@ -100,11 +100,11 @@ For example, the optical form of the *extracted text structure component* expose
 
 ```python
 from typing import List
-from mlcp.src.logic_layer.text_structures.extracted_optical_text_structure import ExtractedOpticalTextDocument
-from mlcp.src.logic_layer.text_structures.extracted_optical_text_structure import OpticalElementRawDataEntry
-from mlcp.src.logic_layer.text_structures.extracted_optical_text_structure.structure_construction import OpticalTextStructureConstructor
-from mlcp.src.logic_layer.text_structures.extracted_optical_text_structure.document_metadata import DocumentMetadataHandler
-from mlcp.src.logic_layer.text_structures.extracted_optical_text_structure.document_exporting import DocumentExporter
+from logic_layer.text_structures.extracted_optical_text_structure import ExtractedOpticalTextDocument
+from logic_layer.text_structures.extracted_optical_text_structure import OpticalElementRawDataEntry
+from logic_layer.text_structures.extracted_optical_text_structure.structure_construction import OpticalTextStructureConstructor
+from logic_layer.text_structures.extracted_optical_text_structure.document_metadata import DocumentMetadataHandler
+from logic_layer.text_structures.extracted_optical_text_structure.document_exporting import DocumentExporter
 
 # some function that takes a list of images and returns the elements inside it
 export_text_from_images = ...
