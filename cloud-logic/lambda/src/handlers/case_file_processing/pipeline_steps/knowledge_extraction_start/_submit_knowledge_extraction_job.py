@@ -1,13 +1,27 @@
+from typing import List
+
 from src.modules.masslaw_cases_objects import MasslawCaseFileInstance
+from src.modules.masslaw_cloud_configurations import get_configuration_value
+from src.modules.masslaw_cloud_configurations import configuration_keys
 from src.modules.mlcp_management import MLCPSubmission
 from src.modules.aws_clients.batch_client import batch_management
 
 
-def submit_knowledge_extraction_job(file_instance: MasslawCaseFileInstance, stage='prod'):
+def submit_knowledge_extraction_job(file_instance: MasslawCaseFileInstance, stage='prod') -> List[str]:
+    languages = file_instance.get_data_property(["languages"], ['eng'])
+    supported_languages = get_configuration_value(configuration_keys.SUPPORTED_MLCP_KNOWLEDGE_EXTRACTION_LANGUAGES)
+    languages_to_process = list(set(languages) & set(supported_languages))
+    processing_job_ids = []
+    for language in languages_to_process:
+        processing_job_id = _submit_knowledge_extraction_job_for_language(file_instance, language, stage)
+        processing_job_ids.append(processing_job_id)
+    return processing_job_ids
+
+
+def _submit_knowledge_extraction_job_for_language(file_instance: MasslawCaseFileInstance, language: str, stage='prod'):
     file_id = file_instance.get_file_id()
     case_id = file_instance.get_data_property(['case_id'])
     file_type = file_instance.get_data_property(["type"])
-    languages = file_instance.get_data_property(["languages"], ['eng'])
 
     text_file_key = f'{file_id}/raw.{file_type}'
     text_file_name = f'{file_id}.{file_type}'
@@ -30,7 +44,7 @@ def submit_knowledge_extraction_job(file_instance: MasslawCaseFileInstance, stag
             "files_data": [
                 {
                     "file_name": text_file_name,
-                    "languages": languages,
+                    "languages": [language],
                     "case_id": case_id,
                     "file_id": file_id,
                     "neptune_endpoints": {
@@ -62,6 +76,7 @@ def submit_knowledge_extraction_job(file_instance: MasslawCaseFileInstance, stag
     })
 
     mlcp_job = mlcp.get_job()
+    mlcp_job.name = f'mlcp-knowledge-extraction-{language}-{stage}'
     mlcp_job.queue = f'mlcp-knowledge-extraction-queue-{stage}'
 
     processing_job_id = batch_management.submit_job(mlcp_job)
