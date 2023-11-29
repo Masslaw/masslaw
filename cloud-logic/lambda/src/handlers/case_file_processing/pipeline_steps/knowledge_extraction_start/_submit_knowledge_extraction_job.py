@@ -71,7 +71,7 @@ def submit_knowledge_extraction_job(file_instance: MasslawCaseFileInstance, stag
 
 def _get_neptune_read_endpoint_for_stage(stage) -> str:
     if stage == 'dev':
-        return "masslaw-knowledge-dev.cluster-c6rrtlqu4oqc.us-east-1.neptune.amazonaws.com"
+        return "masslaw-knowledge-dev.cluster-ro-c6rrtlqu4oqc.us-east-1.neptune.amazonaws.com"
     return ''
 
 
