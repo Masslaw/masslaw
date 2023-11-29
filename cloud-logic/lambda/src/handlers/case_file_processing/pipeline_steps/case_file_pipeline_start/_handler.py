@@ -15,7 +15,7 @@ class CaseFilePipelineStart(MasslawStepFunctionCaseFilePipelineNodeHandler):
         if processing_in_progress:
             self._set_response_attribute(['invalid'], 'true')
             return
-        self.__file_instance.set_data_property(['processing', 'stage_information', 'ProcessingFile', 'status'], 'InProgress')
+        self.__file_instance.set_data_property(['processing', 'stage_information', 'processing_file', 'status'], 'in_progress')
         self.__file_instance.set_data_property(['processing', 'in_progress'], 'true')
         self._set_response_attribute(['file_data'], self.__file_instance.get_data_copy())
 

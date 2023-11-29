@@ -6,7 +6,7 @@ class KnowledgeExtractionSuccess(MasslawStepFunctionCaseFilePipelineNodeHandler)
 
     def _execute(self):
         self.__file_instance = MasslawCaseFileInstance(self._file_id)
-        self.__file_instance.set_data_property(['processing', 'stage_information', 'knowledge_extraction', 'status'], 'Done')
+        self.__file_instance.set_data_property(['processing', 'stage_information', 'knowledge_extraction', 'status'], 'done')
         self.__file_instance.set_data_property(['processing', 'stage_metadata', 'knowledge_extraction', 'valid'], 'true')
         self._set_response_attribute(['file_data'], self.__file_instance.get_data_copy())
 

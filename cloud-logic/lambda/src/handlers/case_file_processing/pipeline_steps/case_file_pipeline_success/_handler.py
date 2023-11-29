@@ -6,7 +6,7 @@ class CaseFilePipelineSuccess(MasslawStepFunctionCaseFilePipelineNodeHandler):
 
     def _execute(self):
         self.__file_instance = MasslawCaseFileInstance(self._file_id)
-        self.__file_instance.set_data_property(['processing', 'stage_information', 'ProcessingFile', 'status'], 'Done')
+        self.__file_instance.set_data_property(['processing', 'stage_information', 'processing_file', 'status'], 'done')
         self.__file_instance.set_data_property(['processing', 'in_progress'], 'false')
         self._set_response_attribute(['file_data'], self.__file_instance.get_data_copy())
 

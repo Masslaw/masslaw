@@ -1,4 +1,4 @@
-from ._mlcp_submittion import MLCPSubmission
+from ._mlcp_submission import MLCPSubmission
 
 
 __all__ = ["MLCPSubmission"]
