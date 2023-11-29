@@ -9,11 +9,11 @@ class SubmitToSearchIndex(MasslawStepFunctionCaseFilePipelineNodeHandler):
 
     def _execute(self):
         self.__file_instance = MasslawCaseFileInstance(self._file_id)
-        self.__file_instance.set_data_property(['processing', 'stage_information', 'TextIndexing', 'status'], 'InProgress')
+        self.__file_instance.set_data_property(['processing', 'stage_information', 'text_indexing', 'status'], 'InProgress')
         self.__load_file_text()
         self.__submit_to_opensearch_index()
-        self.__file_instance.set_data_property(['processing', 'stage_information', 'TextIndexing', 'status'], 'Done')
-        self.__file_instance.set_data_property(['processing', 'stage_metadata', 'TextIndexing', 'valid'], 'true')
+        self.__file_instance.set_data_property(['processing', 'stage_information', 'text_indexing', 'status'], 'Done')
+        self.__file_instance.set_data_property(['processing', 'stage_metadata', 'text_indexing', 'valid'], 'true')
         self._set_response_attribute(['file_data'], self.__file_instance.get_data_copy())
 
     def _handle_exception(self, exception: Exception):

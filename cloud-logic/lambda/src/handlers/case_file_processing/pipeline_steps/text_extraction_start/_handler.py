@@ -7,10 +7,10 @@ class TextExtractionStart(MasslawStepFunctionCaseFilePipelineNodeHandler):
 
     def _execute(self):
         self.__file_instance = MasslawCaseFileInstance(self._file_id)
-        self.__file_instance.set_data_property(['processing', 'stage_information', 'TextExtraction', 'status'], 'InProgress')
+        self.__file_instance.set_data_property(['processing', 'stage_information', 'text_extraction', 'status'], 'InProgress')
         text_extraction_job_id = submit_text_extraction_job(self.__file_instance, stage=self._stage)
         assert text_extraction_job_id
-        self.__file_instance.set_data_property(['processing', 'stage_metadata', 'TextExtraction', 'job_id'], text_extraction_job_id)
+        self.__file_instance.set_data_property(['processing', 'stage_metadata', 'text_extraction', 'job_id'], text_extraction_job_id)
         self.__invalidate_next_steps()
         self._set_response_attribute(['file_data'], self.__file_instance.get_data_copy())
 
@@ -22,8 +22,8 @@ class TextExtractionStart(MasslawStepFunctionCaseFilePipelineNodeHandler):
         self.__file_instance.save_data()
 
     def __invalidate_next_steps(self):
-        self.__file_instance.set_data_property(['processing', 'stage_metadata', 'TextIndexing', 'valid'], 'false')
-        self.__file_instance.set_data_property(['processing', 'stage_metadata', 'TextProcessing', 'valid'], 'false')
+        self.__file_instance.set_data_property(['processing', 'stage_metadata', 'text_indexing', 'valid'], 'false')
+        self.__file_instance.set_data_property(['processing', 'stage_metadata', 'knowledge_extraction', 'valid'], 'false')
 
 
 handler = TextExtractionStart()

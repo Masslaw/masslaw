@@ -6,8 +6,8 @@ class TextExtractionSuccess(MasslawStepFunctionCaseFilePipelineNodeHandler):
 
     def _execute(self):
         self.__file_instance = MasslawCaseFileInstance(self._file_id)
-        self.__file_instance.set_data_property(['processing', 'stage_information', 'TextExtraction', 'status'], 'Done')
-        self.__file_instance.set_data_property(['processing', 'stage_metadata', 'TextExtraction', 'valid'], 'true')
+        self.__file_instance.set_data_property(['processing', 'stage_information', 'text_extraction', 'status'], 'Done')
+        self.__file_instance.set_data_property(['processing', 'stage_metadata', 'text_extraction', 'valid'], 'true')
         self._set_response_attribute(['file_data'], self.__file_instance.get_data_copy())
 
     def _successful_execution(self):
