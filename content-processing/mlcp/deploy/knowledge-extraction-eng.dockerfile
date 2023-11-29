@@ -25,8 +25,6 @@ RUN python -m coreferee install en
 
 # Copy the source code into the container
 COPY /src /src
-COPY /some_text.txt /some_text.txt
-COPY /process_configuration.json /process_configuration.json
 RUN chmod +x /src/main.py
 
 # Command to run on container start
