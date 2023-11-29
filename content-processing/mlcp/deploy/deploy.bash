@@ -37,6 +37,15 @@ else
 fi
 
 cd ..
-docker build -t mlcp-$STAGE -f deploy/Dockerfile .
-docker tag mlcp-$STAGE:latest 746826375642.dkr.ecr.us-east-1.amazonaws.com/mlcp-$STAGE:latest
-docker push 746826375642.dkr.ecr.us-east-1.amazonaws.com/mlcp-$STAGE:latest
+
+IMAGE_NAME=mlcp-text-extraction-$STAGE
+DOCKERFILE=text-extraction.dockerfile
+docker build -t $IMAGE_NAME -f deploy/$DOCKERFILE .
+docker tag $IMAGE_NAME:latest 746826375642.dkr.ecr.us-east-1.amazonaws.com/$IMAGE_NAME:latest
+docker push 746826375642.dkr.ecr.us-east-1.amazonaws.com/$IMAGE_NAME:latest
+
+IMAGE_NAME=mlcp-knowledge-extraction-eng-$STAGE
+DOCKERFILE=knowledge-extraction-eng.dockerfile
+docker build -t $IMAGE_NAME -f deploy/$DOCKERFILE .
+docker tag $IMAGE_NAME:latest 746826375642.dkr.ecr.us-east-1.amazonaws.com/$IMAGE_NAME:latest
+docker push 746826375642.dkr.ecr.us-east-1.amazonaws.com/$IMAGE_NAME:latest

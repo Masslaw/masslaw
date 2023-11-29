@@ -21,12 +21,27 @@ RUN apt-get install -y \
 # process office documents
 RUN apt-get update && apt-get install -y --no-install-recommends libreoffice-writer
 
-# Copy the requirements.txt first to leverage Docker cache
-COPY /src/requirements.txt /src/requirements.txt
-RUN pip3 install -r /src/requirements.txt
+# install python dependencies
+RUN pip3 install boto3==1.28.68
+RUN pip3 install botocore==1.31.68
+RUN pip3 install matplotlib==3.8.0
+RUN pip3 install networkx==3.2
+RUN pip3 install numpy==1.24.3
+RUN pip3 install opencv_python==4.7.0.72
+RUN pip3 install pandas==2.1.3
+RUN pip3 install pdf2image==1.16.3
+RUN pip3 install pdfplumber==0.10.3
+RUN pip3 install Pillow==10.1.0
+RUN pip3 install psutil==5.9.5
+RUN pip3 install pypdf==3.17.1
+RUN pip3 install pytesseract==0.3.10
+RUN pip3 install python_dateutil==2.8.2
+RUN pip3 install reportlab==4.0.7
 
 # Copy the source code into the container
 COPY /src /src
+COPY /some_text.txt /some_text.txt
+COPY /process_configuration.json /process_configuration.json
 RUN chmod +x /src/main.py
 
 # Command to run on container start
