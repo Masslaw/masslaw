@@ -62,7 +62,7 @@ it.
 An example for the usage of the shared layer from an external component:
 
 ```python
-from mlcp.src.shared_layer.mlcp_logger import logger
+from shared_layer.mlcp_logger import logger
 
 logger.log("This is a log message")
 ```

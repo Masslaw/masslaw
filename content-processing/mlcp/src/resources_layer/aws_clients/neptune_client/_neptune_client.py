@@ -16,6 +16,7 @@ from resources_layer.aws_clients.neptune_client._data_parsing import get_node_ob
 from resources_layer.aws_clients.neptune_client._neptune_connection import NeptuneConnection
 from resources_layer.aws_clients.neptune_client._neptune_edge import NeptuneEdge
 from resources_layer.aws_clients.neptune_client._neptune_node import NeptuneNode
+from shared_layer.dictionary_utils import dictionary_utils
 
 
 class NeptuneClient:
@@ -51,6 +52,7 @@ class NeptuneClient:
         t = g.add_v(label)
         if node_id:
             t = t.property(T.id, node_id)
+        dictionary_utils.ensure_flat(properties)
         for key, value in properties.items():
             t = t.property(key, value)
         new_node = t.next()
@@ -62,6 +64,7 @@ class NeptuneClient:
         t = g.add_e(edge_label).from_(__.V(long(from_node))).to(__.V(to_node))
         if edge_id:
             t = t.property(T.id, long(edge_id))
+        dictionary_utils.ensure_flat(properties)
         for key, value in properties.items():
             t = t.property(key, value)
         new_edge = t.next()

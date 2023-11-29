@@ -58,7 +58,7 @@ components inside it.
 An example for the usage of the *resources layer* from an external component:
 
 ```python
-from mlcp.src.resources_layer.aws_clients.s3_client import S3BucketManager
+from resources_layer.aws_clients.s3_client import S3BucketManager
 
 # create an instance of a manager that manages an S3 bucket in a certain region 
 bucket_manager = S3BucketManager(

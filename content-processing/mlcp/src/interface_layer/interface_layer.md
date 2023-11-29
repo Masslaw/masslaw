@@ -48,7 +48,7 @@ environment via the variable key: `"mlcp_process_configuration"`
 
 ```python
 import os
-from mlcp.src.interface_layer.application import Application
+from interface_layer.application import Application
 
 process_configuration = {
     "actions": [

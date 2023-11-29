@@ -57,7 +57,7 @@ that implement their own, in other words the interface of this large component i
 components inside it.
 
 ```python
-from mlcp.src.logic_layer.file_processing import FileProcessing
+from logic_layer.file_processing import FileProcessing
 
 example_file = 'some_pdf_file.pdf'
 

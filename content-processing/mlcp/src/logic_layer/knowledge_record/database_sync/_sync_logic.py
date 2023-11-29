@@ -5,13 +5,13 @@ from logic_layer.knowledge_record.data_merging import ConnectionMerger
 from logic_layer.knowledge_record.data_merging import EntityMerger
 from logic_layer.knowledge_record._entity import KnowledgeRecordEntity
 from logic_layer.knowledge_record._record import KnowledgeRecord
-from logic_layer.knowledge_record.data_loading import graph_database_loading
 from logic_layer.knowledge_record._record_compnents_matching import connection_matching
 from logic_layer.knowledge_record._record_compnents_matching import entity_matching
 from logic_layer.remote_graph_database._graph_database_manager import GraphDatabaseManager
 from shared_layer.mlcp_logger import logger
 
 
+@logger.process_function('Syncing knowledge record with graph database')
 def sync_record_with_graph_database(graph_database_manager: GraphDatabaseManager, record: KnowledgeRecord):
     record_entities = record.get_entities()
     _sync_entities_with_graph_database(graph_database_manager, record_entities)
@@ -22,6 +22,7 @@ def sync_record_with_graph_database(graph_database_manager: GraphDatabaseManager
     record.set_connections(record_connections)
 
 
+@logger.process_function('Syncing entities with graph database')
 def _sync_entities_with_graph_database(graph_database_manager: GraphDatabaseManager, record_entities: List[KnowledgeRecordEntity]):
     for record_entity in record_entities:
         _sync_entity_with_graph_database(graph_database_manager, record_entity)
@@ -47,6 +48,7 @@ def _get_and_merge_matching_entity_if_exists(graph_database_manager: GraphDataba
     entity_merger.merge_data_from_another_entity(matching_entity)
 
 
+@logger.process_function('Syncing connections with graph database')
 def _sync_connections_with_graph_database(graph_database_manager: GraphDatabaseManager, record_connections: List[KnowledgeRecordConnection]):
     for record_connection in record_connections:
         _sync_connection_with_graph_database(graph_database_manager, record_connection)
