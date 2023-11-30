@@ -183,7 +183,7 @@ if __name__ == "__main__":
     target_build_directory = './build'
     source_parent = './src'
     base_yaml_file = './serverless-base.yml'
-    stage = 'dev'
+    stage = input('stage: ')
     run_build(handler_implementations_parent_dir, target_build_directory, source_parent, base_yaml_file)
     os.system(f"cd build; serverless deploy --stage {stage}")
     shutil.rmtree(target_build_directory)
