@@ -76,6 +76,7 @@ def _submit_knowledge_extraction_job_for_language(file_instance: MasslawCaseFile
 
     mlcp_job = mlcp.get_job()
     mlcp_job.name = f'mlcp-knowledge-extraction-{language}-{stage}'
+    mlcp_job.definition = f'mlcp-knowledge-extraction-{language}-{stage}'
     mlcp_job.queue = f'mlcp-knowledge-extraction-queue-{stage}'
 
     processing_job_id = batch_management.submit_job(mlcp_job)
