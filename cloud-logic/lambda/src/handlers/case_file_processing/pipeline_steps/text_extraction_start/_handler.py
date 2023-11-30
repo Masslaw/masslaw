@@ -10,7 +10,7 @@ class TextExtractionStart(MasslawStepFunctionCaseFilePipelineNodeHandler):
         self.__file_instance.set_data_property(['processing', 'stage_information', 'text_extraction', 'status'], 'in_progress')
         text_extraction_job_ids = submit_text_extraction_job(self.__file_instance, stage=self._stage)
         assert not any([job_id is None for job_id in text_extraction_job_ids])
-        self.__file_instance.set_data_property(['processing', 'stage_metadata', 'text_extraction', 'job_id'], text_extraction_job_ids)
+        self.__file_instance.set_data_property(['processing', 'stage_metadata', 'text_extraction', 'job_ids'], text_extraction_job_ids)
         self.__invalidate_next_steps()
         self._set_response_attribute(['file_data'], self.__file_instance.get_data_copy())
 

@@ -21,10 +21,9 @@ def submit_knowledge_extraction_job(file_instance: MasslawCaseFileInstance, stag
 def _submit_knowledge_extraction_job_for_language(file_instance: MasslawCaseFileInstance, language: str, stage='prod'):
     file_id = file_instance.get_file_id()
     case_id = file_instance.get_data_property(['case_id'])
-    file_type = file_instance.get_data_property(["type"])
 
-    text_file_key = f'{file_id}/raw.{file_type}'
-    text_file_name = f'{file_id}.{file_type}'
+    text_file_key = f'{file_id}/client_exposed/extracted_text/plain_text.txt'
+    text_file_name = f'{file_id}.txt'
 
     mlcp = MLCPSubmission(stage=stage)
     mlcp.add_action({
@@ -39,7 +38,7 @@ def _submit_knowledge_extraction_job_for_language(file_instance: MasslawCaseFile
         "required": "True"
     })
     mlcp.add_action({
-        "name": "process_files",
+        "name": "extract_knowledge",
         "params": {
             "files_data": [
                 {
