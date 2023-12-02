@@ -8,11 +8,11 @@ from mlcp.testing.stubs.s3_stub import S3StubTestLoader
 from shared_layer.file_system_utils._file_system_utils import clear_directory
 from shared_layer.file_system_utils._file_system_utils import join_paths
 
-file_name = "כתב אישום.docx"
+file_name = "A-Very-Short-Story.pdf"
 
 bucket_name = "mlcp-test-bucket"
 
-languages = ["eng", "heb"]
+languages = ["eng"]
 
 case_id = 'aH7CFNTa9stf7n8anF78anADV324gnoF'
 

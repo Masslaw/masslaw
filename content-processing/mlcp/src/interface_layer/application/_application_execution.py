@@ -33,13 +33,14 @@ class ApplicationExecution:
         self.__handle_process_configuration()
 
     def __load_stage(self):
-        self.__stage = os.environ.get('__mlcp_stage__', 'prod')
+        self.__stage = os.environ.get('stage', 'prod')
         logger.debug(f"Environment Stage: {common_formats.value(self.__stage)}")
 
     def __configure_logger(self):
         in_production = self.__stage == 'prod'
-        logger.set_colored(not in_production)
-        logger.set_styled(not in_production)
+        in_testing = self.__stage == 'test'
+        logger.set_colored(in_testing)
+        logger.set_styled(in_testing)
         logger.setLevel(logging.INFO if in_production else logging.NOTSET)
 
     def __handle_process_configuration(self):

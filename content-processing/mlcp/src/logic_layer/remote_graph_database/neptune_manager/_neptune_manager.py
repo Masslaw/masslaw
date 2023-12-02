@@ -10,25 +10,33 @@ from logic_layer.remote_graph_database.neptune_manager._neptune_data_parsing imp
 from logic_layer.remote_graph_database.neptune_manager._neptune_data_parsing import parse_raw_neptune_node_object
 from resources_layer.aws_clients.neptune_client import NeptuneClient
 from resources_layer.aws_clients.neptune_client import NeptuneConnection
+from shared_layer.mlcp_logger import logger
+from shared_layer.mlcp_logger import common_formats
 
 
 class NeptuneDatabaseManager(GraphDatabaseManager):
 
     def __init__(self, neptune_read_connection_data: dict, neptune_write_connection_data: dict, subgraph_node_properties: dict = None, subgraph_edge_properties: dict = None, ):
         super().__init__(subgraph_node_properties=subgraph_node_properties, subgraph_edge_properties=subgraph_edge_properties)
+        logger.info("Initializing A Neptune Database Manager")
         self._neptune_read_connection_data = neptune_read_connection_data
         self._neptune_write_connection_data = neptune_write_connection_data
         self._neptune_client = None
-
         self._create_neptune_client()
 
+    @logger.process_function("Creating Neptune Client")
     def _create_neptune_client(self):
         if self._neptune_client: return
-        read_connection = NeptuneConnection(connection_endpoint=self._neptune_read_connection_data.get("endpoint"), connection_port=self._neptune_read_connection_data.get("port", 8182),
-            connection_type=self._neptune_read_connection_data.get("type", "gremlin"), )
-        write_connection = NeptuneConnection(connection_endpoint=self._neptune_write_connection_data.get("endpoint"), connection_port=self._neptune_write_connection_data.get("port", 8182),
-            connection_type=self._neptune_write_connection_data.get("type", "gremlin"), )
+        logger.info("Creating Neptune Read Connection")
+        logger.debug(f"Neptune Read Connection Data: {common_formats.value(self._neptune_read_connection_data)}")
+        read_connection = NeptuneConnection(connection_endpoint=self._neptune_read_connection_data.get("endpoint"), connection_protocol=self._neptune_read_connection_data.get("protocol", "ws"), connection_port=self._neptune_read_connection_data.get("port", 8182),
+                                            connection_type=self._neptune_read_connection_data.get("type", "gremlin"), )
+        logger.info("Creating Neptune Write Connection")
+        logger.debug(f"Neptune Write Connection Data: {common_formats.value(self._neptune_write_connection_data)}")
+        write_connection = NeptuneConnection(connection_endpoint=self._neptune_write_connection_data.get("endpoint"), connection_protocol=self._neptune_write_connection_data.get("protocol", "ws"), connection_port=self._neptune_write_connection_data.get("port", 8182),
+                                             connection_type=self._neptune_write_connection_data.get("type", "gremlin"), )
         self._neptune_client = NeptuneClient(read_connection=read_connection, write_connection=write_connection)
+        logger.positive("Neptune Client Created Successfully")
 
     def set_node(self, label: str, properties: Dict, node_id: str = None) -> GraphDatabaseNode:
         node_properties = properties.copy()

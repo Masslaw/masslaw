@@ -18,4 +18,4 @@ class SpacyDocumentDataInflater:
         inflate_datetime_entity_data(self._document_data.document_entities)
 
     def inflate_relations_data(self):
-        inflate_relations_data(self._document_data.document_relations)
+        inflate_relations_data(list(self._document_data.document_relations))

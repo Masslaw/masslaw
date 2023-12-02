@@ -1,3 +1,7 @@
 role: arn:aws:iam::746826375642:role/MasslawCaseFilePipelineLambdaLogicHandler
 environment:
   deployed: true
+vpc:
+  securityGroupIds:
+    - ${self:custom.lambda-security-group.${self:provider.stage}}
+  subnetIds: ${self:custom.lambda-subnet-ids.${self:provider.stage}}

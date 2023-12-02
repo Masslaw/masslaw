@@ -11,7 +11,7 @@ from mlcp.testing.stubs.s3_stub import S3StubTestLoader
 from shared_layer.file_system_utils._file_system_utils import clear_directory
 from shared_layer.file_system_utils._file_system_utils import join_paths
 
-file_name = "text_example4.txt"
+file_name = "A-Very-Short-Story.txt"
 
 bucket_name = "mlcp-test-bucket"
 
@@ -74,11 +74,13 @@ class MLCPTextExtractionJobTest(unittest.TestCase, MLCPJobTest):
                         "neptune_endpoints": {
                             "read": {
                                 "endpoint": "localhost",
+                                "protocol": "ws",
                                 "port": "8182",
                                 "type": "gremlin"
                             },
                             "write": {
                                 "endpoint": "localhost",
+                                "protocol": "ws",
                                 "port": "8182",
                                 "type": "gremlin"
                             }

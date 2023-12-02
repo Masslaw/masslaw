@@ -15,11 +15,13 @@ The extracted knowledge is loaded to a neptune db.
       "neptune_endpoints": {
         "read": {
           "endpoint": "some-read-endpoint",
+          "protocol": "wss",
           "port": "8182",
           "type": "gremlin"
         },
         "write": {
           "endpoint": "some-write-endpoint",
+          "protocol": "wss",
           "port": "8182",
           "type": "gremlin"
         }

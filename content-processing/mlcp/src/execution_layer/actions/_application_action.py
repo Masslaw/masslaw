@@ -1,3 +1,5 @@
+import os
+import traceback
 from abc import abstractmethod
 
 from execution_layer.actions._exceptions import ApplicationActionExecutionException
@@ -45,6 +47,8 @@ class ApplicationAction:
         except ApplicationActionExecutionException as e:
             self._set_execution_success(False)
             logger.error(f'An application action {common_formats.value(self._action_name)} has failed executing \n reason: {e}')
+            if os.environ.get('stage', 'prod') in ('dev', 'text'):
+                logger.error(traceback.format_exc())
 
     @abstractmethod
     def _execute(self):

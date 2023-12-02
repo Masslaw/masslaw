@@ -24,7 +24,7 @@ def submit_text_extraction_job(file_instance: MasslawCaseFileInstance, stage='pr
     mlcp_job = mlcp.get_job()
     mlcp_job.name = f'mlcp-text-extraction-{stage}'
     mlcp_job.definition = f'mlcp-text-extraction-{stage}'
-    mlcp_job.queue = f'mlcp-text-extraction-queue-{stage}'
+    mlcp_job.queue = f'mlcp-text-extraction-job-queue-{stage}'
 
     processing_job_id = batch_management.submit_job(mlcp_job)
 

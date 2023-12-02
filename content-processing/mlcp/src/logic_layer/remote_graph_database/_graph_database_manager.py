@@ -1,3 +1,4 @@
+import traceback
 from abc import abstractmethod
 from typing import Dict
 from typing import List
@@ -5,11 +6,13 @@ from typing import Optional
 
 from logic_layer.remote_graph_database._graph_database_edge import GraphDatabaseEdge
 from logic_layer.remote_graph_database._graph_database_node import GraphDatabaseNode
+from shared_layer.mlcp_logger import logger
 
 
 class GraphDatabaseManager:
 
     def __init__(self, subgraph_node_properties: Dict = None, subgraph_edge_properties: Dict = None):
+        logger.info("Creating a graph database manager")
         self._subgraph_node_properties = subgraph_node_properties or {}
         self._subgraph_edge_properties = subgraph_edge_properties or {}
 

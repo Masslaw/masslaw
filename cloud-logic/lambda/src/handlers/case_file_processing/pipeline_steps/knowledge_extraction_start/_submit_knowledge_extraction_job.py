@@ -49,11 +49,13 @@ def _submit_knowledge_extraction_job_for_language(file_instance: MasslawCaseFile
                     "neptune_endpoints": {
                         "read": {
                             "endpoint": _get_neptune_read_endpoint_for_stage(stage),
+                            "protocol": "wss",
                             "port": "8182",
                             "type": "gremlin"
                         },
                         "write": {
                             "endpoint": _get_neptune_write_endpoint_for_stage(stage),
+                            "protocol": "wss",
                             "port": "8182",
                             "type": "gremlin"
                         }
@@ -77,7 +79,7 @@ def _submit_knowledge_extraction_job_for_language(file_instance: MasslawCaseFile
     mlcp_job = mlcp.get_job()
     mlcp_job.name = f'mlcp-knowledge-extraction-{language}-{stage}'
     mlcp_job.definition = f'mlcp-knowledge-extraction-{language}-{stage}'
-    mlcp_job.queue = f'mlcp-knowledge-extraction-queue-{stage}'
+    mlcp_job.queue = f'mlcp-knowledge-extraction-job-queue-{stage}'
 
     processing_job_id = batch_management.submit_job(mlcp_job)
 
@@ -85,12 +87,8 @@ def _submit_knowledge_extraction_job_for_language(file_instance: MasslawCaseFile
 
 
 def _get_neptune_read_endpoint_for_stage(stage) -> str:
-    if stage == 'dev':
-        return "masslaw-knowledge-dev.cluster-ro-c6rrtlqu4oqc.us-east-1.neptune.amazonaws.com"
-    return ''
+    return f"masslaw-knowledge-data-{stage}.cluster-ro-c6rrtlqu4oqc.us-east-1.neptune.amazonaws.com"
 
 
 def _get_neptune_write_endpoint_for_stage(stage) -> str:
-    if stage == 'dev':
-        return "masslaw-knowledge-dev.cluster-c6rrtlqu4oqc.us-east-1.neptune.amazonaws.com"
-    return ''
+    return f"masslaw-knowledge-data-{stage}.cluster-c6rrtlqu4oqc.us-east-1.neptune.amazonaws.com"

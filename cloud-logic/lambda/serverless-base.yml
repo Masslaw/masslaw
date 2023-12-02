@@ -10,6 +10,20 @@ provider:
   environment:
     STAGE: ${self:provider.stage}
 
+custom:
+  lambda-subnet-ids:
+    dev:
+      - subnet-0c87536813e12c481
+      - subnet-05021f6034b155cf4
+    prod:
+      - subnet-026d1ea4323bbdd09
+      - subnet-036d473f2e2bc6d9b
+  lambda-security-group:
+      dev:
+          - sg-02f251aeeaf5970de
+      prod:
+          - sg-0037065087a85897c
+
 package:
   individually: true
   patterns:
