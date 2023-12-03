@@ -58,7 +58,10 @@ def ensure_flat(d: dict):
 
 
 def ensure_dict(d):
-    d = isinstance(d, dict) and d or isinstance(d, str) and try_loads(str(d)) or d
+    if isinstance(d, str):
+        if d.isnumeric():
+            return int(d)
+        d = try_loads(str(d)) or d
     if isinstance(d, dict):
         for key in list(d.keys()):
             d[key] = ensure_dict(d[key])

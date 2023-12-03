@@ -10,7 +10,7 @@ class TestKnowledgeRecordGraphVisualizer(unittest.TestCase):
         self.record = KnowledgeRecord()
         entity1 = KnowledgeRecordEntity()
         entity1.set_id("e1")
-        entity1.set_properties({"value": "Entity One"})
+        entity1.set_properties({"title": "Entity One"})
         self.record.set_entities([entity1])
 
         self.visualizer = KnowledgeRecordGraphVisualizer(self.record)

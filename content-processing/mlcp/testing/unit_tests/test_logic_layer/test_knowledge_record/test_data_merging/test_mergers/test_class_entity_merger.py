@@ -8,10 +8,10 @@ class TestClassEntityMerger(unittest.TestCase):
 
     def test_entity_merging(self):
         entity1 = KnowledgeRecordEntity(entity_id='', label='test', properties={
-            'value': 'Adam Douglases', 'appearances': ['Adam did this when', 'Adam said'], 'type': 'person',
+            'title': 'Adam Douglases', 'appearances': ['Adam did this when', 'Adam said'], 'type': 'person',
         }, unique_properties=['value'], )
         entity2 = KnowledgeRecordEntity(entity_id='123', label='some_label', properties={
-            'value': 'Adam', 'appearances': ['Adam Douglases was', 'mr. Adam Douglases loves'], 'type': 'sources.txt person',
+            'title': 'Adam', 'appearances': ['Adam Douglases was', 'mr. Adam Douglases loves'], 'type': 'person',
         })
 
         merger = EntityMerger(target_entity=entity1)
@@ -20,5 +20,5 @@ class TestClassEntityMerger(unittest.TestCase):
         self.assertEqual(entity1.get_id(), '123')
         self.assertEqual(entity1.get_label(), 'some_label')
         self.assertEqual(set(entity1.get_properties().get('appearances')), {'Adam said', 'Adam Douglases was', 'mr. Adam Douglases loves', 'Adam did this when'})
-        self.assertEqual(entity1.get_properties().get('type'), 'sources.txt person')
-        self.assertEqual(entity1.get_properties().get('value'), 'Adam Douglases')
+        self.assertEqual(entity1.get_properties().get('type'), 'person')
+        self.assertEqual(entity1.get_properties().get('title'), 'Adam Douglases')

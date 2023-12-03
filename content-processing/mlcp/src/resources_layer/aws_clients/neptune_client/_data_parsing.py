@@ -12,8 +12,13 @@ from resources_layer.aws_clients.neptune_client._neptune_node import NeptuneNode
 from shared_layer.dictionary_utils import dictionary_utils
 
 
+def get_id_in_correct_type(id_value: str|long) -> str|long:
+    try: return long(id_value)
+    except ValueError: return str(id_value)
+
+
 def parse_raw_neptune_node_data(raw_data: Dict) -> NeptuneNode:
-    node_id = long(raw_data['id'])
+    node_id = get_id_in_correct_type(raw_data['id'])
     node_label = raw_data['label']
     node_properties = raw_data.get('properties', {})
     node_properties = dictionary_utils.ensure_dict(node_properties)
@@ -22,7 +27,7 @@ def parse_raw_neptune_node_data(raw_data: Dict) -> NeptuneNode:
 
 
 def get_node_object_from_vertex(vertex: Vertex) -> NeptuneNode:
-    node_id = long(vertex.id)
+    node_id = get_id_in_correct_type(vertex.id)
     node_label = str(vertex.label)
     node_properties = {p.key: p.value for p in vertex.properties or {}}
     node_properties = dictionary_utils.ensure_dict(node_properties)
@@ -63,10 +68,10 @@ def get_multiple_node_objects_from_traversal(traversal: GraphTraversal) -> List[
 
 
 def parse_raw_neptune_edge_data(raw_data: Dict) -> NeptuneEdge:
-    edge_id = long(raw_data['id'])
+    edge_id = get_id_in_correct_type(raw_data['id'])
     edge_label = str(raw_data['label'])
-    from_edge = long(raw_data['outV'])
-    to_edge = long(raw_data['inV'])
+    from_edge = get_id_in_correct_type(raw_data['outV'])
+    to_edge = get_id_in_correct_type(raw_data['inV'])
     edge_properties = raw_data.get('properties', {})
     edge_properties = dictionary_utils.ensure_dict(edge_properties)
     edge = NeptuneEdge(edge_id=edge_id, label=edge_label, from_node=from_edge, to_node=to_edge, properties=edge_properties)
@@ -74,10 +79,10 @@ def parse_raw_neptune_edge_data(raw_data: Dict) -> NeptuneEdge:
 
 
 def get_edge_object_from_edge(edge: Edge) -> NeptuneEdge:
-    edge_id = long(edge.id)
+    edge_id = get_id_in_correct_type(edge.id)
     edge_label = str(edge.label)
-    from_edge = long(edge.outV.id)
-    to_edge = long(edge.inV.id)
+    from_edge = get_id_in_correct_type(edge.outV.id)
+    to_edge = get_id_in_correct_type(edge.inV.id)
     edge_properties = {p.key: p.value for p in edge.properties or {}}
     edge_properties = dictionary_utils.ensure_dict(edge_properties)
     edge = NeptuneEdge(edge_id=edge_id, label=edge_label, from_node=from_edge, to_node=to_edge, properties=edge_properties)

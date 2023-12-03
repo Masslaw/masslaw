@@ -5,9 +5,24 @@ from shared_layer.mlcp_logger import common_formats
 from shared_layer.mlcp_logger import logger
 from shared_layer.list_utils import list_utils
 
-entity_property_specific_merging_functions = {'title': lambda name1, name2: max(name1, name2, key=len), }
 
-entity_property_type_specific_merging_functions = {list: lambda list1, list2: list_utils.remove_duplicates(list1 + list2), }
+def _title_merging_function(value1: str, value2: str) -> str:
+    return max(value1, value2, key=len)
+
+
+def _list_merging_function(list1: list, list2: list) -> list:
+    lst = list1 + list2
+    list_utils.remove_duplicates(lst)
+    return lst
+
+
+entity_property_specific_merging_functions = {
+    'title': _title_merging_function,
+}
+
+entity_property_type_specific_merging_functions = {
+    list: _list_merging_function,
+}
 
 
 def merge_entities(merge_to: KnowledgeRecordEntity, to_merge: KnowledgeRecordEntity):

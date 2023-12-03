@@ -13,9 +13,9 @@ class TestClassNeptuneDatabaseManager(unittest.TestCase):
     def setUpClass(cls):
         cls.loader = NeptuneStubTestLoader()
         cls.manager1 = NeptuneDatabaseManager(neptune_read_connection_data={"endpoint": "localhost", "port": 8182, "type": "gremlin"},
-            neptune_write_connection_data={"endpoint": "localhost", "port": 8182, "type": "gremlin"}, subgraph_node_properties={"number": "1"}, subgraph_edge_properties={"number": "1"})
+            neptune_write_connection_data={"endpoint": "localhost", "port": 8182, "type": "gremlin"}, subgraph_node_properties={"number": 1}, subgraph_edge_properties={"number": 1})
         cls.manager2 = NeptuneDatabaseManager(neptune_read_connection_data={"endpoint": "localhost", "port": 8182, "type": "gremlin"},
-            neptune_write_connection_data={"endpoint": "localhost", "port": 8182, "type": "gremlin"}, subgraph_node_properties={"number": "2"}, subgraph_edge_properties={"number": "2"})
+            neptune_write_connection_data={"endpoint": "localhost", "port": 8182, "type": "gremlin"}, subgraph_node_properties={"number": 2}, subgraph_edge_properties={"number": 2})
 
     def tearDown(self):
         nodes = self.manager1.get_nodes_by_properties({})

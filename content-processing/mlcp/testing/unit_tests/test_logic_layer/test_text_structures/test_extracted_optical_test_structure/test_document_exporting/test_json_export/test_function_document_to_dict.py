@@ -23,6 +23,6 @@ class TestDocumentToDictFunction(unittest.TestCase):
         self.assertEqual(result_dict['textStructure']['type'], 'optical')
 
     def test_document_to_dict_with_metadata(self):
-        self.optical_text_document.set_metadata({"author": "test_author", "value": "test_title"})
+        self.optical_text_document.set_metadata({"author": "test_author", "title": "test_title"})
         result_dict = _document_to_dict(self.optical_text_document)
-        self.assertEqual(result_dict['metadata'], {"author": "test_author", "value": "test_title"})
+        self.assertEqual(result_dict['metadata'], {"author": "test_author", "title": "test_title"})

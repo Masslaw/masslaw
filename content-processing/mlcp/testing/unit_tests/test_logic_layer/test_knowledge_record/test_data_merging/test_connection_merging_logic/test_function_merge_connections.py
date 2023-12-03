@@ -9,10 +9,10 @@ class TestFunctionMergeConnections(unittest.TestCase):
 
     def test_connection_merging(self):
         connection1 = KnowledgeRecordConnection(connection_id='', label='test', properties={
-            'value': 'Adam Douglases', 'appearances': ['Adam did this when', 'Adam said'], 'type': 'person',
+            'title': 'Adam Douglases', 'appearances': ['Adam did this when', 'Adam said'], 'type': 'person',
         }, unique_properties=['value'], )
         connection2 = KnowledgeRecordConnection(connection_id='123', label='some_label', properties={
-            'value': 'Adam', 'appearances': ['Adam Douglases was', 'mr. Adam Douglases loves'], 'type': 'sources.txt person',
+            'title': 'Adam', 'appearances': ['Adam Douglases was', 'mr. Adam Douglases loves'], 'type': 'person',
         }, from_entity=KnowledgeRecordEntity(), to_entity=KnowledgeRecordEntity(), )
 
         merge_connections(connection1, connection2)
@@ -20,5 +20,5 @@ class TestFunctionMergeConnections(unittest.TestCase):
         self.assertEqual(connection1.get_id(), '123')
         self.assertEqual(connection1.get_label(), 'some_label')
         self.assertEqual(set(connection1.get_properties().get('appearances')), {'Adam said', 'Adam Douglases was', 'mr. Adam Douglases loves', 'Adam did this when'})
-        self.assertEqual(connection1.get_properties().get('type'), 'sources.txt person')
-        self.assertEqual(connection1.get_properties().get('value'), 'Adam Douglases')
+        self.assertEqual(connection1.get_properties().get('type'), 'person')
+        self.assertEqual(connection1.get_properties().get('title'), 'Adam Douglases')

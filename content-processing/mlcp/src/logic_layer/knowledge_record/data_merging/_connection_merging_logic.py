@@ -1,13 +1,33 @@
 from typing import Dict
 
 from logic_layer.knowledge_record import KnowledgeRecordConnection
+from shared_layer.list_utils import list_utils
 from shared_layer.mlcp_logger import common_formats
 from shared_layer.mlcp_logger import logger
-from shared_layer.list_utils import list_utils
 
-connection_property_specific_merging_functions = {'title': lambda v1, v2: max(v1, v2, key=len), 'strength': lambda v1, v2: v1 + v2, }
 
-connection_property_type_specific_merging_functions = {list: lambda list1, list2: list_utils.remove_duplicates(list1 + list2), }
+def _title_merging_function(value1: str, value2: str) -> str:
+    return max(value1, value2, key=len)
+
+
+def _strength_merging_function(value1: int, value2: int) -> int:
+    return value1 + value2
+
+
+def _list_merging_function(list1: list, list2: list) -> list:
+    lst = list1 + list2
+    list_utils.remove_duplicates(lst)
+    return lst
+
+
+connection_property_specific_merging_functions = {
+    'title': _title_merging_function,
+    'strength': _strength_merging_function,
+}
+
+connection_property_type_specific_merging_functions = {
+    list: _list_merging_function,
+}
 
 
 def merge_connections(merge_to: KnowledgeRecordConnection, to_merge: KnowledgeRecordConnection):
