@@ -19,7 +19,7 @@ export function get_file_ongoing_processing_stages_in_order(file_data: CaseFileD
     for (let stage of stages) {
         const stage_data = processing_data[stage];
         const status = stage_data.status;
-        if (status !== 'Done') stagesInProgress.push(stage);
+        if (status !== 'done') stagesInProgress.push(stage);
     }
 
     stagesInProgress.sort((a, b) => {

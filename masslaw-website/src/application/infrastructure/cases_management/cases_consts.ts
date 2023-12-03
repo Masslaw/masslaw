@@ -38,16 +38,18 @@ export const access_level_display_names: { [key: string]: string } = {
 }
 
 export enum FileProcessingStages {
-    Starting = 'Starting',
-    TextExtraction = 'TextExtraction',
-    TextIndexing = 'TextIndexing',
-    ProcessingFile = 'ProcessingFile',
+    Starting = 'starting',
+    TextExtraction = 'text_extraction',
+    TextIndexing = 'text_indexing',
+    KnowledgeExtraction = 'knowledge_extraction',
+    ProcessingFile = 'processing_file',
 } 
 
 export const case_file_processing_stages_order = [
     FileProcessingStages.Starting,
     FileProcessingStages.TextExtraction,
     FileProcessingStages.TextIndexing,
+    FileProcessingStages.KnowledgeExtraction,
     FileProcessingStages.ProcessingFile,
 ]
 
@@ -55,5 +57,6 @@ export const case_file_processing_stage_display_names: { [key: string]: string }
     [FileProcessingStages.Starting]: 'Starting',
     [FileProcessingStages.TextExtraction]: 'Extracting Text',
     [FileProcessingStages.TextIndexing]: 'Making Text Searchable',
+    [FileProcessingStages.KnowledgeExtraction]: 'Extracting Knowledge',
     [FileProcessingStages.ProcessingFile]: 'Processing File',
 }
