@@ -1,5 +1,4 @@
 import math
-import threading
 from concurrent.futures import ThreadPoolExecutor
 
 from src.modules.aws_clients._aws_service_client import AWSServiceClient
