@@ -5,6 +5,8 @@ from src.modules.masslaw_cloud_configurations import get_configuration_value
 from src.modules.masslaw_cloud_configurations import configuration_keys
 from src.modules.mlcp_management import MLCPSubmission
 from src.modules.aws_clients.batch_client import batch_management
+from src.modules.neptune_endpoints import get_neptune_read_endpoint_for_stage
+from src.modules.neptune_endpoints import get_neptune_write_endpoint_for_stage
 
 
 def submit_knowledge_extraction_job(file_instance: MasslawCaseFileInstance, stage='prod') -> List[str]:
@@ -48,13 +50,13 @@ def _submit_knowledge_extraction_job_for_language(file_instance: MasslawCaseFile
                     "file_id": file_id,
                     "neptune_endpoints": {
                         "read": {
-                            "endpoint": _get_neptune_read_endpoint_for_stage(stage),
+                            "endpoint": get_neptune_read_endpoint_for_stage(stage),
                             "protocol": "wss",
                             "port": "8182",
                             "type": "gremlin"
                         },
                         "write": {
-                            "endpoint": _get_neptune_write_endpoint_for_stage(stage),
+                            "endpoint": get_neptune_write_endpoint_for_stage(stage),
                             "protocol": "wss",
                             "port": "8182",
                             "type": "gremlin"
@@ -84,11 +86,3 @@ def _submit_knowledge_extraction_job_for_language(file_instance: MasslawCaseFile
     processing_job_id = batch_management.submit_job(mlcp_job)
 
     return processing_job_id
-
-
-def _get_neptune_read_endpoint_for_stage(stage) -> str:
-    return f"masslaw-knowledge-data-{stage}.cluster-ro-c6rrtlqu4oqc.us-east-1.neptune.amazonaws.com"
-
-
-def _get_neptune_write_endpoint_for_stage(stage) -> str:
-    return f"masslaw-knowledge-data-{stage}.cluster-c6rrtlqu4oqc.us-east-1.neptune.amazonaws.com"

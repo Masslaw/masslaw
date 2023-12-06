@@ -1,4 +1,4 @@
-service: masslaw-lambda-functions
+service: masslaw-cloud-logic
 frameworkVersion: '3'
 
 provider:
@@ -10,6 +10,11 @@ provider:
   environment:
     STAGE: ${self:provider.stage}
 
+package:
+  individually: true
+  patterns:
+    - '!**'
+
 custom:
   lambda-subnet-ids:
     dev:
@@ -19,12 +24,7 @@ custom:
       - subnet-026d1ea4323bbdd09
       - subnet-036d473f2e2bc6d9b
   lambda-security-group:
-      dev:
-          - sg-02f251aeeaf5970de
-      prod:
-          - sg-0037065087a85897c
-
-package:
-  individually: true
-  patterns:
-    - '!**'
+    dev:
+      - sg-02f251aeeaf5970de
+    prod:
+      - sg-0037065087a85897c

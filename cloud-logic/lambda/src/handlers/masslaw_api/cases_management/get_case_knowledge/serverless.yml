@@ -1,0 +1,8 @@
+role: arn:aws:iam::746826375642:role/LambdaMasslawCasesKnowledgeHandlerRole
+environment:
+  deployed: true
+events:
+  - http:
+      path: /cases/case/knowledge
+      method: POST
+      cors: true
