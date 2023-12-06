@@ -1,5 +1,7 @@
 import logging
 import os
+from abc import abstractmethod
+
 import time
 import traceback
 from src.modules.dictionary_utils import dictionary_utils
@@ -23,10 +25,20 @@ class LambdaHandler:
         self.__context = None
         self._stage = os.environ.get('STAGE', 'prod')
         self._execution_exception = ''
-        self.__init_logger()
+
+        self.__setup()
+
         self._log(f'Created a lambda function "{self.name}" :: stage: {self._stage}')
         self._log(f'Expected event structure: {event_structure}', level=logging.DEBUG)
         self._log(f'Lambda environment:\n{os.environ}')
+
+    def __setup(self):
+        self._setup()
+        self.__write_function_name_in_environment()
+        self.__init_logger()
+
+    def _setup(self):
+        pass  # can be implemented by inheriting handler classes
 
     def __call__(self, event, context):
         self._log(f'Calling {self.name}')
@@ -107,3 +119,6 @@ class LambdaHandler:
 
     def _log_exception(self, exception: Exception):
         self._log(f'An error occurred: [{exception.__class__.__name__}]\n \"{exception}\"\n Traceback: {traceback.format_exc()}', level=logging.ERROR)
+
+    def __write_function_name_in_environment(self):
+        os.environ['FUNCTION_NAME'] = self.name
