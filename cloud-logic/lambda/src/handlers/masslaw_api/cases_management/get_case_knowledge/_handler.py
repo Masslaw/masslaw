@@ -1,3 +1,5 @@
+import os
+
 from src.modules.aws_clients.neptune_client import NeptuneClient
 from src.modules.aws_clients.neptune_client import NeptuneConnection
 from src.modules.lambda_base import lambda_constants
@@ -5,6 +7,25 @@ from src.modules.lambda_handler_template_http_invoked_masslaw_case_management_ap
 from src.modules.masslaw_case_storage_management import masslaw_case_storage_management_exceptions
 from src.modules.neptune_endpoints import get_neptune_read_endpoint_for_stage
 from src.modules.dictionary_utils import dictionary_utils
+
+
+_stage = os.environ.get('STAGE', 'prod')
+neptune_read_endpoint = get_neptune_read_endpoint_for_stage(_stage)
+neptune_write_endpoint = get_neptune_read_endpoint_for_stage(_stage)
+_neptune_client = NeptuneClient(
+    read_connection=NeptuneConnection(
+        connection_endpoint=neptune_read_endpoint,
+        connection_port=8182,
+        connection_protocol='wss',
+        connection_type='gremlin'
+    ),
+    write_connection=NeptuneConnection(
+        connection_endpoint=neptune_write_endpoint,
+        connection_port=8182,
+        connection_protocol='wss',
+        connection_type='gremlin'
+    )
+)
 
 
 class StartCaseFileUpload(MasslawCaseManagementApiInvokedLambdaFunction):
@@ -45,35 +66,16 @@ class StartCaseFileUpload(MasslawCaseManagementApiInvokedLambdaFunction):
 
     def _execute(self):
         MasslawCaseManagementApiInvokedLambdaFunction._execute(self)
-        self.__init_client()
         self.__get_entities()
         self.__get_connections()
         self.__build_response()
-
-    def __init_client(self):
-        self._neptune_read_endpoint = get_neptune_read_endpoint_for_stage(self._stage)
-        self._neptune_write_endpoint = get_neptune_read_endpoint_for_stage(self._stage)
-        self._neptune_client = NeptuneClient(
-            read_connection=NeptuneConnection(
-                connection_endpoint=self._neptune_read_endpoint,
-                connection_port=8182,
-                connection_protocol='wss',
-                connection_type='gremlin'
-            ),
-            write_connection=NeptuneConnection(
-                connection_endpoint=self._neptune_write_endpoint,
-                connection_port=8182,
-                connection_protocol='wss',
-                connection_type='gremlin'
-            )
-        )
 
     def __get_entities(self):
         request_query_properties = self.__entity_query_params.get('query_properties', {})
         request_include_properties = self.__entity_query_params.get('include_properties', [])
         request_query_properties['case_id'] = self.__case_id
         request_label = self.__entity_query_params.get('label')
-        neptune_nodes_response = self._neptune_client.get_nodes_by_properties(request_query_properties, request_label)
+        neptune_nodes_response = _neptune_client.get_nodes_by_properties(request_query_properties, request_label)
         entities_response = []
         for neptune_node in neptune_nodes_response:
             entity_id = neptune_node.get_id()
@@ -92,7 +94,7 @@ class StartCaseFileUpload(MasslawCaseManagementApiInvokedLambdaFunction):
         request_include_properties = self.__connection_query_params.get('include_properties', [])
         request_query_properties['case_id'] = self.__case_id
         request_label = self.__connection_query_params.get('label')
-        neptune_edges_response = self._neptune_client.get_edges_by_properties(request_query_properties, request_label)
+        neptune_edges_response = _neptune_client.get_edges_by_properties(request_query_properties, request_label)
         connections_response = []
         for neptune_edge in neptune_edges_response:
             connection_id = neptune_edge.get_id()

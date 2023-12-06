@@ -105,7 +105,7 @@ class LambdaHandler:
 
     def __init_logger(self):
         logging.basicConfig(level=logging.DEBUG, format=LOGGING_FORMAT)
-        self.logger = logging.getLogger(self.name)
+        self.logger = logging.getLogger()
         self.logger.setLevel(logging.DEBUG)
 
     def _successful_execution(self):

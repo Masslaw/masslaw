@@ -8,6 +8,7 @@ from typing import Set
 
 def run_build(handler_implementations_dir: str, target_build_dir: str, source_parent: str, base_yaml_file: str):
     build_lambda_handlers(handler_implementations_dir, target_build_dir, source_parent)
+    install_function_requirements(target_build_dir)
     generate_serverless_deployment_yaml(base_yaml_file, target_build_dir)
 
 
@@ -22,6 +23,12 @@ def build_lambda_handlers(handler_implementations_dir: str, target_build_dir: st
     for index, init_file in enumerate(init_files):
         process_handler(init_file, target_build_dir_absolute, source_parent_absolute, source_parent_as_module, index, len(init_files))
     update_progress_bar(len(init_files), len(init_files), "Complete")
+
+
+def install_function_requirements(target_build_dir):
+    for handler_package in os.listdir(target_build_dir):
+        handler_package_path = os.path.join(target_build_dir, handler_package)
+        install_requirements(handler_package_path)
 
 
 def generate_serverless_deployment_yaml(base_yaml_file: str, target_build_dir: str):
@@ -176,6 +183,23 @@ def get_module_containing_script(script_path: str) -> str:
         if parent_dir == directory: break
         directory = parent_dir
     return None
+
+
+def install_requirements(build_package_path: str):
+    requirements_file = os.path.join(build_package_path, 'requirements.txt')
+    if not os.path.exists(requirements_file): return
+    install_path = os.path.join(build_package_path, 'site-packages')
+    os.system(f"pip install -r {requirements_file} -t {install_path}")
+    package_name = os.path.basename(os.path.normpath(build_package_path))
+    init_file = os.path.join(build_package_path, '__init__.py')
+    with open(init_file, 'r') as file:
+        original_contents = file.read()
+    with open(init_file, 'w') as file:
+        new_contents = ""
+        new_contents += f"import sys\n"
+        new_contents += f"sys.path.append('{package_name}/site-packages')\n"
+        new_contents += original_contents
+        file.write(new_contents)
 
 
 if __name__ == "__main__":

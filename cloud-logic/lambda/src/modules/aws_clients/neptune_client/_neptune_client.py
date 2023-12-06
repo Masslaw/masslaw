@@ -29,9 +29,9 @@ def retry_on_gremlin_server_error(connections: List[NeptuneConnection | None]):
             try:
                 result = func(*args, **kwargs)
             except GremlinServerError as e:
-                logger = logging.getLogger(os.environ['FUNCTION_NAME'])
-                self.logger.info("Gremlin Server Error Occurred. Retrying...")
-                self.logger.debug(f"Error: {e}")
+                logger = logging.getLogger()
+                logger.info("Gremlin Server Error Occurred. Retrying...")
+                logger.debug(f"Error: {e}")
                 for connection in connections:
                     if not connection: continue
                     connection.close_connection()
@@ -54,7 +54,6 @@ class NeptuneClient:
     _write_connection: NeptuneConnection = None
 
     def __init__(self, read_connection: NeptuneConnection, write_connection: NeptuneConnection):
-        self.logger = logging.getLogger(os.environ['FUNCTION_NAME'])
         self._read_connection = read_connection
         self._write_connection = write_connection
         self.establish_connections()
@@ -69,7 +68,7 @@ class NeptuneClient:
     def establish_connections(self):
         self._read_connection.establish_connection()
         self._write_connection.establish_connection()
-        self.logger.info("Connections Established Successfully")
+        logging.getLogger().info("Connections Established Successfully")
 
     def _get_read_traversal_source(self):
         return traversal().with_remote(self._read_connection.get_connection())
