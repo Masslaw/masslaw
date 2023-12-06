@@ -10,8 +10,10 @@ from src.modules.dictionary_utils import dictionary_utils
 class StartCaseFileUpload(MasslawCaseManagementApiInvokedLambdaFunction):
     def __init__(self):
         MasslawCaseManagementApiInvokedLambdaFunction.__init__(self, default_response_body={
-            'entities': [],
-            'connections': []
+            'knowledge': {
+                'entities': [],
+                'connections': []
+            }
         }, request_query_string_parameters_structure={
             'case_id': [str],
         }, request_body_structure={
@@ -109,8 +111,8 @@ class StartCaseFileUpload(MasslawCaseManagementApiInvokedLambdaFunction):
         self._connections_response = connections_response
 
     def __build_response(self):
-        self._set_response_attribute(['entities'], self._entities_response)
-        self._set_response_attribute(['connections'], self._connections_response)
+        self._set_response_attribute(['knowledge', 'entities'], self._entities_response)
+        self._set_response_attribute(['knowledge', 'connections'], self._connections_response)
 
     def _handle_exception(self, exception: Exception):
         if isinstance(exception, masslaw_case_storage_management_exceptions.MasslawFileTypeNotSupportedException):
