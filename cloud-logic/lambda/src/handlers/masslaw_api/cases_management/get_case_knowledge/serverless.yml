@@ -6,3 +6,7 @@ events:
       path: /cases/case/knowledge
       method: POST
       cors: true
+vpc:
+  securityGroupIds:
+    - ${self:custom.lambda-security-group.${self:provider.stage}}
+  subnetIds: ${self:custom.lambda-subnet-ids.${self:provider.stage}}
