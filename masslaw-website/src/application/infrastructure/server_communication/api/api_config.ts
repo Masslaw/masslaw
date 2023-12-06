@@ -55,11 +55,12 @@ export const MasslawApiCalls = {
     SET_CASE_ANNOTATION : {api: APIs.MASSLAW, method:HttpMethod.POST, rout:'/cases/case/annotations'} as ApiCallData,
     DELETE_CASE_ANNOTATION : {api: APIs.MASSLAW, method:HttpMethod.DELETE, rout:'/cases/case/annotations'} as ApiCallData,
     SET_FILE_DESCRIPTION : {api: APIs.MASSLAW, method:HttpMethod.POST, rout:'/cases/case/files/set-description'} as ApiCallData,
+    GET_CASE_KNOWLEDGE : {api: APIs.MASSLAW, method:HttpMethod.POST, rout:'/cases/case/knowledge'} as ApiCallData,
 }
 
 export const ApiRoots: {[key in APIs]: {[key in DevelopmentStages]: string}} = {
     [APIs.MASSLAW]: {
-        [DevelopmentStages.PRODUCTION]: 'https://uoubb15jdd.execute-api.us-east-1.amazonaws.com/prod',
-        [DevelopmentStages.DEVELOPMENT]: 'https://68yfmtv8od.execute-api.us-east-1.amazonaws.com/dev',
+        [DevelopmentStages.PRODUCTION]: 'https://5vcihdhjs8.execute-api.us-east-1.amazonaws.com/prod',
+        [DevelopmentStages.DEVELOPMENT]: 'https://uz878qkx1b.execute-api.us-east-1.amazonaws.com/dev',
     },
 };
