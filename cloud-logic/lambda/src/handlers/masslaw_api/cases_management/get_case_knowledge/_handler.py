@@ -2,9 +2,13 @@ import os
 
 from src.modules.aws_clients.neptune_client import NeptuneClient
 from src.modules.aws_clients.neptune_client import NeptuneConnection
+from src.modules.aws_clients.neptune_client import NeptuneEdge
+from src.modules.aws_clients.neptune_client import NeptuneNode
 from src.modules.lambda_base import lambda_constants
 from src.modules.lambda_handler_template_http_invoked_masslaw_case_management_api import MasslawCaseManagementApiInvokedLambdaFunction
 from src.modules.masslaw_case_storage_management import masslaw_case_storage_management_exceptions
+from src.modules.masslaw_case_users_management import MasslawCaseUserAccessManager
+from src.modules.masslaw_cases_objects import MasslawCaseInstance
 from src.modules.neptune_endpoints import get_neptune_read_endpoint_for_stage
 from src.modules.dictionary_utils import dictionary_utils
 from src.modules.neptune_endpoints import get_neptune_write_endpoint_for_stage
@@ -67,6 +71,10 @@ class GetCaseKnowledge(MasslawCaseManagementApiInvokedLambdaFunction):
 
     def _execute(self):
         MasslawCaseManagementApiInvokedLambdaFunction._execute(self)
+        user_id = self._caller_user_instance.get_user_id()
+        case_instance = MasslawCaseInstance(case_id=self.__case_id)
+        case_user_access = MasslawCaseUserAccessManager(case_instance=case_instance)
+        self._user_access_files = case_user_access.get_user_access_files(user_id)
         self.__get_entities()
         self.__get_connections()
         self.__build_response()
@@ -79,6 +87,8 @@ class GetCaseKnowledge(MasslawCaseManagementApiInvokedLambdaFunction):
         neptune_nodes_response = _neptune_client.get_nodes_by_properties(request_query_properties, request_label)
         entities_response = []
         for neptune_node in neptune_nodes_response:
+            if not self.__validate_node(neptune_node):
+                continue
             entity_id = neptune_node.get_id()
             entity_label = neptune_node.get_label()
             entity_properties = neptune_node.get_properties()
@@ -90,6 +100,13 @@ class GetCaseKnowledge(MasslawCaseManagementApiInvokedLambdaFunction):
             })
         self._entities_response = entities_response
 
+    def __validate_node(self, neptune_node: NeptuneNode) -> bool:
+        if neptune_node.get_properties().get('case_id', '') != self.__case_id:
+            return False
+        if not neptune_node.get_properties().get('file_id', '') in self._user_access_files:
+            return False
+        return True
+
     def __get_connections(self):
         request_query_properties = self.__connection_query_params.get('query_properties', {})
         request_include_properties = self.__connection_query_params.get('include_properties', [])
@@ -98,6 +115,8 @@ class GetCaseKnowledge(MasslawCaseManagementApiInvokedLambdaFunction):
         neptune_edges_response = _neptune_client.get_edges_by_properties(request_query_properties, request_label)
         connections_response = []
         for neptune_edge in neptune_edges_response:
+            if not self.__validate_edge(neptune_edge):
+                continue
             connection_id = neptune_edge.get_id()
             connection_from_node_id = neptune_edge.get_from_node()
             connection_to_node_id = neptune_edge.get_to_node()
@@ -112,6 +131,13 @@ class GetCaseKnowledge(MasslawCaseManagementApiInvokedLambdaFunction):
                 'properties': connection_properties
             })
         self._connections_response = connections_response
+
+    def __validate_edge(self, neptune_edge: NeptuneEdge) -> bool:
+        if neptune_edge.get_properties().get('case_id', '') != self.__case_id:
+            return False
+        if not neptune_edge.get_properties().get('file_id', '') in self._user_access_files:
+            return False
+        return True
 
     def __build_response(self):
         self._set_response_attribute(['body', 'knowledge', 'entities'], self._entities_response)
