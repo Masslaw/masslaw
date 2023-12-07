@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 from abc import abstractmethod
@@ -97,6 +98,7 @@ class LambdaHandler:
     def _prepare_final_response(self, response):
         self._log(f'Preparing final response')
         self._log(f'Raw response: {response}', level=logging.DEBUG)
+        self._log(f'Response length: {len(str(response))}')
         return response
 
     def _assert_event_structure(self):
