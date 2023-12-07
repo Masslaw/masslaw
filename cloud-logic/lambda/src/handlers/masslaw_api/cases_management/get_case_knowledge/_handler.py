@@ -7,11 +7,12 @@ from src.modules.lambda_handler_template_http_invoked_masslaw_case_management_ap
 from src.modules.masslaw_case_storage_management import masslaw_case_storage_management_exceptions
 from src.modules.neptune_endpoints import get_neptune_read_endpoint_for_stage
 from src.modules.dictionary_utils import dictionary_utils
+from src.modules.neptune_endpoints import get_neptune_write_endpoint_for_stage
 
 
 _stage = os.environ.get('STAGE', 'prod')
 neptune_read_endpoint = get_neptune_read_endpoint_for_stage(_stage)
-neptune_write_endpoint = get_neptune_read_endpoint_for_stage(_stage)
+neptune_write_endpoint = get_neptune_write_endpoint_for_stage(_stage)
 _neptune_client = NeptuneClient(
     read_connection=NeptuneConnection(
         connection_endpoint=neptune_read_endpoint,
@@ -28,7 +29,7 @@ _neptune_client = NeptuneClient(
 )
 
 
-class StartCaseFileUpload(MasslawCaseManagementApiInvokedLambdaFunction):
+class GetCaseKnowledge(MasslawCaseManagementApiInvokedLambdaFunction):
     def __init__(self):
         MasslawCaseManagementApiInvokedLambdaFunction.__init__(self, default_response_body={
             'knowledge': {
@@ -45,7 +46,7 @@ class StartCaseFileUpload(MasslawCaseManagementApiInvokedLambdaFunction):
             },
             'connections': {
                 'include_properties': [list, None],
-                'label': [str],
+                'label': [str, None],
                 'query_properties': [dict, None]
             }
         })
@@ -113,8 +114,8 @@ class StartCaseFileUpload(MasslawCaseManagementApiInvokedLambdaFunction):
         self._connections_response = connections_response
 
     def __build_response(self):
-        self._set_response_attribute(['knowledge', 'entities'], self._entities_response)
-        self._set_response_attribute(['knowledge', 'connections'], self._connections_response)
+        self._set_response_attribute(['body', 'knowledge', 'entities'], self._entities_response)
+        self._set_response_attribute(['body', 'knowledge', 'connections'], self._connections_response)
 
     def _handle_exception(self, exception: Exception):
         if isinstance(exception, masslaw_case_storage_management_exceptions.MasslawFileTypeNotSupportedException):
@@ -123,4 +124,4 @@ class StartCaseFileUpload(MasslawCaseManagementApiInvokedLambdaFunction):
             return
 
 
-handler = StartCaseFileUpload()
+handler = GetCaseKnowledge()
