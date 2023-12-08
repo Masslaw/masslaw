@@ -49,3 +49,23 @@ class KnowledgeRecord:
         to_entity = connection.get_to_entity()
         self._outgoing_connections_by_entities[from_entity.__hash__()] = self.get_entity_outgoing_connections(from_entity) + [connection]
         self._ingoing_connections_by_entities[to_entity.__hash__()] = self.get_entity_ingoing_connections(to_entity) + [connection]
+
+    def batch_update_entity_properties(self, properties: Dict):
+        for entity in self._entities:
+            entity_properties = entity.get_properties()
+            entity_properties.update(properties)
+            entity.set_properties(entity_properties)
+
+    def batch_update_connection_properties(self, properties: Dict):
+        for connection in self._connections:
+            connection_properties = connection.get_properties()
+            connection_properties.update(properties)
+            connection.set_properties(connection_properties)
+
+    def batch_set_entity_properties(self, properties: Dict):
+        for entity in self._entities:
+            entity.set_properties(properties)
+
+    def batch_set_connection_properties(self, properties: Dict):
+        for connection in self._connections:
+            connection.set_properties(properties)
