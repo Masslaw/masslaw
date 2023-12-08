@@ -46,9 +46,12 @@ class ExtractKnowledge(ApplicationAction):
         neptune_database_manager = NeptuneDatabaseManager(
             neptune_read_connection_data=neptune_read_endpoint_data,
             neptune_write_connection_data=neptune_write_endpoint_data,
-            subgraph_node_properties=knowledge_record_data.get("node_properties", {}),
-            subgraph_edge_properties=knowledge_record_data.get("edge_properties", {}),
+            subgraph_node_properties=knowledge_record_data.get("subgraph_node_properties", {}),
+            subgraph_edge_properties=knowledge_record_data.get("subgraph_edge_properties", {}),
         )
+
+        knowledge_record.batch_update_entity_properties(knowledge_record_data.get("node_properties", {}))
+        knowledge_record.batch_update_connection_properties(knowledge_record_data.get("edge_properties", {}))
 
         graph_database_sync_manager.sync_with_database(neptune_database_manager)
 
