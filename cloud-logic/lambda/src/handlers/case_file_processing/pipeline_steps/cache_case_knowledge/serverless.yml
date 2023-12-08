@@ -1,11 +1,8 @@
-role: arn:aws:iam::746826375642:role/LambdaMasslawCasesKnowledgeHandlerRole
+role: arn:aws:iam::746826375642:role/MasslawCaseFilePipelineLambdaLogicHandler
+memorySize: 2048 # 2048MB-RAM ~ 2GB-RAM
+timeout: 800 # 800 seconds ~ 13.5 minutes
 environment:
   deployed: true
-events:
-  - http:
-      path: /cases/case/knowledge
-      method: POST
-      cors: true
 vpc:
   securityGroupIds:
     - ${self:custom.lambda-security-group.${self:provider.stage}}

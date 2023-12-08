@@ -1,10 +1,10 @@
 from typing import List
 
-from src.modules.masslaw_cases_objects import MasslawCaseFileInstance
-from src.modules.masslaw_cloud_configurations import get_configuration_value
-from src.modules.masslaw_cloud_configurations import configuration_keys
-from src.modules.mlcp_management import MLCPSubmission
 from src.modules.aws_clients.batch_client import batch_management
+from src.modules.masslaw_cases_objects import MasslawCaseFileInstance
+from src.modules.masslaw_cloud_configurations import configuration_keys
+from src.modules.masslaw_cloud_configurations import get_configuration_value
+from src.modules.mlcp_management import MLCPSubmission
 from src.modules.neptune_endpoints import get_neptune_read_endpoint_for_stage
 from src.modules.neptune_endpoints import get_neptune_write_endpoint_for_stage
 
@@ -42,38 +42,44 @@ def _submit_knowledge_extraction_job_for_language(file_instance: MasslawCaseFile
     mlcp.add_action({
         "name": "extract_knowledge",
         "params": {
-            "files_data": [
-                {
-                    "file_name": text_file_name,
-                    "languages": [language],
-                    "case_id": case_id,
-                    "file_id": file_id,
-                    "neptune_endpoints": {
-                        "read": {
-                            "endpoint": get_neptune_read_endpoint_for_stage(stage),
-                            "protocol": "wss",
-                            "port": "8182",
-                            "type": "gremlin"
-                        },
-                        "write": {
-                            "endpoint": get_neptune_write_endpoint_for_stage(stage),
-                            "protocol": "wss",
-                            "port": "8182",
-                            "type": "gremlin"
-                        }
+            "files_data": [{
+                "file_name": text_file_name,
+                "languages": [language],
+                "case_id": case_id,
+                "file_id": file_id,
+                "neptune_endpoints": {
+                    "read": {
+                        "endpoint": get_neptune_read_endpoint_for_stage(stage),
+                        "protocol": "wss",
+                        "port": "8182",
+                        "type": "gremlin"
                     },
-                    "knowledge_record_data": {
-                        "node_properties": {
-                            "file_id": file_id,
-                            "case_id": case_id
-                        },
-                        "edge_properties": {
-                            "file_id": file_id,
-                            "case_id": case_id
-                        }
+                    "write": {
+                        "endpoint": get_neptune_write_endpoint_for_stage(stage),
+                        "protocol": "wss",
+                        "port": "8182",
+                        "type": "gremlin"
                     }
+                },
+                "knowledge_record_data": {
+                    "node_properties": {
+                        "files": {
+                            'list': [file_id]
+                        },
+                    },
+                    "edge_properties": {
+                        "files": {
+                            'list': [file_id]
+                        },
+                    },
+                    "subgraph_node_properties": {
+                        "case_id": case_id
+                    },
+                    "subgraph_edge_properties": {
+                        "case_id": case_id
+                    },
                 }
-            ]
+            }]
         },
         "required": "True"
     })
