@@ -41,6 +41,13 @@ class ExtractKnowledge(ApplicationAction):
         extractor.load_file(file_name)
         knowledge_record: KnowledgeRecord = extractor.get_record()
 
+        logger.debug(f"{common_formats.value(str(len(knowledge_record.get_entities())))} entities have been extracted.")
+        logger.debug(f"{common_formats.value(str(len(knowledge_record.get_entities())))} connections have been extracted.")
+
+        knowledge_record.batch_update_entity_properties(knowledge_record_data.get("node_properties", {}))
+        knowledge_record.batch_update_connection_properties(knowledge_record_data.get("edge_properties", {}))
+
+        logger.info(f"Proceeding to sync extracted knowledge with neptune database")
         graph_database_sync_manager = RecordDatabaseSyncManager(knowledge_record)
 
         neptune_database_manager = NeptuneDatabaseManager(
@@ -49,9 +56,6 @@ class ExtractKnowledge(ApplicationAction):
             subgraph_node_properties=knowledge_record_data.get("subgraph_node_properties", {}),
             subgraph_edge_properties=knowledge_record_data.get("subgraph_edge_properties", {}),
         )
-
-        knowledge_record.batch_update_entity_properties(knowledge_record_data.get("node_properties", {}))
-        knowledge_record.batch_update_connection_properties(knowledge_record_data.get("edge_properties", {}))
 
         graph_database_sync_manager.sync_with_database(neptune_database_manager)
 

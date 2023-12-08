@@ -28,10 +28,16 @@ The extracted knowledge is loaded to a neptune db.
       },
       "knowledge_record_data": {
         "node_properties": {
-          "this-property": "will be present on all nodes in the uploaded subgraph with this value"
+          "this-property": "will be present on all nodes extracted in the current execution"
         },
         "edge_properties": {
-          "this-property": "will be present on all edges in the uploaded subgraph with this value"
+          "this-property": "will be present on all edges extracted in the current execution"
+        },
+        "subgraph_node_properties": {
+          "this-property": "is the one present in all nodes of the subgraph (in neptune) the result of this execution is targeting, and will be on the nodes extracted in the current execution"
+        },
+        "subgraph_edge_properties": {
+          "this-property": "is the one present in all edges of the subgraph (in neptune) the result of this execution is targeting, and will be on the edges extracted in the current execution"
         }
       }
     }

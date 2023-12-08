@@ -21,7 +21,7 @@ case_id = 'aH7CFNTa9stf7n8anF78anADV324gnoF'
 
 file_id = 'ajva0SF08m8sFM09HM809fmh0CM0fhm0asF8'
 
-parent_output_directory = 'output/knowledge_extraction_job'
+parent_output_directory = './output/knowledge_extraction_job'
 
 reset_database = True
 
@@ -87,13 +87,17 @@ class MLCPTextExtractionJobTest(unittest.TestCase, MLCPJobTest):
                         },
                         "knowledge_record_data": {
                             "node_properties": {
-                                "file_id": file_id,
-                                "case_id": case_id,
+                                "files": {"list": [file_id]},
                             },
                             "edge_properties": {
-                                "file_id": file_id,
-                                "case_id": case_id,
-                            }
+                                "files": {"list": [file_id]},
+                            },
+                            "subgraph_node_properties": {
+                                "case_id": case_id
+                            },
+                            "subgraph_edge_properties": {
+                                "case_id": case_id
+                            },
                         }
                     }]
                 }, "required": "True"

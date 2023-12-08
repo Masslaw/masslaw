@@ -35,7 +35,7 @@ class MLCPJobTest:
         self._set_mlcp_process_configuration(process_configuration)
 
     def _set_stage(self, stage: str):
-        os.environ['__mlcp_stage__'] = stage
+        os.environ['stage'] = stage
 
     def _after_application_finished(self):
         pass

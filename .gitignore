@@ -20,3 +20,4 @@ content-processing/mlcp/testing/shared/neptune_stub/apache-tinkerpop-gremlin-ser
 .serverless
 /cloud-logic/lambda/build/
 content-processing/mlcp/testing/stubs/neptune_stub/apache-tinkerpop-gremlin-server-3.7.0/run/gremlin.pid
+/content-processing/mlcp/testing/output/
