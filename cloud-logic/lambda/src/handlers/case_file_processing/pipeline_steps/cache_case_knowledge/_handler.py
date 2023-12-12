@@ -86,6 +86,8 @@ class GetCaseKnowledge(MasslawStepFunctionCaseFilePipelineNodeHandler):
             connection_data = {
                 'id': connection_id,
                 'label': connection_label,
+                'from': neptune_edge.get_from_node(),
+                'to': neptune_edge.get_to_node(),
                 'properties': selected_connection_properties
             }
             for file_id in files:
