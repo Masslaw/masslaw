@@ -139,6 +139,7 @@ export class Graph {
     }
 
     public addEdge(edge_id: string, from_entity: string, to_entity: string, weight: number) {
+        if (!edge_id || !from_entity || !to_entity || !weight) return;
         let edge_element = document.createElementNS('http://www.w3.org/2000/svg', 'line');
         edge_element.setAttribute('stroke', 'black');
         edge_element.setAttribute('stroke-width', '1');
