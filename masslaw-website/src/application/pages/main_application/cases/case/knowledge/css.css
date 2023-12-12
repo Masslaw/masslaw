@@ -47,3 +47,10 @@
 .graph-node.secondary-focus circle {
     filter: brightness(150%);
 }
+
+.graph-node text {
+    font-size: 7px;
+    user-select: none;
+    filter: drop-shadow(0 0 1px black);
+    text-shadow: 0 0 7px black, 0 0 1px black, 0 0 1px black, 0 0 1px black;
+}

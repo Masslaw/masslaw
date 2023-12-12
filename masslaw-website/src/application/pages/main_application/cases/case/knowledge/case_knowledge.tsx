@@ -53,7 +53,6 @@ export const CaseKnowledge: ApplicationPage = (props: ApplicationPageProps) => {
             });
             await Promise.all(promises);
             setKnowledge(knowledge);
-            console.log(knowledge);
         })()
     }, [caseId]);
 

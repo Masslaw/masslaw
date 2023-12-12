@@ -1,4 +1,6 @@
 import React from "react";
+import {node_style} from "./style_config";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 export class Graph {
 
@@ -6,6 +8,7 @@ export class Graph {
     private radius = 100;
     private mouse_position: [number, number] = [0, 0];
     private dragging_node: string | null = null;
+    private mouse_down: boolean = false;
 
     private viewport: [number, number, number, number] = [-250, -250, 500, 500];
 
@@ -27,99 +30,6 @@ export class Graph {
         normalized_weight: number,
         highlighted: boolean,
     }} = {};
-
-    private node_colors: {[key:string]: { [key:string]: string }} = {
-        'PERSON': {
-            'highlight': '#76bbff',
-            'secondary-highlight': '#3280cc',
-            'idle': '#0d579d',
-        },
-        'ORG': {
-            'highlight': '#ff8b76',
-            'secondary-highlight': '#cc5232',
-            'idle': '#9d2b0d',
-        },
-        'GPE': {
-            'highlight': '#76ff8b',
-            'secondary-highlight': '#32cc52',
-            'idle': '#0d9d2b',
-        },
-        'LOC': {
-            'highlight': '#ff76bb',
-            'secondary-highlight': '#cc3280',
-            'idle': '#9d0d57',
-        },
-        'PRODUCT': {
-            'highlight': '#ffbb76',
-            'secondary-highlight': '#cc8032',
-            'idle': '#9d570d',
-        },
-        'EVENT': {
-            'highlight': '#bb76ff',
-            'secondary-highlight': '#8032cc',
-            'idle': '#570d9d',
-        },
-        'WORK_OF_ART': {
-            'highlight': '#bbff76',
-            'secondary-highlight': '#80cc32',
-            'idle': '#579d0d',
-        },
-        'LAW': {
-            'highlight': '#76ffbb',
-            'secondary-highlight': '#32cc80',
-            'idle': '#0d9d57',
-        },
-        'LANGUAGE': {
-            'highlight': '#ff76bb',
-            'secondary-highlight': '#cc3280',
-            'idle': '#9d0d57',
-        },
-        'DATE': {
-            'highlight': '#76bbff',
-            'secondary-highlight': '#3280cc',
-            'idle': '#0d579d',
-        },
-        'TIME': {
-            'highlight': '#ff8b76',
-            'secondary-highlight': '#cc5232',
-            'idle': '#9d2b0d',
-        },
-        'PERCENT': {
-            'highlight': '#76ff8b',
-            'secondary-highlight': '#32cc52',
-            'idle': '#0d9d2b',
-        },
-        'MONEY': {
-            'highlight': '#ff76bb',
-            'secondary-highlight': '#cc3280',
-            'idle': '#9d0d57',
-        },
-        'QUANTITY': {
-            'highlight': '#ffbb76',
-            'secondary-highlight': '#cc8032',
-            'idle': '#9d570d',
-        },
-        'ORDINAL': {
-            'highlight': '#bb76ff',
-            'secondary-highlight': '#8032cc',
-            'idle': '#570d9d',
-        },
-        'CARDINAL': {
-            'highlight': '#bbff76',
-            'secondary-highlight': '#80cc32',
-            'idle': '#579d0d',
-        },
-        'FAC': {
-            'highlight': '#76ffbb',
-            'secondary-highlight': '#32cc80',
-            'idle': '#0d9d57',
-        },
-        'NORP': {
-            'highlight': '#ff76bb',
-            'secondary-highlight': '#cc3280',
-            'idle': '#9d0d57',
-        },
-    };
 
     public addNode(node_id: string, node_label: string, node_title?: string) {
         let theta = Math.random() * Math.PI * 2;
@@ -157,7 +67,7 @@ export class Graph {
         let max_weight = 0;
         let max_contribution = 0;
         let number_of_nodes = Object.keys(this.nodes).length;
-        this.radius = 2 * Math.sqrt(number_of_nodes);
+        this.radius = Math.sqrt(number_of_nodes);
         for (let edge_id in this.edges) {
             let edge = this.edges[edge_id];
             if (!this.nodes[edge.from_entity] || !this.nodes[edge.to_entity]) {
@@ -176,7 +86,7 @@ export class Graph {
             let edge_to = this.nodes[edge.to_entity];
             edge_from.graph_contribution += edge.weight;
             edge_to.graph_contribution += edge.weight;
-            let connection_length = 100 +  500 / edge.weight;
+            let connection_length = 50 +  200 / edge.weight;
             edge_from.connected_nodes.push([edge.to_entity, connection_length]);
             edge_to.connected_nodes.push([edge.from_entity, connection_length]);
             max_contribution = Math.max(max_contribution, edge_from.graph_contribution, edge_to.graph_contribution);
@@ -207,29 +117,43 @@ export class Graph {
                     let screenCTM = this.svg_ref.current.getScreenCTM();
                     if (!screenCTM) return;
                     svgPoint = svgPoint.matrixTransform(screenCTM.inverse());
+                    if (this.mouse_down && !this.dragging_node) {
+                        let new_viewport: [number, number, number, number] = [this.viewport[0] - event.movementX * this.viewport[2] / 500, this.viewport[1] - event.movementY * this.viewport[2] / 500, this.viewport[2], this.viewport[3]];
+                        let new_viewport_distance_from_center = Math.sqrt(((new_viewport[0] + new_viewport[2] / 2) ** 2) + ((new_viewport[1] + new_viewport[3] / 2) ** 2));
+                        if (new_viewport_distance_from_center > this.radius * 100) return;
+                        this.viewport = new_viewport;
+                    }
                     this.mouse_position = [svgPoint.x, svgPoint.y];
                 }}
-                onMouseUp={() => this.dragging_node = null}
+                onMouseUp={() => {
+                    this.dragging_node = null;
+                    this.mouse_down = false;
+                }}
                 onWheel={(event) => {
                     let delta = event.deltaY;
-                    this.viewport[0] = Math.min(this.viewport[0] - delta, -100);
-                    this.viewport[1] = Math.min(this.viewport[1] - delta, -100);
-                    this.viewport[2] = Math.max(this.viewport[2] + delta + delta, 200);
-                    this.viewport[3] = Math.max(this.viewport[3] + delta + delta, 200);
+                    if (this.viewport[2] + delta < 75 || this.viewport[3] + delta < 75) return;
+                    this.viewport[0] = this.viewport[0] - delta;
+                    this.viewport[1] = this.viewport[1] - delta;
+                    this.viewport[2] = this.viewport[2] + delta * 2;
+                    this.viewport[3] = this.viewport[3] + delta * 2;
+                }}
+                onMouseDown={() => {
+                    this.mouse_down = true;
                 }}
             >
                 {Object.keys(this.edges).map((edge_id) => {
                     let edge =  this.edges[edge_id];
                     let node_from = this.nodes[edge.from_entity];
                     let node_to = this.nodes[edge.to_entity];
+                    let line_width = edge.highlighted ? 5 : 2 * edge.normalized_weight + 1;
                     return <g key={edge_id} className={'graph-edge'} id={edge_id}>
                         <line
                             x1={node_from.position[0].toString()}
                             y1={node_from.position[1].toString()}
                             x2={node_to.position[0].toString()}
                             y2={node_to.position[1].toString()}
-                            stroke={"black"}
-                            style={{strokeWidth: `${((edge.highlighted ? 2 : 1) * 5 * edge.normalized_weight)}px`}}
+                            stroke={'black'}
+                            style={{strokeWidth: `${line_width}px`}}
                             onMouseEnter={() => {
                                 this.nodes[edge.from_entity].state = 'secondary-highlight';
                                 this.nodes[edge.to_entity].state = 'secondary-highlight';
@@ -245,7 +169,8 @@ export class Graph {
                 })}
                 {Object.keys(this.nodes).map((node_id) => {
                     let node = this.nodes[node_id];
-                    let color = (this.node_colors[node.label] || {})[node.state] || 'white';
+                    let color = ((node_style[node.label] || {}).color || {})[node.state] || 'white';
+                    let icon = (node_style[node.label] || {}).icon;
                     let size = (5 + 5 * node.graph_contribution) + (node.state === 'highlight' ? 3 : node.state == 'secondary-highlight' ? 1.5 : 0);
                     return <g key={node_id} className={`graph-node ${node.label}`} id={node_id} >
                         <circle
@@ -268,17 +193,24 @@ export class Graph {
                                     this.nodes[connected_node[0]].state = 'idle';
                                 }
                             }}
-                        />
+                        >
+                        </circle>
+                        <foreignObject
+                            x={node.position[0] - 1.25 * size / 2}
+                            y={node.position[1] - 1.25 * size / 2}
+                            width={1.25 * size}
+                            height={1.25 * size}
+                            style={{ fontSize: `${size}px`, pointerEvents: 'none', color: 'white' }}
+                        >
+                            <FontAwesomeIcon icon={icon} fixedWidth={true}/>
+                        </foreignObject>
                         <text
                             key={node_id + '-label'}
                             x={node.position[0].toString()}
-                            y={(node.position[1] + 20).toString()}
+                            y={(node.position[1] + 16).toString()}
                             textAnchor="middle"
                             dominantBaseline="central"
-                            fill="black"
-                            stroke="white"
-                            strokeWidth="0.5"
-                            style={{ fontSize: '10px', fontWeight: 'bold' }}
+                            fill="white"
                         >{node.title}</text>
                     </g>
                 })}
@@ -287,64 +219,63 @@ export class Graph {
     }
 
     public update(dt: number) {
-        let fdt = 0.003;
-        for (let i = 0; i < 50; i++) {
-            let avg_node_position = [0, 0];
-            for (let node_id in this.nodes) {
-                let node = this.nodes[node_id];
-                avg_node_position[0] += 0.1 * node.position[0] / Object.keys(this.nodes).length;
-                avg_node_position[1] += 0.1 * node.position[1] / Object.keys(this.nodes).length;
+        dt = Math.min(dt, 0.1);
+        dt *= 3;
+        let avg_node_position = [0, 0];
+        for (let node_id in this.nodes) {
+            let node = this.nodes[node_id];
+            avg_node_position[0] += 0.1 * node.position[0] / Object.keys(this.nodes).length;
+            avg_node_position[1] += 0.1 * node.position[1] / Object.keys(this.nodes).length;
+        }
+        for (let node_id in this.nodes) {
+            let node = this.nodes[node_id];
+
+            for(let other_node_id in this.nodes) {
+                if (other_node_id === node_id) continue;
+                let other_node = this.nodes[other_node_id];
+                let delta_vector = [other_node.position[0] - node.position[0], other_node.position[1] - node.position[1]];
+                let distance = Math.sqrt(delta_vector[0] * delta_vector[0] + delta_vector[1] * delta_vector[1]);
+                let delta_vector_normalized = [delta_vector[0] / distance, delta_vector[1] / distance];
+                let repulsion = 500 / (distance + 1);
+                other_node.velocity[0] += delta_vector_normalized[0] * repulsion * dt;
+                other_node.velocity[1] += delta_vector_normalized[1] * repulsion * dt;
             }
-            for (let node_id in this.nodes) {
-                let node = this.nodes[node_id];
 
-                for(let other_node_id in this.nodes) {
-                    if (other_node_id === node_id) continue;
-                    let other_node = this.nodes[other_node_id];
-                    let delta_vector = [other_node.position[0] - node.position[0], other_node.position[1] - node.position[1]];
-                    let distance = Math.sqrt(delta_vector[0] * delta_vector[0] + delta_vector[1] * delta_vector[1]);
-                    let delta_vector_normalized = [delta_vector[0] / distance, delta_vector[1] / distance];
-                    let repulsion = 1000 / (distance + 1);
-                    other_node.velocity[0] += delta_vector_normalized[0] * repulsion * fdt;
-                    other_node.velocity[1] += delta_vector_normalized[1] * repulsion * fdt;
-                }
-
-                let delta_from_center = node.position;
-                let distance_from_center = Math.sqrt(delta_from_center[0] * delta_from_center[0] + delta_from_center[1] * delta_from_center[1]);
-                let delta_from_center_normalized = [delta_from_center[0] / distance_from_center, delta_from_center[1] / distance_from_center];
-                let attraction = node.graph_contribution * distance_from_center * distance_from_center;
-                if (distance_from_center > this.radius) {
-                    attraction += distance_from_center * distance_from_center / this.radius + this.radius;
-                }
-                node.velocity[0] -= delta_from_center_normalized[0] * attraction * fdt * 0.01;
-                node.velocity[1] -= delta_from_center_normalized[1] * attraction * fdt * 0.01;
-
-                let node_connection_length_sum = 0;
-                for (let connected_node of node.connected_nodes) {
-                    node_connection_length_sum += connected_node[1];
-                }
-                for(let connected_node of node.connected_nodes) {
-                    let other_node = this.nodes[connected_node[0]];
-                    let normalized_length = (1 + (connected_node[1] / node_connection_length_sum));
-                    other_node.velocity[0] -= (other_node.position[0] - node.position[0]) * normalized_length * fdt * 0.1;
-                    other_node.velocity[1] -= (other_node.position[1] - node.position[1]) * normalized_length * fdt * 0.1;
-                }
-
-                if (this.dragging_node == node_id) {
-                    node.velocity[0] += (this.mouse_position[0] - node.position[0]) * fdt * 2;
-                    node.velocity[1] += (this.mouse_position[1] - node.position[1]) * fdt * 2;
-                }
-
-                node.velocity[0] -= avg_node_position[0] * fdt;
-                node.velocity[0] -= avg_node_position[0] * fdt;
-
-                let drag_factor = Math.pow(1 / node.drag, fdt);
-                node.velocity[0] *= drag_factor;
-                node.velocity[1] *= drag_factor;
-
-                node.position[0] += node.velocity[0] * fdt;
-                node.position[1] += node.velocity[1] * fdt;
+            let delta_from_center = node.position;
+            let distance_from_center = Math.sqrt(delta_from_center[0] * delta_from_center[0] + delta_from_center[1] * delta_from_center[1]);
+            let delta_from_center_normalized = [delta_from_center[0] / distance_from_center, delta_from_center[1] / distance_from_center];
+            let attraction = node.graph_contribution * distance_from_center * distance_from_center;
+            if (distance_from_center > this.radius) {
+                attraction += distance_from_center * distance_from_center / this.radius + this.radius;
             }
+            node.velocity[0] -= delta_from_center_normalized[0] * attraction * dt * 0.01;
+            node.velocity[1] -= delta_from_center_normalized[1] * attraction * dt * 0.01;
+
+            let node_connection_length_sum = 0;
+            for (let connected_node of node.connected_nodes) {
+                node_connection_length_sum += connected_node[1];
+            }
+            for(let connected_node of node.connected_nodes) {
+                let other_node = this.nodes[connected_node[0]];
+                let normalized_length = (1 + (connected_node[1] / node_connection_length_sum));
+                other_node.velocity[0] -= (other_node.position[0] - node.position[0]) * normalized_length * dt * 0.1;
+                other_node.velocity[1] -= (other_node.position[1] - node.position[1]) * normalized_length * dt * 0.1;
+            }
+
+            if (this.dragging_node == node_id) {
+                node.velocity[0] += (this.mouse_position[0] - node.position[0]) * dt * 5;
+                node.velocity[1] += (this.mouse_position[1] - node.position[1]) * dt * 5;
+            }
+
+            node.velocity[0] -= avg_node_position[0] * dt;
+            node.velocity[0] -= avg_node_position[0] * dt;
+
+            let drag_factor = Math.pow(1 / node.drag, dt);
+            node.velocity[0] *= drag_factor;
+            node.velocity[1] *= drag_factor;
+
+            node.position[0] += node.velocity[0] * dt;
+            node.position[1] += node.velocity[1] * dt;
         }
     }
 }
