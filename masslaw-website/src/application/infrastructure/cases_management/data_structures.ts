@@ -55,3 +55,24 @@ export const annotation_type_to_icon = {
     [CaseFileAnnotationTypes.highlight]: faHighlighter,
     [undefined as unknown as CaseFileAnnotationTypes]: '',
 }
+
+export interface knowledgeEntity {
+    id: string,
+    label: string,
+    properties: {[key: string]: any},
+}
+
+export interface knowledgeConnection {
+    id: string,
+    label: string,
+    from: string,
+    to: string,
+    properties: {[key: string]: any},
+}
+
+export interface knowledge {
+    [file_id: string]: {
+        entities: knowledgeEntity[],
+        connections: knowledgeConnection[],
+    }
+}

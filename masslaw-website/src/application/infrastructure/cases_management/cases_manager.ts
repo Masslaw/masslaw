@@ -1,6 +1,6 @@
 import {ApiManager, HTTPRequest} from "../server_communication/api/api_client";
 import {MultipartFileUploader, MultipartUploadTemplate} from "../server_communication/server_modules/s3_client";
-import {CaseData, CaseFileAnnotationData, CaseFileData} from "./data_structures";
+import {CaseData, CaseFileAnnotationData, CaseFileData, knowledge} from "./data_structures";
 import {MasslawApiCalls} from "../server_communication/api/api_config";
 
 

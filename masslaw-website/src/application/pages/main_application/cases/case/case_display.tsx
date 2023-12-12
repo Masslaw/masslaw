@@ -100,13 +100,12 @@ export const CaseDisplay: ApplicationPage = (props: ApplicationPageProps) => {
 
                                 <button
                                     className={'case-display-side-bar-button'}
-                                    style={{opacity: 0.5}}
-                                    // onClick={(e) => {navigate_function(ApplicationRoutes.CASE_USERS, {'caseId': caseId || ''})}}
+                                    onClick={(e) => {navigate_function(ApplicationRoutes.CASE_KNOWLEDGE, {'caseId': caseId || ''})}}
                                 >
                                     <span className={'case-display-side-bar-button-icon'}>
                                         <FontAwesomeIcon icon={faProjectDiagram} />
                                     </span>
-                                    <span className={'case-display-side-bar-button-caption'}>{'Connections'}</span>
+                                    <span className={'case-display-side-bar-button-caption'}>{'Knowledge'}</span>
                                 </button>
                                 <button
                                     className={'case-display-side-bar-button'}

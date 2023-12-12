@@ -20,6 +20,7 @@ import {CaseSearch} from "../../../pages/main_application/cases/case/search/case
 import {ApplicationPageRenderer} from "./application_page_renderer";
 import {UserStatus} from "../../user_management/user_status";
 import {CaseAnnotations} from "../../../pages/main_application/cases/case/annotations/case_annotations";
+import {CaseKnowledge} from "../../../pages/main_application/cases/case/knowledge/case_knowledge";
 
 
 export function ApplicationRouter() {
@@ -176,6 +177,14 @@ export function ApplicationRouter() {
                                     element={
                                         <ApplicationPageRenderer
                                             pageComponent={CaseAnnotations}
+                                        />
+                                    }
+                                />
+                                <Route
+                                    path={ApplicationRoutes.CASE_KNOWLEDGE}
+                                    element={
+                                        <ApplicationPageRenderer
+                                            pageComponent={CaseKnowledge}
                                         />
                                     }
                                 />

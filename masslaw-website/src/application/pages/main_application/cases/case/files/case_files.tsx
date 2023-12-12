@@ -97,19 +97,9 @@ export const CaseFiles: ApplicationPage = (props: ApplicationPageProps) => {
         setLoadingFilesList(false);
     }
 
-    const [reload_files_loop, setReloadFilesLoop] = useState(true);
-
-
-    const reloadLoop = useCallback(async () => {
-        await getCaseFiles();
-        if (!reload_files_loop) return;
-        await setTimeout(reloadLoop, 30 * 1000);
-    }, [reload_files_loop]);
-
     useEffect(() => {
-        reloadLoop();
-        return () => setReloadFilesLoop(false);
-    }, [reload_files_loop]);
+        getCaseFiles();
+    }, []);
 
     return (
         <>
@@ -229,7 +219,7 @@ const FileDataDisplayPopupComponent: PopupComponent = (props: FileDataDisplayPop
     const [current_file_processing_stage, setCurrentFileProcessingStage] = useState<FileProcessingStages|undefined>(FileProcessingStages.Starting);
 
     const openable = useCallback(() => {
-        return (((file_data.processing || {}).TextExtraction || {}).status || '') == 'Done'
+        return (((file_data.processing || {})[FileProcessingStages.TextExtraction] || {})['status'] || '') == 'done';
     }, [file_data])
 
     const obtainFileAnnotations = useCallback(async () => {

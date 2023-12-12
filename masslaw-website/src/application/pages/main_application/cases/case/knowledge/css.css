@@ -1,0 +1,49 @@
+@import url('../../../../../shared/css/global.css');
+
+
+.case-knowledge-header {
+    position: relative;
+    width: calc(100% - 40px);
+    margin: 20px 20px 0 20px;
+    height: var(--case-files-list-header-height);
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: var(--secondary-top-z-index);
+}
+
+.case-knowledge-page-title {
+    margin: 0;
+    padding: 0;
+    left: 20px;
+    width: 100%;
+}
+
+.case-knowledge-text-input-container {
+    height: 100%;
+    width: calc(100% - 300px);
+}
+
+.case-knowledge-submit-knowledge-button-container {
+    padding-top: 13px;
+    right: 20px;
+    width: 150px;
+}
+
+.case-knowledge-graph-container {
+    width: calc(100% - 40px);
+    height: calc(100% - 130px);
+    margin: 20px;
+    background: var(--masslaw-secondary-background-shade);
+    overflow-y: hidden;
+}
+
+.graph-node.main-focus circle {
+    filter: brightness(200%);
+}
+
+.graph-node.secondary-focus circle {
+    filter: brightness(150%);
+}
