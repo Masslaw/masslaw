@@ -2,6 +2,8 @@ import React from "react";
 import {node_style} from "./style_config";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
+import './css.css';
+
 export class Graph {
 
     private svg_ref = React.createRef<SVGSVGElement>();
@@ -9,46 +11,24 @@ export class Graph {
     private mouse_position: [number, number] = [0, 0];
     private dragging_node: string | null = null;
     private mouse_down: boolean = false;
-
     private viewport: [number, number, number, number] = [-250, -250, 500, 500];
-    
-    private onNodeClickedCallback: (node_id: string) => void = (node_id: string) => {};
-    private onNodeHoverCallback: (node_id: string, hovering: boolean) => void = (node_id: string) => {};
-    private onEdgeClickedCallback: (edge_id: string) => void = (edge_id: string) => {};
-    private onEdgeHoverCallback: (edge_id: string, hovering: boolean) => void = (edge_id: string) => {};
-
-    private nodes: {[key:string]: {
-        label: string,
-        title?: string,
-        position: [number, number],
-        velocity: [number, number],
-        drag: number,
-        graph_contribution: number,
-        connected_nodes: [string, number][],
-        state: string,
-    }} = {};
-    private edges: {[ket:string]: {
-        label?: string,
-        from_entity: string,
-        to_entity: string,
-        weight: number,
-        normalized_weight: number,
-        highlighted: boolean,
-    }} = {};
+    private nodes: {
+        [key: string]: {
+            label: string, title?: string, position: [number, number], velocity: [number, number], drag: number, graph_contribution: number, connected_nodes: [string, number][], state: string,
+        }
+    } = {};
+    private edges: {
+        [ket: string]: {
+            label?: string, from_entity: string, to_entity: string, weight: number, normalized_weight: number, state: string,
+        }
+    } = {};
 
     public addNode(node_id: string, node_label: string, node_title?: string) {
         let theta = Math.random() * Math.PI * 2;
         let x = this.radius * Math.cos(theta);
         let y = this.radius * Math.sin(theta);
         this.nodes[node_id] = {
-            label: node_label,
-            title: node_title,
-            position: [x, y],
-            velocity: [0, 0],
-            graph_contribution: 1,
-            drag: 2,
-            connected_nodes: [],
-            state: 'idle',
+            label: node_label, title: node_title, position: [x, y], velocity: [0, 0], graph_contribution: 1, drag: 2, connected_nodes: [], state: 'idle',
         };
         this.onGraphUpdated();
     }
@@ -59,52 +39,9 @@ export class Graph {
         edge_element.setAttribute('stroke', 'black');
         edge_element.setAttribute('stroke-width', '1');
         this.edges[edge_id] = {
-            from_entity: from_entity,
-            to_entity: to_entity,
-            weight: weight,
-            normalized_weight: 0,
-            highlighted: false,
+            from_entity: from_entity, to_entity: to_entity, weight: weight, normalized_weight: 0, state: 'idle',
         };
         this.onGraphUpdated();
-    }
-
-    private onGraphUpdated() {
-        let max_weight = 0;
-        let max_contribution = 0;
-        let number_of_nodes = Object.keys(this.nodes).length;
-        this.radius = Math.sqrt(number_of_nodes);
-        for (let edge_id in this.edges) {
-            let edge = this.edges[edge_id];
-            if (!this.nodes[edge.from_entity] || !this.nodes[edge.to_entity]) {
-                delete this.edges[edge_id];
-            }
-        }
-        for (let node_id in this.nodes) {
-            let node = this.nodes[node_id];
-            node.graph_contribution = 0;
-            node.connected_nodes = [];
-        }
-        for (let edge_id in this.edges) {
-            let edge = this.edges[edge_id];
-            max_weight = Math.max(max_weight, edge.weight);
-            let edge_from = this.nodes[edge.from_entity];
-            let edge_to = this.nodes[edge.to_entity];
-            edge_from.graph_contribution += edge.weight;
-            edge_to.graph_contribution += edge.weight;
-            let connection_length = 50 +  200 / edge.weight;
-            edge_from.connected_nodes.push([edge.to_entity, connection_length]);
-            edge_to.connected_nodes.push([edge.from_entity, connection_length]);
-            max_contribution = Math.max(max_contribution, edge_from.graph_contribution, edge_to.graph_contribution);
-        }
-        for (let node_id in this.nodes) {
-            let node = this.nodes[node_id];
-            node.graph_contribution = node.graph_contribution / max_contribution;
-            node.drag = 2 + 10 * node.graph_contribution;
-        }
-        for (let edge_id in this.edges) {
-            let edge = this.edges[edge_id];
-            edge.normalized_weight = edge.weight / max_weight;
-        }
     }
 
     public getElement() {
@@ -113,7 +50,7 @@ export class Graph {
                 ref={this.svg_ref}
                 className="case-knowledge-graph"
                 viewBox={`${this.viewport[0]} ${this.viewport[1]} ${this.viewport[2]} ${this.viewport[3]}`}
-                style={{ width: '100%', height: '100%' }}
+                style={{width: '100%', height: '100%'}}
                 onMouseMove={(event) => {
                     if (!this.svg_ref.current) return;
                     let svgPoint = this.svg_ref.current.createSVGPoint();
@@ -147,29 +84,31 @@ export class Graph {
                 }}
             >
                 {Object.keys(this.edges).map((edge_id) => {
-                    let edge =  this.edges[edge_id];
+                    let edge = this.edges[edge_id];
                     let node_from = this.nodes[edge.from_entity];
                     let node_to = this.nodes[edge.to_entity];
-                    let line_width = edge.highlighted ? 5 : 2 * edge.normalized_weight + 1;
+                    let line_width = edge.state == 'hovered' ? 5 : edge.state == 'highlighted' ? 3 * edge.normalized_weight : 2 * edge.normalized_weight;
                     return <g key={edge_id} className={'graph-edge'} id={edge_id}>
                         <line
                             x1={node_from.position[0].toString()}
                             y1={node_from.position[1].toString()}
                             x2={node_to.position[0].toString()}
                             y2={node_to.position[1].toString()}
-                            stroke={'black'}
+                            fill={'black'}
+                            width={'1px'}
+                            stroke={edge.state == 'highlighted' ? 'grey' : 'black'}
                             style={{strokeWidth: `${line_width}px`}}
                             onMouseEnter={() => {
                                 this.nodes[edge.from_entity].state = 'secondary-highlight';
                                 this.nodes[edge.to_entity].state = 'secondary-highlight';
-                                edge.highlighted = true;
+                                edge.state = 'hovered';
                                 this.onEdgeHoverCallback(edge_id, true);
                             }}
                             onMouseLeave={() => {
                                 this.nodes[edge.from_entity].state = 'idle';
                                 this.nodes[edge.to_entity].state = 'idle';
-                                edge.highlighted = false;
-                                this.onEdgeHoverCallback(edge_id, true);
+                                edge.state = 'idle';
+                                this.onEdgeHoverCallback(edge_id, false);
                             }}
                             onClick={e => {
                                 this.onEdgeClickedCallback(edge_id)
@@ -182,7 +121,7 @@ export class Graph {
                     let color = ((node_style[node.label] || {}).color || {})[node.state] || 'white';
                     let icon = (node_style[node.label] || {}).icon;
                     let size = (5 + 5 * node.graph_contribution) + (node.state === 'highlight' ? 3 : node.state == 'secondary-highlight' ? 1.5 : 0);
-                    return <g key={node_id} className={`graph-node ${node.label}`} id={node_id} >
+                    return <g key={node_id} className={`graph-node ${node.label}`} id={node_id}>
                         <circle
                             cx={node.position[0].toString()}
                             cy={node.position[1].toString()}
@@ -190,17 +129,17 @@ export class Graph {
                             stroke="black"
                             fill={color}
                             style={{strokeWidth: '1px'}}
-                            onMouseDown={() => this.dragging_node = node_id }
+                            onMouseDown={() => this.dragging_node = node_id}
                             onMouseEnter={() => {
                                 this.nodes[node_id].state = 'highlight';
-                                for(let connected_node of node.connected_nodes) {
+                                for (let connected_node of node.connected_nodes) {
                                     this.nodes[connected_node[0]].state = 'secondary-highlight';
                                 }
                                 this.onNodeHoverCallback(node_id, true);
                             }}
                             onMouseLeave={() => {
                                 this.nodes[node_id].state = 'idle';
-                                for(let connected_node of node.connected_nodes) {
+                                for (let connected_node of node.connected_nodes) {
                                     this.nodes[connected_node[0]].state = 'idle';
                                 }
                                 this.onNodeHoverCallback(node_id, false);
@@ -215,7 +154,7 @@ export class Graph {
                             y={node.position[1] - 1.25 * size / 2}
                             width={1.25 * size}
                             height={1.25 * size}
-                            style={{ fontSize: `${size}px`, pointerEvents: 'none', color: 'white' }}
+                            style={{fontSize: `${size}px`, pointerEvents: 'none', color: 'white'}}
                         >
                             <FontAwesomeIcon icon={icon} fixedWidth={true}/>
                         </foreignObject>
@@ -234,7 +173,7 @@ export class Graph {
     }
 
     public update(dt: number) {
-        dt = Math.min(dt, 0.1);
+        dt = Math.min(dt, 0.01);
         dt *= 3;
         let avg_node_position = [0, 0];
         for (let node_id in this.nodes) {
@@ -245,7 +184,7 @@ export class Graph {
         for (let node_id in this.nodes) {
             let node = this.nodes[node_id];
 
-            for(let other_node_id in this.nodes) {
+            for (let other_node_id in this.nodes) {
                 if (other_node_id === node_id) continue;
                 let other_node = this.nodes[other_node_id];
                 let delta_vector = [other_node.position[0] - node.position[0], other_node.position[1] - node.position[1]];
@@ -270,7 +209,7 @@ export class Graph {
             for (let connected_node of node.connected_nodes) {
                 node_connection_length_sum += connected_node[1];
             }
-            for(let connected_node of node.connected_nodes) {
+            for (let connected_node of node.connected_nodes) {
                 let other_node = this.nodes[connected_node[0]];
                 let normalized_length = (1 + (connected_node[1] / node_connection_length_sum));
                 other_node.velocity[0] -= (other_node.position[0] - node.position[0]) * normalized_length * dt * 0.1;
@@ -295,26 +234,77 @@ export class Graph {
     }
 
     public getNodeById(node_id: string) {
-        return this.nodes[node_id]
+        return this.nodes[node_id];
     }
 
     public getEdgeById(edge_id: string) {
-        return this.edges[edge_id]
+        return this.edges[edge_id];
     }
-    
+
     public setNodeClickCallback(callback: (node_id: string) => void) {
-        this.onNodeClickedCallback = callback
+        this.onNodeClickedCallback = callback;
     }
-    
+
     public setEdgeClickCallback(callback: (edge_id: string) => void) {
-        this.onEdgeClickedCallback = callback
+        this.onEdgeClickedCallback = callback;
     }
-    
+
     public setNodeHoverCallback(callback: (node_id: string, hovering: boolean) => void) {
         this.onNodeHoverCallback = callback
     }
-    
+
     public setEdgeHoverCallback(callback: (edge_id: string, hovering: boolean) => void) {
         this.onEdgeHoverCallback = callback
+    }
+
+    private onNodeClickedCallback: (node_id: string) => void = (node_id: string) => {
+    };
+
+    private onNodeHoverCallback: (node_id: string, hovering: boolean) => void = (node_id: string) => {
+    };
+
+    private onEdgeClickedCallback: (edge_id: string) => void = (edge_id: string) => {
+    };
+
+    private onEdgeHoverCallback: (edge_id: string, hovering: boolean) => void = (edge_id: string) => {
+    };
+
+    private onGraphUpdated() {
+        let max_weight = 0;
+        let max_contribution = 0;
+        let number_of_nodes = Object.keys(this.nodes).length;
+        this.radius = Math.sqrt(number_of_nodes);
+        for (let edge_id in this.edges) {
+            let edge = this.edges[edge_id];
+            if (!this.nodes[edge.from_entity] || !this.nodes[edge.to_entity]) {
+                delete this.edges[edge_id];
+            }
+        }
+        for (let node_id in this.nodes) {
+            let node = this.nodes[node_id];
+            node.graph_contribution = 0;
+            node.connected_nodes = [];
+        }
+        for (let edge_id in this.edges) {
+            let edge = this.edges[edge_id];
+            max_weight = Math.max(max_weight, edge.weight);
+            let edge_from = this.nodes[edge.from_entity];
+            let edge_to = this.nodes[edge.to_entity];
+            edge_from.graph_contribution += edge.weight;
+            edge_to.graph_contribution += edge.weight;
+            let connection_length = 50 + 200 / edge.weight;
+            edge_from.connected_nodes.push([edge.to_entity, connection_length]);
+            edge_to.connected_nodes.push([edge.from_entity, connection_length]);
+            max_contribution = Math.max(max_contribution, edge_from.graph_contribution, edge_to.graph_contribution);
+        }
+        for (let node_id in this.nodes) {
+            let node = this.nodes[node_id];
+            node.graph_contribution = node.graph_contribution / max_contribution;
+            node.drag = 2 + 10 * node.graph_contribution;
+        }
+        for (let edge_id in this.edges) {
+            let edge = this.edges[edge_id];
+            edge.normalized_weight = edge.weight / max_weight;
+        }
     }
 }

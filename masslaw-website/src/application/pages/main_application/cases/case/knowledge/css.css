@@ -38,19 +38,65 @@
     margin: 20px;
     background: var(--masslaw-secondary-background-shade);
     overflow-y: hidden;
+    position: relative;
 }
 
-.graph-node.main-focus circle {
-    filter: brightness(200%);
+.case-knowledge-files-list-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 300px;
+    height: fit-content;
+    max-height: calc(100% - 40px);
+    margin: 0;
+    padding: 0;
+    background: none;
+    overflow-y: scroll;
+    overflow-x: visible;
+    position: absolute;
+    top: 40px;
+    right: 0;
+    pointer-events: none;
 }
 
-.graph-node.secondary-focus circle {
-    filter: brightness(150%);
+.case-knowledge-file-item {
+    width: calc(100% - 30px);
+    height: 50px;
+    margin: 5px;
+    padding: 0 0 0 5px;
+    line-height: 50px;
+    position: relative;
+    background: white;
+    border-radius: 5px;
+    border: 1px solid grey;
+    border-left: 5px solid var(--masslaw-primary-main);
+    filter: var(--masslaw-floating-shadow);
+    pointer-events: all;
+    transition: all 0.2s ease-in-out;
 }
 
-.graph-node text {
-    font-size: 7px;
-    user-select: none;
-    filter: drop-shadow(0 0 1px black);
-    text-shadow: 0 0 7px black, 0 0 1px black, 0 0 1px black, 0 0 1px black;
+.case-knowledge-file-item:hover {
+    cursor: pointer;
+    background: #f1f1f1;
+    filter: var(--masslaw-higher-floating-shadow);
+}
+
+.case-knowledge-file-item.highlighted {
+    outline: 5px solid white;
+}
+
+.case-knowledge-files-list-title {
+    position: absolute;
+    width: 300px;
+    top: 5px;
+    right: 0;
+    margin: 0;
+    padding: 0;
+    height: 30px;
+    line-height: 30px;
+    color: black;
+    font-size: 20px;
+    font-weight: 500;
+    border: 0 solid grey;
+    border-bottom: 1px solid grey;
 }
