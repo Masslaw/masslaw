@@ -6,7 +6,6 @@ class MasslawUserDataCollector:
 
     def __init__(self, user_instance: MasslawUserInstance):
         self.__user_instance = user_instance
-
         self.__user_data_access_manager = MasslawUserDataAccessManager(self.__user_instance)
 
     def get_user_data(self, as_user: MasslawUserInstance):

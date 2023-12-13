@@ -14,7 +14,6 @@ class MasslawUserInstance(DataHolder):
 
     def __init__(self, user_id: str = None, access_token: str = None):
         self.__user_id = user_id or cognitoManager.get_user_id_by_access_token(access_token)
-
         DataHolder.__init__(self)
 
     def load_data(self):

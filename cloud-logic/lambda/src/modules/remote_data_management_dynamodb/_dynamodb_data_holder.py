@@ -3,9 +3,13 @@ from src.modules.aws_clients.dynamodb_client import DynamoDBTableManager
 from src.modules.dictionary_utils import dictionary_utils
 
 
+initialized_table_managers = {}
+
+
 class DynamodbDataHolder(DataHolder):
     def __init__(self, table_name: str, item_id: str, locked_attributes=None):
-        self._db_manager = DynamoDBTableManager(table_name)
+        self._db_manager = initialized_table_managers.get(table_name) or DynamoDBTableManager(table_name)
+        initialized_table_managers[table_name] = self._db_manager
         self._item_id = item_id
         locked_attributes = locked_attributes or []
         locked_attributes.append(self._db_manager.get_primary_key_name())

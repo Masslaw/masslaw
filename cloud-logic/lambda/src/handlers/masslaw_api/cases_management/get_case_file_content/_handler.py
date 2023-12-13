@@ -1,3 +1,7 @@
+from concurrent.futures import Future
+from concurrent.futures import ThreadPoolExecutor
+from typing import Dict
+
 from src.modules.lambda_base import lambda_constants
 from src.modules.lambda_handler_template_http_invoked_masslaw_case_management_api import MasslawCaseManagementApiInvokedLambdaFunction
 from src.modules.masslaw_case_storage_management import MasslawCaseStorageManager
@@ -23,8 +27,14 @@ class GetCaseFileContent(MasslawCaseManagementApiInvokedLambdaFunction):
         case_instance = MasslawCaseInstance(self.__case_id)
         case_storage_manager = MasslawCaseStorageManager(case_instance=case_instance)
         urls = {}
-        for content_path in self.__content_paths:
-            urls[content_path] = case_storage_manager.get_case_file_download_url(user_id=user_id, file_id=self.__file_id, content_path=content_path)
+        with ThreadPoolExecutor(max_workers=100) as executor:
+            submissions: Dict[str, Future] = {}
+            for content_path in self.__content_paths:
+                submissions[content_path] = executor.submit(case_storage_manager.get_case_file_download_url, user_id, self.__file_id, content_path)
+                self._log(f"Submitted {content_path}")
+            for content_path, submission in submissions.items():
+                urls[content_path] = submission.result()
+                self._log(f"Got {content_path} --> {urls[content_path]}")
         case_instance.save_data()
         self._set_response_attribute([lambda_constants.EventKeys.BODY, 'download_urls'], urls)
 
