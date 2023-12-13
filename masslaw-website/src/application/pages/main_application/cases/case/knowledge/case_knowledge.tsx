@@ -16,7 +16,7 @@ import {
 } from "../../../../../infrastructure/application_base/global_functionality/global_states";
 import {CaseFileAnnotationData, CaseFileData, knowledge, knowledgeConnection, knowledgeEntity} from "../../../../../infrastructure/cases_management/data_structures";
 import {FileProcessingStages} from "../../../../../infrastructure/cases_management/cases_consts";
-import {Graph} from "./graph/graph";
+import {Graph} from "../../../../../modules/graph/graph";
 import {now, random} from "lodash";
 
 export const CaseKnowledge: ApplicationPage = (props: ApplicationPageProps) => {

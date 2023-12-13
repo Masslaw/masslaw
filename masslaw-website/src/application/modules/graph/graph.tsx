@@ -11,6 +11,11 @@ export class Graph {
     private mouse_down: boolean = false;
 
     private viewport: [number, number, number, number] = [-250, -250, 500, 500];
+    
+    private onNodeClickedCallback: (node_id: string) => void = (node_id: string) => {};
+    private onNodeHoverCallback: (node_id: string, hovering: boolean) => void = (node_id: string) => {};
+    private onEdgeClickedCallback: (edge_id: string) => void = (edge_id: string) => {};
+    private onEdgeHoverCallback: (edge_id: string, hovering: boolean) => void = (edge_id: string) => {};
 
     private nodes: {[key:string]: {
         label: string,
@@ -158,11 +163,16 @@ export class Graph {
                                 this.nodes[edge.from_entity].state = 'secondary-highlight';
                                 this.nodes[edge.to_entity].state = 'secondary-highlight';
                                 edge.highlighted = true;
+                                this.onEdgeHoverCallback(edge_id, true);
                             }}
                             onMouseLeave={() => {
                                 this.nodes[edge.from_entity].state = 'idle';
                                 this.nodes[edge.to_entity].state = 'idle';
                                 edge.highlighted = false;
+                                this.onEdgeHoverCallback(edge_id, true);
+                            }}
+                            onClick={e => {
+                                this.onEdgeClickedCallback(edge_id)
                             }}
                         />
                     </g>
@@ -186,12 +196,17 @@ export class Graph {
                                 for(let connected_node of node.connected_nodes) {
                                     this.nodes[connected_node[0]].state = 'secondary-highlight';
                                 }
+                                this.onNodeHoverCallback(node_id, true);
                             }}
                             onMouseLeave={() => {
                                 this.nodes[node_id].state = 'idle';
                                 for(let connected_node of node.connected_nodes) {
                                     this.nodes[connected_node[0]].state = 'idle';
                                 }
+                                this.onNodeHoverCallback(node_id, false);
+                            }}
+                            onClick={e => {
+                                this.onNodeClickedCallback(node_id);
                             }}
                         >
                         </circle>
@@ -277,5 +292,29 @@ export class Graph {
             node.position[0] += node.velocity[0] * dt;
             node.position[1] += node.velocity[1] * dt;
         }
+    }
+
+    public getNodeById(node_id: string) {
+        return this.nodes[node_id]
+    }
+
+    public getEdgeById(edge_id: string) {
+        return this.edges[edge_id]
+    }
+    
+    public setNodeClickCallback(callback: (node_id: string) => void) {
+        this.onNodeClickedCallback = callback
+    }
+    
+    public setEdgeClickCallback(callback: (edge_id: string) => void) {
+        this.onEdgeClickedCallback = callback
+    }
+    
+    public setNodeHoverCallback(callback: (node_id: string, hovering: boolean) => void) {
+        this.onNodeHoverCallback = callback
+    }
+    
+    public setEdgeHoverCallback(callback: (edge_id: string, hovering: boolean) => void) {
+        this.onEdgeHoverCallback = callback
     }
 }
