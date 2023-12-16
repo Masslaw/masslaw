@@ -71,8 +71,6 @@ export interface knowledgeConnection {
 }
 
 export interface knowledge {
-    [file_id: string]: {
-        entities: knowledgeEntity[],
-        connections: knowledgeConnection[],
-    }
+    entities: knowledgeEntity[],
+    connections: knowledgeConnection[],
 }

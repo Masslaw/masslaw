@@ -20,4 +20,5 @@ export enum ApplicationRoutes {
     CASE_SEARCH = "/app/cases/:caseId/files/search",
     CASE_ANNOTATIONS = "/app/cases/:caseId/files/highlights",
     CASE_KNOWLEDGE = "/app/cases/:caseId/knowledge",
+    CASE_KNOWLEDGE_ENTITY = "/app/cases/:caseId/knowledge/entity/:entityId",
 }

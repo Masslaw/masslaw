@@ -21,6 +21,7 @@ import {ApplicationPageRenderer} from "./application_page_renderer";
 import {UserStatus} from "../../user_management/user_status";
 import {CaseAnnotations} from "../../../pages/main_application/cases/case/annotations/case_annotations";
 import {CaseKnowledge} from "../../../pages/main_application/cases/case/knowledge/case_knowledge";
+import {NodeDisplay} from "../../../pages/main_application/cases/case/knowledge/node_display/node_display";
 
 
 export function ApplicationRouter() {
@@ -185,6 +186,14 @@ export function ApplicationRouter() {
                                     element={
                                         <ApplicationPageRenderer
                                             pageComponent={CaseKnowledge}
+                                        />
+                                    }
+                                />
+                                <Route
+                                    path={ApplicationRoutes.CASE_KNOWLEDGE_ENTITY}
+                                    element={
+                                        <ApplicationPageRenderer
+                                            pageComponent={NodeDisplay}
                                         />
                                     }
                                 />

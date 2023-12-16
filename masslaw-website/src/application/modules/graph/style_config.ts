@@ -1,4 +1,4 @@
-import {faBalanceScale, faBuilding, faCalculator, faCalendarAlt, faCalendarDay, faClock, faDollar, faDollarSign, faEllipsisH, faFlag, faHospital, faImage, faLanguage, faLocation, faMapMarkerAlt, faPercent, faPerson, faUser, faUsers} from "@fortawesome/free-solid-svg-icons";
+import {faBalanceScale, faBuilding, faCalculator, faCalendarAlt, faCalendarDay, faCar, faClock, faDollar, faDollarSign, faEllipsisH, faFlag, faGun, faHospital, faImage, faLanguage, faLocation, faMapMarkerAlt, faPercent, faPerson, faUser, faUsers} from "@fortawesome/free-solid-svg-icons";
 import {IconProp} from "@fortawesome/fontawesome-svg-core";
 import {faSketch} from "@fortawesome/free-brands-svg-icons";
 
@@ -34,7 +34,7 @@ export const node_style: {[key:string]: {
         color: {
             'highlight': '#ff76bb',
             'secondary-highlight': '#cc3280',
-            'idle': '#9d0d57',
+            'idle': '#ec9c09',
         },
         icon: faMapMarkerAlt,
     },
@@ -88,9 +88,9 @@ export const node_style: {[key:string]: {
     },
     'TIME': {
         color: {
-            'highlight': '#ff8b76',
-            'secondary-highlight': '#cc5232',
-            'idle': '#9d2b0d',
+            'highlight': '#76ff8b',
+            'secondary-highlight': '#32cc52',
+            'idle': '#0d9d2b',
         },
         icon: faClock,
     },
@@ -149,5 +149,21 @@ export const node_style: {[key:string]: {
             'idle': '#9d0d57',
         },
         icon: faUsers,
+    },
+    'WEAPON': {
+        color: {
+            'highlight': '#0f0f0f',
+            'secondary-highlight': '#080808',
+            'idle': '#000000',
+        },
+        icon: faGun,
+    },
+    'LICENSE': {
+        color: {
+            'highlight': '#76bbff',
+            'secondary-highlight': '#e7e527',
+            'idle': '#cecc08',
+        },
+        icon: faCar,
     },
 };

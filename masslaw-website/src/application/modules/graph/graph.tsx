@@ -23,6 +23,11 @@ export class Graph {
         }
     } = {};
 
+    public reset() {
+        this.nodes = {};
+        this.edges = {};
+    }
+
     public addNode(node_id: string, node_label: string, node_title?: string) {
         let theta = Math.random() * Math.PI * 2;
         let x = this.radius * Math.cos(theta);

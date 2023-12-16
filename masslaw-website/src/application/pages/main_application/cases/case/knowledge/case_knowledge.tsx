@@ -10,6 +10,8 @@ import {CaseFileData, knowledge, knowledgeConnection, knowledgeEntity} from "../
 import {FileProcessingStages} from "../../../../../infrastructure/cases_management/cases_consts";
 import {Graph} from "../../../../../modules/graph/graph";
 import {now} from "lodash";
+import {ApplicationRoutes} from "../../../../../infrastructure/application_base/routing/application_routes";
+import {LoadingIcon} from "../../../../../shared/components/loading_icon/loading_icon";
 
 export const CaseKnowledge: ApplicationPage = (props: ApplicationPageProps) => {
 
@@ -20,7 +22,7 @@ export const CaseKnowledge: ApplicationPage = (props: ApplicationPageProps) => {
     const {caseId} = useParams();
 
     const [files_data, setFilesData] = useState([] as CaseFileData[]);
-    const [knowledge, setKnowledge] = useState(null as knowledge | null);
+    const [knowledge, setKnowledge] = useState(null as { [file_id: string]: knowledge } | null);
 
     const [selected_files, setSelectedFiles] = useState([] as string[]);
     const [highlighted_files, setHighlightedFiles] = useState([] as string[]);
@@ -33,7 +35,7 @@ export const CaseKnowledge: ApplicationPage = (props: ApplicationPageProps) => {
         (async () => {
             let case_files_response = await CasesManager.getInstance().getCaseFiles(caseId || '');
             setFilesData(case_files_response);
-            let knowledge = {} as knowledge;
+            let knowledge = {} as { [file_id: string]: knowledge };
             let promises = case_files_response.map((file_data) => {
                 let file_knowledge_extraction_status = ((file_data.processing || {})[FileProcessingStages.KnowledgeExtraction] || {})['status'] || 'never_executed';
                 if (file_knowledge_extraction_status !== 'done') return;
@@ -75,6 +77,7 @@ export const CaseKnowledge: ApplicationPage = (props: ApplicationPageProps) => {
 
     useEffect(() => {
         graph_instance.setNodeClickCallback((node_id) => {
+            navigate_function(ApplicationRoutes.CASE_KNOWLEDGE_ENTITY, {caseId: caseId || '', entityId: node_id || ''});
         });
         graph_instance.setEdgeClickCallback((edge_id) => {
         });
@@ -141,26 +144,35 @@ export const CaseKnowledge: ApplicationPage = (props: ApplicationPageProps) => {
             <div className={'case-knowledge-page-title page-title'}>{`Case Knowledge`}</div>
         </div>
         <div className={'case-knowledge-graph-container'}>
-            {graph_element}
-            <div className={'case-knowledge-files-list-title'}>{`Files`}</div>
-            <div className={'case-knowledge-files-list-container'}>
-                {files_data.map((file_data) => {
-                    return <>
-                        <div
-                            key={file_data.id}
-                            className={`case-knowledge-file-item ${highlighted_files.includes(file_data.id) && 'highlighted' || ''}`}
-                            onMouseEnter={() => {
-                                setSelectedFiles((current_selected) => [...current_selected, file_data.id]);
-                            }}
-                            onMouseLeave={() => {
-                                setSelectedFiles((current_selected) => current_selected.filter((file_id) => file_id !== file_data.id));
-                            }}
-                        >
-                            {file_data.name}
+            {
+                knowledge && Object.keys(knowledge).length > 0 ?
+                    <>
+                        {graph_element}
+                        <div className={'case-knowledge-files-list-title'}>{`Files`}</div>
+                        <div className={'case-knowledge-files-list-container'}>
+                            {files_data.map((file_data) => {
+                                return <>
+                                    <div
+                                        key={file_data.id}
+                                        className={`case-knowledge-file-item ${highlighted_files.includes(file_data.id) && 'highlighted' || ''}`}
+                                        onMouseEnter={() => {
+                                            setSelectedFiles((current_selected) => [...current_selected, file_data.id]);
+                                        }}
+                                        onMouseLeave={() => {
+                                            setSelectedFiles((current_selected) => current_selected.filter((file_id) => file_id !== file_data.id));
+                                        }}
+                                    >
+                                        {file_data.name}
+                                    </div>
+                                </>
+                            })}
                         </div>
                     </>
-                })}
-            </div>
+                    :
+                    <>
+                        <LoadingIcon color={'#000000'} />
+                    </>
+            }
         </div>
     </>)
 }

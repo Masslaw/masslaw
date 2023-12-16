@@ -1,0 +1,204 @@
+@import url('../../../../../../shared/css/global.css');
+
+
+.node-display {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    flex-direction: row;
+}
+
+.node-knowledge-display-container {
+    width: 50%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: var(--masslaw-secondary-background-shade);
+}
+
+.node-data-container {
+    width: 50%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+.node-display-title {
+    display: block;
+    color: var(--masslaw-dark-text-color);
+    font-size: 20px;
+    font-weight: bold;
+    margin: 15px;
+    width: calc(100% - 30px);
+    min-height: 30px;
+    line-height: 30px;
+    overflow: hidden;
+}
+
+.node-knowledge-quotes-list {
+    margin: 10px;
+    padding: 10px;
+    overflow-x: hidden;
+    width: calc(100% - 40px);
+    background-color: var(--masslaw-tertiary-background-shade);
+    border-radius: 5px;
+}
+
+.node-knowledge-quotes-list-title {
+    display: block;
+    color: var(--masslaw-dark-text-color);
+    font-size: 16px;
+    font-weight: bold;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 20px;
+    line-height: 20px;
+    overflow: hidden;
+}
+
+.node-knowledge-quotes-list-scrollable-region {
+    margin: 10px;
+    padding: 10px;
+    overflow-x: hidden;
+    width: calc(100% - 40px);
+    background-color: var(--masslaw-tertiary-background-shade);
+    border-radius: 5px;
+    overflow-y: scroll;
+    max-height: 400px;
+}
+
+.node-knowledge-quotes-list-item {
+    background: white;
+    border: 1px solid darkgray;
+    border-radius: 5px;
+    margin: 10px 0 10px;
+    padding: 10px;
+    font-size: 12px;
+    line-height: 16px;
+}
+
+.node-connections-list {
+    margin: 10px;
+    padding: 10px;
+    overflow-x: hidden;
+    width: calc(100% - 40px);
+    background-color: var(--masslaw-tertiary-background-shade);
+    border-radius: 5px;
+}
+
+.nodes-connections-list-title {
+    display: block;
+    color: var(--masslaw-dark-text-color);
+    font-size: 16px;
+    font-weight: bold;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 20px;
+    line-height: 20px;
+    overflow: hidden;
+}
+
+.node-connections-list-scrollable-region {
+    margin: 10px;
+    padding: 10px;
+    overflow-x: hidden;
+    width: calc(100% - 40px);
+    background-color: var(--masslaw-tertiary-background-shade);
+    border-radius: 5px;
+    overflow-y: scroll;
+    max-height: 400px;
+}
+
+.node-connections-list-item {
+    display: block;
+    width: 100%;
+    margin: 10px 0 10px 0;
+    border: 1px solid darkgray;
+    border-radius: 5px;
+    cursor: pointer;
+    background: white;
+}
+
+.node-connections-list-item:hover {
+    background: lightgrey;
+}
+
+.node-connections-list-item-title {
+    margin: 10px;
+    width: 100%;
+    min-width: 20px;
+    line-height: 20px;
+    overflow: hidden;
+}
+
+.connection-evidence-list-item {
+    background: white;
+    border: 1px solid darkgray;
+    border-radius: 5px;
+    margin: 10px 0 10px;
+    padding: 10px;
+    font-size: 12px;
+    line-height: 16px;
+}
+
+.node-display-files-list {
+    margin: 10px;
+    padding: 10px;
+    overflow-x: hidden;
+    width: calc(100% - 40px);
+    background-color: var(--masslaw-tertiary-background-shade);
+    border-radius: 5px;
+}
+
+.node-display-files-list-title {
+    display: block;
+    color: var(--masslaw-dark-text-color);
+    font-size: 16px;
+    font-weight: bold;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 20px;
+    line-height: 20px;
+    overflow: hidden;
+}
+
+.node-display-files-list-scrollable-region {
+    margin: 10px;
+    padding: 10px;
+    overflow-x: hidden;
+    width: calc(100% - 40px);
+    background-color: var(--masslaw-tertiary-background-shade);
+    border-radius: 5px;
+    overflow-y: scroll;
+    max-height: 400px;
+}
+
+.node-display-file-item {
+    width: 100%;
+    margin: 10px 0 10px 0;
+    border: 1px solid darkgray;
+    border-left: 5px solid var(--masslaw-primary-main);
+    border-radius: 5px;
+    cursor: pointer;
+    background: white;
+}
+
+.node-display-file-item:hover {
+    background: lightgrey;
+}
+
+.node-display-file-title {
+    margin: 10px;
+    width: 100%;
+    min-width: 20px;
+    line-height: 40px;
+    overflow: hidden;
+}

@@ -25,7 +25,7 @@ CACHED_NODE_PROPERTIES = ['title']
 CACHED_EDGE_PROPERTIES = ['strength']
 
 
-class GetCaseKnowledge(MasslawStepFunctionCaseFilePipelineNodeHandler):
+class CacheCaseKnowledge(MasslawStepFunctionCaseFilePipelineNodeHandler):
 
     def _execute(self):
         self._file_data = self._get_request_event().get('file_data', {})
@@ -119,4 +119,4 @@ class GetCaseKnowledge(MasslawStepFunctionCaseFilePipelineNodeHandler):
         self._log("Finished uploading")
 
 
-handler = GetCaseKnowledge()
+handler = CacheCaseKnowledge()

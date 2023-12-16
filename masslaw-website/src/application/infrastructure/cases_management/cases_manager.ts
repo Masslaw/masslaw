@@ -141,6 +141,14 @@ export class CasesManager {
         return await mpUploader.performMultipartUpload();
     }
 
+    public async getCaseKnowledgeForItem(case_id: string, item_id: string, item_type: string): Promise<knowledge> {
+        let response= await ApiManager.getInstance().MakeApiHttpRequest<{knowledge: knowledge}>({
+            call: MasslawApiCalls.GET_CASE_KNOWLEDGE_ITEM_DATA,
+            queryStringParameters: {case_id: case_id, item_id: item_id, item_type: item_type} as {[key:string]: string},
+        } as HTTPRequest);
+        return response.data.knowledge;
+    }
+
     public async search_text(caseId: string, text: string, fileIds?: string[], highlight_padding?: number) {
         let response= await ApiManager.getInstance().MakeApiHttpRequest<{
             results: {file_id: string, file_name: string, text_highlights: string}[]
