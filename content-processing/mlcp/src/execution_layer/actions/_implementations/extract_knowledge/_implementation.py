@@ -47,6 +47,9 @@ class ExtractKnowledge(ApplicationAction):
         knowledge_record.batch_update_entity_properties(knowledge_record_data.get("node_properties", {}))
         knowledge_record.batch_update_connection_properties(knowledge_record_data.get("edge_properties", {}))
 
+        file_id = knowledge_record_data.get("file_id")
+        if file_id: self.prefrom_custom_knowledge_items_properties_manipulation_for_file(knowledge_record, file_id)
+
         logger.info(f"Proceeding to sync extracted knowledge with neptune database")
         graph_database_sync_manager = RecordDatabaseSyncManager(knowledge_record)
 
@@ -60,4 +63,15 @@ class ExtractKnowledge(ApplicationAction):
         graph_database_sync_manager.sync_with_database(neptune_database_manager)
 
         return True
+
+    def prefrom_custom_knowledge_items_properties_manipulation_for_file(self, knowledge_record: KnowledgeRecord, file_id: str):
+        for entity in knowledge_record.get_entities():
+            entity_properties = entity.get_properties()
+            information_items = entity_properties.get("information_items", [])
+            entity_properties['information_items'] = {file_id: information_items}
+        for connection in knowledge_record.get_connections():
+            connection_properties = connection.get_properties()
+            evidence = connection_properties.get("evidence", [])
+            connection_properties['evidence'] = {file_id: evidence}
+
 

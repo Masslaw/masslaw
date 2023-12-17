@@ -25,7 +25,7 @@ def _load_entity_information_items(person_entities: List[DocumentEntity]):
         entity_information_items = _get_entity_information_items(entity)
         information_items = [{'t': information_item.text, 's': information_item.start_char, 'e': information_item.end_char} for information_item in entity_information_items]
         _merge_mergable_information_items(information_items)
-        entity.entity_data['information_items'] = {"list": information_items}
+        entity.entity_data['information_items'] = information_items
 
 
 def _get_entity_information_items(entity: DocumentEntity) -> Set[Span]:
