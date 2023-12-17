@@ -78,6 +78,7 @@ def _submit_knowledge_extraction_job_for_language(file_instance: MasslawCaseFile
                     "subgraph_edge_properties": {
                         "case_id": case_id
                     },
+                    "file_id": file_id
                 }
             }]
         },
