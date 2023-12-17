@@ -83,6 +83,21 @@
     line-height: 16px;
 }
 
+.node-knowledge-quotes-list-item-file {
+    display: block;
+    color: var(--masslaw-light-text-color);
+    font-size: 10px;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline: var(--masslaw-light-text-color);
+    margin: 10px 5px 5px 5px;
+}
+
+.node-knowledge-quotes-list-item-file:hover {
+    text-underline: var(--masslaw-primary-light);
+    color: var(--masslaw-primary-light);
+}
+
 .node-connections-list {
     margin: 10px;
     padding: 10px;
@@ -146,6 +161,21 @@
     padding: 10px;
     font-size: 12px;
     line-height: 16px;
+}
+
+.connection-evidence-list-item-file {
+    display: block;
+    color: var(--masslaw-light-text-color);
+    font-size: 10px;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline: var(--masslaw-light-text-color);
+    margin: 10px 5px 5px 5px;
+}
+
+.connection-evidence-list-item-file:hover {
+    text-underline: var(--masslaw-primary-light);
+    color: var(--masslaw-primary-light);
 }
 
 .node-display-files-list {

@@ -115,11 +115,21 @@ export const NodeDisplay: ApplicationPage = (props: ApplicationPageProps) => {
                     <div className={'node-knowledge-quotes-list'}>
                         <div className={'node-knowledge-quotes-list-title'}>{'Insightful Quotes:'}</div>
                         <div className={'node-knowledge-quotes-list-scrollable-region'}>
-                            {((entity_data.properties['information_items'] || {})['list'] || []).map((information_item: { [key: string]: string }) => {
-                                let item_text = information_item['t'] || '';
-                                return <div className={'node-knowledge-quotes-list-item'}>
-                                    ""{item_text}""
-                                </div>
+                            {Object.keys(entity_data.properties['information_items'] || {}).map((file_id: string) => {
+                                let file_information_items: {[key:string]:string}[] = entity_data.properties['information_items'][file_id];
+                                return file_information_items.map(information_item => <div className={'node-knowledge-quotes-list-item'}>
+                                    ""{information_item['t']}""
+                                    <div className={'node-knowledge-quotes-list-item-file'} onClick={
+                                        e => navigate_function(ApplicationRoutes.FILE_DISPLAY, {
+                                            'caseId': caseId || '', 'fileId': file_id
+                                        },{
+                                            'scroll_to': information_item['s'] || '',
+                                            'mark': `${information_item['s']}|${information_item['e']}`,
+                                        })
+                                    }>
+                                        {files_data[file_id].name}
+                                    </div>
+                                </div>)
                             })}
                         </div>
                     </div>
@@ -151,8 +161,21 @@ export const NodeDisplay: ApplicationPage = (props: ApplicationPageProps) => {
                                         <Accordion
                                             title={'Connection Evidence'}
                                             component={<div className={'connection-evidence-list'}>
-                                                {((connection_data.properties['evidence'] || {})['list'] || []).map((evidence_data: { [key: string]: string }) => {
-                                                    return <div key={evidence_data['t']} className={'connection-evidence-list-item'}>""{evidence_data['t'] || ''}""</div>
+                                                {Object.keys(connection_data.properties['evidence'] || {}).map((file_id: string) => {
+                                                    let evidence_data: {[key:string]:string}[] = connection_data.properties['evidence'][file_id];
+                                                    return evidence_data.map(evidence_item => <div key={evidence_item['t']} className={'connection-evidence-list-item'}>
+                                                        ""{evidence_item['t'] || ''}""
+                                                        <div className={'connection-evidence-list-item-file'} onClick={
+                                                            e => navigate_function(ApplicationRoutes.FILE_DISPLAY, {
+                                                                'caseId': caseId || '', 'fileId': file_id
+                                                            },{
+                                                                'scroll_to': evidence_item['s'] || '',
+                                                                'mark': `${evidence_item['s']}|${evidence_item['e']}`,
+                                                            })
+                                                        }>
+                                                            {files_data[file_id].name}
+                                                        </div>
+                                                    </div>)
                                                 })}
                                             </div>}
                                         />
