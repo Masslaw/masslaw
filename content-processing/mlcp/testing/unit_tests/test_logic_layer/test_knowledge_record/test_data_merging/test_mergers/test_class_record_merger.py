@@ -24,7 +24,7 @@ class TestClassRecordMerger(unittest.TestCase):
         to_merge_record.set_connections([connection_to_merge_in, connection_to_merge_out])
 
         merger = RecordMerger(merge_to_record)
-        merger.merge_data_from_another_record(to_merge_record)
+        merger.merge_entities_from_another_record(to_merge_record)
 
         self.assertIn(non_matching_entity, merge_to_record.get_entities())
 

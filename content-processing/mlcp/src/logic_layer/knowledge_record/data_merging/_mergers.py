@@ -2,7 +2,8 @@ from logic_layer.knowledge_record import KnowledgeRecord
 from logic_layer.knowledge_record._connection import KnowledgeRecordConnection
 from logic_layer.knowledge_record.data_merging._connection_merging_logic import merge_connections
 from logic_layer.knowledge_record.data_merging._entity_merging_logic import merge_entities
-from logic_layer.knowledge_record.data_merging._record_merging_logic import merge_records
+from logic_layer.knowledge_record.data_merging._record_merging_logic import merge_connections_in_record
+from logic_layer.knowledge_record.data_merging._record_merging_logic import merge_entities_between_records
 from logic_layer.knowledge_record._entity import KnowledgeRecordEntity
 
 
@@ -29,5 +30,8 @@ class RecordMerger:
     def __init__(self, target_record: KnowledgeRecord):
         self._target_record = target_record
 
-    def merge_data_from_another_record(self, another_record: KnowledgeRecord):
-        merge_records(merget_to=self._target_record, to_merge=another_record)
+    def merge_entities_from_another_record(self, another_record: KnowledgeRecord):
+        merge_entities_between_records(merge_to=self._target_record, to_merge=another_record)
+
+    def merge_connections_in_record(self, bidirectional: bool = False, ignore_properties: bool = False):
+        merge_connections_in_record(record=self._target_record, bidirectional=bidirectional, ignore_properties=ignore_properties)

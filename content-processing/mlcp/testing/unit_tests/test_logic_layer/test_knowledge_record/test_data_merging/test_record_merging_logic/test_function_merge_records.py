@@ -3,7 +3,7 @@ import unittest
 from logic_layer.knowledge_record import KnowledgeRecord
 from logic_layer.knowledge_record import KnowledgeRecordConnection
 from logic_layer.knowledge_record import KnowledgeRecordEntity
-from logic_layer.knowledge_record.data_merging._record_merging_logic import merge_records
+from logic_layer.knowledge_record.data_merging._record_merging_logic import merge_entities_between_records
 
 
 class TestFunctionMergerRecords(unittest.TestCase):
@@ -23,7 +23,7 @@ class TestFunctionMergerRecords(unittest.TestCase):
         connection_to_merge_out = KnowledgeRecordConnection(connection_id='c2', label='connection', from_entity=entity_to_merge, to_entity=non_matching_entity)
         to_merge_record.set_connections([connection_to_merge_in, connection_to_merge_out])
 
-        merge_records(merge_to_record, to_merge_record)
+        merge_entities_between_records(merge_to_record, to_merge_record)
 
         self.assertIn(non_matching_entity, merge_to_record.get_entities())
 

@@ -22,7 +22,8 @@ class KnowledgeExtractor:
 
     @logger.process_function("Knowledge Extractor - Merging data from record")
     def _merge_data_from_record(self, another_record: KnowledgeRecord):
-        self.__knowledge_record_merger.merge_data_from_another_record(another_record)
+        self.__knowledge_record_merger.merge_entities_from_another_record(another_record)
+        self.__knowledge_record_merger.merge_connections_in_record(bidirectional=True, ignore_properties=True)
 
     @logger.process_function("Knowledge Extractor - Processing text")
     def load_text(self, text: str):

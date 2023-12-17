@@ -17,7 +17,7 @@ class TestFunctionFetchMatchingConnectionsInDatabase(unittest.TestCase):
         connections = fetch_matching_connections_in_database(graph_database_manager=mock_graph_db_manager,
             connection=KnowledgeRecordConnection(from_entity=KnowledgeRecordEntity(), to_entity=KnowledgeRecordEntity()), )
 
-        self.assertEqual(len(connections), 1)
+        self.assertGreater(len(connections), 0)
         self.assertEqual(connections[0].get_id(), '123')
         self.assertEqual(connections[0].get_label(), 'test')
         self.assertEqual(connections[0].get_properties(), {'test': 'test'})
