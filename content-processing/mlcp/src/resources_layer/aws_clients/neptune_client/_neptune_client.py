@@ -85,7 +85,7 @@ class NeptuneClient:
         properties = properties.copy()
         dictionary_utils.ensure_flat(properties)
         for key, value in properties.items():
-            t = t.property(key, value)
+            t = t.property(key, str(value))
         new_node = t.next()
         node_object = get_node_object_from_vertex(vertex=new_node)
         return node_object
@@ -99,7 +99,7 @@ class NeptuneClient:
         properties = properties.copy()
         dictionary_utils.ensure_flat(properties)
         for key, value in properties.items():
-            t = t.property(key, value)
+            t = t.property(key, str(value))
         new_edge = t.next()
         edge_object = get_edge_object_from_edge(edge=new_edge)
         return edge_object
@@ -111,7 +111,7 @@ class NeptuneClient:
         properties = properties.copy()
         dictionary_utils.ensure_flat(properties)
         for key, value in properties.items():
-            t = t.property(key, value)
+            t = t.property(key, str(value))
         t.next()
 
     @retry_on_gremlin_server_error(connections=[_read_connection, _write_connection])
@@ -121,7 +121,7 @@ class NeptuneClient:
         properties = properties.copy()
         dictionary_utils.ensure_flat(properties)
         for key, value in properties.items():
-            t = t.property(key, value)
+            t = t.property(key, str(value))
         t.next()
 
     @retry_on_gremlin_server_error(connections=[_read_connection, _write_connection])

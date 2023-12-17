@@ -64,14 +64,17 @@ class ExtractKnowledge(ApplicationAction):
 
         return True
 
+    @logger.process_function('Performing custom knowledge items properties manipulation for file')
     def prefrom_custom_knowledge_items_properties_manipulation_for_file(self, knowledge_record: KnowledgeRecord, file_id: str):
         for entity in knowledge_record.get_entities():
             entity_properties = entity.get_properties()
             information_items = entity_properties.get("information_items", [])
             entity_properties['information_items'] = {file_id: information_items}
+            entity.set_properties(entity_properties)
         for connection in knowledge_record.get_connections():
             connection_properties = connection.get_properties()
             evidence = connection_properties.get("evidence", [])
             connection_properties['evidence'] = {file_id: evidence}
+            connection.set_properties(connection_properties)
 
 
