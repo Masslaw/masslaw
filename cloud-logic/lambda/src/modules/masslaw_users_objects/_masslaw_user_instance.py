@@ -1,6 +1,7 @@
 import re
 
 from src.modules.aws_clients.cognito_client import CognitoUserPoolManager
+from src.modules.aws_clients.dynamodb_client import DynamoDBTableManager
 from src.modules.masslaw_users_objects._exceptions import MasslawUserDataUpdateException
 from src.modules.remote_data_management import DataHolder
 from src.modules.dictionary_utils import dictionary_utils
@@ -8,6 +9,7 @@ from src.modules.masslaw_users_config import read_only_user_attributes
 
 
 cognitoManager = CognitoUserPoolManager("MasslawUsers")
+users_table_manager = DynamoDBTableManager('MasslawUsers')
 
 
 class MasslawUserInstance(DataHolder):
@@ -20,7 +22,7 @@ class MasslawUserInstance(DataHolder):
         if not self.__user_id:
             return False
         DataHolder.load_data(self)
-        user_data = cognitoManager.get_user_by_id(self.__user_id)
+        user_data = users_table_manager.get_item(self.__user_id)
         if not user_data:
             return False
         user_data = dictionary_utils.ensure_dict(user_data)
@@ -30,8 +32,7 @@ class MasslawUserInstance(DataHolder):
     def save_data(self):
         DataHolder.save_data(self)
         write_user_data = self._get_write_data_object()
-        dictionary_utils.ensure_flat(write_user_data)
-        cognitoManager.update_user_data(self.__user_id, write_user_data)
+        users_table_manager.update_item(self.__user_id, write_user_data)
         self._valid = True
 
     def get_user_id(self):
@@ -58,7 +59,3 @@ class MasslawUserInstance(DataHolder):
         provided_email = self.get_data_property(['email'], '')
         if len(provided_email) <= 2 or not bool(re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', provided_email)):
             raise MasslawUserDataUpdateException('invalid email address')
-
-        # provided_phone = data.get('phone', '')
-        # if len(provided_phone) <= 2 or not bool(re.match(r'^\+?\d{1,3}[-.\s]?\(?\d{2,3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$', provided_phone)):
-        #     raise MasslawUserDataUpdateException('invalid phone number')

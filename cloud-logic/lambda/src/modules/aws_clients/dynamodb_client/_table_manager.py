@@ -21,10 +21,10 @@ class DynamoDBTableManager(AWSServiceClient):
         return item
 
     def update_item(self, item_id, data):
+        if self.primary_key in data: del data[self.primary_key]
         update_expression = "SET " + ", ".join(f"#{k}=:{k}" for k in data)
         expression_attribute_names = {f"#{k}": k for k in data}
         expression_attribute_values = {f":{k}": v for k, v in data.items()}
-
         self.table.update_item(Key=self.__ensure_key_object(item_id), UpdateExpression=update_expression, ExpressionAttributeNames=expression_attribute_names, ExpressionAttributeValues=expression_attribute_values)
 
     def item_exists(self, key):

@@ -1,4 +1,4 @@
-role: arn:aws:iam::746826375642:role/LambdaFullyAccessingCognito
+role: arn:aws:iam::746826375642:role/LambdaHandlingMasslawUsers
 environment:
   deployed: true
 events:
