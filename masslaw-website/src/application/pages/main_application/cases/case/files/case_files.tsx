@@ -267,22 +267,6 @@ const FileDataDisplayPopupComponent: PopupComponent = (props: FileDataDisplayPop
                         <div className={'case-file-name'}>
                             {file_data.name}
                         </div>
-                        <div className={'file-data-display-ellipsis-menu-container'}>
-                            <MasslawEllipsisMenu
-                                menuItems={[
-                                    {
-                                        caption: 'Delete',
-                                        icon: faTrashAlt,
-                                        onClick: () => {
-                                            props.functions['delete']({id: props.fileId} as CaseFileData);
-                                            global_popups_interface.closeCurrentPopup();
-                                        },
-                                        color: 'var(--red-main)'
-                                    }
-                                ]}
-                                buttonSize={{w: 60, h: 60}}
-                            />
-                        </div>
                         <div className={'file-data-display-close-button-container'}>
                             <MasslawButton
                                 caption={''}
