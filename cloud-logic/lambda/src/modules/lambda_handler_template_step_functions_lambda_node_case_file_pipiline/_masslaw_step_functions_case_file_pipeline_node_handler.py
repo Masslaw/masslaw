@@ -7,6 +7,11 @@ class MasslawStepFunctionCaseFilePipelineNodeHandler(StepFunctionLambdaNodeHandl
         self._file_id = ''
         self._execution_stage = ''
 
+    def _reset_state(self):
+        StepFunctionLambdaNodeHandler._reset_state(self)
+        self._file_id = ''
+        self._execution_stage = ''
+
     def _handle_event(self):
         StepFunctionLambdaNodeHandler._handle_event(self)
         self._file_id = self._get_request_event().get('file_id')

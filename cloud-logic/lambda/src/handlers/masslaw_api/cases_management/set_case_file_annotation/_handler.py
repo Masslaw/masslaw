@@ -19,6 +19,18 @@ class SetCaseFileAnnotation(MasslawCaseManagementApiInvokedLambdaFunction):
         self.__annotated_text = ''
         self.__color = ''
 
+    def _reset_state(self):
+        MasslawCaseManagementApiInvokedLambdaFunction._reset_state(self)
+        self.__case_id = ''
+        self.__file_id = ''
+        self.__annotation_id = ''
+        self.__type = ''
+        self.__from_char = 0
+        self.__to_char = 0
+        self.__annotation_text = ''
+        self.__annotated_text = ''
+        self.__color = ''
+
     def _load_request_query_string_params(self):
         MasslawCaseManagementApiInvokedLambdaFunction._load_request_query_string_params(self)
         self.__case_id = self._request_query_string_params.get('case_id')

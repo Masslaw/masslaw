@@ -10,6 +10,10 @@ class MasslawCaseManagementApiInvokedLambdaFunction(AuthenticatedMasslawUserHttp
         AuthenticatedMasslawUserHttpInvokedLambdaFunction.__init__(self, name=name, default_response_body=default_response_body, request_query_string_parameters_structure=request_query_string_parameters_structure, request_body_structure=request_body_structure,
             minimum_user_status_level=user_statuses.UserStatuses.FULLY_APPROVED)
 
+    def _reset_state(self):
+        AuthenticatedMasslawUserHttpInvokedLambdaFunction._reset_state(self)
+        pass
+
     def _handle_exception(self, exception: Exception):
         if isinstance(exception, masslaw_cases_objects_exceptions.MasslawCaseDataUpdateException):
             self._set_response_attribute([lambda_constants.EventKeys.STATUS_CODE], lambda_constants.StatusCodes.BAD_REQUEST)

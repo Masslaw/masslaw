@@ -33,6 +33,11 @@ class AuthenticatedMasslawUserHttpInvokedLambdaFunction(HTTPInvokedLambdaFunctio
         self._log(f'Calling an authenticated user http invoked lambda handler. \n'
                   f'Minimum allowed user status: {minimum_user_status_level}')
 
+    def _reset_state(self):
+        HTTPInvokedLambdaFunctionHandler._reset_state(self)
+        self._access_token = ''
+        self._caller_user_instance = None
+
     def _load_request_headers(self):
         HTTPInvokedLambdaFunctionHandler._load_request_headers(self)
         access_token = dictionary_utils.get_from(self._request_headers, [lambda_constants.RequestHeaders.AUTHORIZATION], '')

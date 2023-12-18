@@ -21,6 +21,12 @@ class HTTPInvokedLambdaFunctionHandler(LambdaHandler):
         self._request_headers = {}
         self._request_body = {}
 
+    def _reset_state(self):
+        LambdaHandler._reset_state(self)
+        self._request_query_string_params = {}
+        self._request_headers = {}
+        self._request_body = {}
+
     def _prepare_final_response(self, response):
         response = LambdaHandler._prepare_final_response(self, response)
 

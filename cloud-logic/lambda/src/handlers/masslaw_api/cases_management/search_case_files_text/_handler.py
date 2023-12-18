@@ -14,6 +14,13 @@ class SearchCaseFiles(MasslawCaseManagementApiInvokedLambdaFunction):
         self.__highlight_padding = 0
         self.__files = None
 
+    def _reset_state(self):
+        MasslawCaseManagementApiInvokedLambdaFunction._reset_state(self)
+        self.__case_id = ''
+        self.__search_query = ''
+        self.__highlight_padding = 0
+        self.__files = None
+
     def _load_request_query_string_params(self):
         MasslawCaseManagementApiInvokedLambdaFunction._load_request_query_string_params(self)
         self.__case_id = self._request_query_string_params.get('case_id')

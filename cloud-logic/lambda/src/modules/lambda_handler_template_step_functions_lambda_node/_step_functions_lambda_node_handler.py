@@ -5,6 +5,10 @@ from src.modules.lambda_base import LambdaHandler
 
 class StepFunctionLambdaNodeHandler(LambdaHandler):
 
+    def _reset_state(self):
+        LambdaHandler._reset_state(self)
+        pass
+
     def _handle_event(self):
         LambdaHandler._handle_event(self)
         self._set_response_attribute([], LambdaHandler._get_request_event(self))

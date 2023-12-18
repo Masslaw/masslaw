@@ -10,6 +10,10 @@ class SetUserData(AuthenticatedMasslawUserHttpInvokedLambdaFunction):
         AuthenticatedMasslawUserHttpInvokedLambdaFunction.__init__(self, default_response_body={'user_data': {}}, request_body_structure={'user_data': [dict]}, minimum_user_status_level=user_statuses.UserStatuses.LOGGED_IN, )
         self.__user_data = {}
 
+    def _reset_state(self):
+        AuthenticatedMasslawUserHttpInvokedLambdaFunction._reset_state(self)
+        self.__user_data = {}
+
     def _load_request_body(self):
         AuthenticatedMasslawUserHttpInvokedLambdaFunction._load_request_body(self)
         self.__user_data = self._request_body.get('user_data', {})

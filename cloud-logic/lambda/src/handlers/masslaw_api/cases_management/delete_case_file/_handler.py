@@ -6,7 +6,11 @@ from src.modules.masslaw_cases_objects import MasslawCaseInstance
 class DeleteCaseFile(MasslawCaseManagementApiInvokedLambdaFunction):
     def __init__(self):
         MasslawCaseManagementApiInvokedLambdaFunction.__init__(self, default_response_body={}, request_query_string_parameters_structure={'case_id': [str], 'file_id': [str], })
+        self.__case_id: str = ''
+        self.__file_id: str = ''
 
+    def _reset_state(self):
+        MasslawCaseManagementApiInvokedLambdaFunction._reset_state(self)
         self.__case_id: str = ''
         self.__file_id: str = ''
 

@@ -13,6 +13,13 @@ class StartCaseFileUpload(MasslawCaseManagementApiInvokedLambdaFunction):
         self.__num_parts = 0
         self.__languages = ['eng']
 
+    def _reset_state(self):
+        MasslawCaseManagementApiInvokedLambdaFunction._reset_state(self)
+        self.__case_id = ''
+        self.__file_name = ''
+        self.__num_parts = 0
+        self.__languages = ['eng']
+
     def _load_request_body(self):
         MasslawCaseManagementApiInvokedLambdaFunction._load_request_body(self)
         self.__case_id = self._request_body.get('case_id')

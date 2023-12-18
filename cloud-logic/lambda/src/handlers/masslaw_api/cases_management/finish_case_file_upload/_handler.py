@@ -12,6 +12,12 @@ class FinishCaseFileUpload(MasslawCaseManagementApiInvokedLambdaFunction):
         self.__file_id = ''
         self.__parts = {}
 
+    def _reset_state(self):
+        MasslawCaseManagementApiInvokedLambdaFunction._reset_state(self)
+        self.__case_id = ''
+        self.__file_id = ''
+        self.__parts = {}
+
     def _load_request_body(self):
         MasslawCaseManagementApiInvokedLambdaFunction._load_request_body(self)
         self.__case_id = self._request_body.get('case_id')

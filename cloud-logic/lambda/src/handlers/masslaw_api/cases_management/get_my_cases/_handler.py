@@ -10,6 +10,10 @@ class GetMyCases(MasslawCaseManagementApiInvokedLambdaFunction):
         MasslawCaseManagementApiInvokedLambdaFunction.__init__(self, default_response_body={'my_cases': [], })
         self.__case_id = ''
 
+    def _reset_state(self):
+        MasslawCaseManagementApiInvokedLambdaFunction._reset_state(self)
+        self.__case_id = ''
+
     def _load_request_query_string_params(self):
         MasslawCaseManagementApiInvokedLambdaFunction._load_request_query_string_params(self)
         self.__case_id = self._request_query_string_params.get('case_id')

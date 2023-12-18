@@ -33,6 +33,18 @@ class LambdaHandler:
         self._log(f'Expected event structure: {event_structure}', level=logging.DEBUG)
         self._log(f'Lambda environment:\n{os.environ}')
 
+    def __reset_state(self):
+        self._log(f'Resetting state')
+        self._execution_exception = ''
+        self.__response = self.__default_response or {}
+        self.__event = {}
+        self.__context = None
+        self._reset_state()
+
+    @abstractmethod
+    def _reset_state(self):
+        pass  # can be implemented by inheriting handler classes
+
     def __setup(self):
         self._setup()
         self.__write_function_name_in_environment()
@@ -43,6 +55,7 @@ class LambdaHandler:
 
     def __call__(self, event, context):
         self._log(f'Calling {self.name}')
+        self.__reset_state()
         _start_execution_time_milliseconds = time.time()
         res = False
         try:
@@ -62,6 +75,7 @@ class LambdaHandler:
         return final_response
 
     def __handle_event(self, event):
+        self._log("Handling event")
         self.__event = dictionary_utils.ensure_dict(event)
         self._log(f'Event: \n {self.__event}', level=logging.DEBUG)
         self._assert_event_structure()
@@ -71,6 +85,7 @@ class LambdaHandler:
         pass  # can be implemented by inheriting handler classes
 
     def __handle_context(self, context):
+        self._log("Handling context")
         self.__context = context
         self._handle_context()
         self._log(f'Context: \n {self.__context}', level=logging.DEBUG)

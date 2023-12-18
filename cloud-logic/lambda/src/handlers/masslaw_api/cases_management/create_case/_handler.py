@@ -6,7 +6,10 @@ from src.modules.masslaw_case_creation import create_a_new_case
 class CreateCase(MasslawCaseManagementApiInvokedLambdaFunction):
     def __init__(self):
         MasslawCaseManagementApiInvokedLambdaFunction.__init__(self, default_response_body={'case_id': ''}, request_body_structure={'case_data': {'title': [str], 'description': [str]}})
+        self.__case_data = {}
 
+    def _reset_state(self):
+        MasslawCaseManagementApiInvokedLambdaFunction._reset_state(self)
         self.__case_data = {}
 
     def _load_request_body(self):

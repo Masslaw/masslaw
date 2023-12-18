@@ -11,6 +11,10 @@ class GetUserData(AuthenticatedMasslawUserHttpInvokedLambdaFunction):
         AuthenticatedMasslawUserHttpInvokedLambdaFunction.__init__(self, default_response_body={'user_data': {}}, minimum_user_status_level=user_statuses.UserStatuses.GUEST, )
         self.__user_id = None
 
+    def _reset_state(self):
+        AuthenticatedMasslawUserHttpInvokedLambdaFunction._reset_state(self)
+        self.__user_id = None
+
     def _load_request_query_string_params(self):
         AuthenticatedMasslawUserHttpInvokedLambdaFunction._load_request_query_string_params(self)
         self.__user_id = self._request_query_string_params.get('user_id', None)
