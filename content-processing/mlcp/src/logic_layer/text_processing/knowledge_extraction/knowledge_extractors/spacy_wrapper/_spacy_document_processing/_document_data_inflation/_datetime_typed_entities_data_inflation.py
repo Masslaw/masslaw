@@ -30,7 +30,7 @@ def _parse_datetimes(datetime_entities: List[DocumentEntity]):
 
 
 def _get_parseable_datetime_string_from_span(datetime_entity_span: Span) -> str:
-    span_tokens = [datetime_entity_span.doc[i] for i in range(datetime_entity_span.start, datetime_entity_span.end + 1)]
+    span_tokens = [datetime_entity_span.doc[i] for i in range(datetime_entity_span.start, datetime_entity_span.end)]
     filtered_tokens = [token for token in span_tokens if token.pos_ not in ("DET", "ADP", "PUNCT")]
     text = ' '.join([token.text for token in filtered_tokens])
     text = _replace_common_unparseable_expressions_with_parsable_text(text)
