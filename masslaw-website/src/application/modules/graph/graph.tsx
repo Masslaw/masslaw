@@ -235,11 +235,6 @@ export class Graph {
 
             node.position[0] += node.velocity[0] * dt;
             node.position[1] += node.velocity[1] * dt;
-
-            if (Number.isNaN(node.position[0]) || node.position[0] == undefined) node.position[0] = Math.random();
-            if (Number.isNaN(node.position[1]) || node.position[1] == undefined) node.position[1] = Math.random();
-            if (Number.isNaN(node.velocity[0]) || node.velocity[0] == undefined) node.velocity[0] = Math.random();
-            if (Number.isNaN(node.velocity[1]) || node.velocity[1] == undefined) node.velocity[1] = Math.random();
         }
     }
 
@@ -302,7 +297,7 @@ export class Graph {
             let edge_to = this.nodes[edge.to_entity];
             edge_from.graph_contribution += edge.weight;
             edge_to.graph_contribution += edge.weight;
-            let connection_length = 50 + 200 / edge.weight;
+            let connection_length = Math.min(50 + 200 / edge.weight, this.radius);
             edge_from.connected_nodes.push([edge.to_entity, connection_length]);
             edge_to.connected_nodes.push([edge.from_entity, connection_length]);
             max_contribution = Math.max(max_contribution, edge_from.graph_contribution, edge_to.graph_contribution);
