@@ -235,6 +235,11 @@ export class Graph {
 
             node.position[0] += node.velocity[0] * dt;
             node.position[1] += node.velocity[1] * dt;
+
+            if (Number.isNaN(node.position[0]) || node.position[0] == undefined) node.position[0] = Math.random();
+            if (Number.isNaN(node.position[1]) || node.position[1] == undefined) node.position[1] = Math.random();
+            if (Number.isNaN(node.velocity[0]) || node.velocity[0] == undefined) node.velocity[0] = Math.random();
+            if (Number.isNaN(node.velocity[1]) || node.velocity[1] == undefined) node.velocity[1] = Math.random();
         }
     }
 
