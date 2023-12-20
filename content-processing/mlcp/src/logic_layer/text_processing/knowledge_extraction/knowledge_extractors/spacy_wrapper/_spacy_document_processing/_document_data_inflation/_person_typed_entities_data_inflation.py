@@ -40,6 +40,7 @@ def _get_entity_information_items(entity: DocumentEntity) -> Set[Span]:
 def _merge_mergable_information_items(information_items: List[Dict]):
     list_utils.merge_mergeable(information_items, _check_information_items_mergeable, _merge_information_items)
 
+
 def _check_information_items_mergeable(i1: Dict, i2: Dict) -> bool:
     range_of_one_contains_the_other = not not set(range(i1.get('s'), i1.get('e'))) & set(range(i2.get('s'), i2.get('e')))
     if range_of_one_contains_the_other: return True
@@ -47,8 +48,10 @@ def _check_information_items_mergeable(i1: Dict, i2: Dict) -> bool:
     if text_of_one_contains_the_other: return True
     return False
 
+
 def _merge_information_items(i1: Dict, i2: Dict) -> Dict:
     return max(i1, i2, key=lambda i: len(i.get('t', '')))
+
 
 def _get_information_about_a_person(person_token: Token) -> Set[Span]:
     information_items = set()
