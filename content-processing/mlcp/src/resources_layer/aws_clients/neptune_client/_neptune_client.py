@@ -169,7 +169,7 @@ class NeptuneClient:
         properties = properties.copy()
         dictionary_utils.ensure_flat(properties)
         for key, value in properties.items():
-            t = t.has(key, value)
+            t = t.has(key, str(value))
         node_objects = get_multiple_node_objects_from_traversal(traversal=t)
         return node_objects
 
@@ -180,7 +180,7 @@ class NeptuneClient:
         properties = properties.copy()
         dictionary_utils.ensure_flat(properties)
         for key, value in properties.items():
-            t = t.has(key, value)
+            t = t.has(key, str(value))
         if label:
             t = t.has_label(label)
         if from_node:
