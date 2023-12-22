@@ -40,6 +40,7 @@ def _structure_element_data_to_dict(structure_element: OpticalTextStructureEleme
     element_data = {}
 
     child_type = structure_element.get_children_type() or str
+    element_properties = structure_element.get_properties() or {}
     if child_type == str:
         element_data['v'] = structure_element.get_value()
         bounding_rectangle = structure_element.get_bounding_rect()
@@ -53,5 +54,6 @@ def _structure_element_data_to_dict(structure_element: OpticalTextStructureEleme
             child_data = _structure_element_data_to_dict(child)
             children_data.append(child_data)
         element_data[OpticalTextStructureElement(child_type).get_label()] = children_data
+    element_data['p'] = element_properties
 
     return element_data

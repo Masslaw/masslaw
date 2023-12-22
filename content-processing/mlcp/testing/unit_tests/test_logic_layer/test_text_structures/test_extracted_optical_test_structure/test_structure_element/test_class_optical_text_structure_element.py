@@ -57,3 +57,32 @@ class TestClassOpticalTextStructureElement(unittest.TestCase):
     def test_class_method_defaults(self):
         self.assertEqual(OpticalTextStructureElement.get_children_separator(), '')
         self.assertEqual(OpticalTextStructureElement.get_children_order_direction(), OpticalStructureElementOrderDirection.HORIZONTAL)
+
+    def test_get_properties(self):
+        element = OpticalTextStructureElement()
+        properties = {'a': 1, 'b': 2, 'c': {'d': '3'}}
+        element._properties = properties
+        self.assertEqual(element.get_properties(), properties)
+
+    def test_set_property(self):
+        element = OpticalTextStructureElement()
+        properties = {'a': 1, 'b': 2, 'c': {'d': '3'}}
+        element._properties = properties
+
+        element.set_property('a', 4)
+        element.set_property('c', {'d': '5'})
+        element.set_property('e', 6)
+
+        self.assertEqual(element._properties, {'a': 4, 'b': 2, 'c': {'d': '5'}, 'e': 6})
+
+    def test_delete_property(self):
+        element = OpticalTextStructureElement()
+        properties = {'a': 1, 'b': 2, 'c': {'d': '3'}}
+        element._properties = properties
+
+        element.delete_property('a')
+        element.delete_property('c')
+        element.delete_property('e')
+
+        self.assertEqual(element._properties, {'b': 2})
+

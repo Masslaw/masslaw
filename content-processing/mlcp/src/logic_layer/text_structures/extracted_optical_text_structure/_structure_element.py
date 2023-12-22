@@ -1,3 +1,4 @@
+from typing import Dict
 from typing import List
 from typing import Optional
 from typing import Type
@@ -14,10 +15,12 @@ class OpticalTextStructureElement:
 
     _children: List = []
     _bounding_rect: OpticalStructureElementBoundingRectangle = (0, 0, 0, 0)
+    _properties: dict = {}
 
-    def __init__(self, children: List = None, bounding_rect: OpticalStructureElementBoundingRectangle = None) -> object:
+    def __init__(self, children: List = None, bounding_rect: OpticalStructureElementBoundingRectangle = None, properties: Dict = None) -> object:
         children and self.set_children(children)
         bounding_rect and self.set_bounding_rect(bounding_rect)
+        self._properties = properties or {}
 
     @classmethod
     def get_label(cls) -> str:
@@ -59,6 +62,18 @@ class OpticalTextStructureElement:
 
     def is_leaf(self):
         return not issubclass(self.get_children_type() or str, OpticalTextStructureElement)
+
+    def get_property(self, property_name: str) -> Optional[any]:
+        return self._properties.get(property_name)
+
+    def set_property(self, property_name: str, property_value: any):
+        self._properties[property_name] = property_value
+
+    def delete_property(self, property_name: str):
+        self._properties.pop(property_name, None)
+
+    def get_properties(self) -> dict:
+        return self._properties
 
     def __str__(self):
         return self.get_value()

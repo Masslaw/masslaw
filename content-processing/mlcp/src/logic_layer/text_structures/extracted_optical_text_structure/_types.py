@@ -28,3 +28,6 @@ OpticalStructureElementBoundingRectangle: Type = Tuple[float, float, float, floa
 
 # will be the shape of a single raw data entry to the construction system (that turns it into a hierarchy element)
 OpticalElementRawDataEntry: Type = Tuple[str, OpticalStructureElementBoundingRectangle]
+
+# will be the provided datatype to point to a specific element in the structure
+OpticalDocumentElementsPointer: Type = Tuple[int, ...]

@@ -43,6 +43,7 @@ def _structure_element_to_xml_element(structure_element: OpticalTextStructureEle
     xml_element = ElementTree.Element(structure_element.__class__.get_label())
 
     child_type = structure_element.get_children_type() or str
+    element_properties = structure_element.get_properties() or {}
     if child_type == str:
         xml_element.set('v', structure_element.get_value())
         bounding_rectangle = structure_element.get_bounding_rect()
@@ -53,6 +54,9 @@ def _structure_element_to_xml_element(structure_element: OpticalTextStructureEle
         for child in element_children:
             child_xml_element = _structure_element_to_xml_element(child)
             xml_element.append(child_xml_element)
+    for key, value in element_properties.items():
+        key = key.replace(' ', '-')
+        xml_element.set(f'p-{key}', str(value))
 
     return xml_element
 
