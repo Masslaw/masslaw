@@ -4,6 +4,7 @@ from logic_layer.knowledge_record import KnowledgeRecord
 from logic_layer.text_processing.knowledge_extraction.knowledge_extractors.spacy_wrapper._spacy_document_processing._basic_document_processing import SpacyCoreferencesResolver
 from logic_layer.text_processing.knowledge_extraction.knowledge_extractors.spacy_wrapper._spacy_document_processing._basic_document_processing import SpacyEntitiesExtractor
 from logic_layer.text_processing.knowledge_extraction.knowledge_extractors.spacy_wrapper._spacy_document_processing._basic_document_processing import SpacyRelationsExtractor
+from logic_layer.text_processing.knowledge_extraction.knowledge_extractors.spacy_wrapper._spacy_document_processing._basic_document_processing._document_data_filterer import DocumentDataFilterer
 from logic_layer.text_processing.knowledge_extraction.knowledge_extractors.spacy_wrapper._spacy_document_processing._document_data_inflation import SpacyDocumentDataInflater
 from logic_layer.text_processing.knowledge_extraction.knowledge_extractors.spacy_wrapper._spacy_document_processing._knowledge_record_building import SpacyDocumentKnowledgeRecordBuilder
 from logic_layer.text_processing.knowledge_extraction.knowledge_extractors.spacy_wrapper._spacy_document_processing._structures import SpacyDocumentData
@@ -18,6 +19,7 @@ class SpacyDocumentProcessor:
         self._entities_extractor = SpacyEntitiesExtractor(self._document_data)
         self._relations_extractor = SpacyRelationsExtractor(self._document_data)
         self._document_data_inflater = SpacyDocumentDataInflater(self._document_data)
+        self._document_data_filterer = DocumentDataFilterer(self._document_data)
         self._knowledge_record_builder = SpacyDocumentKnowledgeRecordBuilder(self._document_data)
         self._knowledge_record = KnowledgeRecord()
 
@@ -28,6 +30,7 @@ class SpacyDocumentProcessor:
         self._inflate_entity_data()
         self._extract_relations()
         self._inflate_relations_data()
+        self._filter_document_data()
         self._build_knowledge_record()
         return self._knowledge_record
 
@@ -51,6 +54,10 @@ class SpacyDocumentProcessor:
     @logger.process_function("Inflating relations data")
     def _inflate_relations_data(self):
         self._document_data_inflater.inflate_relations_data()
+
+    @logger.process_function("Filtering document data")
+    def _filter_document_data(self):
+        self._document_data_filterer.filter_document_data()
 
     @logger.process_function("Building knowledge record")
     def _build_knowledge_record(self):

@@ -12,10 +12,20 @@ def get_entity_span_for_token(token: Token) -> Span | None:
 
 
 def get_compound_chain(token: Token):
-    compound_chain = set()
-    compound_chain.update(set(traverse_upward(token, lambda token: token.dep_ != 'compound')))
-    compound_chain.update(set(traverse_downward(token, lambda token: token.dep_ != 'compound')))
-    return sort_tokens(list(compound_chain))
+    return get_token_dependency_chain(token, ['compound'])
+
+
+def get_token_dependency_chain(token, dependencies, _visited=None):
+    visited = _visited or set()
+    if token in visited: return set()
+    visited.add(token)
+    dependency_chain = {token}
+    for child in token.children:
+        if child.dep_ in dependencies:
+            dependency_chain.update(get_token_dependency_chain(child, dependencies, visited))
+    if token.head != token and token.dep_ in dependencies:
+        dependency_chain.update(get_token_dependency_chain(token.head, dependencies, visited))
+    return sort_tokens(list(dependency_chain))
 
 
 def traverse_upward(token: Token, stop_condition: callable) -> List[Token]:

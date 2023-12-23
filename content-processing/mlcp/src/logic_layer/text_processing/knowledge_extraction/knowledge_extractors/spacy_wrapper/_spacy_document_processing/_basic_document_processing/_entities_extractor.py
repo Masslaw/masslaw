@@ -1,4 +1,5 @@
 from typing import List
+from typing import Set
 
 from logic_layer.text_processing.knowledge_extraction.knowledge_extractors.spacy_wrapper._spacy_document_processing._structures import DocumentEntity
 from logic_layer.text_processing.knowledge_extraction.knowledge_extractors.spacy_wrapper._spacy_document_processing._structures import SpacyDocumentData
@@ -8,11 +9,10 @@ from shared_layer.list_utils import list_utils
 class SpacyEntitiesExtractor:
     def __init__(self, document_data: SpacyDocumentData):
         self._document_data = document_data
-        self._entities: List[DocumentEntity] = []
+        self._entities: Set[DocumentEntity] = set()
 
     def extract_entities(self):
         self._load_entities()
-        self._release_useless_entities()
         self._load_entities_coreference_chains()
         self._resolve_entity_appearances()
         self._merge_entities()
@@ -25,14 +25,7 @@ class SpacyEntitiesExtractor:
             document_entity.entity_spans = {entity_span}
             document_entity.entity_type = entity_span.label_
             document_entity.entity_data = {}
-            self._entities.append(document_entity)
-
-    def _release_useless_entities(self):
-        self._entities = [entity for entity in self._entities if not self._detereine_entity_useless(entity)]
-
-    def _detereine_entity_useless(self, entity: DocumentEntity) -> bool:
-        if entity.entity_type in ("DATE", ) and any(span for span in entity.entity_spans if 'old' in span.text): return True;
-        return False
+            self._entities.add(document_entity)
 
     def _load_entities_coreference_chains(self):
         for entity in self._entities:
@@ -48,12 +41,13 @@ class SpacyEntitiesExtractor:
                 entity.entity_appearances.update([token for token in chain.chain_tokens if token.pos_ == "PRON"])
 
     def _merge_entities(self):
-        list_utils.merge_mergeable(self._entities, self._mergeable, self._do_merge_entities)
+        entities_list = list(self._entities)
+        list_utils.merge_mergeable(entities_list, self._mergeable, self._do_merge_entities)
+        self._entities = set(entities_list)
 
     def _mergeable(self, entity1: DocumentEntity, entity2: DocumentEntity) -> bool:
         if entity1.entity_type != entity2.entity_type:
             return False
-
         entity1_name_components = set()
         for entity1_span in entity1.entity_spans:
             entity1_name_components.update(entity1_span.text.split(' '))
@@ -63,7 +57,6 @@ class SpacyEntitiesExtractor:
         overlapping_components = entity1_name_components & entity2_name_components
         if len(overlapping_components):
             return True
-
         return False
 
     def _do_merge_entities(self, entity1: DocumentEntity, entity2: DocumentEntity) -> DocumentEntity:

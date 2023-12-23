@@ -11,7 +11,7 @@ from mlcp.testing.stubs.s3_stub import S3StubTestLoader
 from shared_layer.file_system_utils._file_system_utils import clear_directory
 from shared_layer.file_system_utils._file_system_utils import join_paths
 
-file_name = "A-Very-Short-Story.xml"
+file_name = "ukftt_grc_2023_1033.xml"
 
 bucket_name = "mlcp-test-bucket"
 
@@ -19,7 +19,7 @@ languages = ["eng", "heb"]
 
 case_id = 'aH7CFNTa9stf7n8anF78anADV324gnoF'
 
-file_id = 'ajva0SF08m8sFM09HM809fmh0CM0fhm0asF8'
+file_id = file_name
 
 parent_output_directory = './output/knowledge_extraction_job'
 

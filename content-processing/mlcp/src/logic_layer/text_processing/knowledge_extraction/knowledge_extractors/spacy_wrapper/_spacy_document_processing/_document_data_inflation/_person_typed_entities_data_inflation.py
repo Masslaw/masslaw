@@ -11,13 +11,7 @@ from shared_layer.list_utils import list_utils
 
 def inflate_person_entity_data(entitise: List[DocumentEntity]|Set[DocumentEntity]):
     person_typed_entities = [entity for entity in entitise if entity.entity_type == "PERSON"]
-    _load_entity_titles(person_typed_entities)
     _load_entity_information_items(person_typed_entities)
-
-
-def _load_entity_titles(person_entities: List[DocumentEntity]):
-    for entity in person_entities:
-        entity.entity_data['title'] = max(entity.entity_spans, key=lambda span: len(span.text)).text
 
 
 def _load_entity_information_items(person_entities: List[DocumentEntity]):

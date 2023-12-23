@@ -4,21 +4,38 @@ from typing import Set
 from dateutil import parser
 from spacy.tokens.span import Span
 
+from logic_layer.text_processing.knowledge_extraction.knowledge_extractors.spacy_wrapper._spacy._common import get_token_dependency_chain
 from logic_layer.text_processing.knowledge_extraction.knowledge_extractors.spacy_wrapper._spacy_document_processing._structures import DocumentEntity
 from shared_layer.list_utils import list_utils
 
 
 def inflate_datetime_entity_data(entities: List[DocumentEntity] | Set[DocumentEntity]):
     date_typed_entities = [entity for entity in entities if entity.entity_type in ("DATE", "TIME",)]
+    _load_entity_titles(date_typed_entities)
     _parse_datetimes(date_typed_entities)
     _merge_mergable_datetime_entities(date_typed_entities)
+    _cleanup(date_typed_entities)
+
+
+def _load_entity_titles(date_entities: List[DocumentEntity]):
+    for entity in date_entities:
+        entity_spans = entity.entity_spans
+        possible_titles = set()
+        for datetime_entity_span in entity_spans:
+            chain = get_token_dependency_chain(datetime_entity_span.root, ['compound', 'nummod', 'nmod'])
+            span_tokens = datetime_entity_span.doc[min(chain[0].i, datetime_entity_span.start):max(datetime_entity_span[-1].i + 1, datetime_entity_span.end)]
+            possible_title = ' '.join([token.text for token in span_tokens])
+            possible_titles.add(possible_title)
+        final_title = max(possible_titles, key=lambda title: len(title))
+        entity.entity_data['title'] = final_title
+        entity.entity_data['possible_titles'] = possible_titles
 
 
 def _parse_datetimes(datetime_entities: List[DocumentEntity]):
     for entity in datetime_entities:
         predicted_datetimes = []
-        for entity_span in entity.entity_spans:
-            datetime_string = _get_parseable_datetime_string_from_span(entity_span)
+        for possible_title in entity.entity_data.get('possible_titles', []):
+            datetime_string = _replace_common_unparseable_expressions_with_parsable_text(possible_title)
             try:
                 parsed_datetime_iso = parser.parse(datetime_string).isoformat()
                 predicted_datetimes.append(parsed_datetime_iso)
@@ -27,14 +44,6 @@ def _parse_datetimes(datetime_entities: List[DocumentEntity]):
         if not predicted_datetimes: continue
         mostly_predicted_date_iso = max(set(predicted_datetimes), key=predicted_datetimes.count)
         entity.entity_data['iso'] = mostly_predicted_date_iso
-
-
-def _get_parseable_datetime_string_from_span(datetime_entity_span: Span) -> str:
-    span_tokens = [datetime_entity_span.doc[i] for i in range(datetime_entity_span.start, datetime_entity_span.end)]
-    filtered_tokens = [token for token in span_tokens if token.pos_ not in ("DET", "ADP", "PUNCT")]
-    text = ' '.join([token.text for token in filtered_tokens])
-    text = _replace_common_unparseable_expressions_with_parsable_text(text)
-    return text
 
 
 def _replace_common_unparseable_expressions_with_parsable_text(text: str) -> str:
@@ -67,3 +76,8 @@ def _merge_datetime_entities(entity1: DocumentEntity, entity2: DocumentEntity) -
     merged_entity.entity_appearances = entity1.entity_appearances | entity2.entity_appearances
     merged_entity.coreference_chains = entity1.coreference_chains | entity2.coreference_chains
     return merged_entity
+
+
+def _cleanup(datetime_entities: List[DocumentEntity]):
+    for entity in datetime_entities:
+        entity.entity_data.pop('possible_titles', None)

@@ -1,6 +1,7 @@
 from logic_layer.knowledge_record import KnowledgeRecord
 from logic_layer.knowledge_record import KnowledgeRecordConnection
 from logic_layer.knowledge_record import KnowledgeRecordEntity
+from logic_layer.text_processing.knowledge_extraction.knowledge_extractors.spacy_wrapper._spacy_document_processing._basic_document_processing._document_data_filterer import DocumentDataFilterer
 from logic_layer.text_processing.knowledge_extraction.knowledge_extractors.spacy_wrapper._spacy_document_processing._structures import SpacyDocumentData
 from shared_layer.mlcp_logger import logger
 
