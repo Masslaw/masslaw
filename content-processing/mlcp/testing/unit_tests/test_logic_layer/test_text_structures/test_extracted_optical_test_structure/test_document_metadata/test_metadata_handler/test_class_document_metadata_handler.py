@@ -8,10 +8,7 @@ from logic_layer.text_structures.extracted_optical_text_structure.document_metad
 class TestClassDocumentMetadataHandler(unittest.TestCase):
 
     def test_put_metadata_items(self):
-        document = ExtractedOpticalTextDocument([
-            OpticalStructureHierarchyLevel.GROUP,
-            OpticalStructureHierarchyLevel.LINE
-        ])
+        document = ExtractedOpticalTextDocument()
         document_metadata_handler = DocumentMetadataHandler(document)
 
         document_metadata_handler.put_metadata_item(['a', 'b'], 'label1', {'d': 'e'})

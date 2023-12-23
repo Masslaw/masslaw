@@ -10,7 +10,7 @@ from logic_layer.text_structures.extracted_optical_text_structure.structure_visu
 
 class TestFunctionPrintStructureGroupsToImages(unittest.TestCase):
     def setUp(self):
-        self.document = ExtractedOpticalTextDocument([OpticalStructureHierarchyLevel.WORD])
+        self.document = ExtractedOpticalTextDocument()
         self.word1 = OpticalTextStructureWord()
         self.word1.set_children(list('hello'))
         self.word1.set_bounding_rect((5, 5, 10, 10))

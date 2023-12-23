@@ -11,8 +11,7 @@ from logic_layer.text_structures.extracted_optical_text_structure.document_expor
 class TestExportDocumentToJsonFormat(unittest.TestCase):
 
     def setUp(self):
-        self.optical_text_document = ExtractedOpticalTextDocument(
-            structure_hierarchy_formation=[OpticalStructureHierarchyLevel.GROUP, OpticalStructureHierarchyLevel.LINE, OpticalStructureHierarchyLevel.WORD, OpticalStructureHierarchyLevel.CHARACTER, ])
+        self.optical_text_document = ExtractedOpticalTextDocument()
 
     def test_export_to_json_valid_conditions(self):
         with tempfile.NamedTemporaryFile('w+', suffix='.json') as output_file:

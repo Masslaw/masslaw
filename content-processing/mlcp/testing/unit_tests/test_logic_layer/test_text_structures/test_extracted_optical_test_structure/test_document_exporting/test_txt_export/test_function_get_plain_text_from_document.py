@@ -9,8 +9,7 @@ from logic_layer.text_structures.extracted_optical_text_structure.document_expor
 class TestFunctionGetPlainTextFromDocument(unittest.TestCase):
 
     def create_dummy_optical_text_document(self):
-        optical_text_document = ExtractedOpticalTextDocument(
-            structure_hierarchy_formation=[OpticalStructureHierarchyLevel.GROUP, OpticalStructureHierarchyLevel.LINE, OpticalStructureHierarchyLevel.WORD, OpticalStructureHierarchyLevel.CHARACTER, ])
+        optical_text_document = ExtractedOpticalTextDocument()
         child_element = OpticalTextStructureElement()
         child_element.set_children(list("Dummy text"))
         optical_text_document.get_structure_root().set_children([child_element])
@@ -22,7 +21,6 @@ class TestFunctionGetPlainTextFromDocument(unittest.TestCase):
         self.assertEqual(result_text.strip(), "Dummy text")
 
     def test_get_plain_text_from_empty_document(self):
-        optical_text_document = ExtractedOpticalTextDocument(
-            structure_hierarchy_formation=[OpticalStructureHierarchyLevel.GROUP, OpticalStructureHierarchyLevel.LINE, OpticalStructureHierarchyLevel.WORD, OpticalStructureHierarchyLevel.CHARACTER, ])
+        optical_text_document = ExtractedOpticalTextDocument()
         result_text = _get_plain_text_from_document(optical_text_document)
         self.assertEqual(result_text.strip(), "")

@@ -47,10 +47,10 @@ class TestClassOpticalTextStructureManipulator(unittest.TestCase):
         group2 = OpticalTextStructureGroup()
         group2.set_children([line4, line5])
 
-        structure_root = OpticalTextStructureRoot([OpticalTextStructureGroup, OpticalTextStructureLine, OpticalTextStructureWord])
+        structure_root = OpticalTextStructureRoot()
         structure_root.set_children([group1, group2])
 
-        document = ExtractedOpticalTextDocument([OpticalTextStructureGroup, OpticalTextStructureLine, OpticalTextStructureWord])
+        document = ExtractedOpticalTextDocument()
         document.set_structure_root(structure_root)
 
         manipulator = OpticalTextStructureManipulator(document)
@@ -85,10 +85,10 @@ class TestClassOpticalTextStructureManipulator(unittest.TestCase):
         group1 = OpticalTextStructureGroup()
         group1.set_children([line1, line2])
 
-        structure = OpticalTextStructureRoot([OpticalTextStructureGroup, OpticalTextStructureLine, OpticalTextStructureWord])
+        structure = OpticalTextStructureRoot()
         structure.set_children([group1])
 
-        document = ExtractedOpticalTextDocument([OpticalTextStructureGroup, OpticalTextStructureLine, OpticalTextStructureWord])
+        document = ExtractedOpticalTextDocument()
         document.set_structure_root(structure)
 
         manipulator = OpticalTextStructureManipulator(document)

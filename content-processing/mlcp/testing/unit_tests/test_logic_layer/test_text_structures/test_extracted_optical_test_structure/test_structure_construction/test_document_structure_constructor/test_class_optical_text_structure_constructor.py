@@ -11,10 +11,11 @@ class TestClassOpticalTextStructureConstructor(unittest.TestCase):
         entry_groups = [[('Hello\nThere!', (65, 0, 115, 10)), ('How', (0, 20, 75, 30)), ('are you?', (90, 20, 130, 30))],
                         [('I am', (0, 0, 45, 10)), ('fine!', (0, 20, 50, 30)), ('Thank you.', (0, 40, 135, 50)), ]]
 
-        document = ExtractedOpticalTextDocument(
-            [OpticalStructureHierarchyLevel.PARAGRAPH, OpticalStructureHierarchyLevel.LINE, OpticalStructureHierarchyLevel.WORD, OpticalStructureHierarchyLevel.CHARACTER])
+        document = ExtractedOpticalTextDocument()
 
-        structure_constructor = OpticalTextStructureConstructor(document)
+        hierarchy_formation = [OpticalStructureHierarchyLevel.PARAGRAPH, OpticalStructureHierarchyLevel.LINE, OpticalStructureHierarchyLevel.WORD, OpticalStructureHierarchyLevel.CHARACTER]
+
+        structure_constructor = OpticalTextStructureConstructor(document, hierarchy_formation)
 
         structure_constructor.add_entry_groups_to_structure(entry_groups)
 
@@ -66,10 +67,11 @@ class TestClassOpticalTextStructureConstructor(unittest.TestCase):
             ]
         ]
 
-        document = ExtractedOpticalTextDocument(
-            [OpticalStructureHierarchyLevel.GROUP, OpticalStructureHierarchyLevel.LINE, OpticalStructureHierarchyLevel.WORD, OpticalStructureHierarchyLevel.CHARACTER])
+        document = ExtractedOpticalTextDocument()
 
-        structure_constructor = OpticalTextStructureConstructor(document)
+        hierarchy_formation = [OpticalStructureHierarchyLevel.PARAGRAPH, OpticalStructureHierarchyLevel.LINE, OpticalStructureHierarchyLevel.WORD, OpticalStructureHierarchyLevel.CHARACTER]
+
+        structure_constructor = OpticalTextStructureConstructor(document, hierarchy_formation)
 
         structure_constructor.add_structured_entry_groups_to_structure(structured_entry_groups)
 

@@ -10,8 +10,7 @@ from logic_layer.text_structures.extracted_optical_text_structure.document_expor
 class TestFunctionExportDocumentToXmlFormat(unittest.TestCase):
 
     def test_export_document_to_xml_format_valid_conditions(self):
-        optical_text_document = ExtractedOpticalTextDocument(
-            structure_hierarchy_formation=[OpticalStructureHierarchyLevel.GROUP, OpticalStructureHierarchyLevel.LINE, OpticalStructureHierarchyLevel.WORD, OpticalStructureHierarchyLevel.CHARACTER, ])
+        optical_text_document = ExtractedOpticalTextDocument()
         with tempfile.NamedTemporaryFile('bw+', suffix='.xml') as output_file:
             export_document_to_xml_format(optical_text_document, output_file)
             output_file.seek(0)
@@ -20,8 +19,7 @@ class TestFunctionExportDocumentToXmlFormat(unittest.TestCase):
             self.assertIn(b'<extractedTextDocument type="optical">', content)
 
     def test_export_document_to_xml_format_invalid_file_type(self):
-        optical_text_document = ExtractedOpticalTextDocument(
-            structure_hierarchy_formation=[OpticalStructureHierarchyLevel.GROUP, OpticalStructureHierarchyLevel.LINE, OpticalStructureHierarchyLevel.WORD, OpticalStructureHierarchyLevel.CHARACTER, ])
+        optical_text_document = ExtractedOpticalTextDocument()
         with tempfile.NamedTemporaryFile('w+', suffix='.txt') as output_file:
             with self.assertRaises(DocumentExportingOutputFileTypeException):
                 export_document_to_xml_format(optical_text_document, output_file)

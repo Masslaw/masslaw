@@ -1,7 +1,7 @@
 from typing import Type
 
 from logic_layer.text_structures.extracted_optical_text_structure._structure_element import OpticalTextStructureElement
-from logic_layer.text_structures.extracted_optical_text_structure._types import OpticalStructureHierarchyFormation
+from logic_layer.text_structures.extracted_optical_text_structure.structure_construction._structure_hierarchy_formation import OpticalStructureHierarchyFormation
 
 
 class StructureConstructionElementNestingException(TypeError):

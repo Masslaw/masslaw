@@ -56,8 +56,8 @@ class TestClassPdfProcessor(unittest.TestCase):
                 with patch('logic_layer.file_processing._processors.pdf_processor._pdf_processor.PdfFileLoader.create_page_images_with_no_text_elements') as mock_create_page_images_with_no_text_elements:
                     with patch('logic_layer.file_processing._processors.pdf_processor._pdf_processor.PdfFileLoader.get_optical_text_document') as mock_get_optical_text_document:
                         with patch('logic_layer.file_processing._processors.pdf_processor._pdf_processor.OpticalDocumentExtractor') as mock_extracted_document_extraction:
-                            extracted_document = ExtractedOpticalTextDocument([OpticalStructureHierarchyLevel.WORD])
-                            existing_document = ExtractedOpticalTextDocument([OpticalStructureHierarchyLevel.WORD])
+                            extracted_document = ExtractedOpticalTextDocument()
+                            existing_document = ExtractedOpticalTextDocument()
                             mock_extracted_document_extraction.return_value.extract_text_document.return_value = extracted_document
                             mock_get_optical_text_document.return_value = existing_document
                             mock_extract_existing_optical_text_document.side_effect = lambda: ...
@@ -73,7 +73,7 @@ class TestClassPdfProcessor(unittest.TestCase):
     def test_export_text(self):
         output_dir = tempfile.TemporaryDirectory().name
 
-        self.test_processor._extracted_text_document = ExtractedOpticalTextDocument([OpticalStructureHierarchyLevel.WORD])
+        self.test_processor._extracted_text_document = ExtractedOpticalTextDocument()
 
         self.test_processor._export_text(output_dir=output_dir)
 
@@ -83,7 +83,7 @@ class TestClassPdfProcessor(unittest.TestCase):
     def test_export_assets(self):
         output_dir = tempfile.TemporaryDirectory().name
 
-        self.test_processor._extracted_text_document = ExtractedOpticalTextDocument([OpticalStructureHierarchyLevel.WORD])
+        self.test_processor._extracted_text_document = ExtractedOpticalTextDocument()
 
         with patch('logic_layer.file_processing._processors.pdf_processor._pdf_file_loader.pypdf') as mock_pypdf:
             mock_pypdf.PdfReader.return_value = MagicMock()

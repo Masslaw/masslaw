@@ -12,7 +12,7 @@ from logic_layer.text_structures.extracted_optical_text_structure.element_pointe
 class TestFunctionSetElementAtPointer(unittest.TestCase):
 
     def setUp(self):
-        self.document = ExtractedOpticalTextDocument([OpticalStructureHierarchyLevel.GROUP, OpticalStructureHierarchyLevel.LINE, OpticalStructureHierarchyLevel.WORD])
+        self.document = ExtractedOpticalTextDocument()
 
         element = OpticalTextStructureGroup(
             children=[

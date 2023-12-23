@@ -3,21 +3,19 @@ from typing import List
 import pdfplumber
 
 from logic_layer.bidi import correct_ltr_sequenced_text
-from logic_layer.text_structures.extracted_optical_text_structure import ExtractedOpticalTextDocument, \
-    OpticalElementRawDataEntry, OpticalStructureHierarchyFormation
-from logic_layer.text_structures.extracted_optical_text_structure.structure_construction import \
-    OpticalTextStructureConstructor
-from logic_layer.text_structures.extracted_optical_text_structure.structure_manipulation import \
-    OpticalTextStructureManipulator
+from logic_layer.text_structures.extracted_optical_text_structure import ExtractedOpticalTextDocument
+from logic_layer.text_structures.extracted_optical_text_structure import OpticalElementRawDataEntry
+from logic_layer.text_structures.extracted_optical_text_structure.structure_construction._structure_hierarchy_formation import OpticalStructureHierarchyFormation
+from logic_layer.text_structures.extracted_optical_text_structure.structure_construction import OpticalTextStructureConstructor
+from logic_layer.text_structures.extracted_optical_text_structure.structure_manipulation import OpticalTextStructureManipulator
 from shared_layer.mlcp_logger import logger
 
 
 @logger.process_function("Extracting an optical text document from a PDF file")
-def pdf_document_to_optical_text_document(file_path: str,
-                                          hierarchy_formation: OpticalStructureHierarchyFormation) -> ExtractedOpticalTextDocument:
+def pdf_document_to_optical_text_document(file_path: str, hierarchy_formation: OpticalStructureHierarchyFormation) -> ExtractedOpticalTextDocument:
     pdf_text_elements_entries = extract_element_entries(file_path)
-    document = ExtractedOpticalTextDocument(hierarchy_formation)
-    constructor = OpticalTextStructureConstructor(document)
+    document = ExtractedOpticalTextDocument()
+    constructor = OpticalTextStructureConstructor(document, hierarchy_formation)
     constructor.add_entry_groups_to_structure(pdf_text_elements_entries)
     polish_document(document)
     return document
@@ -34,10 +32,7 @@ def get_text_elements_from_page(page) -> List[OpticalElementRawDataEntry]:
     for text_element in page.extract_text_lines():
         text = text_element['text']
         text = correct_ltr_sequenced_text(text)
-        bounding_rect = (text_element['x0'] / page.width,
-                         text_element['top'] / page.height,
-                         text_element['x1'] / page.width,
-                         text_element['bottom'] / page.height)
+        bounding_rect = (text_element['x0'] / page.width, text_element['top'] / page.height, text_element['x1'] / page.width, text_element['bottom'] / page.height)
         text_elements.append((text, bounding_rect))
     return text_elements
 

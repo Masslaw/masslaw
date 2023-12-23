@@ -23,7 +23,7 @@ class TestClassKnowledgeExtractor(unittest.TestCase):
 
     def test_optical_text_document_processing(self):
         mock_knowledge_record = KnowledgeRecord()
-        optical_text_document_to_process = ExtractedOpticalTextDocument([Mock()])
+        optical_text_document_to_process = ExtractedOpticalTextDocument()
 
         class KnowledgeExtractorMock(KnowledgeExtractor):
             def _process_optical_text_document(self, document: ExtractedOpticalTextDocument):

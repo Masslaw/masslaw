@@ -9,7 +9,7 @@ from logic_layer.text_structures.extracted_optical_text_structure.document_expor
 class TestFunctionStructureRootToHtmlElement(unittest.TestCase):
 
     def test_structure_root_to_html_element_valid_conditions(self):
-        structure_root = OpticalTextStructureRoot(hierarchy_formation=[OpticalStructureHierarchyLevel.GROUP, OpticalStructureHierarchyLevel.LINE, OpticalStructureHierarchyLevel.WORD, OpticalStructureHierarchyLevel.CHARACTER])
+        structure_root = OpticalTextStructureRoot()
         html_element = _structure_root_to_html_element(structure_root)
 
         self.assertIsInstance(html_element, ElementTree.Element)
@@ -17,7 +17,7 @@ class TestFunctionStructureRootToHtmlElement(unittest.TestCase):
         self.assertEqual('ml-document-structure', html_element.attrib['class'])
 
     def test_structure_root_to_html_element_check_children(self):
-        structure_root = OpticalTextStructureRoot(hierarchy_formation=[OpticalStructureHierarchyLevel.GROUP, OpticalStructureHierarchyLevel.LINE, OpticalStructureHierarchyLevel.WORD, OpticalStructureHierarchyLevel.CHARACTER])
+        structure_root = OpticalTextStructureRoot()
         html_element = _structure_root_to_html_element(structure_root)
 
         # Assuming children are present in the structure root, verify they are converted to HTML elements

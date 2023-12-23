@@ -4,14 +4,14 @@ from typing import Tuple
 from logic_layer.text_extraction.optical_character_recognition import OcrExtractedElement
 from logic_layer.text_structures.extracted_optical_text_structure import ExtractedOpticalTextDocument
 from logic_layer.text_structures.extracted_optical_text_structure import OpticalElementRawDataEntry
-from logic_layer.text_structures.extracted_optical_text_structure import OpticalStructureHierarchyFormation
+from logic_layer.text_structures.extracted_optical_text_structure.structure_construction._structure_hierarchy_formation import OpticalStructureHierarchyFormation
 from logic_layer.text_structures.extracted_optical_text_structure.structure_construction import OpticalTextStructureConstructor
 
 
 def construct_optical_text_document_from_ocr_output_element_groups(structure_hierarchy_formation: OpticalStructureHierarchyFormation, extracted_element_groups: List[List[OcrExtractedElement]]) -> ExtractedOpticalTextDocument:
-    document = ExtractedOpticalTextDocument(structure_hierarchy_formation)
+    document = ExtractedOpticalTextDocument()
     element_entry_groups = extracted_element_groups_to_optical_structure_entry_groups(extracted_element_groups)
-    document_constructor = OpticalTextStructureConstructor(document)
+    document_constructor = OpticalTextStructureConstructor(document, structure_hierarchy_formation)
     document_constructor.add_entry_groups_to_structure(element_entry_groups)
     return document
 
@@ -28,9 +28,9 @@ def extracted_element_groups_to_optical_structure_entry_groups(extracted_element
 
 
 def construct_optical_text_document_from_structured_ocr_output(structure_hierarchy_formation: OpticalStructureHierarchyFormation, extracted_structured_element_groups) -> ExtractedOpticalTextDocument:
-    document = ExtractedOpticalTextDocument(structure_hierarchy_formation)
+    document = ExtractedOpticalTextDocument()
     structured_element_groups = extracted_structured_elements_to_structured_optical_entries(extracted_structured_element_groups)
-    document_constructor = OpticalTextStructureConstructor(document)
+    document_constructor = OpticalTextStructureConstructor(document, structure_hierarchy_formation)
     document_constructor.add_structured_entry_groups_to_structure(structured_element_groups)
     return document
 

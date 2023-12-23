@@ -1,7 +1,6 @@
-from logic_layer.text_extraction.file_specific_extractors.pdf._pdf_optical_text_document_extraction_logic import \
-    pdf_document_to_optical_text_document
-from logic_layer.text_structures.extracted_optical_text_structure import OpticalStructureHierarchyFormation, \
-    ExtractedOpticalTextDocument
+from logic_layer.text_extraction.file_specific_extractors.pdf._pdf_optical_text_document_extraction_logic import pdf_document_to_optical_text_document
+from logic_layer.text_structures.extracted_optical_text_structure import ExtractedOpticalTextDocument
+from logic_layer.text_structures.extracted_optical_text_structure.structure_construction import OpticalStructureHierarchyFormation
 
 
 class PdfTextExtractor:

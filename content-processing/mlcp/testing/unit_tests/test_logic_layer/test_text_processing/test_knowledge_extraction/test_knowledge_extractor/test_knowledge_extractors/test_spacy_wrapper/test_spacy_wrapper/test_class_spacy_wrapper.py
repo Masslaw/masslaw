@@ -39,8 +39,10 @@ class TestClassSpacyWrapper(unittest.TestCase):
 
     def test_process_optical_text_document(self):
         with patch('logic_layer.text_processing.knowledge_extraction.knowledge_extractors.spacy_wrapper._spacy_wrapper.SpacyWrapper._process_text') as mock_process_text:
-            optical_text_document = ExtractedOpticalTextDocument([OpticalStructureHierarchyLevel.LINE, OpticalStructureHierarchyLevel.WORD])
-            OpticalTextStructureConstructor(optical_text_document).add_entry_groups_to_structure([[('this', (0,0,0,0)), ('is', (0,0,0,1)), ('some', (0,0,0,2)), ('text', (0,0,0,3)), ('to', (0,0,0,4)), ('process', (0,0,0,5))]])
+            optical_text_document = ExtractedOpticalTextDocument()
+            hierarchy_formation = [OpticalStructureHierarchyLevel.LINE, OpticalStructureHierarchyLevel.WORD]
+            constructor = OpticalTextStructureConstructor(optical_text_document, hierarchy_formation)
+            constructor.add_entry_groups_to_structure([[('this', (0,0,0,0)), ('is', (0,0,0,1)), ('some', (0,0,0,2)), ('text', (0,0,0,3)), ('to', (0,0,0,4)), ('process', (0,0,0,5))]])
             spacy_wrapper = SpacyWrapper(['en', 'fr', 'sp'])
             spacy_wrapper._process_optical_text_document(optical_text_document)
             self.assertEqual(mock_process_text.call_args_list, [call('this is some text to process')])

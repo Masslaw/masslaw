@@ -10,9 +10,11 @@ class TestClassStructureConstructor(unittest.TestCase):
         entry_groups = [[('Hello\nThere!', (65, 0, 115, 10)), ('How', (0, 20, 75, 30)), ('are you?', (90, 20, 130, 30))],
                         [('I am', (0, 0, 45, 10)), ('fine!', (0, 20, 50, 30)), ('Thank you.', (0, 40, 135, 50)), ]]
 
-        structure = OpticalTextStructureRoot([OpticalStructureHierarchyLevel.PARAGRAPH, OpticalStructureHierarchyLevel.LINE, OpticalStructureHierarchyLevel.WORD, OpticalStructureHierarchyLevel.CHARACTER])
+        structure = OpticalTextStructureRoot()
 
-        structure_constructor = StructureConstructor(structure)
+        hierarchy_formation = [OpticalStructureHierarchyLevel.PARAGRAPH, OpticalStructureHierarchyLevel.LINE, OpticalStructureHierarchyLevel.WORD, OpticalStructureHierarchyLevel.CHARACTER]
+
+        structure_constructor = StructureConstructor(structure, hierarchy_formation)
 
         structure_constructor.add_entry_groups_as_structure_children(entry_groups)
 
@@ -62,10 +64,11 @@ class TestClassStructureConstructor(unittest.TestCase):
             ]
         ]
 
-        structure = OpticalTextStructureRoot(
-            [OpticalStructureHierarchyLevel.GROUP, OpticalStructureHierarchyLevel.LINE, OpticalStructureHierarchyLevel.WORD, OpticalStructureHierarchyLevel.CHARACTER])
+        structure = OpticalTextStructureRoot()
 
-        structure_constructor = StructureConstructor(structure)
+        hierarchy_formation = [OpticalStructureHierarchyLevel.PARAGRAPH, OpticalStructureHierarchyLevel.LINE, OpticalStructureHierarchyLevel.WORD, OpticalStructureHierarchyLevel.CHARACTER]
+
+        structure_constructor = StructureConstructor(structure, hierarchy_formation)
 
         structure_constructor.add_structured_entry_groups_to_structure(structured_entry_groups)
 

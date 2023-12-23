@@ -10,8 +10,7 @@ from logic_layer.text_structures.extracted_optical_text_structure.document_expor
 class TestDocumentExporter(unittest.TestCase):
 
     def setUp(self):
-        self.mock_document = ExtractedOpticalTextDocument(
-            [OpticalStructureHierarchyLevel.GROUP, OpticalStructureHierarchyLevel.LINE, OpticalStructureHierarchyLevel.WORD, OpticalStructureHierarchyLevel.CHARACTER, ])
+        self.mock_document = ExtractedOpticalTextDocument()
         self.document_exporter = DocumentExporter(document=self.mock_document)
 
     def test_export_json(self):

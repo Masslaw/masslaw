@@ -124,9 +124,11 @@ for image_output in ocr_output:
 
 # create a new document
 document = ExtractedOpticalTextDocument()
+# define the hierarchy formation
+hierarchy_formation = [...]
 
 # create a constructor for the document
-constructor = OpticalTextStructureConstructor(document)
+constructor = OpticalTextStructureConstructor(document, hierarchy_formation)
 # add the groups to the structure as a individual children (each image is a child)
 constructor.add_entry_groups_to_structure(entry_groups)
 

@@ -31,7 +31,7 @@ class TestFunctionCleanupStructure(unittest.TestCase):
         group1 = OpticalTextStructureGroup()
         group1.set_children([line1, line2])
 
-        structure = OpticalTextStructureRoot([OpticalTextStructureGroup, OpticalTextStructureLine, OpticalTextStructureWord])
+        structure = OpticalTextStructureRoot()
         structure.set_children([group1])
 
         cleanup_structure(structure)

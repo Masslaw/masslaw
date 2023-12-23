@@ -8,8 +8,7 @@ from logic_layer.text_structures.extracted_optical_text_structure.document_expor
 class TestStructureRootToDictFunction(unittest.TestCase):
 
     def setUp(self):
-        self.structure_root = OpticalTextStructureRoot(
-            hierarchy_formation=[OpticalStructureHierarchyLevel.GROUP, OpticalStructureHierarchyLevel.LINE, OpticalStructureHierarchyLevel.WORD, OpticalStructureHierarchyLevel.CHARACTER, ])
+        self.structure_root = OpticalTextStructureRoot()
 
     def test_structure_root_to_dict_valid_conditions(self):
         result_dict = _structure_root_to_dict(self.structure_root)

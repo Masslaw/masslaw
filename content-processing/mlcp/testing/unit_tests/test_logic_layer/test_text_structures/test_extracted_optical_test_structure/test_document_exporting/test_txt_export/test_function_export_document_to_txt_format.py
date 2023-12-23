@@ -11,8 +11,7 @@ from logic_layer.text_structures.extracted_optical_text_structure.document_expor
 class TestFunctionExportDocumentToTxtFormat(unittest.TestCase):
 
     def create_dummy_optical_text_document(self):
-        optical_text_document = ExtractedOpticalTextDocument(
-            structure_hierarchy_formation=[OpticalStructureHierarchyLevel.GROUP, OpticalStructureHierarchyLevel.LINE, OpticalStructureHierarchyLevel.WORD, OpticalStructureHierarchyLevel.CHARACTER, ])
+        optical_text_document = ExtractedOpticalTextDocument()
         child_element = OpticalTextStructureElement()
         child_element.set_children(list("Dummy text"))
         optical_text_document.get_structure_root().set_children([child_element])

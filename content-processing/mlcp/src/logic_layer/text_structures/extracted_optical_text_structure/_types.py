@@ -19,10 +19,6 @@ class OpticalStructureHierarchyLevel(Enum):
     WORD = 'word'
     CHARACTER = 'char'
 
-
-# the last element in the hierarchy will always be a string value
-OpticalStructureHierarchyFormation: Type = List[OpticalStructureHierarchyLevel]
-
 # defined as (x1, y1, x2, y2)
 OpticalStructureElementBoundingRectangle: Type = Tuple[float, float, float, float]
 

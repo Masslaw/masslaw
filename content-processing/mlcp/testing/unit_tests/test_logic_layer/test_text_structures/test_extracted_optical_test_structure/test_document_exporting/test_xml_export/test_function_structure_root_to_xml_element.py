@@ -10,8 +10,7 @@ from logic_layer.text_structures.extracted_optical_text_structure.document_expor
 class TestFunctionStructureRootToXmlElement(unittest.TestCase):
 
     def create_dummy_structure_root(self):
-        structure_root = OpticalTextStructureRoot(
-            hierarchy_formation=[OpticalStructureHierarchyLevel.GROUP, OpticalStructureHierarchyLevel.LINE, OpticalStructureHierarchyLevel.WORD, OpticalStructureHierarchyLevel.CHARACTER, ])
+        structure_root = OpticalTextStructureRoot()
         child_element = OpticalTextStructureElement()
         child_element.set_children(list("Dummy text"))
         structure_root.set_children([child_element])

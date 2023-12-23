@@ -9,8 +9,7 @@ from logic_layer.text_structures.extracted_optical_text_structure.document_expor
 class TestFunctionDocumentToXmlElement(unittest.TestCase):
 
     def test_document_to_xml_element_valid_conditions(self):
-        optical_text_document = ExtractedOpticalTextDocument(
-            structure_hierarchy_formation=[OpticalStructureHierarchyLevel.GROUP, OpticalStructureHierarchyLevel.LINE, OpticalStructureHierarchyLevel.WORD, OpticalStructureHierarchyLevel.CHARACTER, ])
+        optical_text_document = ExtractedOpticalTextDocument()
         result_element = _document_to_xml_element(optical_text_document)
 
         self.assertIsInstance(result_element, ElementTree.Element)
@@ -18,8 +17,7 @@ class TestFunctionDocumentToXmlElement(unittest.TestCase):
         self.assertEqual('optical', result_element.attrib['type'])
 
     def test_document_to_xml_element_check_structure(self):
-        optical_text_document = ExtractedOpticalTextDocument(
-            structure_hierarchy_formation=[OpticalStructureHierarchyLevel.GROUP, OpticalStructureHierarchyLevel.LINE, OpticalStructureHierarchyLevel.WORD, OpticalStructureHierarchyLevel.CHARACTER, ])
+        optical_text_document = ExtractedOpticalTextDocument()
         result_element = _document_to_xml_element(optical_text_document)
 
         structure_element = next((child for child in result_element if child.tag == 'textStructure'), None)

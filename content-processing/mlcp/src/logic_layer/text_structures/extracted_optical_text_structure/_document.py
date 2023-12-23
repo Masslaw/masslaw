@@ -1,5 +1,4 @@
 from logic_layer.text_structures.extracted_optical_text_structure._structure_root import OpticalTextStructureRoot
-from logic_layer.text_structures.extracted_optical_text_structure._types import OpticalStructureHierarchyFormation
 
 
 class ExtractedOpticalTextDocument:
@@ -9,8 +8,8 @@ class ExtractedOpticalTextDocument:
     text data are performed on it.
     """
 
-    def __init__(self, structure_hierarchy_formation: OpticalStructureHierarchyFormation):
-        self._structure_root = OpticalTextStructureRoot(structure_hierarchy_formation)
+    def __init__(self):
+        self._structure_root = OpticalTextStructureRoot()
         self._metadata = {}
 
     def set_structure_root(self, structure_root: OpticalTextStructureRoot):
