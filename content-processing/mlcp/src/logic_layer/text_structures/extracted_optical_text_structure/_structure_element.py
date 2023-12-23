@@ -75,6 +75,9 @@ class OpticalTextStructureElement:
     def get_properties(self) -> dict:
         return self._properties
 
+    def set_properties(self, properties: dict):
+        self._properties = properties
+
     def __str__(self):
         return self.get_value()
 

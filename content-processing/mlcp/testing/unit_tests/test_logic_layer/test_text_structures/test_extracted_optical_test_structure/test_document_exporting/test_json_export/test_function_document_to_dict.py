@@ -2,6 +2,7 @@ import unittest
 
 from logic_layer.text_structures.extracted_optical_text_structure import ExtractedOpticalTextDocument
 from logic_layer.text_structures.extracted_optical_text_structure import OpticalStructureHierarchyLevel
+from logic_layer.text_structures.extracted_optical_text_structure._hierarchy_levels import OpticalTextStructureLine
 from logic_layer.text_structures.extracted_optical_text_structure.document_exporting._json_export import _document_to_dict
 
 
@@ -9,6 +10,7 @@ class TestDocumentToDictFunction(unittest.TestCase):
 
     def setUp(self):
         self.optical_text_document = ExtractedOpticalTextDocument()
+        self.optical_text_document.get_structure_root().set_children([OpticalTextStructureLine()])
 
     def test_document_to_dict_valid_conditions(self):
         result_dict = _document_to_dict(self.optical_text_document)

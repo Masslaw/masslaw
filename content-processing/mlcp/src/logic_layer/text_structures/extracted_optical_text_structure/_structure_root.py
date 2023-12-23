@@ -1,4 +1,5 @@
 from typing import List
+from typing import Type
 
 from logic_layer.text_structures.extracted_optical_text_structure._structure_element import OpticalTextStructureElement
 
@@ -14,3 +15,6 @@ class OpticalTextStructureRoot:
 
     def get_children(self) -> List[OpticalTextStructureElement]:
         return self._children
+
+    def get_children_type(self) -> Type[OpticalTextStructureElement] | None:
+        return len(self._children) > 0 and self._children[0].__class__ or None

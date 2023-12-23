@@ -1,5 +1,6 @@
 import json
 from typing import IO
+from typing import Type
 
 from logic_layer.text_structures.extracted_optical_text_structure._document import ExtractedOpticalTextDocument
 from logic_layer.text_structures.extracted_optical_text_structure._structure_element import OpticalTextStructureElement
@@ -15,24 +16,23 @@ def export_document_to_json_format(optical_text_document: ExtractedOpticalTextDo
 
 def _document_to_dict(optical_text_document: ExtractedOpticalTextDocument) -> dict:
     document_data = {}
-
     structure_data = _structure_root_to_dict(optical_text_document.get_structure_root())
     document_data['textStructure'] = structure_data
-
     document_metadata = optical_text_document.get_metadata()
     document_data['metadata'] = document_metadata
-
     return document_data
 
 
 def _structure_root_to_dict(structure_root: OpticalTextStructureRoot):
     structure_data = {}
-
-    structure_data['children'] = []
-    for child in structure_root.get_children():
-        structure_data['children'].append(_structure_element_data_to_dict(child))
     structure_data['type'] = 'optical'
-
+    structure_root_children = structure_root.get_children()
+    child_type = structure_root.get_children_type()
+    if not child_type: return structure_data
+    child_data = []
+    for child in structure_root_children:
+        child_data.append(_structure_element_data_to_dict(child))
+    structure_data[child_type.get_label()] = child_data
     return structure_data
 
 
