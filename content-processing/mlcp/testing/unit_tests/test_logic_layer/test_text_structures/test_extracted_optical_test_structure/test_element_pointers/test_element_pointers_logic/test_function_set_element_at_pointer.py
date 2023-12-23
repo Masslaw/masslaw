@@ -6,7 +6,7 @@ from logic_layer.text_structures.extracted_optical_text_structure._hierarchy_lev
 from logic_layer.text_structures.extracted_optical_text_structure._hierarchy_levels import OpticalTextStructureLine
 from logic_layer.text_structures.extracted_optical_text_structure._hierarchy_levels import OpticalTextStructureWord
 from logic_layer.text_structures.extracted_optical_text_structure.element_pointers._element_pointers_logic import set_element_at_pointer
-from logic_layer.text_structures.extracted_optical_text_structure.element_pointers.exceptions import InvalidPointerException
+from logic_layer.text_structures.extracted_optical_text_structure.element_pointers import document_element_pointers_exceptions
 
 
 class TestFunctionSetElementAtPointer(unittest.TestCase):
@@ -49,13 +49,13 @@ class TestFunctionSetElementAtPointer(unittest.TestCase):
     def test_with_invalid_pointer(self):
         pointer = (0, 3, 1)
         new_element = OpticalTextStructureWord(bounding_rect=(0, 0, 10, 10))
-        with self.assertRaises(InvalidPointerException):
+        with self.assertRaises(document_element_pointers_exceptions.InvalidPointerException):
             set_element_at_pointer(self.document.get_structure_root(), pointer=pointer, element=new_element)
 
     def test_with_empty_pointer(self):
         pointer = ()
         new_element = OpticalTextStructureWord(bounding_rect=(0, 0, 10, 10))
-        with self.assertRaises(InvalidPointerException):
+        with self.assertRaises(document_element_pointers_exceptions.InvalidPointerException):
             set_element_at_pointer(self.document.get_structure_root(), pointer=pointer, element=new_element)
 
     def test_with_invalid_element_type(self):

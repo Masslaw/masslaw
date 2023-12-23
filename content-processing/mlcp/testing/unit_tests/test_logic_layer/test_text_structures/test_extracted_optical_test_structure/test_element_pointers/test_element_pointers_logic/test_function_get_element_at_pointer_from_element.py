@@ -6,7 +6,7 @@ from logic_layer.text_structures.extracted_optical_text_structure._hierarchy_lev
 from logic_layer.text_structures.extracted_optical_text_structure._hierarchy_levels import OpticalTextStructureLine
 from logic_layer.text_structures.extracted_optical_text_structure._hierarchy_levels import OpticalTextStructureWord
 from logic_layer.text_structures.extracted_optical_text_structure.element_pointers._element_pointers_logic import _get_element_at_pointer_from_element
-from logic_layer.text_structures.extracted_optical_text_structure.element_pointers.exceptions import InvalidPointerException
+from logic_layer.text_structures.extracted_optical_text_structure.element_pointers import document_element_pointers_exceptions
 
 
 class TestFunctionGetElementAtPointerFromElement(unittest.TestCase):
@@ -49,13 +49,13 @@ class TestFunctionGetElementAtPointerFromElement(unittest.TestCase):
     def test_with_invalid_pointer(self):
         pointer = (0, 3, 1)
         element = self.document.get_structure_root().get_children()[0]
-        with self.assertRaises(InvalidPointerException):
+        with self.assertRaises(document_element_pointers_exceptions.InvalidPointerException):
             _get_element_at_pointer_from_element(element, pointer=pointer)
 
     def test_with_pointer_too_long(self):
         pointer = (0, 1, 1, 0, 1)
         element = self.document.get_structure_root().get_children()[0]
-        with self.assertRaises(InvalidPointerException):
+        with self.assertRaises(document_element_pointers_exceptions.InvalidPointerException):
             _get_element_at_pointer_from_element(element, pointer=pointer)
 
     def test_with_empty_pointer(self):

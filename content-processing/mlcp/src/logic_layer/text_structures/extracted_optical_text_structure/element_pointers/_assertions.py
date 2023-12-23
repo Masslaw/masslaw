@@ -1,4 +1,4 @@
-from logic_layer.text_structures.extracted_optical_text_structure.element_pointers.exceptions import InvalidPointerException
+from logic_layer.text_structures.extracted_optical_text_structure.element_pointers._exceptions import InvalidPointerException
 from logic_layer.text_structures.extracted_optical_text_structure._types import OpticalDocumentElementsPointer
 
 
