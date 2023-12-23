@@ -9,7 +9,6 @@ import {LoadingIcon} from "../../../../../../shared/components/loading_icon/load
 import {CasesManager} from "../../../../../../infrastructure/cases_management/cases_manager";
 import {Graph} from "../../../../../../modules/graph/graph";
 import {now} from "lodash";
-import {MasslawButton, MasslawButtonTypes} from "../../../../../../shared/components/masslaw_button/masslaw_button";
 import {faArrowRight, faFile} from "@fortawesome/free-solid-svg-icons";
 import {ApplicationRoutes} from "../../../../../../infrastructure/application_base/routing/application_routes";
 import {Accordion} from "../../../../../../shared/components/accordion/accordion";
@@ -166,12 +165,15 @@ export const NodeDisplay: ApplicationPage = (props: ApplicationPageProps) => {
                                                     return evidence_data.map(evidence_item => <div key={evidence_item['t']} className={'connection-evidence-list-item'}>
                                                         ""{evidence_item['t'] || ''}""
                                                         <div className={'connection-evidence-list-item-file'} onClick={
-                                                            e => navigate_function(ApplicationRoutes.FILE_DISPLAY, {
-                                                                'caseId': caseId || '', 'fileId': file_id
-                                                            },{
-                                                                'scroll_to': evidence_item['s'] || '',
-                                                                'mark': `${evidence_item['s']}|${evidence_item['e']}`,
-                                                            })
+                                                            e => {
+                                                                navigate_function(ApplicationRoutes.FILE_DISPLAY, {
+                                                                    'caseId': caseId || '', 'fileId': file_id
+                                                                }, {
+                                                                    'scroll_to': evidence_item['s'] || '',
+                                                                    'mark': `${evidence_item['s']}|${evidence_item['e']}`,
+                                                                })
+                                                                e.stopPropagation();
+                                                            }
                                                         }>
                                                             {files_data[file_id].name}
                                                         </div>
