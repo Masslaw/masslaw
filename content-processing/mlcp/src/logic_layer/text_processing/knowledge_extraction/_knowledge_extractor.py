@@ -4,6 +4,7 @@ from typing import List
 from logic_layer.knowledge_record import KnowledgeRecord
 from logic_layer.knowledge_record.data_merging import RecordMerger
 from logic_layer.text_structures.extracted_optical_text_structure import ExtractedOpticalTextDocument
+from logic_layer.text_structures.extracted_optical_text_structure.document_loading import DocumentLoader
 from shared_layer.file_system_utils import file_system_utils
 from shared_layer.mlcp_logger import logger
 from shared_layer.mlcp_logger import common_formats
@@ -42,9 +43,17 @@ class KnowledgeExtractor:
                 self._process_text(f.read())
                 return
         if file_type in ('xml',):
-            # to be implemented when the document structure loading functionality is implemented
-            # self._process_optical_text_document(...)
-            raise NotImplementedError
+            document_loader = DocumentLoader()
+            with open(file_path, 'r') as f:
+                extracted_optical_text_document = document_loader.load_xml(f)
+                self._process_optical_text_document(extracted_optical_text_document)
+                return
+        if file_type in ('json',):
+            document_loader = DocumentLoader()
+            with open(file_path, 'r') as f:
+                extracted_optical_text_document = document_loader.load_json(f)
+                self._process_optical_text_document(extracted_optical_text_document)
+                return
         raise ValueError(f"Unsupported file type: {file_type}")
 
     @abstractmethod
