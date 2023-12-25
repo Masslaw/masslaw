@@ -57,6 +57,7 @@ export const CaseKnowledge: ApplicationPage = (props: ApplicationPageProps) => {
         if (!knowledge) return;
         for (let file_id in knowledge) {
             let file_knowledge = knowledge[file_id];
+            if (!file_knowledge) continue;
             for (let entity of file_knowledge.entities) {
                 (graph_instance.getNodeById(entity.id) || {}).state = 'idle';
             }
@@ -66,6 +67,7 @@ export const CaseKnowledge: ApplicationPage = (props: ApplicationPageProps) => {
         }
         for (let file_id of selected_files) {
             let file_knowledge = knowledge[file_id];
+            if (!file_knowledge) continue;
             for (let entity of file_knowledge.entities) {
                 (graph_instance.getNodeById(entity.id) || {}).state = 'highlight';
             }
@@ -123,21 +125,18 @@ export const CaseKnowledge: ApplicationPage = (props: ApplicationPageProps) => {
         setGraphInstance(graph_instance);
     }, [graph_instance]);
 
-    let previousUpdateTime = now();
     const graphUpdateLoop = useCallback(() => {
-        requestAnimationFrame(graphUpdateLoop);
-        let _now = now();
-        let dt = (_now - previousUpdateTime) / 1000;
-        previousUpdateTime = _now;
-        graph_instance.update(dt);
         setGraphElement(graph_instance.getElement());
+        setTimeout(graphUpdateLoop, 0);
     }, [graph_instance]);
 
-    let animationFrameRequest = useRef();
     useEffect(() => {
         getCaseKnowledge();
-        requestAnimationFrame(graphUpdateLoop);
-    }, [caseId])
+    }, [caseId]);
+
+    useEffect(() => {
+        graphUpdateLoop();
+    }, []);
 
     return (<>
         <div className={'case-annotations-header'}>

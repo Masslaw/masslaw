@@ -76,17 +76,16 @@ export const NodeDisplay: ApplicationPage = (props: ApplicationPageProps) => {
         setConnectionsById(connections_by_id_map);
     }, [entityId]);
 
-    let previousUpdateTime = now();
     const graphUpdateLoop = useCallback(() => {
-        requestAnimationFrame(graphUpdateLoop);
-        let _now = now();
-        let dt = (_now - previousUpdateTime) / 1000;
-        previousUpdateTime = _now;
-        graph_instance.update(dt);
         setGraphElement(graph_instance.getElement());
+        setTimeout(graphUpdateLoop, 0);
     }, [graph_instance]);
 
     let requestAnimationFrameId = useRef(0);
+    useEffect(() => {
+        graphUpdateLoop();
+    }, []);
+
     useEffect(() => {
         graph_instance.reset();
         for (let entity of (knowledge || {}).entities || []) {
@@ -94,11 +93,6 @@ export const NodeDisplay: ApplicationPage = (props: ApplicationPageProps) => {
         }
         for (let connection of (knowledge || {}).connections || []) {
             graph_instance.addEdge(connection.id, connection.from, connection.to, connection.properties['strength'] || 1);
-        }
-        cancelAnimationFrame(requestAnimationFrameId.current);
-        requestAnimationFrameId.current = requestAnimationFrame(graphUpdateLoop);
-        return () => {
-            cancelAnimationFrame(requestAnimationFrameId.current);
         }
     }, [knowledge]);
 

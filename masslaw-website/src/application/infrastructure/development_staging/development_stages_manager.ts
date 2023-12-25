@@ -20,7 +20,7 @@ export class DevelopmentStagesManager {
     public getDevelopmentStage() {
         // on macOS / Linux do: ~export DEVELOPMENT_STAGE=<development_stage>
         // on Windows do: ~setx DEVELOPMENT_STAGE "<development_stage>"
-        // return DevelopmentStages.DEVELOPMENT; //TOPOOOO
-        return (process.env.REACT_APP_DEVELOPMENT_STAGE || DevelopmentStages.PRODUCTION) as DevelopmentStages;
+        return DevelopmentStages.PRODUCTION; //TOPOOOO
+        // return (process.env.REACT_APP_DEVELOPMENT_STAGE || DevelopmentStages.PRODUCTION) as DevelopmentStages;
     }
 }
