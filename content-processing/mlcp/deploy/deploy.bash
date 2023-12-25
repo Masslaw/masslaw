@@ -52,4 +52,6 @@ docker push 746826375642.dkr.ecr.us-east-1.amazonaws.com/$IMAGE_NAME:latest
 
 echo "Shutting down Docker..."
 osascript -e 'quit app "Docker"'
+sleep 3
+killall Docker
 echo "Docker has been shut down."
