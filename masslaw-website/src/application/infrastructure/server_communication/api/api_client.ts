@@ -17,7 +17,6 @@ export class ApiManager {
         }
     }
 
-
     private _cognitoManager = CognitoManager.getInstance();
 
     public async MakeApiHttpRequest<T>(request: HTTPRequest) : Promise<{success: boolean, data: T}> {
