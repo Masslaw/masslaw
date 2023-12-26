@@ -137,7 +137,7 @@ export class CasesManager {
     }
 
     public async uploadFile(case_id: string, file: File, progressCallback?: Function) {
-        let mpUploader = new MasslawCaseFilesMultipartUploader(case_id, file, ['eng', 'heb'], progressCallback);
+        let mpUploader = new MasslawCaseFilesMultipartUploader(case_id, file, ['eng'], progressCallback);
         return await mpUploader.performMultipartUpload();
     }
 

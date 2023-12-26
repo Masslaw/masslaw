@@ -1,7 +1,6 @@
 import {CognitoManager} from "../server_modules/cognito_client";
 import axios, {AxiosRequestConfig} from "axios";
 import {UserStatusManager} from "../../user_management/user_status_manager";
-import {DevelopmentStagesManager} from "../../development_staging/development_stages_manager";
 import {ApiCallData, ApiRoots, APIs} from "./api_config";
 
 export class ApiManager {
@@ -66,8 +65,7 @@ export class ApiManager {
     }
 
     private getBaseUrlForApi(api: APIs) : string {
-        const development_stage = DevelopmentStagesManager.getInstance().getDevelopmentStage();
-        return ApiRoots[api][development_stage];
+        return process.env.API_BASE_URL || '';
     }
 }
 
