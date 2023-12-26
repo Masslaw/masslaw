@@ -1,7 +1,7 @@
 import {CognitoManager} from "../server_modules/cognito_client";
 import axios, {AxiosRequestConfig} from "axios";
 import {UserStatusManager} from "../../user_management/user_status_manager";
-import {ApiCallData, ApiRoots, APIs} from "./api_config";
+import {ApiCallData, APIs} from "./api_config";
 
 export class ApiManager {
 
