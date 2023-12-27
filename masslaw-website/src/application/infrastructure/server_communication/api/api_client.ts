@@ -1,7 +1,8 @@
 import {CognitoManager} from "../server_modules/cognito_client";
 import axios, {AxiosRequestConfig} from "axios";
 import {UserStatusManager} from "../../user_management/user_status_manager";
-import {ApiCallData, APIs} from "./api_config";
+import {ApiCallData} from "./api_config";
+
 
 export class ApiManager {
 
@@ -31,7 +32,7 @@ export class ApiManager {
 
         request_headers['Content-Type'] = 'application/json';
 
-        let apiUrl = new URL(this.getBaseUrlForApi(request_call.api) + request_call.rout);
+        let apiUrl = new URL(this.getBaseUrlForApi() + request_call.rout);
         for (const [key, value] of Object.entries(request_query_string_params)) {
             if (key && value) apiUrl.searchParams.append(key, value);
         }
@@ -63,7 +64,7 @@ export class ApiManager {
         UserStatusManager.getInstance().setDiscoveredStatus(discoveredStatus);
     }
 
-    private getBaseUrlForApi(api: APIs) : string {
+    private getBaseUrlForApi() : string {
         return process.env.REACT_APP_API_BASE_URL || 'https://5vcihdhjs8.execute-api.us-east-1.amazonaws.com/prod';
     }
 }

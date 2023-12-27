@@ -1,7 +1,3 @@
-export enum APIs {
-    MASSLAW = 'masslaw',
-}
-
 
 export enum HttpMethod {
     GET = "GET",
@@ -28,29 +24,28 @@ export enum HttpStatus {
 
 
 export interface ApiCallData {
-    api: APIs,
     method: HttpMethod,
     rout: string,
 }
 
 export const MasslawApiCalls = {
-    GET_MY_STATUS : {api: APIs.MASSLAW, method:HttpMethod.GET, rout:'/users/me/status'} as ApiCallData,
-    GET_USER_DATA : {api: APIs.MASSLAW, method:HttpMethod.GET, rout:'/users/user-data'} as ApiCallData,
-    SET_USER_DATA : {api: APIs.MASSLAW, method:HttpMethod.POST, rout:'/users/user-data'} as ApiCallData,
-    CREATE_CASE : {api: APIs.MASSLAW, method:HttpMethod.POST, rout:'/cases/create'} as ApiCallData,
-    GET_MY_CASES : {api: APIs.MASSLAW, method:HttpMethod.GET, rout:'/cases/get-mine'} as ApiCallData,
-    GET_CASE_DATA : {api: APIs.MASSLAW, method:HttpMethod.GET, rout:'/cases/case/data'} as ApiCallData,
-    SET_CASE_DATA : {api: APIs.MASSLAW, method:HttpMethod.POST, rout:'/cases/case/data'} as ApiCallData,
-    GET_CASE_FILES : {api: APIs.MASSLAW, method:HttpMethod.GET, rout:'/cases/case/files'} as ApiCallData,
-    START_CASE_FILE_UPLOAD : {api: APIs.MASSLAW, method:HttpMethod.POST, rout:'/cases/case/files/start-file-upload'} as ApiCallData,
-    FINISH_CASE_FILE_UPLOAD : {api: APIs.MASSLAW, method:HttpMethod.POST, rout:'/cases/case/files/finish-file-upload'} as ApiCallData,
-    GET_CASE_FILE_CONTENT : {api: APIs.MASSLAW, method:HttpMethod.GET, rout:'/cases/case/files/get-content'} as ApiCallData,
-    GET_CASE_FILE_DATA : {api: APIs.MASSLAW, method:HttpMethod.GET, rout:'/cases/case/files/get-file-data'} as ApiCallData,
-    DELETE_CASE_FILE : {api: APIs.MASSLAW, method:HttpMethod.DELETE, rout:'/cases/case/files/delete-file'} as ApiCallData,
-    SEARCH_CASE_FILES_TEXT : {api: APIs.MASSLAW, method:HttpMethod.GET, rout:'/cases/case/files/search-text'} as ApiCallData,
-    GET_CASE_ANNOTATIONS : {api: APIs.MASSLAW, method:HttpMethod.GET, rout:'/cases/case/annotations'} as ApiCallData,
-    SET_CASE_ANNOTATION : {api: APIs.MASSLAW, method:HttpMethod.POST, rout:'/cases/case/annotations'} as ApiCallData,
-    DELETE_CASE_ANNOTATION : {api: APIs.MASSLAW, method:HttpMethod.DELETE, rout:'/cases/case/annotations'} as ApiCallData,
-    SET_FILE_DESCRIPTION : {api: APIs.MASSLAW, method:HttpMethod.POST, rout:'/cases/case/files/set-description'} as ApiCallData,
-    GET_CASE_KNOWLEDGE_ITEM_DATA : {api: APIs.MASSLAW, method:HttpMethod.GET, rout:'/cases/case/knowledge/items/data'} as ApiCallData,
+    GET_MY_STATUS : {method:HttpMethod.GET, rout:'/users/me/status'} as ApiCallData,
+    GET_USER_DATA : {method:HttpMethod.GET, rout:'/users/user-data'} as ApiCallData,
+    SET_USER_DATA : {method:HttpMethod.POST, rout:'/users/user-data'} as ApiCallData,
+    CREATE_CASE : {method:HttpMethod.POST, rout:'/cases/create'} as ApiCallData,
+    GET_MY_CASES : {method:HttpMethod.GET, rout:'/cases/get-mine'} as ApiCallData,
+    GET_CASE_DATA : {method:HttpMethod.GET, rout:'/cases/case/data'} as ApiCallData,
+    SET_CASE_DATA : {method:HttpMethod.POST, rout:'/cases/case/data'} as ApiCallData,
+    GET_CASE_FILES : {method:HttpMethod.GET, rout:'/cases/case/files'} as ApiCallData,
+    START_CASE_FILE_UPLOAD : {method:HttpMethod.POST, rout:'/cases/case/files/start-file-upload'} as ApiCallData,
+    FINISH_CASE_FILE_UPLOAD : {method:HttpMethod.POST, rout:'/cases/case/files/finish-file-upload'} as ApiCallData,
+    GET_CASE_FILE_CONTENT : {method:HttpMethod.GET, rout:'/cases/case/files/get-content'} as ApiCallData,
+    GET_CASE_FILE_DATA : {method:HttpMethod.GET, rout:'/cases/case/files/get-file-data'} as ApiCallData,
+    DELETE_CASE_FILE : {method:HttpMethod.DELETE, rout:'/cases/case/files/delete-file'} as ApiCallData,
+    SEARCH_CASE_FILES_TEXT : {method:HttpMethod.GET, rout:'/cases/case/files/search-text'} as ApiCallData,
+    GET_CASE_ANNOTATIONS : {method:HttpMethod.GET, rout:'/cases/case/annotations'} as ApiCallData,
+    SET_CASE_ANNOTATION : {method:HttpMethod.POST, rout:'/cases/case/annotations'} as ApiCallData,
+    DELETE_CASE_ANNOTATION : {method:HttpMethod.DELETE, rout:'/cases/case/annotations'} as ApiCallData,
+    SET_FILE_DESCRIPTION : {method:HttpMethod.POST, rout:'/cases/case/files/set-description'} as ApiCallData,
+    GET_CASE_KNOWLEDGE_ITEM_DATA : {method:HttpMethod.GET, rout:'/cases/case/knowledge/items/data'} as ApiCallData,
 }
