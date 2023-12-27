@@ -64,7 +64,7 @@ export class ApiManager {
     }
 
     private getBaseUrlForApi(api: APIs) : string {
-        return process.env.API_BASE_URL || '';
+        return process.env.REACT_APP_API_BASE_URL || 'https://5vcihdhjs8.execute-api.us-east-1.amazonaws.com/prod';
     }
 }
 
