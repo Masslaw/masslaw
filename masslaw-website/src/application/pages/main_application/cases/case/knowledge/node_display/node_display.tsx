@@ -7,7 +7,7 @@ import React, {useCallback, useEffect, useRef, useState} from "react";
 import {CaseFileData, knowledge, knowledgeConnection, knowledgeEntity} from "../../../../../../infrastructure/cases_management/data_structures";
 import {LoadingIcon} from "../../../../../../shared/components/loading_icon/loading_icon";
 import {CasesManager} from "../../../../../../infrastructure/cases_management/cases_manager";
-import {Graph} from "../../../../../../modules/graph/graph";
+import {Graph, GraphInterface} from "../../../../../../modules/graph/graph";
 import {now} from "lodash";
 import {faArrowRight, faFile} from "@fortawesome/free-solid-svg-icons";
 import {ApplicationRoutes} from "../../../../../../infrastructure/application_base/routing/application_routes";
@@ -36,7 +36,7 @@ export const NodeDisplay: ApplicationPage = (props: ApplicationPageProps) => {
 
     const [graph_element, setGraphElement] = useState(<></>);
 
-    const [graph_instance, setGraphInstance] = useState(new Graph());
+    const graphRef = useRef<GraphInterface | null>(null);
 
     const [files_data, setFilesData] = useState({} as { [file_id: string]: CaseFileData });
 
@@ -76,24 +76,13 @@ export const NodeDisplay: ApplicationPage = (props: ApplicationPageProps) => {
         setConnectionsById(connections_by_id_map);
     }, [entityId]);
 
-    const graphUpdateLoop = useCallback(() => {
-        setGraphElement(graph_instance.getElement());
-        setTimeout(graphUpdateLoop, 0);
-    }, [graph_instance]);
-
     let requestAnimationFrameId = useRef(0);
-    useEffect(() => {
-        graphUpdateLoop();
-    }, []);
 
     useEffect(() => {
-        graph_instance.reset();
-        for (let entity of (knowledge || {}).entities || []) {
-            graph_instance.addNode(entity.id, entity.label, entity.properties['title'] || '');
-        }
-        for (let connection of (knowledge || {}).connections || []) {
-            graph_instance.addEdge(connection.id, connection.from, connection.to, connection.properties['strength'] || 1);
-        }
+        if (!graphRef.current) return;
+        graphRef.current.reset();
+        for (let entity of (knowledge || {}).entities || []) graphRef.current.addNode(entity.id, entity.label, entity.properties['title'] || '');
+        for (let connection of (knowledge || {}).connections || []) graphRef.current.addEdge(connection.id, connection.from, connection.to, connection.properties['strength'] || 1);
     }, [knowledge]);
 
     return <>
@@ -207,7 +196,13 @@ export const NodeDisplay: ApplicationPage = (props: ApplicationPageProps) => {
                     </div>
                 </div>
                 <div className={'node-knowledge-display-container'}>
-                    {graph_element}
+                    <Graph
+                        ref={graphRef}
+                        nodeClickCallback={() => {}}
+                        edgeClickCallback={() => {}}
+                        nodeHoverCallback={() => {}}
+                        edgeHoverCallback={() => {}}
+                    />
                 </div>
             </div>
         </>}

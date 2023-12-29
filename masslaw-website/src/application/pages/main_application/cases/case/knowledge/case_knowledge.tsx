@@ -8,8 +8,7 @@ import {NavigationFunctionState, QueryStringParamsState} from "../../../../../in
 import {useGlobalState} from "../../../../../infrastructure/application_base/global_functionality/global_states";
 import {CaseFileData, knowledge, knowledgeConnection, knowledgeEntity} from "../../../../../infrastructure/cases_management/data_structures";
 import {FileProcessingStages} from "../../../../../infrastructure/cases_management/cases_consts";
-import {Graph} from "../../../../../modules/graph/graph";
-import {now} from "lodash";
+import {Graph, GraphInterface} from "../../../../../modules/graph/graph";
 import {ApplicationRoutes} from "../../../../../infrastructure/application_base/routing/application_routes";
 import {LoadingIcon} from "../../../../../shared/components/loading_icon/loading_icon";
 
@@ -27,9 +26,7 @@ export const CaseKnowledge: ApplicationPage = (props: ApplicationPageProps) => {
     const [selected_files, setSelectedFiles] = useState([] as string[]);
     const [highlighted_files, setHighlightedFiles] = useState([] as string[]);
 
-    const [graph_element, setGraphElement] = useState(<></>);
-
-    const [graph_instance, setGraphInstance] = useState(new Graph());
+    const graphRef = useRef<GraphInterface | null>(null);
 
     const getCaseKnowledge = useCallback(() => {
         (async () => {
@@ -45,7 +42,6 @@ export const CaseKnowledge: ApplicationPage = (props: ApplicationPageProps) => {
                     if (!download_url) return;
                     let file_knowledge = await fetch(download_url).then((response) => response.json());
                     knowledge[file_id] = file_knowledge;
-                    applyFileKnowledge(file_knowledge);
                 })();
             });
             await Promise.all(promises);
@@ -55,88 +51,76 @@ export const CaseKnowledge: ApplicationPage = (props: ApplicationPageProps) => {
 
     useEffect(() => {
         if (!knowledge) return;
+        if (!graphRef.current) return;
         for (let file_id in knowledge) {
             let file_knowledge = knowledge[file_id];
             if (!file_knowledge) continue;
             for (let entity of file_knowledge.entities) {
-                (graph_instance.getNodeById(entity.id) || {}).state = 'idle';
+                graphRef.current.addNode(entity.id, entity.label, entity.properties['title']);
             }
             for (let connection of file_knowledge.connections) {
-                (graph_instance.getEdgeById(connection.id) || {}).state = 'idle';
+                graphRef.current.addEdge(connection.id, connection.from, connection.to, connection.properties['strength']);
             }
+        }
+    }, [knowledge, graphRef.current]);
+
+    useEffect(() => {
+        if (!knowledge) return;
+        if (!graphRef.current) return;
+        for (let file_id in knowledge) {
+            let file_knowledge = knowledge[file_id];
+            if (!file_knowledge) continue;
+            for (let entity of file_knowledge.entities) graphRef.current.setNodeState(entity.id, 'idle');
+            for (let connection of file_knowledge.connections) graphRef.current.setEdgeState(connection.id, 'idle');
         }
         for (let file_id of selected_files) {
             let file_knowledge = knowledge[file_id];
             if (!file_knowledge) continue;
-            for (let entity of file_knowledge.entities) {
-                (graph_instance.getNodeById(entity.id) || {}).state = 'highlight';
-            }
-            for (let connection of file_knowledge.connections) {
-                (graph_instance.getEdgeById(connection.id) || {}).state = 'highlighted';
-            }
+            for (let entity of file_knowledge.entities) graphRef.current.setNodeState(entity.id, 'highlight');
+            for (let connection of file_knowledge.connections) graphRef.current.setEdgeState(connection.id, 'highlighted');
         }
-    }, [graph_instance, selected_files]);
+    }, [selected_files]);
+
+    const nodeClickCallback = (node_id: string) => {
+        navigate_function(ApplicationRoutes.CASE_KNOWLEDGE_ENTITY, {caseId: caseId || '', entityId: node_id || ''});
+    };
+    const edgeClickCallback = (edge_id: string) => {
+    };
+
+    const nodeHoverCallback = (node_id: string, hovering: boolean) => {
+        if (hovering) {
+            let node_files: string[] = [];
+            for (let file_id in knowledge) {
+                let file_knowledge = knowledge[file_id];
+                for (let entity of file_knowledge.entities) {
+                    if (entity.id === node_id) node_files.push(file_id);
+                }
+            }
+            setHighlightedFiles(node_files);
+        } else {
+            setHighlightedFiles([]);
+        }
+    };
+
+    const edgeHoverCallback = (edge_id: string, hovering: boolean) => {
+        if (hovering) {
+            let edge_files: string[] = [];
+            for (let file_id in knowledge) {
+                let file_knowledge = knowledge[file_id];
+                for (let connection of file_knowledge.connections) {
+                    if (connection.id === edge_id) edge_files.push(file_id);
+                }
+            }
+            setHighlightedFiles(edge_files);
+        } else {
+            setHighlightedFiles([]);
+        }
+    };
 
     useEffect(() => {
-        graph_instance.setNodeClickCallback((node_id) => {
-            navigate_function(ApplicationRoutes.CASE_KNOWLEDGE_ENTITY, {caseId: caseId || '', entityId: node_id || ''});
-        });
-        graph_instance.setEdgeClickCallback((edge_id) => {
-        });
-
-        graph_instance.setNodeHoverCallback((node_id, hovering) => {
-            if (hovering) {
-                let node_files: string[] = [];
-                for (let file_id in knowledge) {
-                    let file_knowledge = knowledge[file_id];
-                    for (let entity of file_knowledge.entities) {
-                        if (entity.id === node_id) node_files.push(file_id);
-                    }
-                }
-                setHighlightedFiles(node_files);
-            } else {
-                setHighlightedFiles([]);
-            }
-        });
-
-        graph_instance.setEdgeHoverCallback((edge_id, hovering) => {
-            if (hovering) {
-                let edge_files: string[] = [];
-                for (let file_id in knowledge) {
-                    let file_knowledge = knowledge[file_id];
-                    for (let connection of file_knowledge.connections) {
-                        if (connection.id === edge_id) edge_files.push(file_id);
-                    }
-                }
-                setHighlightedFiles(edge_files);
-            } else {
-                setHighlightedFiles([]);
-            }
-        });
-    }, [graph_instance]);
-
-    let applyFileKnowledge = useCallback((file_knowledge: { entities: knowledgeEntity[], connections: knowledgeConnection[] }) => {
-        for (let entity of file_knowledge.entities) {
-            graph_instance.addNode(entity.id, entity.label, entity.properties['title']);
-        }
-        for (let connection of file_knowledge.connections) {
-            graph_instance.addEdge(connection.id, connection.from, connection.to, connection.properties['strength']);
-        }
-        setGraphInstance(graph_instance);
-    }, [graph_instance]);
-
-    const graphUpdateLoop = useCallback(() => {
-        setGraphElement(graph_instance.getElement());
-        setTimeout(graphUpdateLoop, 0);
-    }, [graph_instance]);
-
-    useEffect(() => {
+        if (!caseId) return;
         getCaseKnowledge();
     }, [caseId]);
-
-    useEffect(() => {
-        graphUpdateLoop();
-    }, []);
 
     return (<>
         <div className={'case-annotations-header'}>
@@ -146,7 +130,14 @@ export const CaseKnowledge: ApplicationPage = (props: ApplicationPageProps) => {
             {
                 knowledge && Object.keys(knowledge).length > 0 ?
                     <>
-                        {graph_element}
+                        <Graph
+                            ref={graphRef}
+                            nodeClickCallback={nodeClickCallback}
+                            edgeClickCallback={edgeClickCallback}
+                            nodeHoverCallback={nodeHoverCallback}
+                            edgeHoverCallback={edgeHoverCallback}
+                        />
+                        <div className={'case-knowledge-graph-info-text'}>{`Only the 60 most relevant items are displayed.`}</div>
                         <div className={'case-knowledge-files-list-title'}>{`Files`}</div>
                         <div className={'case-knowledge-files-list-container'}>
                             {files_data.map((file_data) => {

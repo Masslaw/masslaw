@@ -100,3 +100,19 @@
     border: 0 solid grey;
     border-bottom: 1px solid grey;
 }
+
+.case-knowledge-graph-info-text {
+    position: absolute;
+    height: 20px;
+    bottom: 10px;
+    left: 10px;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: grey;
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 500;
+}
