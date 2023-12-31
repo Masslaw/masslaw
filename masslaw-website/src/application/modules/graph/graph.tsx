@@ -49,7 +49,7 @@ export const Graph = forwardRef<
     
     const time_of_initial_simulation = 0;
 
-    const MAXIMUM_NUMBER_OF_NODES_DISPLAYED = 60;
+    const MAXIMUM_NUMBER_OF_NODES_DISPLAYED = 40;
     
     const [nodes, setNodes] = useState({} as { [key: string]: Node });
     const [edges, setEdges] = useState({} as { [key: string]: Edge });

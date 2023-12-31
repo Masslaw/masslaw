@@ -137,7 +137,7 @@ export const CaseKnowledge: ApplicationPage = (props: ApplicationPageProps) => {
                             nodeHoverCallback={nodeHoverCallback}
                             edgeHoverCallback={edgeHoverCallback}
                         />
-                        <div className={'case-knowledge-graph-info-text'}>{`Only the 60 most relevant items are displayed.`}</div>
+                        <div className={'case-knowledge-graph-info-text'}>{`Only the 40 most relevant items are displayed.`}</div>
                         <div className={'case-knowledge-files-list-title'}>{`Files`}</div>
                         <div className={'case-knowledge-files-list-container'}>
                             {files_data.map((file_data) => {
