@@ -19,9 +19,9 @@ class LambdaHandler:
             event_structure: dict = None
     ):
         self.name = name or str(self.__class__.__name__)
-        self.__event_structure = event_structure or {}
-        self.__default_response = default_response or {}
-        self.__response = self.__default_response or {}
+        self.__event_structure = (event_structure or {}).copy()
+        self.__default_response = (default_response or {}).copy()
+        self.__response = (self.__default_response or {}).copy()
         self.__event = {}
         self.__context = None
         self._stage = os.environ.get('STAGE', 'prod')
@@ -36,7 +36,7 @@ class LambdaHandler:
     def __reset_state(self):
         self._log(f'Resetting state')
         self._execution_exception = ''
-        self.__response = self.__default_response or {}
+        self.__response = (self.__default_response or {}).copy()
         self.__event = {}
         self.__context = None
         self._reset_state()
@@ -59,7 +59,7 @@ class LambdaHandler:
         _start_execution_time_milliseconds = time.time()
         res = False
         try:
-            self.__response = self.__default_response
+            self.__response = (self.__default_response or {}).copy()
             self.__handle_event(event)
             self.__handle_context(context)
             self.__call_function()
@@ -106,11 +106,12 @@ class LambdaHandler:
     def _get_request_context(self):
         return self.__context
 
-    def _set_response_attribute(self, key_path, value):
+    def _set_response_attribute(self, key_path: list, value: any):
+        self._log(f'Setting response attribute: {key_path} = {value}')
         if value is None: dictionary_utils.delete_at(self.__response, key_path)
         else: dictionary_utils.set_at(self.__response, key_path, value)
 
-    def _prepare_final_response(self, response):
+    def _prepare_final_response(self, response: dict) -> dict:
         self._log(f'Preparing final response')
         self._log(f'Raw response: {response}', level=logging.DEBUG)
         self._log(f'Response length: {len(str(response))}')

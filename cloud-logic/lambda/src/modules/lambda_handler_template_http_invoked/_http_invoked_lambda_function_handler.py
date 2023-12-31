@@ -5,17 +5,29 @@ from src.modules.lambda_base import LambdaHandler
 from src.modules.lambda_base import lambda_base_exceptions
 from src.modules.lambda_base import lambda_constants
 
-HARD_CODED_RESPONSE_HEADERS = {lambda_constants.RequestHeaders.CONTENT_TYPE: lambda_constants.ContentTypes.APPLICATION_JSON, lambda_constants.RequestHeaders.ACCESS_CONTROL_ALLOW_ORIGIN: '*', }
-DEFAULT_RESPONSE_BODY = {lambda_constants.EventKeys.RESPONSE_MESSAGE: "", lambda_constants.EventKeys.USER_STATUS: -1, }
+HARD_CODED_RESPONSE_HEADERS = {
+    lambda_constants.RequestHeaders.CONTENT_TYPE: lambda_constants.ContentTypes.APPLICATION_JSON,
+    lambda_constants.RequestHeaders.ACCESS_CONTROL_ALLOW_ORIGIN: '*',
+}
+DEFAULT_RESPONSE_BODY = {
+    lambda_constants.EventKeys.RESPONSE_MESSAGE: "",
+    lambda_constants.EventKeys.USER_STATUS: -1,
+}
 
 
 class HTTPInvokedLambdaFunctionHandler(LambdaHandler):
     def __init__(self, name=None, default_response_body=None, request_query_string_parameters_structure=None, request_body_structure=None):
-        LambdaHandler.__init__(self, name=name, default_response={lambda_constants.EventKeys.STATUS_CODE: lambda_constants.StatusCodes.OK, lambda_constants.EventKeys.HEADER_PARAMETERS: HARD_CODED_RESPONSE_HEADERS, lambda_constants.EventKeys.BODY: DEFAULT_RESPONSE_BODY, },
-            event_structure={lambda_constants.EventKeys.QUERY_STRING_PARAMETERS: request_query_string_parameters_structure or {}, lambda_constants.EventKeys.BODY: request_body_structure or {}})
+        self.__default_response_body = DEFAULT_RESPONSE_BODY
+        self.__default_response_body.update(default_response_body or {})
 
-        self.__default_response_body = default_response_body or {}
-        self._set_response_attribute([lambda_constants.EventKeys.BODY], self.__default_response_body)
+        LambdaHandler.__init__(self, name=name, default_response={
+            lambda_constants.EventKeys.STATUS_CODE: lambda_constants.StatusCodes.OK,
+            lambda_constants.EventKeys.HEADER_PARAMETERS: HARD_CODED_RESPONSE_HEADERS,
+            lambda_constants.EventKeys.BODY: self.__default_response_body,
+        }, event_structure={
+            lambda_constants.EventKeys.QUERY_STRING_PARAMETERS: request_query_string_parameters_structure or {},
+            lambda_constants.EventKeys.BODY: request_body_structure or {}
+        })
 
         self._request_query_string_params = {}
         self._request_headers = {}
@@ -29,22 +41,11 @@ class HTTPInvokedLambdaFunctionHandler(LambdaHandler):
 
     def _prepare_final_response(self, response):
         response = LambdaHandler._prepare_final_response(self, response)
-
-        if self._stage in ['dev']:
-            response[lambda_constants.EventKeys.BODY]['error'] = str(self._execution_exception)
-
+        if self._stage in ['dev']: response[lambda_constants.EventKeys.BODY]['error'] = str(self._execution_exception)
         response[lambda_constants.EventKeys.HEADER_PARAMETERS].update(HARD_CODED_RESPONSE_HEADERS)
-
-        valid_body = DEFAULT_RESPONSE_BODY
-        valid_body.update(self.__default_response_body)
-
-        raw_response_body = dictionary_utils.ensure_dict(response.get(lambda_constants.EventKeys.BODY, {}))
-        if isinstance(raw_response_body, dict):
-            valid_body.update(raw_response_body)
-
-        valid_body = dictionary_utils.ensure_serializable(valid_body)
+        raw_response_body = response.get(lambda_constants.EventKeys.BODY, {})
+        valid_body = dictionary_utils.ensure_serializable(raw_response_body)
         response[lambda_constants.EventKeys.BODY] = json.dumps(valid_body)
-
         return response
 
     def _handle_event(self):
