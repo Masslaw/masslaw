@@ -99,8 +99,8 @@ export const Graph = forwardRef<
             let edges_copy = {..._edges};
             let original_edge = edges_copy[edge_id];
             if (original_edge) {
-                original_edge.from_entity = from_entity;
-                original_edge.to_entity = to_entity;
+                original_edge.from_entity = from_entity.toString();
+                original_edge.to_entity = to_entity.toString();
                 original_edge.weight = weight;
                 edges_copy[edge_id] = original_edge;
                 return edges_copy;
@@ -161,9 +161,6 @@ export const Graph = forwardRef<
             let edge_to = nodes_copy[edge.to_entity];
             edge_from.graph_contribution += edge.weight;
             edge_to.graph_contribution += edge.weight;
-            let connection_length = Math.min(50 + 200 / edge.weight, radius);
-            edge_from.connected_nodes.push([edge.to_entity, connection_length]);
-            edge_to.connected_nodes.push([edge.from_entity, connection_length]);
             max_contribution = Math.max(max_contribution, edge_from.graph_contribution, edge_to.graph_contribution);
         }
         for (let node_id in nodes_copy) {
@@ -175,6 +172,10 @@ export const Graph = forwardRef<
             let edge = edges_copy[edge_id];
             edge.normalized_weight = edge.weight / max_weight;
             edge.width = 3 * Math.sin((1 - ((edge.normalized_weight - 1) ** 2)) * Math.PI / 2);
+            let edge_from = nodes_copy[edge.from_entity];
+            let edge_to = nodes_copy[edge.to_entity];
+            edge_from.connected_nodes.push([edge.to_entity, edge.normalized_weight]);
+            edge_to.connected_nodes.push([edge.from_entity, edge.normalized_weight]);
         }
         setNodes(nodes_copy);
         setEdges(edges_copy);
@@ -285,7 +286,7 @@ export const Graph = forwardRef<
                 for (let connected_node of node.connected_nodes) {
                     let other_node = new_nodes[connected_node[0]];
                     if (!other_node) continue;
-                    let normalized_length = (1 + (connected_node[1] / node_connection_length_sum));
+                    let normalized_length = (1 + (5 * connected_node[1] / node_connection_length_sum));
                     other_node.velocity[0] -= (other_node.position[0] - node.position[0]) * normalized_length * personal_dt * 0.1;
                     other_node.velocity[1] -= (other_node.position[1] - node.position[1]) * normalized_length * personal_dt * 0.1;
                 }
@@ -366,12 +367,12 @@ export const Graph = forwardRef<
         >
             {Object.keys(edges).map((edge_id) => {
                 let edge = edges[edge_id];
-                if (!edge) return;
-                if (!nodes_to_display.current.includes(edge.from_entity)) return;
-                if (!nodes_to_display.current.includes(edge.to_entity)) return;
+                if (edge == undefined) return;
+                if (!nodes_to_display.current.includes(edge.from_entity.toString())) return;
+                if (!nodes_to_display.current.includes(edge.to_entity.toString())) return;
                 let node_from = nodes[edge.from_entity];
                 let node_to = nodes[edge.to_entity];
-                if (!node_from || !node_to) return;
+                if (node_from == undefined || node_to == undefined) return;
                 if (node_from.simulated_time_since_creation < time_of_initial_simulation) return;
                 if (node_to.simulated_time_since_creation < time_of_initial_simulation) return;
                 let line_width = edge.state == 'hovered' ? 5 : edge.state == 'highlighted' ? 3 * edge.normalized_weight : edge.width;
@@ -446,6 +447,8 @@ export const Graph = forwardRef<
                         }}
                         onClick={e => {
                             if (draggingNodeRef.current) return;
+                            if (Math.abs(mouse_position[0] - dragging_start_position[0]) > 10) return;
+                            if (Math.abs(mouse_position[1] - dragging_start_position[1]) > 10) return;
                             props.nodeClickCallback(node_id);
                         }}
                     >

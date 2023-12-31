@@ -34,8 +34,6 @@ export const NodeDisplay: ApplicationPage = (props: ApplicationPageProps) => {
 
     const [connections_by_id, setConnectionsById] = useState({} as { [connection_id: string]: knowledgeConnection } | null);
 
-    const [graph_element, setGraphElement] = useState(<></>);
-
     const graphRef = useRef<GraphInterface | null>(null);
 
     const [files_data, setFilesData] = useState({} as { [file_id: string]: CaseFileData });
@@ -62,16 +60,16 @@ export const NodeDisplay: ApplicationPage = (props: ApplicationPageProps) => {
     const getEntityData = useCallback(async () => {
         let item_knowledge = await CasesManager.getInstance().getCaseKnowledgeForItem(caseId || '', entityId || '', 'node');
         setKnowledge(item_knowledge);
-        let entity = item_knowledge.entities.find(node => node.id === entityId) || null;
+        let entity = item_knowledge.entities.find(node => node.id.toString() === entityId?.toString()) || null;
         setEntityData(entity);
         let entities_by_id_map = {} as { [entity_id: string]: knowledgeEntity };
         item_knowledge.entities.forEach((entity) => {
-            entities_by_id_map[entity.id] = entity;
+            entities_by_id_map[entity.id.toString()] = entity;
         })
         setEntitiesById(entities_by_id_map);
         let connections_by_id_map = {} as { [connection_id: string]: knowledgeConnection };
         item_knowledge.connections.forEach((connection) => {
-            connections_by_id_map[connection.id] = connection;
+            connections_by_id_map[connection.id.toString()] = connection;
         })
         setConnectionsById(connections_by_id_map);
     }, [entityId]);
@@ -81,8 +79,8 @@ export const NodeDisplay: ApplicationPage = (props: ApplicationPageProps) => {
     useEffect(() => {
         if (!graphRef.current) return;
         graphRef.current.reset();
-        for (let entity of (knowledge || {}).entities || []) graphRef.current.addNode(entity.id, entity.label, entity.properties['title'] || '');
-        for (let connection of (knowledge || {}).connections || []) graphRef.current.addEdge(connection.id, connection.from, connection.to, connection.properties['strength'] || 1);
+        for (let entity of (knowledge || {}).entities || []) graphRef.current.addNode(entity.id.toString(), entity.label, entity.properties['title'] || '');
+        for (let connection of (knowledge || {}).connections || []) graphRef.current.addEdge(connection.id.toString(), connection.from.toString(), connection.to.toString(), connection.properties['strength'] || 1);
     }, [knowledge]);
 
     return <>
@@ -119,8 +117,8 @@ export const NodeDisplay: ApplicationPage = (props: ApplicationPageProps) => {
                         <div className={'nodes-connections-list-title'}>{`${entity_data.properties['title']} is connected to:`}</div>
                         <div className={'node-connections-list-scrollable-region'}>
                             {Object.values(knowledge.connections).map((connection_data: knowledgeConnection) => {
-                                let connected_node_id = connection_data.from !== entityId ? connection_data.from : connection_data.to;
-                                let node_data = entities_by_id && entities_by_id[connected_node_id] || {} as knowledgeEntity;
+                                let connected_node_id = connection_data.from.toString() !== entityId?.toString() ? connection_data.from.toString() : connection_data.to.toString();
+                                let node_data = entities_by_id && entities_by_id[connected_node_id.toString()] || {} as knowledgeEntity;
                                 let node_color = node_style[node_data.label].color['idle'] || 'grey';
                                 let node_icon = node_style[node_data.label].icon;
                                 return <>
@@ -158,7 +156,7 @@ export const NodeDisplay: ApplicationPage = (props: ApplicationPageProps) => {
                                                                 e.stopPropagation();
                                                             }
                                                         }>
-                                                            {files_data[file_id].name}
+                                                            {(files_data[file_id] || {}).name || ''}
                                                         </div>
                                                     </div>)
                                                 })}
