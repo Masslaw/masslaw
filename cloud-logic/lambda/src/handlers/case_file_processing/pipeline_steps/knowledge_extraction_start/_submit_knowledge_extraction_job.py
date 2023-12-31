@@ -7,6 +7,7 @@ from src.modules.masslaw_cloud_configurations import get_configuration_value
 from src.modules.mlcp_management import MLCPSubmission
 from src.modules.neptune_endpoints import get_neptune_read_endpoint_for_stage
 from src.modules.neptune_endpoints import get_neptune_write_endpoint_for_stage
+from src.modules.neptune_endpoints._get_neptune_endpoints import get_neptune_protocol_for_stage
 
 
 def submit_knowledge_extraction_job(file_instance: MasslawCaseFileInstance, stage='prod') -> List[str]:
@@ -50,13 +51,13 @@ def _submit_knowledge_extraction_job_for_language(file_instance: MasslawCaseFile
                 "neptune_endpoints": {
                     "read": {
                         "endpoint": get_neptune_read_endpoint_for_stage(stage),
-                        "protocol": "wss",
+                        "protocol": get_neptune_protocol_for_stage(stage),
                         "port": "8182",
                         "type": "gremlin"
                     },
                     "write": {
                         "endpoint": get_neptune_write_endpoint_for_stage(stage),
-                        "protocol": "wss",
+                        "protocol": get_neptune_protocol_for_stage(stage),
                         "port": "8182",
                         "type": "gremlin"
                     }

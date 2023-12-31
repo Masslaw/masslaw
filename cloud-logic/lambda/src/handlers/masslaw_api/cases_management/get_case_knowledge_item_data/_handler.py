@@ -6,19 +6,29 @@ from src.modules.aws_clients.neptune_client import NeptuneConnection
 from src.modules.lambda_handler_template_http_invoked_masslaw_case_management_api import MasslawCaseManagementApiInvokedLambdaFunction
 from src.modules.neptune_endpoints import get_neptune_read_endpoint_for_stage
 from src.modules.neptune_endpoints import get_neptune_write_endpoint_for_stage
-
+from src.modules.neptune_endpoints._get_neptune_endpoints import get_neptune_protocol_for_stage
 
 _stage = os.environ.get('STAGE', 'prod')
 neptune_read_endpoint = get_neptune_read_endpoint_for_stage(_stage)
 neptune_write_endpoint = get_neptune_write_endpoint_for_stage(_stage)
-_neptune_client = NeptuneClient(read_connection=NeptuneConnection(connection_endpoint=neptune_read_endpoint, connection_port=8182, connection_protocol='wss', connection_type='gremlin'),
-    write_connection=NeptuneConnection(connection_endpoint=neptune_write_endpoint, connection_port=8182, connection_protocol='wss', connection_type='gremlin'))
+neptune_connection_protocol = get_neptune_protocol_for_stage(_stage)
+_neptune_client = NeptuneClient(read_connection=NeptuneConnection(connection_endpoint=neptune_read_endpoint, connection_port=8182, connection_protocol=neptune_connection_protocol, connection_type='gremlin'),
+                                write_connection=NeptuneConnection(connection_endpoint=neptune_write_endpoint, connection_port=8182, connection_protocol=neptune_connection_protocol, connection_type='gremlin'))
 
 
 class GetCaseKnowledgeItemData(MasslawCaseManagementApiInvokedLambdaFunction):
 
     def __init__(self):
-        MasslawCaseManagementApiInvokedLambdaFunction.__init__(self, default_response_body={'knowledge': {'entities': [], 'connections': []}}, request_query_string_parameters_structure={'case_id': [str], 'item_id': [str], 'item_type': [str]})
+        MasslawCaseManagementApiInvokedLambdaFunction.__init__(self, default_response_body={
+            'knowledge': {
+                'entities': [],
+                'connections': []
+            }
+        }, request_query_string_parameters_structure={
+            'case_id': [str],
+            'item_id': [str, int],
+            'item_type': [str]
+        })
         self.__case_id = ''
         self.__item_id = ''
         self.__item_type = ''
@@ -35,9 +45,8 @@ class GetCaseKnowledgeItemData(MasslawCaseManagementApiInvokedLambdaFunction):
         self.__item_id = self._request_query_string_params.get('item_id')
         self.__item_type = self._request_query_string_params.get('item_type')
 
-
     def _execute(self):
-        if self.__item_type not in ('node', 'edge', ):
+        if self.__item_type not in ('node', 'edge',):
             raise ValueError(f'item_type must be one of: "node", "edge". Got: {self.__item_type}')
         if self.__item_type == 'node':
             self._set_response_attribute(['body', 'knowledge'], self.__handle_node())
@@ -56,7 +65,10 @@ class GetCaseKnowledgeItemData(MasslawCaseManagementApiInvokedLambdaFunction):
             node_outgoing_connections = node_outgoing_connections_future.result()
             node_ingoing_connections = node_ingoing_connections_future.result()
 
-        response = {'entities': [], 'connections': []}
+        response = {
+            'entities': [],
+            'connections': []
+        }
 
         with ThreadPoolExecutor() as executor:
             to_nodes_futures = []
@@ -69,7 +81,9 @@ class GetCaseKnowledgeItemData(MasslawCaseManagementApiInvokedLambdaFunction):
             for future in to_nodes_futures + from_nodes_futures:
                 connected_nodes.append(future.result())
 
-        all_nodes_by_id = {node_data.get_id(): node_data}
+        all_nodes_by_id = {
+            node_data.get_id(): node_data
+        }
         for connected_node in connected_nodes:
             all_nodes_by_id[connected_node.get_id()] = connected_node
         all_nodes = list(all_nodes_by_id.values())
@@ -98,26 +112,24 @@ class GetCaseKnowledgeItemData(MasslawCaseManagementApiInvokedLambdaFunction):
             from_node = from_node_future.result()
             to_node = to_node_future.result()
 
-        response = {'entities': [
-            {
+        response = {
+            'entities': [{
                 'id': from_node.get_id(),
                 'label': from_node.get_label(),
                 'properties': from_node.get_properties()
-            },
-            {
+            }, {
                 'id': to_node.get_id(),
                 'label': to_node.get_label(),
                 'properties': to_node.get_properties()
-            }
-        ], 'connections': [
-            {
+            }],
+            'connections': [{
                 'id': edge_data.get_id(),
                 'label': edge_data.get_label(),
                 'from': edge_data.get_from_node(),
                 'to': edge_data.get_to_node(),
                 'properties': edge_data.get_properties()
-            }
-        ]}
+            }]
+        }
         return response
 
     def _handle_exception(self, exception: Exception):

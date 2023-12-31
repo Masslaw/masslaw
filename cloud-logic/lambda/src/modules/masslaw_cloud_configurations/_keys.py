@@ -1,2 +1,3 @@
 SUPPORTED_MLCP_FILE_TYPES = "supported_mlcp_file_types"
 SUPPORTED_MLCP_KNOWLEDGE_EXTRACTION_LANGUAGES = 'mlcp_knowledge_extraction_supported_languages'
+MASSLAW_KNOWLEDGE_NEPTUNE_ENDPOINTS = 'masslaw_knowledge_neptune_endpoints'

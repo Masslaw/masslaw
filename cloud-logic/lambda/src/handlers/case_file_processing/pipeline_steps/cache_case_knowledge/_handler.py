@@ -12,12 +12,14 @@ from src.modules.lambda_handler_template_step_functions_lambda_node_case_file_pi
 from src.modules.masslaw_cases_config._storage_config import CASES_CONTENT_BUCKET_ID
 from src.modules.neptune_endpoints import get_neptune_read_endpoint_for_stage
 from src.modules.neptune_endpoints import get_neptune_write_endpoint_for_stage
+from src.modules.neptune_endpoints._get_neptune_endpoints import get_neptune_protocol_for_stage
 
 _stage = os.environ.get('STAGE', 'prod')
 neptune_read_endpoint = get_neptune_read_endpoint_for_stage(_stage)
 neptune_write_endpoint = get_neptune_write_endpoint_for_stage(_stage)
-_neptune_client = NeptuneClient(read_connection=NeptuneConnection(connection_endpoint=neptune_read_endpoint, connection_port=8182, connection_protocol='wss', connection_type='gremlin'),
-    write_connection=NeptuneConnection(connection_endpoint=neptune_write_endpoint, connection_port=8182, connection_protocol='wss', connection_type='gremlin'))
+neptune_connection_protocol = get_neptune_protocol_for_stage(_stage)
+_neptune_client = NeptuneClient(read_connection=NeptuneConnection(connection_endpoint=neptune_read_endpoint, connection_port=8182, connection_protocol=neptune_connection_protocol, connection_type='gremlin'),
+    write_connection=NeptuneConnection(connection_endpoint=neptune_write_endpoint, connection_port=8182, connection_protocol=neptune_connection_protocol, connection_type='gremlin'))
 
 _s3_bucket_manager = S3BucketManager(CASES_CONTENT_BUCKET_ID)
 
