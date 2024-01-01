@@ -14,7 +14,7 @@ interface Node {
     velocity: [number, number],
     drag: number,
     graph_contribution: number,
-    connected_nodes: [string, number][],
+    connected_nodes: [string, number, string][],
     state: string,
     simulated_time_since_creation: number,
 }
@@ -174,8 +174,8 @@ export const Graph = forwardRef<
             edge.width = 3 * Math.sin((1 - ((edge.normalized_weight - 1) ** 2)) * Math.PI / 2);
             let edge_from = nodes_copy[edge.from_entity];
             let edge_to = nodes_copy[edge.to_entity];
-            edge_from.connected_nodes.push([edge.to_entity, edge.normalized_weight]);
-            edge_to.connected_nodes.push([edge.from_entity, edge.normalized_weight]);
+            edge_from.connected_nodes.push([edge.to_entity, edge.normalized_weight, edge_id]);
+            edge_to.connected_nodes.push([edge.from_entity, edge.normalized_weight, edge_id]);
         }
         setNodes(nodes_copy);
         setEdges(edges_copy);
@@ -258,7 +258,6 @@ export const Graph = forwardRef<
             for (let node_id of nodes_to_display.current) {
                 let node = new_nodes[node_id];
                 if (!node) continue;
-                let personal_dt = dt * (0.3 + (20 / (10 + (node.simulated_time_since_creation ** 2))))
                 const nearbyNodes = grid.retrieve(node.position);
                 for (let other_node_id of nearbyNodes) {
                     if (other_node_id === node_id) continue;
@@ -276,8 +275,8 @@ export const Graph = forwardRef<
                 let distance_from_center = Math.sqrt(delta_from_center[0] * delta_from_center[0] + delta_from_center[1] * delta_from_center[1]);
                 let delta_from_center_normalized = [delta_from_center[0] / distance_from_center, delta_from_center[1] / distance_from_center];
                 let attraction = node.graph_contribution * distance_from_center;
-                node.velocity[0] -= delta_from_center_normalized[0] * attraction * personal_dt * 0.01;
-                node.velocity[1] -= delta_from_center_normalized[1] * attraction * personal_dt * 0.01;
+                node.velocity[0] -= delta_from_center_normalized[0] * attraction * dt * 0.01;
+                node.velocity[1] -= delta_from_center_normalized[1] * attraction * dt * 0.01;
                 let node_connection_length_sum = 0;
                 for (let connected_node of node.connected_nodes) {
                     node_connection_length_sum += connected_node[1];
@@ -287,24 +286,23 @@ export const Graph = forwardRef<
                     let other_node = new_nodes[connected_node[0]];
                     if (!other_node) continue;
                     let normalized_length = (1 + (5 * connected_node[1] / node_connection_length_sum));
-                    other_node.velocity[0] -= (other_node.position[0] - node.position[0]) * normalized_length * personal_dt * 0.1;
-                    other_node.velocity[1] -= (other_node.position[1] - node.position[1]) * normalized_length * personal_dt * 0.1;
+                    other_node.velocity[0] -= (other_node.position[0] - node.position[0]) * normalized_length * dt * 0.1;
+                    other_node.velocity[1] -= (other_node.position[1] - node.position[1]) * normalized_length * dt * 0.1;
                 }
                 if (draggingNodeRef.current === node_id) {
-                    personal_dt = dt;
-                    node.velocity[0] += (mousePositionRef.current[0] - node.position[0]) * personal_dt * 20;
-                    node.velocity[1] += (mousePositionRef.current[1] - node.position[1]) * personal_dt * 20;
+                    node.velocity[0] += (mousePositionRef.current[0] - node.position[0]) * dt * 20;
+                    node.velocity[1] += (mousePositionRef.current[1] - node.position[1]) * dt * 20;
                 }
 
-                node.velocity[0] -= avg_node_position[0] * personal_dt;
-                node.velocity[1] -= avg_node_position[1] * personal_dt;
+                node.velocity[0] -= avg_node_position[0] * dt;
+                node.velocity[1] -= avg_node_position[1] * dt;
 
-                let drag_factor = Math.pow(1 / node.drag, personal_dt);
+                let drag_factor = Math.pow(1 / node.drag, dt);
                 node.velocity[0] *= drag_factor;
                 node.velocity[1] *= drag_factor;
 
-                node.position[0] += node.velocity[0] * personal_dt;
-                node.position[1] += node.velocity[1] * personal_dt;
+                node.position[0] += node.velocity[0] * dt;
+                node.position[1] += node.velocity[1] * dt;
 
                 node.simulated_time_since_creation += dt;
             }
@@ -375,7 +373,7 @@ export const Graph = forwardRef<
                 if (node_from == undefined || node_to == undefined) return;
                 if (node_from.simulated_time_since_creation < time_of_initial_simulation) return;
                 if (node_to.simulated_time_since_creation < time_of_initial_simulation) return;
-                let line_width = edge.state == 'hovered' ? 5 : edge.state == 'highlighted' ? 3 * edge.normalized_weight : edge.width;
+                let line_width = edge.state == 'hovered' ? 5 : edge.state == 'highlighted' ? 1 + edge.width : edge.width;
                 return <g key={edge_id} className={'graph-edge'} id={edge_id}>
                     <line
                         key={edge_id + '-line'}
@@ -434,15 +432,19 @@ export const Graph = forwardRef<
                         onMouseEnter={() => {
                             if (draggingNodeRef.current) return;
                             setNodeState(node_id, 'highlight')
-                            for (let connected_node of node.connected_nodes)
+                            for (let connected_node of node.connected_nodes) {
                                 setNodeState(connected_node[0], 'secondary-highlight');
+                                setEdgeState(connected_node[2], 'highlighted');
+                            }
                             props.nodeHoverCallback(node_id, true);
                         }}
                         onMouseLeave={() => {
                             if (draggingNodeRef.current) return;
                             setNodeState(node_id, 'idle');
-                            for (let connected_node of node.connected_nodes)
+                            for (let connected_node of node.connected_nodes) {
                                 setNodeState(connected_node[0], 'idle');
+                                setEdgeState(connected_node[2], 'idle');
+                            }
                             props.nodeHoverCallback(node_id, false);
                         }}
                         onClick={e => {

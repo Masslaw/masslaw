@@ -88,33 +88,9 @@ export const CaseKnowledge: ApplicationPage = (props: ApplicationPageProps) => {
     };
 
     const nodeHoverCallback = (node_id: string, hovering: boolean) => {
-        if (hovering) {
-            let node_files: string[] = [];
-            for (let file_id in knowledge) {
-                let file_knowledge = knowledge[file_id];
-                for (let entity of file_knowledge.entities) {
-                    if (entity.id === node_id) node_files.push(file_id);
-                }
-            }
-            setHighlightedFiles(node_files);
-        } else {
-            setHighlightedFiles([]);
-        }
     };
 
     const edgeHoverCallback = (edge_id: string, hovering: boolean) => {
-        if (hovering) {
-            let edge_files: string[] = [];
-            for (let file_id in knowledge) {
-                let file_knowledge = knowledge[file_id];
-                for (let connection of file_knowledge.connections) {
-                    if (connection.id === edge_id) edge_files.push(file_id);
-                }
-            }
-            setHighlightedFiles(edge_files);
-        } else {
-            setHighlightedFiles([]);
-        }
     };
 
     useEffect(() => {
