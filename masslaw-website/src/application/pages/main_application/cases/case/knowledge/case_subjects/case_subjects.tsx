@@ -110,50 +110,56 @@ export const CaseSubjects: ApplicationPage = (props: ApplicationPageProps) => {
     return <>
         {knowledge && Object.keys(knowledge).length > 0 ?
             <div className={'node-display'}>
-                <div className={'node-data-container'}>
-                    {
-                        Object.keys(entities_by_id)
-                            .sort((a, b) => (graph_contribution_by_entity_id[b] || 0) - (graph_contribution_by_entity_id[a] || 0))
-                            .map((entity_id) => {
-                            return <>
-                                <div className={"entity_item_data_display"}>
-                                    <div
-                                        className={"entity_item_entity_name"}
-                                        onMouseEnter={e => {
-                                            graphRef.current?.setNodeState(entity_id, 'highlight');
-                                        }}
-                                        onMouseLeave={e => {
-                                            graphRef.current?.setNodeState(entity_id, 'idle');
-                                        }}
-                                    >
-                                        {(entities_by_id[entity_id]?.properties || {}).title || ''}
-                                    </div>
-                                    <Accordion title={'Entity Files'} component={
-                                        <div className={'entity_item_files_list'}>
-                                            {
-                                                Array.from(entitiy_files_by_entity_id[entity_id] || new Set()).map((file_id) => {
-                                                    return <div
-                                                        className={'entity_item_files_list_item'}
-                                                        onClick={e => {
-                                                            e.stopPropagation();
-                                                            navigate_function(ApplicationRoutes.FILE_DISPLAY, {'caseId': caseId || '', 'fileId': file_id})
-                                                        }}
-                                                    >
-                                                        <div className={'entity_item_files_list_item_file_icon'}>
-                                                            <FontAwesomeIcon icon={faFile} />
-                                                        </div>
-                                                        <div className={'entity_item_files_list_item_file_name'} >
-                                                            {files_data.find((file_data) => file_data.id === file_id)?.name}
-                                                        </div>
-                                                    </div>
-                                                })
-                                            }
+                <div className={'subjects-data-container'}>
+                    <div className={"page_title"}>Case Subjects</div>
+                    <div className={'subjects-list'}>
+                        {
+                            Object.keys(entities_by_id)
+                                .sort((a, b) => (graph_contribution_by_entity_id[b] || 0) - (graph_contribution_by_entity_id[a] || 0))
+                                .map((entity_id) => {
+                                    return <>
+                                        <div
+                                            className={"entity_item_data_display"}
+                                            onClick={e => nodeClickCallback(entity_id)}
+                                        >
+                                            <div
+                                                className={"entity_item_entity_name"}
+                                                onMouseEnter={e => {
+                                                    graphRef.current?.setNodeState(entity_id, 'highlight');
+                                                }}
+                                                onMouseLeave={e => {
+                                                    graphRef.current?.setNodeState(entity_id, 'idle');
+                                                }}
+                                            >
+                                                {(entities_by_id[entity_id]?.properties || {}).title || ''}
+                                            </div>
+                                            <Accordion title={'Files'} component={
+                                                <div className={'entity_item_files_list'}>
+                                                    {
+                                                        Array.from(entitiy_files_by_entity_id[entity_id] || new Set()).map((file_id) => {
+                                                            return <div
+                                                                className={'entity_item_files_list_item'}
+                                                                onClick={e => {
+                                                                    e.stopPropagation();
+                                                                    navigate_function(ApplicationRoutes.FILE_DISPLAY, {'caseId': caseId || '', 'fileId': file_id})
+                                                                }}
+                                                            >
+                                                                <div className={'entity_item_files_list_item_file_icon'}>
+                                                                    <FontAwesomeIcon icon={faFile}/>
+                                                                </div>
+                                                                <div className={'entity_item_files_list_item_file_name'}>
+                                                                    {files_data.find((file_data) => file_data.id === file_id)?.name}
+                                                                </div>
+                                                            </div>
+                                                        })
+                                                    }
+                                                </div>
+                                            }/>
                                         </div>
-                                    } />
-                                </div>
-                            </>
-                        })
-                    }
+                                    </>
+                                })
+                        }
+                    </div>
                 </div>
                 <div className={'node-knowledge-display-container'}>
                     <Graph
@@ -169,8 +175,8 @@ export const CaseSubjects: ApplicationPage = (props: ApplicationPageProps) => {
                     />
                 </div>
             </div>
-        :
-            <LoadingIcon color={'#000000'} />
+            :
+            <LoadingIcon color={'#000000'}/>
         }
     </>
 }
