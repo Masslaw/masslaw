@@ -20,8 +20,10 @@ import {CaseSearch} from "../../../pages/main_application/cases/case/search/case
 import {ApplicationPageRenderer} from "./application_page_renderer";
 import {UserStatus} from "../../user_management/user_status";
 import {CaseAnnotations} from "../../../pages/main_application/cases/case/annotations/case_annotations";
-import {CaseKnowledge} from "../../../pages/main_application/cases/case/knowledge/case_knowledge";
+import {CaseKnowledge} from "../../../pages/main_application/cases/case/knowledge/case_knowledge/case_knowledge";
 import {NodeDisplay} from "../../../pages/main_application/cases/case/knowledge/node_display/node_display";
+import {CaseTimeline} from "../../../pages/main_application/cases/case/knowledge/case_timeline/case_timeline";
+import {CaseSubjects} from "../../../pages/main_application/cases/case/knowledge/case_subjects/case_subjects";
 
 
 export function ApplicationRouter() {
@@ -186,6 +188,22 @@ export function ApplicationRouter() {
                                     element={
                                         <ApplicationPageRenderer
                                             pageComponent={CaseKnowledge}
+                                        />
+                                    }
+                                />
+                                <Route
+                                    path={ApplicationRoutes.CASE_SUBJECTS}
+                                    element={
+                                        <ApplicationPageRenderer
+                                            pageComponent={CaseSubjects}
+                                        />
+                                    }
+                                />
+                                <Route
+                                    path={ApplicationRoutes.CASE_TIMELINE}
+                                    element={
+                                        <ApplicationPageRenderer
+                                            pageComponent={CaseTimeline}
                                         />
                                     }
                                 />

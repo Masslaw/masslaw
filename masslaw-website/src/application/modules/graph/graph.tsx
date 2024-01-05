@@ -214,14 +214,22 @@ export const Graph = forwardRef<
         return () => setUpdate(false);
     }, []);
 
+    let previous_physics_time = now();
     const physicsUpdateLoop = useCallback(() => {
-        updatePhysics(0.015);
+        let current_time = now();
+        let dt = current_time - previous_physics_time;
+        previous_physics_time = current_time;
+        updatePhysics(Math.min(0.05, dt));
         if (!update) return;
         setTimeout(() => physicsUpdateLoop(), 0);
     }, [update]);
 
+    let previous_display_time = now();
     const displayUpdateLoop = useCallback(() => {
-        updateNodeDisplayPositions(0.015);
+        let current_time = now();
+        let dt = current_time - previous_display_time;
+        previous_display_time = current_time;
+        updateNodeDisplayPositions(Math.min(0.05, dt));
         if (!update) return;
         setTimeout(() => displayUpdateLoop(), 0);
     }, [update]);

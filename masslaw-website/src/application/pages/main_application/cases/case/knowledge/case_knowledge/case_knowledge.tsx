@@ -1,16 +1,16 @@
 import React, {useCallback, useEffect, useRef, useState} from "react";
 
 import "./css.css";
-import {CasesManager} from "../../../../../infrastructure/cases_management/cases_manager";
+import {CasesManager} from "../../../../../../infrastructure/cases_management/cases_manager";
 import {useParams} from "react-router-dom";
-import {ApplicationPage, ApplicationPageProps} from "../../../../../infrastructure/application_base/routing/application_page_renderer";
-import {NavigationFunctionState, QueryStringParamsState} from "../../../../../infrastructure/application_base/routing/application_global_routing";
-import {useGlobalState} from "../../../../../infrastructure/application_base/global_functionality/global_states";
-import {CaseFileData, knowledge, knowledgeConnection, knowledgeEntity} from "../../../../../infrastructure/cases_management/data_structures";
-import {FileProcessingStages} from "../../../../../infrastructure/cases_management/cases_consts";
-import {Graph, GraphInterface} from "../../../../../modules/graph/graph";
-import {ApplicationRoutes} from "../../../../../infrastructure/application_base/routing/application_routes";
-import {LoadingIcon} from "../../../../../shared/components/loading_icon/loading_icon";
+import {ApplicationPage, ApplicationPageProps} from "../../../../../../infrastructure/application_base/routing/application_page_renderer";
+import {NavigationFunctionState, QueryStringParamsState} from "../../../../../../infrastructure/application_base/routing/application_global_routing";
+import {useGlobalState} from "../../../../../../infrastructure/application_base/global_functionality/global_states";
+import {CaseFileData, knowledge, knowledgeConnection, knowledgeEntity} from "../../../../../../infrastructure/cases_management/data_structures";
+import {FileProcessingStages} from "../../../../../../infrastructure/cases_management/cases_consts";
+import {Graph, GraphInterface} from "../../../../../../modules/graph/graph";
+import {ApplicationRoutes} from "../../../../../../infrastructure/application_base/routing/application_routes";
+import {LoadingIcon} from "../../../../../../shared/components/loading_icon/loading_icon";
 
 export const CaseKnowledge: ApplicationPage = (props: ApplicationPageProps) => {
 
