@@ -1,0 +1,9 @@
+from logic_layer.knowledge_record.record_merging import RecordMergingConfiguration
+from logic_layer.text_processing.knowledge_extraction.knowledge_extractors.spacy_wrapper._knowledge_merging_logic._connection_mergability_check_logic import check_spacy_connections_mergeable
+from logic_layer.text_processing.knowledge_extraction.knowledge_extractors.spacy_wrapper._knowledge_merging_logic._entity_mergability_check_logic import check_spacy_entities_mergeable
+
+
+class SpacyKnowledgeMergingConfiguration(RecordMergingConfiguration):
+
+    def __init__(self):
+        super().__init__(entity_mergeability_check_function=check_spacy_entities_mergeable, connection_mergeability_check_function=check_spacy_connections_mergeable)

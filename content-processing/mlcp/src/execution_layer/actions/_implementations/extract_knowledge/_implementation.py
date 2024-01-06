@@ -5,6 +5,7 @@ from logic_layer.knowledge_record.record_merging import RecordMergingConfigurati
 from logic_layer.remote_graph_database.neptune_manager import NeptuneDatabaseManager
 from logic_layer.text_processing.knowledge_extraction._knowledge_extractor import KnowledgeExtractor
 from logic_layer.text_processing.knowledge_extraction.knowledge_extractors.spacy_wrapper import SpacyWrapper
+from logic_layer.text_processing.knowledge_extraction.knowledge_extractors.spacy_wrapper._knowledge_merging_logic import SpacyKnowledgeMergingConfiguration
 from shared_layer.mlcp_logger import common_formats
 from shared_layer.mlcp_logger import logger
 
@@ -39,8 +40,10 @@ class ExtractKnowledge(ApplicationAction):
             logger.warn(f"Skipping file due to missing data")
             return False
 
-        merging_configuration = RecordMergingConfiguration()
+        merging_configuration = SpacyKnowledgeMergingConfiguration()
+
         extractor: KnowledgeExtractor = SpacyWrapper(languages)
+        extractor.set_knowledge_merging_configuration(merging_configuration)
         extractor.load_file(file_name)
         knowledge_record: KnowledgeRecord = extractor.get_record()
 

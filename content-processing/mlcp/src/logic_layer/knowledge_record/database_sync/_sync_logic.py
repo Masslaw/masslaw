@@ -64,5 +64,7 @@ def _put_connection_in_database(record_connection: KnowledgeRecordConnection, gr
     if record_connection.get_id():
         graph_database_manager.load_properties_to_edge(edge_id=record_connection.get_id(), properties=record_connection.get_properties())
         return
+    if not record_connection.get_from_entity().get_id(): return
+    if not record_connection.get_to_entity().get_id(): return
     new_edge = graph_database_manager.set_edge(edge_label=record_connection.get_label(), from_node=record_connection.get_from_entity().get_id(), to_node=record_connection.get_to_entity().get_id(), properties=record_connection.get_properties(), )
     record_connection.set_id(new_edge.get_id())

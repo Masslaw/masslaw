@@ -1,3 +1,4 @@
+import re
 from typing import IO
 
 import networkx
@@ -14,7 +15,7 @@ FONT_SIZE = 4
 
 
 def visualize_graph_database_using_matplotlib(graph_database_manager: GraphDatabaseManager, output_file: str, node_title_property: str = 'title'):
-    def get_title(node): return str(node.get_properties().get(node_title_property, node.get_id())).replace(' ', '_')
+    def get_title(node): return re.sub('[^A-Za-z0-9]+', '', str(node.get_properties().get(node_title_property, 'untitled')).replace(' ', '_'))
     all_nodes = graph_database_manager.get_nodes_by_properties({})
     all_edges = graph_database_manager.get_edges_by_properties({})
     node_by_id = {}

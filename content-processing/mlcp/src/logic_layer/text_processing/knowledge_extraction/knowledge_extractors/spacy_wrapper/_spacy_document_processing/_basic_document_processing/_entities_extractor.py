@@ -1,9 +1,7 @@
-from typing import List
 from typing import Set
 
 from logic_layer.text_processing.knowledge_extraction.knowledge_extractors.spacy_wrapper._spacy_document_processing._structures import DocumentEntity
 from logic_layer.text_processing.knowledge_extraction.knowledge_extractors.spacy_wrapper._spacy_document_processing._structures import SpacyDocumentData
-from shared_layer.list_utils import list_utils
 
 
 class SpacyEntitiesExtractor:
@@ -15,7 +13,6 @@ class SpacyEntitiesExtractor:
         self._load_entities()
         self._load_entities_coreference_chains()
         self._resolve_entity_appearances()
-        self._merge_entities()
         self._document_data.document_entities = self._entities
 
     def _load_entities(self):
@@ -39,31 +36,3 @@ class SpacyEntitiesExtractor:
             entity.entity_appearances = set([span.root for span in entity.entity_spans])
             for chain in entity.coreference_chains:
                 entity.entity_appearances.update([token for token in chain.chain_tokens if token.pos_ == "PRON"])
-
-    def _merge_entities(self):
-        entities_list = list(self._entities)
-        list_utils.merge_mergeable(entities_list, self._mergeable, self._do_merge_entities)
-        self._entities = set(entities_list)
-
-    def _mergeable(self, entity1: DocumentEntity, entity2: DocumentEntity) -> bool:
-        if entity1.entity_type != entity2.entity_type:
-            return False
-        entity1_name_components = set()
-        for entity1_span in entity1.entity_spans:
-            entity1_name_components.update(entity1_span.text.split(' '))
-        entity2_name_components = set()
-        for entity2_span in entity2.entity_spans:
-            entity2_name_components.update(entity2_span.text.split(' '))
-        overlapping_components = entity1_name_components & entity2_name_components
-        if len(overlapping_components):
-            return True
-        return False
-
-    def _do_merge_entities(self, entity1: DocumentEntity, entity2: DocumentEntity) -> DocumentEntity:
-        merged_entity = DocumentEntity()
-        merged_entity.entity_type = entity1.entity_type
-        merged_entity.entity_spans = entity1.entity_spans | entity2.entity_spans
-        merged_entity.coreference_chains = entity1.coreference_chains.copy() | entity2.coreference_chains.copy()
-        merged_entity.entity_appearances = entity1.entity_appearances.copy() | entity2.entity_appearances.copy()
-        merged_entity.entity_data = {**entity1.entity_data, **entity2.entity_data}
-        return merged_entity

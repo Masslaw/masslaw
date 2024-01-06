@@ -1,10 +1,10 @@
-from typing import IO
+import re
 
 from logic_layer.remote_graph_database._graph_database_manager import GraphDatabaseManager
 
 
 def visualize_graph_database_using_mermaid(graph_database_manager: GraphDatabaseManager, output_file: str, node_title_property: str = 'title'):
-    def get_title(node): return str(node.get_properties().get(node_title_property, 'untitled')).replace(' ', '_')
+    def get_title(node): return re.sub('[^A-Za-z0-9]+', '', str(node.get_properties().get(node_title_property, 'untitled')).replace(' ', '_'))
     mermaid_script = "graph LR\n"
     all_nodes = graph_database_manager.get_nodes_by_properties({})
     all_edges = graph_database_manager.get_edges_by_properties({})

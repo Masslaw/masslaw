@@ -1,3 +1,5 @@
+import threading
+import time
 from time import sleep
 
 from gremlin_python.driver.driver_remote_connection import DriverRemoteConnection
@@ -37,7 +39,10 @@ class NeptuneConnection:
         if not self._connected():
             self._connection = None
             return
-        self._connection.close()
+        close_connection_thread = threading.Thread(target=self._connection.close)
+        close_connection_thread.start()
+        close_connection_thread.join(timeout=5)
+        del self._connection
         self._connection = None
         logger.positive("Connection Closed")
 
