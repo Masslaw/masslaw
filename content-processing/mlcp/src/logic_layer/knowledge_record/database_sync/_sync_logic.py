@@ -36,12 +36,15 @@ def _fetch_graph_entities(graph_database_manager: GraphDatabaseManager) -> List[
     return entities
 
 
+@logger.process_function('Fetching connections from database')
 def _fetch_graph_connections(graph_database_manager: GraphDatabaseManager) -> List[KnowledgeRecordConnection]:
     edges = graph_database_manager.get_edges_by_properties({})
     connections = [graph_database_edge_to_connection(edge) for edge in edges]
     return connections
 
 
+# TODO: Instead of iterating over all components and submitting them one by one - a single database instruction per each - find a gremlin instruction that batch-performs this action - lowering overhead and improving performance
+@logger.process_function('Loading record data to database')
 def _load_record_data_to_database(record: KnowledgeRecord, graph_database_manager: GraphDatabaseManager):
     for entity in record.get_entities():
         _put_entity_in_database(entity, graph_database_manager)
