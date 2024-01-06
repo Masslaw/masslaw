@@ -1,5 +1,4 @@
 import unittest
-from unittest.mock import Mock
 
 from logic_layer.knowledge_record import KnowledgeRecord
 from logic_layer.text_processing.knowledge_extraction._knowledge_extractor import KnowledgeExtractor

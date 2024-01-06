@@ -1,35 +1,55 @@
 from typing import List
 
-from logic_layer.knowledge_record._connection import KnowledgeRecordConnection
-from logic_layer.knowledge_record.data_merging import ConnectionMerger
-from logic_layer.knowledge_record.data_merging import EntityMerger
-from logic_layer.knowledge_record._entity import KnowledgeRecordEntity
+from logic_layer.knowledge_record import KnowledgeRecordConnection
+from logic_layer.knowledge_record import KnowledgeRecordEntity
 from logic_layer.knowledge_record._record import KnowledgeRecord
-from logic_layer.knowledge_record._record_compnents_matching import connection_matching
-from logic_layer.knowledge_record._record_compnents_matching import entity_matching
+from logic_layer.knowledge_record.data_loading._graph_database_loading import graph_database_edge_to_connection
+from logic_layer.knowledge_record.data_loading._graph_database_loading import graph_database_node_to_entity
+from logic_layer.knowledge_record.record_merging import RecordMerger
+from logic_layer.knowledge_record.record_merging import RecordMergingConfiguration
 from logic_layer.remote_graph_database._graph_database_manager import GraphDatabaseManager
 from shared_layer.mlcp_logger import logger
 
 
 @logger.process_function('Syncing knowledge record with graph database')
-def sync_record_with_graph_database(graph_database_manager: GraphDatabaseManager, record: KnowledgeRecord):
-    record_entities = record.get_entities()
-    _sync_entities_with_graph_database(graph_database_manager, record_entities)
-    record.set_entities(record_entities)
-
-    record_connections = record.get_connections()
-    _sync_connections_with_graph_database(graph_database_manager, record_connections)
-    record.set_connections(record_connections)
+def sync_record_with_graph_database(record: KnowledgeRecord, graph_database_manager: GraphDatabaseManager, merging_configuration: RecordMergingConfiguration):
+    graph_record = _load_knowledge_record_from_database(graph_database_manager)
+    record_merger = RecordMerger(record, merging_configuration)
+    record_merger.merge_record(graph_record)
+    _load_record_data_to_database(record, graph_database_manager)
 
 
-@logger.process_function('Syncing entities with graph database')
-def _sync_entities_with_graph_database(graph_database_manager: GraphDatabaseManager, record_entities: List[KnowledgeRecordEntity]):
-    for record_entity in record_entities:
-        _sync_entity_with_graph_database(graph_database_manager, record_entity)
+@logger.process_function('Loading knowledge record from database')
+def _load_knowledge_record_from_database(graph_database_manager: GraphDatabaseManager) -> KnowledgeRecord:
+    entities = _fetch_graph_entities(graph_database_manager)
+    connections = _fetch_graph_connections(graph_database_manager)
+    record = KnowledgeRecord()
+    record.set_entities(entities)
+    record.set_connections(connections)
+    return record
 
 
-def _sync_entity_with_graph_database(graph_database_manager: GraphDatabaseManager, record_entity: KnowledgeRecordEntity):
-    _get_and_merge_matching_entity_if_exists(graph_database_manager, record_entity)
+@logger.process_function('Fetching entities from database')
+def _fetch_graph_entities(graph_database_manager: GraphDatabaseManager) -> List[KnowledgeRecordEntity]:
+    nodes = graph_database_manager.get_nodes_by_properties({})
+    entities = [graph_database_node_to_entity(node) for node in nodes]
+    return entities
+
+
+def _fetch_graph_connections(graph_database_manager: GraphDatabaseManager) -> List[KnowledgeRecordConnection]:
+    edges = graph_database_manager.get_edges_by_properties({})
+    connections = [graph_database_edge_to_connection(edge) for edge in edges]
+    return connections
+
+
+def _load_record_data_to_database(record: KnowledgeRecord, graph_database_manager: GraphDatabaseManager):
+    for entity in record.get_entities():
+        _put_entity_in_database(entity, graph_database_manager)
+    for connection in record.get_connections():
+        _put_connection_in_database(connection, graph_database_manager)
+
+
+def _put_entity_in_database(record_entity: KnowledgeRecordEntity, graph_database_manager: GraphDatabaseManager):
     if record_entity.get_id():
         graph_database_manager.load_properties_to_node(node_id=record_entity.get_id(), properties=record_entity.get_properties())
         return
@@ -37,39 +57,9 @@ def _sync_entity_with_graph_database(graph_database_manager: GraphDatabaseManage
     record_entity.set_id(new_node.get_id())
 
 
-def _get_and_merge_matching_entity_if_exists(graph_database_manager: GraphDatabaseManager, record_entity: KnowledgeRecordEntity):
-    matching_entities = entity_matching.fetch_matching_entities_in_database(graph_database_manager, record_entity)
-    if len(matching_entities) == 0:
-        return
-    if len(matching_entities) > 1:
-        logger.critical(f"More than one matching node found for entity {record_entity.get_properties()}")
-    matching_entity = matching_entities[0]
-    entity_merger = EntityMerger(record_entity)
-    entity_merger.merge_data_from_another_entity(matching_entity)
-
-
-@logger.process_function('Syncing connections with graph database')
-def _sync_connections_with_graph_database(graph_database_manager: GraphDatabaseManager, record_connections: List[KnowledgeRecordConnection]):
-    for record_connection in record_connections:
-        _sync_connection_with_graph_database(graph_database_manager, record_connection)
-
-
-def _sync_connection_with_graph_database(graph_database_manager: GraphDatabaseManager, record_connection: KnowledgeRecordConnection):
-    _get_and_merge_matching_connection_if_exists(graph_database_manager, record_connection)
+def _put_connection_in_database(record_connection: KnowledgeRecordConnection, graph_database_manager: GraphDatabaseManager):
     if record_connection.get_id():
         graph_database_manager.load_properties_to_edge(edge_id=record_connection.get_id(), properties=record_connection.get_properties())
         return
-    new_edge = graph_database_manager.set_edge(edge_label=record_connection.get_label(), from_node=record_connection.get_from_entity().get_id(),
-        to_node=record_connection.get_to_entity().get_id(), properties=record_connection.get_properties(), )
+    new_edge = graph_database_manager.set_edge(edge_label=record_connection.get_label(), from_node=record_connection.get_from_entity().get_id(), to_node=record_connection.get_to_entity().get_id(), properties=record_connection.get_properties(), )
     record_connection.set_id(new_edge.get_id())
-
-
-def _get_and_merge_matching_connection_if_exists(graph_database_manager: GraphDatabaseManager, record_connection: KnowledgeRecordConnection):
-    matching_connections = connection_matching.fetch_matching_connections_in_database(graph_database_manager, record_connection)
-    if len(matching_connections) == 0:
-        return
-    if len(matching_connections) > 1:
-        logger.critical(f"More than one matching edge found for connection {record_connection.get_properties()}")
-    matching_connection = matching_connections[0]
-    connection_merger = ConnectionMerger(record_connection)
-    connection_merger.merge_data_from_another_connection(matching_connection)

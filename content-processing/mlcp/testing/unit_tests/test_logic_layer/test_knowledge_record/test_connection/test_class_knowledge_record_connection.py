@@ -1,7 +1,8 @@
 import unittest
-from typing import Dict
-from logic_layer.knowledge_record._entity import KnowledgeRecordEntity
+
 from logic_layer.knowledge_record._connection import KnowledgeRecordConnection
+from logic_layer.knowledge_record._entity import KnowledgeRecordEntity
+
 
 class TestClassKnowledgeRecordConnection(unittest.TestCase):
 
@@ -9,8 +10,10 @@ class TestClassKnowledgeRecordConnection(unittest.TestCase):
         self.connection = KnowledgeRecordConnection()
         self.entity1 = KnowledgeRecordEntity(entity_id='entity1')
         self.entity2 = KnowledgeRecordEntity(entity_id='entity2')
-        self.sample_properties = {"prop1": "value1", "prop2": "value2"}
-        self.unique_property = "prop1"
+        self.sample_properties = {
+            "prop1": "value1",
+            "prop2": "value2"
+        }
 
     def test_set_and_get_id(self):
         self.connection.set_id("test_id")
@@ -36,14 +39,3 @@ class TestClassKnowledgeRecordConnection(unittest.TestCase):
         properties = self.connection.get_properties()
         properties["newKey"] = "newValue"
         self.assertNotEqual(properties, self.connection.get_properties())
-
-    def test_set_and_get_unique_properties(self):
-        self.connection.set_properties(self.sample_properties)
-        self.connection.set_property_as_unique(self.unique_property)
-        expected_unique_props = {self.unique_property: self.sample_properties[self.unique_property]}
-        self.assertEqual(self.connection.get_unique_properties(), expected_unique_props)
-
-    def test_set_property_as_unique_non_existent(self):
-        self.connection.set_properties(self.sample_properties)
-        self.connection.set_property_as_unique("non_existent")
-        self.assertNotIn("non_existent", self.connection.get_properties())

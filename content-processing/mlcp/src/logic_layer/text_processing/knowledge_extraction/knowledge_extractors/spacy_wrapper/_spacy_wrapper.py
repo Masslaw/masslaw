@@ -49,7 +49,7 @@ class SpacyWrapper(KnowledgeExtractor):
         self._merge_data_from_record(knowledge_record)
 
     @logger.process_function("Loading spacy document")
-    def _load_spacy_document_in_language(self, text: str, language: str) -> Doc|None:
+    def _load_spacy_document_in_language(self, text: str, language: str) -> Doc | None:
         logger.info(f"Loading a spacy document in language {common_formats.value(language)}.")
         spacy_model = self._spacy_models.get(language)
         if not spacy_model:

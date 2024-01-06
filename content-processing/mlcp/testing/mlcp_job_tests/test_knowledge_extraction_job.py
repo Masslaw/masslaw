@@ -26,7 +26,7 @@ parent_output_directory = './output/knowledge_extraction_job'
 reset_database = True
 
 
-class MLCPTextExtractionJobTest(unittest.TestCase, MLCPJobTest):
+class MLCPKnowledgeExtractionJobTest(unittest.TestCase, MLCPJobTest):
 
     @classmethod
     def setUpClass(cls):
@@ -59,13 +59,18 @@ class MLCPTextExtractionJobTest(unittest.TestCase, MLCPJobTest):
     def _load_mlcp_process_configuration(self):
         self._set_mlcp_process_configuration({
             'actions': [{
-                "name": "s3_download", "params": {
-                    "bucket": bucket_name, "files_data": [{
-                        "key": file_name, "save_as": self.in_temporary_storage(file_name)
+                "name": "s3_download",
+                "params": {
+                    "bucket": bucket_name,
+                    "files_data": [{
+                        "key": file_name,
+                        "save_as": self.in_temporary_storage(file_name)
                     }]
-                }, "required": "True"
+                },
+                "required": "True"
             }, {
-                "name": "extract_knowledge", "params": {
+                "name": "extract_knowledge",
+                "params": {
                     "files_data": [{
                         "file_name": self.in_temporary_storage(file_name),
                         "languages": languages,
@@ -87,10 +92,14 @@ class MLCPTextExtractionJobTest(unittest.TestCase, MLCPJobTest):
                         },
                         "knowledge_record_data": {
                             "node_properties": {
-                                "files": {"list": [file_id]},
+                                "files": {
+                                    "list": [file_id]
+                                },
                             },
                             "edge_properties": {
-                                "files": {"list": [file_id]},
+                                "files": {
+                                    "list": [file_id]
+                                },
                             },
                             "subgraph_node_properties": {
                                 "case_id": case_id
@@ -100,13 +109,22 @@ class MLCPTextExtractionJobTest(unittest.TestCase, MLCPJobTest):
                             },
                         }
                     }]
-                }, "required": "True"
+                },
+                "required": "True"
             },
             ]
         })
 
     def _after_application_finished(self):
-        db_manager = NeptuneDatabaseManager(neptune_write_connection_data={'endpoint': 'localhost', 'port': '8182', 'type': 'gremlin'}, neptune_read_connection_data={'endpoint': 'localhost', 'port': '8182', 'type': 'gremlin'}, )
+        db_manager = NeptuneDatabaseManager(neptune_write_connection_data={
+            'endpoint': 'localhost',
+            'port': '8182',
+            'type': 'gremlin'
+        }, neptune_read_connection_data={
+            'endpoint': 'localhost',
+            'port': '8182',
+            'type': 'gremlin'
+        }, )
 
         visualizer = GraphDatabaseVisualizer(db_manager)
         visualizer.visualize_database_content_using_mermaid(os.path.join(self.test_output_directory, "graph.mermaid"))

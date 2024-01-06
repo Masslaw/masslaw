@@ -2,12 +2,13 @@ from abc import abstractmethod
 from typing import List
 
 from logic_layer.knowledge_record import KnowledgeRecord
-from logic_layer.knowledge_record.data_merging import RecordMerger
+from logic_layer.knowledge_record.record_merging import RecordMerger
+from logic_layer.knowledge_record.record_merging import RecordMergingConfiguration
 from logic_layer.text_structures.extracted_optical_text_structure import ExtractedOpticalTextDocument
 from logic_layer.text_structures.extracted_optical_text_structure.document_loading import DocumentLoader
 from shared_layer.file_system_utils import file_system_utils
-from shared_layer.mlcp_logger import logger
 from shared_layer.mlcp_logger import common_formats
+from shared_layer.mlcp_logger import logger
 
 
 class KnowledgeExtractor:
@@ -16,15 +17,17 @@ class KnowledgeExtractor:
         self._languages = languages
         logger.info(f"Knowledge extractor initialized with languages: {self._languages}")
         self._knowledge_record = KnowledgeRecord()
-        self.__knowledge_record_merger = RecordMerger(self._knowledge_record)
+        self._knowledge_record_merger = RecordMerger(self._knowledge_record, RecordMergingConfiguration())
 
     def get_record(self) -> KnowledgeRecord:
         return self._knowledge_record
 
+    def set_knowledge_merging_configuration(self, merge_configuration: RecordMergingConfiguration):
+        self._knowledge_record_merger.set_merge_configuration(merge_configuration)
+
     @logger.process_function("Knowledge Extractor - Merging data from record")
     def _merge_data_from_record(self, another_record: KnowledgeRecord):
-        self.__knowledge_record_merger.merge_entities_from_another_record(another_record)
-        self.__knowledge_record_merger.merge_connections_in_record(bidirectional=True, ignore_properties=True)
+        self._knowledge_record_merger.merge_record(another_record)
 
     @logger.process_function("Knowledge Extractor - Processing text")
     def load_text(self, text: str):

@@ -1,14 +1,12 @@
-from typing import List
 from typing import Dict
 
 
 class KnowledgeRecordEntity:
 
-    def __init__(self, entity_id: str = '', label: str = '', properties: Dict = None, unique_properties: List[str] = None):
+    def __init__(self, entity_id: str = '', label: str = '', properties: Dict = None):
         self._id = entity_id
         self._label = label
         self._properties = properties or {}
-        self._unique_properties = unique_properties or []
 
     def get_id(self) -> str:
         return self._id
@@ -27,9 +25,3 @@ class KnowledgeRecordEntity:
 
     def set_properties(self, properties: Dict):
         self._properties = properties.copy()
-
-    def set_property_as_unique(self, property_key: str):
-        self._unique_properties.append(property_key)
-
-    def get_unique_properties(self) -> Dict:
-        return {key: self._properties[key] for key in self._unique_properties if key in self._properties}

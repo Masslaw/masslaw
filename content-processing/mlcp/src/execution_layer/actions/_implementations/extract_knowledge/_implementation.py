@@ -1,11 +1,13 @@
 from execution_layer.actions._application_action import ApplicationAction
 from logic_layer.knowledge_record import KnowledgeRecord
 from logic_layer.knowledge_record.database_sync import RecordDatabaseSyncManager
+from logic_layer.knowledge_record.record_merging import RecordMergingConfiguration
+from logic_layer.remote_graph_database.neptune_manager import NeptuneDatabaseManager
 from logic_layer.text_processing.knowledge_extraction._knowledge_extractor import KnowledgeExtractor
 from logic_layer.text_processing.knowledge_extraction.knowledge_extractors.spacy_wrapper import SpacyWrapper
-from shared_layer.mlcp_logger import logger
 from shared_layer.mlcp_logger import common_formats
-from logic_layer.remote_graph_database.neptune_manager import NeptuneDatabaseManager
+from shared_layer.mlcp_logger import logger
+
 
 class ExtractKnowledge(ApplicationAction):
     _required_params = ['files_data']
@@ -37,6 +39,7 @@ class ExtractKnowledge(ApplicationAction):
             logger.warn(f"Skipping file due to missing data")
             return False
 
+        merging_configuration = RecordMergingConfiguration()
         extractor: KnowledgeExtractor = SpacyWrapper(languages)
         extractor.load_file(file_name)
         knowledge_record: KnowledgeRecord = extractor.get_record()
@@ -51,7 +54,7 @@ class ExtractKnowledge(ApplicationAction):
         if file_id: self.prefrom_custom_knowledge_items_properties_manipulation_for_file(knowledge_record, file_id)
 
         logger.info(f"Proceeding to sync extracted knowledge with neptune database")
-        graph_database_sync_manager = RecordDatabaseSyncManager(knowledge_record)
+        graph_database_sync_manager = RecordDatabaseSyncManager(knowledge_record, merging_configuration)
 
         neptune_database_manager = NeptuneDatabaseManager(
             neptune_read_connection_data=neptune_read_endpoint_data,
@@ -69,12 +72,14 @@ class ExtractKnowledge(ApplicationAction):
         for entity in knowledge_record.get_entities():
             entity_properties = entity.get_properties()
             information_items = entity_properties.get("information_items", [])
-            entity_properties['information_items'] = {file_id: information_items}
+            entity_properties['information_items'] = {
+                file_id: information_items
+            }
             entity.set_properties(entity_properties)
         for connection in knowledge_record.get_connections():
             connection_properties = connection.get_properties()
             evidence = connection_properties.get("evidence", [])
-            connection_properties['evidence'] = {file_id: evidence}
+            connection_properties['evidence'] = {
+                file_id: evidence
+            }
             connection.set_properties(connection_properties)
-
-

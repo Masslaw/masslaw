@@ -6,13 +6,13 @@ from logic_layer.knowledge_record.data_loading._exceptions import RecordDictiona
 
 
 def assert_entity_dictionary_data_record(data: Dict):
-    for key in ['id', 'label', 'properties', 'unique_properties']:
+    for key in ['id', 'label', 'properties']:
         if key not in data:
             raise EntityDictionaryDataPropertyMissing(key)
 
 
 def assert_connection_dictionary_data_record(data: Dict):
-    for key in ['id', 'label', 'from_entity_id', 'to_entity_id', 'properties', 'unique_properties']:
+    for key in ['id', 'label', 'from_entity_id', 'to_entity_id', 'properties']:
         if key not in data:
             raise ConnectionDictionaryDataPropertyMissing(key)
 

@@ -1,7 +1,6 @@
 from logic_layer.knowledge_record import KnowledgeRecord
 from logic_layer.knowledge_record import KnowledgeRecordConnection
 from logic_layer.knowledge_record import KnowledgeRecordEntity
-from logic_layer.text_processing.knowledge_extraction.knowledge_extractors.spacy_wrapper._spacy_document_processing._basic_document_processing._document_data_filterer import DocumentDataFilterer
 from logic_layer.text_processing.knowledge_extraction.knowledge_extractors.spacy_wrapper._spacy_document_processing._structures import SpacyDocumentData
 from shared_layer.mlcp_logger import logger
 
@@ -23,7 +22,7 @@ class SpacyDocumentKnowledgeRecordBuilder:
         for entity in self._document_data.document_entities:
             entity_label = entity.entity_type
             entity_properties = entity.entity_data
-            record_entity = KnowledgeRecordEntity('', entity_label, entity_properties, ['title', 'iso'])
+            record_entity = KnowledgeRecordEntity('', entity_label, entity_properties)
             self._document_entities_to_record_entities[entity] = record_entity
             self._knowledge_record.add_entities(record_entity)
 

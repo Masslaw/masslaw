@@ -8,7 +8,6 @@ class NeptuneStubTestLoader:
 
     def start_gremlin_server(self):
         server_executable_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'apache-tinkerpop-gremlin-server-3.7.0')
-        subprocess.Popen([f'{server_executable_path}/bin/gremlin-server.sh', 'stop'])
         self.process = subprocess.Popen([f'{server_executable_path}/bin/gremlin-server.sh', f'start'])
 
     def stop_gremlin_server(self):

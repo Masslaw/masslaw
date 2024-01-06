@@ -8,7 +8,7 @@ from mlcp.testing.stubs.s3_stub import S3StubTestLoader
 from shared_layer.file_system_utils._file_system_utils import clear_directory
 from shared_layer.file_system_utils._file_system_utils import join_paths
 
-file_name = "ukftt_grc_2023_1033.pdf"
+file_name = "A-Very-Short-Story.pdf"
 
 bucket_name = "mlcp-test-bucket"
 
@@ -51,13 +51,18 @@ class MLCPTextExtractionJobTest(unittest.TestCase, MLCPJobTest):
     def _load_mlcp_process_configuration(self):
         self._set_mlcp_process_configuration({
             'actions': [{
-                "name": "s3_download", "params": {
-                    "bucket": bucket_name, "files_data": [{
-                        "key": file_name, "save_as": self.in_temporary_storage(file_name)
+                "name": "s3_download",
+                "params": {
+                    "bucket": bucket_name,
+                    "files_data": [{
+                        "key": file_name,
+                        "save_as": self.in_temporary_storage(file_name)
                     }]
-                }, "required": "True"
+                },
+                "required": "True"
             }, {
-                "name": "process_files", "params": {
+                "name": "process_files",
+                "params": {
                     "files_data": [{
                         "file_name": self.in_temporary_storage(file_name),
                         "languages": languages,
@@ -69,14 +74,20 @@ class MLCPTextExtractionJobTest(unittest.TestCase, MLCPJobTest):
                         "debug_data_dir": os.path.join(self.test_output_directory, "debug_data"),
                         "converted_file_output_dir": os.path.join(self.test_output_directory, "converted_files"),
                     }]
-                }, "required": "True"
+                },
+                "required": "True"
             }, {
-                "name": "s3_upload", "params": {
-                    "bucket": bucket_name, "files_data": [{
-                        "key": f"{file_id}/client_exposed/extracted_text", "saved_as": os.path.join(self.test_output_directory, "extracted_text")
+                "name": "s3_upload",
+                "params": {
+                    "bucket": bucket_name,
+                    "files_data": [{
+                        "key": f"{file_id}/client_exposed/extracted_text",
+                        "saved_as": os.path.join(self.test_output_directory, "extracted_text")
                     }, {
-                        "key": f"{file_id}/client_exposed/processed_assets", "saved_as": os.path.join(self.test_output_directory, "processed_assets")
+                        "key": f"{file_id}/client_exposed/processed_assets",
+                        "saved_as": os.path.join(self.test_output_directory, "processed_assets")
                     }]
-                }, "required": "True"
+                },
+                "required": "True"
             }]
         })
