@@ -2,12 +2,12 @@ from typing import Dict
 
 from logic_layer.knowledge_record import KnowledgeRecordConnection
 from shared_layer.list_utils import list_utils
-from shared_layer.mlcp_logger import common_formats
 from shared_layer.mlcp_logger import logger
+from shared_layer.mlcp_logger import common_formats
 
 
 def _title_merging_function(value1: str, value2: str) -> str:
-    return max(value1, value2, key=len)
+    return max(str(value1), str(value2), key=len)
 
 
 def _strength_merging_function(value1: int, value2: int) -> int:
@@ -52,6 +52,7 @@ def merge_connection_properties(connection1_properties: Dict, connection2_proper
         connection1_type = type(connection1_value)
         connection2_type = type(connection2_value)
         if connection1_type != connection2_type:
+            # TODO: maybe we should try casting one of the values to the other's type
             logger.warn(f"Connection property {common_formats.value(property_name)} has different types in the two connections: {common_formats.value(connection1_type)} and {common_formats.value(connection2_type)} respectively. The value from the second connection will be used.")
             merged_properties[property_name] = connection2_value
             continue

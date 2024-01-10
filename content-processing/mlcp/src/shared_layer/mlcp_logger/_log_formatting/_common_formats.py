@@ -7,7 +7,7 @@ from shared_layer.mlcp_logger._log_formatting._log_styling import as_mark
 from shared_layer.mlcp_logger._log_formatting._log_styling import as_underline
 
 
-def value(message: str) -> str:
+def value(message: any) -> str:
     message = str(message)
     return as_magenta(as_underline(message))
 

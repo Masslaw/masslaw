@@ -16,7 +16,7 @@ from shared_layer.mlcp_logger import common_formats
 from shared_layer.mlcp_logger import logger
 
 
-PROCESSED_HIERARCHY_LEVEL_IN_DOCUMENT_STRUCTURE = OpticalStructureHierarchyLevel.BLOCK
+PROCESSED_HIERARCHY_LEVEL_IN_DOCUMENT_STRUCTURE = OpticalStructureHierarchyLevel.GROUP
 
 
 class SpacyWrapper(KnowledgeExtractor):
@@ -56,7 +56,6 @@ class SpacyWrapper(KnowledgeExtractor):
         texts_to_process = [structure_child_to_process.get_value() for structure_child_to_process in structure_children_to_process]
         self._process_texts(texts_to_process)
 
-
     @logger.process_function("Spacy Wrapper - Processing text in a single language")
     def _process_texts_in_language(self, texts: List[str], language: str) -> List[KnowledgeRecord] | None:
         logger.info(f"Processing text in language {common_formats.value(language)}")
@@ -68,9 +67,9 @@ class SpacyWrapper(KnowledgeExtractor):
         knowledge_records = [knowledge_record for knowledge_record in knowledge_records if knowledge_record is not None]
         return knowledge_records
 
-    @logger.process_function("Loading spacy document")
+    @logger.process_function("Loading spacy documents")
     def _load_spacy_documents_in_language(self, texts: List[str], language: str) -> List[Doc] | None:
-        logger.info(f"Loading a spacy document in language {common_formats.value(language)}.")
+        logger.info(f"Loading a spacy documents for tests in language {common_formats.value(language)}.")
         spacy_model = self._spacy_models.get(language)
         if not spacy_model:
             logger.warn(f'Trying to process text in a language that failed loading: {common_formats.value(language)}.')

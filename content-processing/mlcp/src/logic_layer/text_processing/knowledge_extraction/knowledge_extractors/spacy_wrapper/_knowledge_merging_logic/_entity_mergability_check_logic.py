@@ -1,11 +1,14 @@
+import re
+
 from logic_layer.knowledge_record import KnowledgeRecordEntity
+from logic_layer.text_processing.knowledge_extraction.knowledge_extractors.spacy_wrapper._knowledge_merging_logic.merging_logic_config import PERSON_ENTITIES_REMOVABLE_EXPRESSIONS
 
 
 def check_spacy_entities_mergeable(entity1: KnowledgeRecordEntity, entity2: KnowledgeRecordEntity):
     if _check_entity_ids(entity1, entity2): return True
-    if not _check_entity_labels(entity1, entity2): return False
     if _determine_person_typed_entities_mergeable(entity1, entity2): return True
     if _determine_date_time_typed_entities_mergeable(entity1, entity2): return True
+    if _determine_general_entity_typed_entities_mergeable(entity1, entity2): return True
     return False
 
 
@@ -13,20 +16,44 @@ def _check_entity_ids(entity1: KnowledgeRecordEntity, entity2: KnowledgeRecordEn
     return entity1.get_id() and entity2.get_id() and entity1.get_id() == entity2.get_id()
 
 
-def _check_entity_labels(entity1: KnowledgeRecordEntity, entity2: KnowledgeRecordEntity):
-    return entity1.get_label() == entity2.get_label()
-
-
-def _determine_person_typed_entities_mergeable(entity1: KnowledgeRecordEntity, entity2: KnowledgeRecordEntity):
+def _determine_person_typed_entities_mergeable(entity1: KnowledgeRecordEntity, entity2: KnowledgeRecordEntity) -> bool:
     if not (entity1.get_label() == "PERSON" and entity2.get_label() == "PERSON"): return False
-    entity1_title = entity1.get_properties().get("title", '')
-    entity2_title = entity2.get_properties().get("title", '')
-    if len(set(entity1_title.split(' ')) & set(entity2_title.split(' '))) > 0: return True
+    entity1_title = str(entity1.get_properties().get("title", '')).lower()
+    entity2_title = str(entity2.get_properties().get("title", '')).lower()
+    entity1_title = re.sub(r'\s+', ' ', re.sub(r'[^A-Za-z]', ' ', entity1_title))
+    entity2_title = re.sub(r'\s+', ' ', re.sub(r'[^A-Za-z]', ' ', entity2_title))
+    entity1_parts = set(entity1_title.split(' '))
+    entity2_parts = set(entity2_title.split(' '))
+    entity1_parts -= PERSON_ENTITIES_REMOVABLE_EXPRESSIONS
+    entity2_parts -= PERSON_ENTITIES_REMOVABLE_EXPRESSIONS
+    entity1_parts = {part for part in entity1_parts if len(part) > 1}
+    entity2_parts = {part for part in entity2_parts if len(part) > 1}
+    entity_parts_overlap = entity1_parts & entity2_parts
+    if len(entity_parts_overlap) > (len(entity1_parts) + len(entity2_parts)) / 4: return True  # - more than half of the average of the lengths
     return False
 
 
-def _determine_date_time_typed_entities_mergeable(entity1: KnowledgeRecordEntity, entity2: KnowledgeRecordEntity):
+def _determine_date_time_typed_entities_mergeable(entity1: KnowledgeRecordEntity, entity2: KnowledgeRecordEntity) -> bool:
     if not (entity1.get_label() in ("DATE", "TIME",) and entity2.get_label() in ("DATE", "TIME",)): return False
-    entity1_iso = entity1.get_properties().get("iso", '')
-    entity2_iso = entity2.get_properties().get("iso", '')
-    return entity1_iso == entity2_iso
+    entity1_datetime = entity1.get_properties().get("datetime", {})
+    entity2_datetime = entity2.get_properties().get("datetime", {})
+    for key, value in entity1_datetime.items():
+        if value != entity2_datetime.get(key, value): return False
+    for key, value in entity2_datetime.items():
+        if value != entity1_datetime.get(key, value): return False
+    return True
+
+
+def _determine_general_entity_typed_entities_mergeable(entity1: KnowledgeRecordEntity, entity2: KnowledgeRecordEntity) -> bool:
+    if not (entity1.get_label() == entity2.get_label()): return False
+    entity1_title = str(entity1.get_properties().get("title", '')).lower()
+    entity2_title = str(entity2.get_properties().get("title", '')).lower()
+    entity1_title = re.sub(r'\s+', ' ', re.sub(r'[^A-Za-z]', ' ', entity1_title))
+    entity2_title = re.sub(r'\s+', ' ', re.sub(r'[^A-Za-z]', ' ', entity2_title))
+    entity1_parts = set(entity1_title.split(' '))
+    entity2_parts = set(entity2_title.split(' '))
+    entity1_parts = {part for part in entity1_parts if len(part) > 1}
+    entity2_parts = {part for part in entity2_parts if len(part) > 1}
+    entity_parts_overlap = entity1_parts & entity2_parts
+    if len(entity_parts_overlap) > (len(entity1_parts) + len(entity2_parts)) / 4: return True  # - more than half of the average of the lengths
+    return False

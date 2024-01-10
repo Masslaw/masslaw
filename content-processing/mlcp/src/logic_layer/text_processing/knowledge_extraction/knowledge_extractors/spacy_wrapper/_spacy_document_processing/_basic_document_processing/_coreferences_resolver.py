@@ -31,7 +31,6 @@ class SpacyCoreferencesResolver:
     def _resolve_chain_entities(self):
         for chain in self._coreference_chains:
             chain.chain_entities = set()
-            spacy_document = self._document_data.spacy_document
             for token in chain.chain_tokens:
                 entity_span = common.get_entity_span_for_token(token)
                 if not entity_span: continue

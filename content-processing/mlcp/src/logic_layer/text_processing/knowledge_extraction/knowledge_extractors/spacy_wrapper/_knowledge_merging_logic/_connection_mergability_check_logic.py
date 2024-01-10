@@ -10,7 +10,7 @@ def check_spacy_connections_mergeable(connection1: KnowledgeRecordConnection, co
 
 
 def _check_connection_ids(connection1: KnowledgeRecordConnection, connection2: KnowledgeRecordConnection):
-    return connection1.get_id() == connection2.get_id()
+    return connection1.get_id() and connection2.get_id() and connection1.get_id() == connection2.get_id()
 
 
 def _check_connection_labels(connection1: KnowledgeRecordConnection, connection2: KnowledgeRecordConnection):

@@ -28,9 +28,10 @@ class SpacyDocumentProcessor:
         self._resolve_coreferences()
         self._extract_entities()
         self._inflate_entity_data()
+        self._filter_entities()
         self._extract_relations()
         self._inflate_relations_data()
-        self._filter_document_data()
+        self._filter_relations()
         self._build_knowledge_record()
         return self._knowledge_record
 
@@ -47,6 +48,10 @@ class SpacyDocumentProcessor:
         self._document_data_inflater.generate_titles_for_entities()
         self._document_data_inflater.inflate_entity_data()
 
+    @logger.process_function("Filtering document entities")
+    def _filter_entities(self):
+        self._document_data_filterer.filter_entities()
+
     @logger.process_function("Extracting relations")
     def _extract_relations(self):
         self._relations_extractor.extract_relations()
@@ -55,9 +60,9 @@ class SpacyDocumentProcessor:
     def _inflate_relations_data(self):
         self._document_data_inflater.inflate_relations_data()
 
-    @logger.process_function("Filtering document data")
-    def _filter_document_data(self):
-        self._document_data_filterer.filter_document_data()
+    @logger.process_function("Filtering document relations")
+    def _filter_relations(self):
+        self._document_data_filterer.filter_relations()
 
     @logger.process_function("Building knowledge record")
     def _build_knowledge_record(self):

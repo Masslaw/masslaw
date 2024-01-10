@@ -10,7 +10,7 @@ from shared_layer.list_utils import list_utils
 
 
 def inflate_person_entity_data(entitise: List[DocumentEntity]|Set[DocumentEntity]):
-    person_typed_entities = [entity for entity in entitise if entity.entity_type == "PERSON"]
+    person_typed_entities = [entity for entity in entitise if entity.entity_span.label_ == "PERSON"]
     _load_entity_information_items(person_typed_entities)
 
 
@@ -24,10 +24,7 @@ def _load_entity_information_items(person_entities: List[DocumentEntity]):
 
 def _get_entity_information_items(entity: DocumentEntity) -> Set[Span]:
     entity_information_items = set()
-    for entity_span in entity.entity_spans:
-        entity_information_items |= _get_information_about_a_person(entity_span.root)
-    for entity_appearance in entity.entity_appearances:
-        entity_information_items |= _get_information_about_a_person(entity_appearance)
+    entity_information_items |= _get_information_about_a_person(entity.entity_span.root)
     return entity_information_items
 
 

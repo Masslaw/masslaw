@@ -23,7 +23,7 @@ _neptune_client = NeptuneClient(read_connection=NeptuneConnection(connection_end
 
 _s3_bucket_manager = S3BucketManager(CASES_CONTENT_BUCKET_ID)
 
-CACHED_NODE_PROPERTIES = ['title', 'iso']
+CACHED_NODE_PROPERTIES = ['title', 'datetime']
 CACHED_EDGE_PROPERTIES = ['strength']
 
 

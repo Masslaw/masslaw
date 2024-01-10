@@ -48,7 +48,7 @@ class ExtractKnowledge(ApplicationAction):
         knowledge_record: KnowledgeRecord = extractor.get_record()
 
         logger.debug(f"{common_formats.value(str(len(knowledge_record.get_entities())))} entities have been extracted.")
-        logger.debug(f"{common_formats.value(str(len(knowledge_record.get_entities())))} connections have been extracted.")
+        logger.debug(f"{common_formats.value(str(len(knowledge_record.get_connections())))} connections have been extracted.")
 
         knowledge_record.batch_update_entity_properties(knowledge_record_data.get("node_properties", {}))
         knowledge_record.batch_update_connection_properties(knowledge_record_data.get("edge_properties", {}))

@@ -1,5 +1,7 @@
 from typing import Dict
 
+import pandas as pd
+
 from logic_layer.knowledge_record import KnowledgeRecordEntity
 from shared_layer.mlcp_logger import common_formats
 from shared_layer.mlcp_logger import logger
@@ -7,7 +9,7 @@ from shared_layer.list_utils import list_utils
 
 
 def _title_merging_function(value1: str, value2: str) -> str:
-    return max(value1, value2, key=len)
+    return max(str(value1), str(value2), key=len)
 
 
 def _list_merging_function(list1: list, list2: list) -> list:
@@ -46,6 +48,7 @@ def merge_entity_properties(entity1_properties: Dict, entity2_properties: Dict) 
         entity1_type = type(entity1_value)
         entity2_type = type(entity2_value)
         if entity1_type != entity2_type:
+            # TODO: maybe we should try casting one of the values to the other's type
             logger.warn(f"Entity property {common_formats.value(property_name)} has different types in the two entities: {common_formats.value(entity1_type)} and {common_formats.value(entity2_type)} respectively. The value from the second entity will be used.")
             merged_properties[property_name] = entity2_value
             continue

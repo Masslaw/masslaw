@@ -12,7 +12,7 @@ class SpacyDocumentDataInflater:
 
     def generate_titles_for_entities(self):
         for entity in self._document_data.document_entities:
-            entity.entity_data['title'] = max(entity.entity_spans, key=lambda span: len(span.text)).text.replace('\n', ' ')
+            entity.entity_data['title'] = entity.entity_span.text.replace('\n', ' ')
 
     def inflate_entity_data(self):
         inflate_person_entity_data(self._document_data.document_entities)

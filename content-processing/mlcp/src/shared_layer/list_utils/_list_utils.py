@@ -1,6 +1,7 @@
-from typing import Iterable
 from typing import List
 from typing import Type
+
+from shared_layer.mlcp_logger import logger
 
 
 def force_element_in_index_path(lst: List, index_path: List[int], element: any, default: Type = None):

@@ -24,7 +24,7 @@ class MLCPLogger(logging.Logger):
         self._formatter = None
 
         self._init_formatter()
-        self.set_log_output_stream(log_output_stream_handler)
+        self.set_log_output_stream(log_output_stream_handler or sys.stdout)
 
         self.set_colored(colored)
 
@@ -95,7 +95,7 @@ class MLCPLogger(logging.Logger):
         self.log(level=logging.ERROR, msg=common_formats.important(msg), *args, **kwargs)
 
     def set_log_output_stream(self, handler):
-        stdout_handler = logging.StreamHandler(handler or sys.stdout)
+        stdout_handler = logging.StreamHandler(handler)
         stdout_handler.setLevel(self.level)
         stdout_handler.setFormatter(self._formatter)
         self.addHandler(stdout_handler)
@@ -140,5 +140,6 @@ class MLCPLogger(logging.Logger):
 logger = None
 
 if not logger:
+    logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
     logger = MLCPLogger("MLCPLogger")
     logger.setLevel(logging.NOTSET)

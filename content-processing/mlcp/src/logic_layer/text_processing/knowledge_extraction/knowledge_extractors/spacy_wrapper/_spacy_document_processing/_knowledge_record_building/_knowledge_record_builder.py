@@ -20,7 +20,7 @@ class SpacyDocumentKnowledgeRecordBuilder:
     @logger.process_function("Creating entities")
     def _create_entities(self):
         for entity in self._document_data.document_entities:
-            entity_label = entity.entity_type
+            entity_label = entity.entity_span.label_
             entity_properties = entity.entity_data
             record_entity = KnowledgeRecordEntity('', entity_label, entity_properties)
             self._document_entities_to_record_entities[entity] = record_entity

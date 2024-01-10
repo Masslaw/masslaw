@@ -1,24 +1,19 @@
-from contextvars import Token
-from typing import List
 from typing import Set
 
 from spacy.tokens.doc import Doc
+from spacy.tokens.token import Token
 from spacy.tokens.span import Span
 
 
 class CoreferenceChain:
     chain_tokens: Set[Token]
-    chain_subjects: Set[Span]
     chain_entities: Set[Span]
 
 
 class DocumentEntity:
-    entity_spans: Set[Span] = set()
-    entity_type: str = None
+    entity_span: Span = None
     entity_data: dict = {}
     entity_appearances: Set[Token]
-    coreference_chains: Set[CoreferenceChain]
-
 
 class DocumentEntityRelation:
     relation_type: str = 'connection'
