@@ -1,4 +1,5 @@
 import unittest
+from typing import List
 
 from logic_layer.knowledge_record import KnowledgeRecord
 from logic_layer.text_processing.knowledge_extraction._knowledge_extractor import KnowledgeExtractor
@@ -12,11 +13,11 @@ class TestClassKnowledgeExtractor(unittest.TestCase):
         text_to_process = 'This is some text to process.'
 
         class KnowledgeExtractorMock(KnowledgeExtractor):
-            def _process_text(self, text: str):
+            def _process_texts(self, text: List[str]):
                 self._knowledge_record = mock_knowledge_record
 
         knowledge_extractor_mock = KnowledgeExtractorMock([])
-        knowledge_extractor_mock.load_text(text_to_process)
+        knowledge_extractor_mock.load_texts([text_to_process])
 
         self.assertEqual(knowledge_extractor_mock.get_record(), mock_knowledge_record)
 

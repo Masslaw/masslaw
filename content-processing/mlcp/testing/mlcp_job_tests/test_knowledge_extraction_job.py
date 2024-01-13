@@ -11,7 +11,7 @@ from mlcp.testing.stubs.s3_stub import S3StubTestLoader
 from shared_layer.file_system_utils._file_system_utils import clear_directory
 from shared_layer.file_system_utils._file_system_utils import join_paths
 
-file_name = "oag_report_-_bronx-westchester.xml"
+file_name = "A-Very-Short-Story.txt"
 
 bucket_name = "mlcp-test-bucket"
 
@@ -23,7 +23,7 @@ file_id = file_name
 
 parent_output_directory = './output/knowledge_extraction_job'
 
-reset_database = True
+reset_database = False
 
 
 class MLCPKnowledgeExtractionJobTest(unittest.TestCase, MLCPJobTest):
@@ -102,10 +102,10 @@ class MLCPKnowledgeExtractionJobTest(unittest.TestCase, MLCPJobTest):
                                 },
                             },
                             "subgraph_node_properties": {
-                                "case_id": case_id
+                                "case_id": case_id + file_name
                             },
                             "subgraph_edge_properties": {
-                                "case_id": case_id
+                                "case_id": case_id + file_name
                             },
                         }
                     }]
@@ -130,11 +130,11 @@ class MLCPKnowledgeExtractionJobTest(unittest.TestCase, MLCPJobTest):
         visualizer.visualize_database_content_using_mermaid(os.path.join(self.test_output_directory, "graph.mermaid"))
         visualizer.visualize_database_content_using_matplotlib(os.path.join(self.test_output_directory, "graph.png"))
 
-        if reset_database:
-            all_nodes = db_manager.get_nodes_by_properties({})
-            for node in all_nodes:
-                db_manager.delete_node_if_exists(node_id=node.get_id())
+        all_nodes = db_manager.get_nodes_by_properties({})
+        all_edges = db_manager.get_edges_by_properties({})
+        print(f"Number of nodes: {len(all_nodes)}")
+        print(f"Number of edges: {len(all_edges)}")
 
-            all_edges = db_manager.get_edges_by_properties({})
-            for edge in all_edges:
-                db_manager.delete_edge_if_exists(edge_id=edge.get_id())
+        if reset_database:
+            db_manager.delete_nodes_if_exist([node.get_id() for node in all_nodes])
+            db_manager.delete_edges_if_exist([edge.get_id() for edge in all_edges])

@@ -2,6 +2,8 @@ import unittest
 
 import gremlin_python
 
+from logic_layer.remote_graph_database import GraphDatabaseEdge
+from logic_layer.remote_graph_database import GraphDatabaseNode
 from logic_layer.remote_graph_database.neptune_manager import NeptuneDatabaseManager
 from mlcp.testing.stubs.neptune_stub import NeptuneStubTestLoader
 
@@ -19,20 +21,16 @@ class TestClassNeptuneDatabaseManager(unittest.TestCase):
 
     def tearDown(self):
         nodes = self.manager1.get_nodes_by_properties({})
-        for node in nodes:
-            self.manager1.delete_node_if_exists(node_id=node.get_id())
+        self.manager1.delete_nodes_if_exist([node.get_id() for node in nodes])
 
         edges = self.manager1.get_edges_by_properties({})
-        for edge in edges:
-            self.manager1.delete_edge_if_exists(edge_id=edge.get_id())
+        self.manager1.delete_edges_if_exist([edge.get_id() for edge in edges])
 
         nodes = self.manager2.get_nodes_by_properties({})
-        for node in nodes:
-            self.manager2.delete_node_if_exists(node_id=node.get_id())
+        self.manager2.delete_nodes_if_exist([node.get_id() for node in nodes])
 
         edges = self.manager2.get_edges_by_properties({})
-        for edge in edges:
-            self.manager2.delete_edge_if_exists(edge_id=edge.get_id())
+        self.manager2.delete_edges_if_exist([edge.get_id() for edge in edges])
 
     @classmethod
     def tearDownClass(cls):
@@ -41,10 +39,10 @@ class TestClassNeptuneDatabaseManager(unittest.TestCase):
     def test_set_new_node(self):
         node_label = "Person"
         node_properties = {"name": "Bob", "age": 30}
-        new_node = self.manager1.set_node(label=node_label, properties=node_properties)
+        new_node = self.manager1.set_nodes([GraphDatabaseNode(label=node_label, properties=node_properties)])[0]
         node_id = new_node.get_id()
 
-        node = self.manager1.get_node_by_id(node_id=node_id)
+        node = self.manager1.get_nodes_by_ids([node_id])[0]
         self.assertEqual(node.get_id(), node_id)
         self.assertEqual(node.get_label(), node_label)
         self.assertEqual(node.get_properties(), {**node_properties, **self.manager1.get_subgraph_node_properties()})
@@ -52,10 +50,10 @@ class TestClassNeptuneDatabaseManager(unittest.TestCase):
     def test_replace_node(self):
         existing_node_label = "Person"
         existing_node_properties = {"name": "Bob", "age": 30}
-        existing_node = self.manager1.set_node(label=existing_node_label, properties=existing_node_properties)
+        existing_node = self.manager1.set_nodes([GraphDatabaseNode(label=existing_node_label, properties=existing_node_properties)])[0]
         node_id = existing_node.get_id()
 
-        node = self.manager1.get_node_by_id(node_id=node_id)
+        node = self.manager1.get_nodes_by_ids([node_id])[0]
         self.assertEqual(node.get_id(), node_id)
         self.assertEqual(node.get_label(), existing_node_label)
         self.assertEqual(node.get_properties(), {**existing_node_properties, **self.manager1.get_subgraph_node_properties()})
@@ -63,12 +61,12 @@ class TestClassNeptuneDatabaseManager(unittest.TestCase):
         new_node_label = "Person"
         new_node_properties = {"name": "Will", "age": 31}
         with self.assertRaises(gremlin_python.driver.protocol.GremlinServerError):
-            self.manager1.set_node(label=new_node_label, properties=new_node_properties, node_id=node_id)
+            self.manager1.set_nodes([GraphDatabaseNode(node_id=node_id, label=new_node_label, properties=new_node_properties)])
 
-        self.manager1.delete_node_if_exists(node_id=node_id)
-        self.manager1.set_node(label=new_node_label, properties=new_node_properties, node_id=node_id)
+        self.manager1.delete_nodes_if_exist([node_id])
+        self.manager1.set_nodes([GraphDatabaseNode(node_id=node_id, label=new_node_label, properties=new_node_properties)])
 
-        node = self.manager1.get_node_by_id(node_id=node_id)
+        node = self.manager1.get_nodes_by_ids([node_id])[0]
         self.assertEqual(node.get_id(), node_id)
         self.assertEqual(node.get_label(), new_node_label)
         self.assertEqual(node.get_properties(), {**new_node_properties, **self.manager1.get_subgraph_node_properties()})
@@ -76,33 +74,33 @@ class TestClassNeptuneDatabaseManager(unittest.TestCase):
     def test_update_node_properties(self):
         existing_node_label = "Person"
         existing_node_properties = {"name": "Bob", "age": 30}
-        existing_node = self.manager1.set_node(label=existing_node_label, properties=existing_node_properties)
+        existing_node = self.manager1.set_nodes([GraphDatabaseNode(label=existing_node_label, properties=existing_node_properties)])[0]
         node_id = existing_node.get_id()
 
-        node = self.manager1.get_node_by_id(node_id=node_id)
+        node = self.manager1.get_nodes_by_ids([node_id])[0]
         self.assertIsNotNone(node)
         self.assertEqual(node.get_id(), node_id)
         self.assertEqual(node.get_label(), existing_node_label)
         self.assertEqual(node.get_properties(), {**existing_node_properties, **self.manager1.get_subgraph_node_properties()})
 
         new_node_properties = {"name": "Will", "age": 31}
-        self.manager1.load_properties_to_node(node_id=node_id, properties=new_node_properties)
+        self.manager1.load_properties_to_nodes(node_properties={node_id: new_node_properties})
 
-        node = self.manager1.get_node_by_id(node_id=node_id)
+        node = self.manager1.get_nodes_by_ids([node_id])[0]
         self.assertIsNotNone(node)
         self.assertEqual(node.get_id(), node_id)
         self.assertEqual(node.get_label(), existing_node_label)
         self.assertEqual(node.get_properties(), new_node_properties)
 
     def test_get_nodes_by_properties(self):
-        bob1 = self.manager1.set_node(label="Man", properties={'name': 'bob', 'age': 30})
-        bob2 = self.manager1.set_node(label="Man", properties={'name': 'bob', 'age': 40})
+        bob1, bob2 = self.manager1.set_nodes([GraphDatabaseNode(label="Man", properties={'name': 'bob', 'age': 30}),
+                                              GraphDatabaseNode(label="Man", properties={'name': 'bob', 'age': 40})])
 
-        alice1 = self.manager1.set_node(label="Woman", properties={'name': 'alice', 'age': 30})
-        alice2 = self.manager1.set_node(label="Woman", properties={'name': 'alice', 'age': 40})
+        alice1, alice2 = self.manager1.set_nodes([GraphDatabaseNode(label="Woman", properties={'name': 'alice', 'age': 30}),
+                                                  GraphDatabaseNode(label="Woman", properties={'name': 'alice', 'age': 40})])
 
-        will1 = self.manager1.set_node(label='Man', properties={'name': 'will', 'age': 30})
-        will2 = self.manager1.set_node(label="Man", properties={'name': 'will', 'age': 40})
+        will1, will2 = self.manager1.set_nodes([GraphDatabaseNode(label="Man", properties={'name': 'will', 'age': 30}),
+                                                GraphDatabaseNode(label="Man", properties={'name': 'will', 'age': 40})])
 
         bobs = self.manager1.get_nodes_by_properties(properties={'name': 'bob'})
         self.assertSetEqual(set([bob.get_id() for bob in bobs]), {bob1.get_id(), bob2.get_id()})
@@ -129,18 +127,18 @@ class TestClassNeptuneDatabaseManager(unittest.TestCase):
         edge_label = "Knows"
         edge_properties = {"relation": "friend"}
 
-        new_node1 = self.manager1.set_node(label='Label', properties={'name': 'Bob', 'age': 30})
+        new_node1 = self.manager1.set_nodes([GraphDatabaseNode(label='Label', properties={'name': 'Bob'})])[0]
         node1_id = new_node1.get_id()
-        self.assertIsNotNone(self.manager1.get_node_by_id(node_id=node1_id))
+        self.assertIsNotNone(self.manager1.get_nodes_by_ids([node1_id]))
 
-        new_node2 = self.manager1.set_node(label='Label', properties={'name': 'Will', 'age': 31})
+        new_node2 = self.manager1.set_nodes([GraphDatabaseNode(label='Label', properties={'name': 'Will'})])[0]
         node2_id = new_node2.get_id()
-        self.assertIsNotNone(self.manager1.get_node_by_id(node_id=node2_id))
+        self.assertIsNotNone(self.manager1.get_nodes_by_ids([node2_id]))
 
-        new_edge = self.manager1.set_edge(edge_label=edge_label, from_node=node1_id, to_node=node2_id, properties=edge_properties)
+        new_edge = self.manager1.set_edges([GraphDatabaseEdge(edge_label=edge_label, from_node=node1_id, to_node=node2_id, properties=edge_properties)])[0]
         edge_id = new_edge.get_id()
 
-        edge = self.manager1.get_edge_by_id(edge_id=edge_id)
+        edge = self.manager1.get_edges_by_ids([edge_id])[0]
         self.assertIsNotNone(edge)
         self.assertEqual(edge.get_id(), edge_id)
         self.assertEqual(edge.get_label(), edge_label)
@@ -152,18 +150,18 @@ class TestClassNeptuneDatabaseManager(unittest.TestCase):
         edge_label = "Knows"
         edge_properties = {"relation": "friend"}
 
-        new_node1 = self.manager1.set_node(label='Label', properties={'name': 'Bob'})
+        new_node1 = self.manager1.set_nodes([GraphDatabaseNode(label='Label', properties={'name': 'Bob'})])[0]
         node1_id = new_node1.get_id()
-        self.assertIsNotNone(self.manager1.get_node_by_id(node_id=node1_id))
+        self.assertIsNotNone(self.manager1.get_nodes_by_ids([node1_id]))
 
-        new_node2 = self.manager1.set_node(label='Label', properties={'name': 'Will'})
+        new_node2 = self.manager1.set_nodes([GraphDatabaseNode(label='Label', properties={'name': 'Will'})])[0]
         node2_id = new_node2.get_id()
-        self.assertIsNotNone(self.manager1.get_node_by_id(node_id=node2_id))
+        self.assertIsNotNone(self.manager1.get_nodes_by_ids([node2_id]))
 
-        existing_edge = self.manager1.set_edge(edge_label=edge_label, from_node=node1_id, to_node=node2_id, properties=edge_properties)
+        existing_edge = self.manager1.set_edges([GraphDatabaseEdge(edge_label=edge_label, from_node=node1_id, to_node=node2_id, properties=edge_properties)])[0]
         edge_id = existing_edge.get_id()
 
-        edge = self.manager1.get_edge_by_id(edge_id=edge_id)
+        edge = self.manager1.get_edges_by_ids([edge_id])[0]
         self.assertIsNotNone(edge)
         self.assertEqual(edge.get_id(), edge_id)
         self.assertEqual(edge.get_label(), edge_label)
@@ -174,12 +172,12 @@ class TestClassNeptuneDatabaseManager(unittest.TestCase):
         new_edge_label = "Knows"
         new_edge_properties = {"relation": "enemy"}
         with self.assertRaises(gremlin_python.driver.protocol.GremlinServerError):
-            self.manager1.set_edge(edge_label=new_edge_label, from_node=node1_id, to_node=node2_id, properties=new_edge_properties, edge_id=edge_id)
+            self.manager1.set_edges([GraphDatabaseEdge(edge_id=edge_id, edge_label=new_edge_label, from_node=node1_id, to_node=node2_id, properties=new_edge_properties)])
 
-        self.manager1.delete_edge_if_exists(edge_id=edge_id)
-        self.manager1.set_edge(edge_label=new_edge_label, from_node=node1_id, to_node=node2_id, properties=new_edge_properties, edge_id=edge_id)
+        self.manager1.delete_edges_if_exist([edge_id])
+        self.manager1.set_edges([GraphDatabaseEdge(edge_id=edge_id, edge_label=new_edge_label, from_node=node1_id, to_node=node2_id, properties=new_edge_properties)])
 
-        edge = self.manager1.get_edge_by_id(edge_id=edge_id)
+        edge = self.manager1.get_edges_by_ids([edge_id])[0]
         self.assertEqual(edge.get_id(), edge_id)
         self.assertEqual(edge.get_label(), new_edge_label)
         self.assertEqual(edge.get_from_node(), node1_id)
@@ -190,18 +188,18 @@ class TestClassNeptuneDatabaseManager(unittest.TestCase):
         edge_label = "Knows"
         edge_properties = {"relation": "friend"}
 
-        new_node1 = self.manager1.set_node(label='Label', properties={'name': 'Bob'})
+        new_node1 = self.manager1.set_nodes([GraphDatabaseNode(label='Label', properties={'name': 'Bob'})])[0]
         node1_id = new_node1.get_id()
-        self.assertIsNotNone(self.manager1.get_node_by_id(node_id=node1_id))
+        self.assertIsNotNone(self.manager1.get_nodes_by_ids([node1_id]))
 
-        new_node2 = self.manager1.set_node(label='Label', properties={'name': 'Will'})
+        new_node2 = self.manager1.set_nodes([GraphDatabaseNode(label='Label', properties={'name': 'Will'})])[0]
         node2_id = new_node2.get_id()
-        self.assertIsNotNone(self.manager1.get_node_by_id(node_id=node2_id))
+        self.assertIsNotNone(self.manager1.get_nodes_by_ids([node2_id]))
 
-        existing_edge = self.manager1.set_edge(edge_label=edge_label, from_node=node1_id, to_node=node2_id, properties=edge_properties)
+        existing_edge = self.manager1.set_edges([GraphDatabaseEdge(edge_label=edge_label, from_node=node1_id, to_node=node2_id, properties=edge_properties)])[0]
         edge_id = existing_edge.get_id()
 
-        edge = self.manager1.get_edge_by_id(edge_id=edge_id)
+        edge = self.manager1.get_edges_by_ids([edge_id])[0]
         self.assertIsNotNone(edge)
         self.assertEqual(edge.get_id(), edge_id)
         self.assertEqual(edge.get_label(), edge_label)
@@ -210,9 +208,9 @@ class TestClassNeptuneDatabaseManager(unittest.TestCase):
         self.assertEqual(edge.get_properties(), {**edge_properties, **self.manager1.get_subgraph_edge_properties()})
 
         new_edge_properties = {"relation": "enemy"}
-        self.manager1.load_properties_to_edge(edge_id=edge_id, properties=new_edge_properties)
+        self.manager1.load_properties_to_edges({edge_id: new_edge_properties})
 
-        edge = self.manager1.get_edge_by_id(edge_id=edge_id)
+        edge = self.manager1.get_edges_by_ids([edge_id])[0]
         self.assertIsNotNone(edge)
         self.assertEqual(edge.get_id(), edge_id)
         self.assertEqual(edge.get_label(), edge_label)
@@ -221,17 +219,21 @@ class TestClassNeptuneDatabaseManager(unittest.TestCase):
         self.assertEqual(edge.get_properties(), {**new_edge_properties, **self.manager1.get_subgraph_edge_properties()})
 
     def test_get_edges_by_properties(self):
-        node1_id = self.manager1.set_node(label='Label', properties={'name': 'Bob', 'age': 30}).get_id()
-        node2_id = self.manager1.set_node(label='Label', properties={'name': 'Will', 'age': 31}).get_id()
+        node1, node2 = self.manager1.set_nodes([GraphDatabaseNode(label='Label', properties={'name': 'Bob'}),
+                                                GraphDatabaseNode(label='Label', properties={'name': 'Will'})])
+        node1_id = node1.get_id()
+        node2_id = node2.get_id()
 
-        friend_1 = self.manager1.set_edge(edge_label='Knows', from_node=node1_id, to_node=node2_id, properties={'relation': 'friend', 'closeness': 'close'})
-        friend_2 = self.manager1.set_edge(edge_label='Knows', from_node=node1_id, to_node=node2_id, properties={'relation': 'friend', 'closeness': 'not close'})
+        friend_1, friend_2 = self.manager1.set_edges([GraphDatabaseEdge(edge_label='Knows', from_node=node1_id, to_node=node2_id, properties={'relation': 'friend', 'closeness': 'close'}),
+                                                      GraphDatabaseEdge(edge_label='Knows', from_node=node1_id, to_node=node2_id, properties={'relation': 'friend', 'closeness': 'not close'})])
 
-        enemy_1 = self.manager1.set_edge(edge_label='Knows', from_node=node1_id, to_node=node2_id, properties={'relation': 'enemy', 'closeness': 'close'})
-        enemy_2 = self.manager1.set_edge(edge_label='Knows', from_node=node1_id, to_node=node2_id, properties={'relation': 'enemy', 'closeness': 'not close'})
+        enemy_1, enemy_2 = self.manager1.set_edges([GraphDatabaseEdge(edge_label='Knows', from_node=node1_id, to_node=node2_id, properties={'relation': 'enemy', 'closeness': 'close'}),
+                                                    GraphDatabaseEdge(edge_label='Knows', from_node=node1_id, to_node=node2_id, properties={'relation': 'enemy', 'closeness': 'not close'})])
 
-        co_workers_1 = self.manager1.set_edge(edge_label='Co-Workers', from_node=node1_id, to_node=node2_id, properties={'relation': 'co-worker', 'closeness': 'close'})
-        co_workers_2 = self.manager1.set_edge(edge_label='Co-Workers', from_node=node1_id, to_node=node2_id, properties={'relation': 'co-worker', 'closeness': 'not close'})
+        # co_workers_1 = self.manager1.set_edge(edge_label='Co-Workers', from_node=node1_id, to_node=node2_id, properties={'relation': 'co-worker', 'closeness': 'close'})
+        # co_workers_2 = self.manager1.set_edge(edge_label='Co-Workers', from_node=node1_id, to_node=node2_id, properties={'relation': 'co-worker', 'closeness': 'not close'})
+        co_workers_1, co_workers_2 = self.manager1.set_edges([GraphDatabaseEdge(edge_label='Co-Workers', from_node=node1_id, to_node=node2_id, properties={'relation': 'co-worker', 'closeness': 'close'}),
+                                                              GraphDatabaseEdge(edge_label='Co-Workers', from_node=node1_id, to_node=node2_id, properties={'relation': 'co-worker', 'closeness': 'not close'})])
 
         friends = self.manager1.get_edges_by_properties(properties={'relation': 'friend'})
         self.assertSetEqual(set([friend.get_id() for friend in friends]), {friend_1.get_id(), friend_2.get_id()})
@@ -258,13 +260,16 @@ class TestClassNeptuneDatabaseManager(unittest.TestCase):
         self.assertSetEqual(set([edge.get_id() for edge in all]), {friend_1.get_id(), friend_2.get_id(), enemy_1.get_id(), enemy_2.get_id(), co_workers_1.get_id(), co_workers_2.get_id()})
 
     def test_get_edges_by_nodes_connection(self):
-        node1_id = self.manager1.set_node(label='Label', properties={}).get_id()
-        node2_id = self.manager1.set_node(label='Label', properties={}).get_id()
-        node3_id = self.manager1.set_node(label='Label', properties={}).get_id()
+        node1, node2, node3 = self.manager1.set_nodes([GraphDatabaseNode(label='Label', properties={}),
+                                                         GraphDatabaseNode(label='Label', properties={}),
+                                                         GraphDatabaseNode(label='Label', properties={})])
+        node1_id = node1.get_id()
+        node2_id = node2.get_id()
+        node3_id = node3.get_id()
 
-        connection_1 = self.manager1.set_edge(edge_label='Connection', from_node=node1_id, to_node=node2_id, properties={})
-        connection_2 = self.manager1.set_edge(edge_label='Connection', from_node=node1_id, to_node=node3_id, properties={})
-        connection_3 = self.manager1.set_edge(edge_label='Connection', from_node=node2_id, to_node=node3_id, properties={})
+        connection_1, connection_2, connection_3 = self.manager1.set_edges([GraphDatabaseEdge(edge_label='Connection', from_node=node1_id, to_node=node2_id, properties={}),
+                                                                            GraphDatabaseEdge(edge_label='Connection', from_node=node1_id, to_node=node3_id, properties={}),
+                                                                            GraphDatabaseEdge(edge_label='Connection', from_node=node2_id, to_node=node3_id, properties={})])
 
         node1_connections = self.manager1.get_edges_by_properties(properties={}, from_node=node1_id)
         self.assertSetEqual(set([connection.get_id() for connection in node1_connections]), {connection_1.get_id(), connection_2.get_id()})

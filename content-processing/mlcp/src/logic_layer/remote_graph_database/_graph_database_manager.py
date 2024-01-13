@@ -23,35 +23,35 @@ class GraphDatabaseManager:
         return self._subgraph_edge_properties.copy()
 
     @abstractmethod
-    def set_node(self, label: str, properties: Dict, node_id: str = None):
+    def set_nodes(self, nodes: List[GraphDatabaseNode]) -> List[GraphDatabaseNode]:
         pass
 
     @abstractmethod
-    def set_edge(self, edge_label: str, from_node: str, to_node: str, properties: Dict, edge_id: str = None):
+    def set_edges(self, edges: List[GraphDatabaseEdge]) -> List[GraphDatabaseEdge]:
         pass
 
     @abstractmethod
-    def delete_node_if_exists(self, node_id: str = None):
+    def delete_nodes_if_exist(self, node_ids: List[str]):
         pass
 
     @abstractmethod
-    def delete_edge_if_exists(self, edge_id: str = None):
+    def delete_edges_if_exist(self, edge_ids: List[str]):
         pass
 
     @abstractmethod
-    def load_properties_to_node(self, node_id: str, properties: Dict):
+    def load_properties_to_nodes(self, node_properties: Dict[str, Dict]):
         pass
 
     @abstractmethod
-    def load_properties_to_edge(self, edge_id: str, properties: Dict):
+    def load_properties_to_edges(self, edge_properties: Dict[str, Dict]):
         pass
 
     @abstractmethod
-    def get_node_by_id(self, node_id: str) -> Optional[GraphDatabaseNode]:
+    def get_nodes_by_ids(self, node_ids: List[str]) -> List[GraphDatabaseNode]:
         pass
 
     @abstractmethod
-    def get_edge_by_id(self, edge_id: str) -> Optional[GraphDatabaseEdge]:
+    def get_edges_by_ids(self, edge_ids: List[str]) -> List[GraphDatabaseEdge]:
         pass
 
     @abstractmethod
@@ -60,14 +60,6 @@ class GraphDatabaseManager:
 
     @abstractmethod
     def get_edges_by_properties(self, properties: Dict, label: str = None, from_node: str = None, to_node: str = None) -> List[GraphDatabaseEdge]:
-        pass
-
-    @abstractmethod
-    def generate_unique_node_id(self) -> str:
-        pass
-
-    @abstractmethod
-    def generate_unique_edge_id(self) -> str:
         pass
 
     @abstractmethod

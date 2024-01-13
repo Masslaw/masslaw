@@ -49,7 +49,7 @@ def _parse_datetime(datetime_string: str) -> dict:
     return date_time_data
 
 
-def _search_in_string_as_whole(string: str, substring: str) -> bool:
+def _search_in_string_as_whole(substring: str, string: str) -> bool:
     return re.search(r'\b' + re.escape(substring) + r'\b', string) is not None
 
 

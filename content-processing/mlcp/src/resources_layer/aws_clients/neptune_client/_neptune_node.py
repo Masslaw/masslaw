@@ -4,7 +4,7 @@ from gremlin_python.statics import long
 
 
 class NeptuneNode:
-    def __init__(self, node_id: long, label: str, properties: Dict):
+    def __init__(self, label: str, properties: Dict, node_id: long | str = None):
         self._id = node_id
         self._label = label
         self._properties = properties

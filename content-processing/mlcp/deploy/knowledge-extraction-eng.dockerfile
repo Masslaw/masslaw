@@ -8,8 +8,6 @@ RUN apt-get update
 RUN apt-get clean
 RUN apt-get autoremove
 
-
-
 # Install necessary packages
 # --
 

@@ -2,7 +2,7 @@ from typing import Dict
 
 
 class GraphDatabaseEdge:
-    def __init__(self, edge_id: str, edge_label: str, from_node: str, to_node: str, properties: Dict):
+    def __init__(self, edge_label: str, from_node: str, to_node: str, properties: Dict, edge_id: str = None):
         self._id = edge_id
         self._label = edge_label
         self._from_node = from_node

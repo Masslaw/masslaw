@@ -30,8 +30,8 @@ class KnowledgeExtractor:
         self._knowledge_record_merger.merge_record(another_record)
 
     @logger.process_function("Knowledge Extractor - Processing text")
-    def load_text(self, text: str):
-        self._process_text(text)
+    def load_texts(self, texts: List[str]):
+        self._process_texts(texts)
 
     @logger.process_function("Knowledge Extractor - Processing optical text document")
     def load_optical_text_document(self, document: ExtractedOpticalTextDocument):
@@ -43,7 +43,7 @@ class KnowledgeExtractor:
         logger.debug(f"Loading file {common_formats.value(file_path)} of type {common_formats.value(file_type)}")
         if file_type in ('txt', 'text'):
             with open(file_path, 'r') as f:
-                self._process_text(f.read())
+                self._process_texts([f.read()])
                 return
         if file_type in ('xml',):
             document_loader = DocumentLoader()
@@ -60,7 +60,7 @@ class KnowledgeExtractor:
         raise ValueError(f"Unsupported file type: {file_type}")
 
     @abstractmethod
-    def _process_text(self, text: str):
+    def _process_texts(self, text: List[str]):
         pass
 
     @abstractmethod

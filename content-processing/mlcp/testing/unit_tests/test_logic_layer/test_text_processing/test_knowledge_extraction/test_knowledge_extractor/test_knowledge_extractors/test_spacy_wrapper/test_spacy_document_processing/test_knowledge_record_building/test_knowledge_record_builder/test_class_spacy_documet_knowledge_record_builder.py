@@ -1,4 +1,5 @@
 import unittest
+from unittest.mock import Mock
 
 from logic_layer.text_processing.knowledge_extraction.knowledge_extractors.spacy_wrapper._spacy_document_processing._knowledge_record_building._knowledge_record_builder import SpacyDocumentKnowledgeRecordBuilder
 from logic_layer.text_processing.knowledge_extraction.knowledge_extractors.spacy_wrapper._spacy_document_processing._structures import DocumentEntity
@@ -10,8 +11,11 @@ class TestClassSpacyDocumentKnowledgeRecordBuilder(unittest.TestCase):
 
     def setUp(self):
         entity1 = DocumentEntity()
+        entity1.entity_span = Mock()
         entity2 = DocumentEntity()
+        entity2.entity_span = Mock()
         entity3 = DocumentEntity()
+        entity3.entity_span = Mock()
         relation1 = DocumentEntityRelation()
         relation1.from_entity = entity1
         relation1.to_entity = entity2

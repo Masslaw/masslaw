@@ -2,7 +2,7 @@ from typing import Dict
 
 
 class GraphDatabaseNode:
-    def __init__(self, node_id: str, label: str, properties: Dict):
+    def __init__(self, label: str, properties: Dict, node_id: str = None):
         self._id = node_id
         self._label = label
         self._properties = properties
