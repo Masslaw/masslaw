@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 
 import './css.css';
+import {unixTimeToDayDateString} from "../../shared/util/date_time_utiles";
 
 
 export const Timeline = function (props: {
@@ -95,6 +96,9 @@ export const Timeline = function (props: {
                     if (!event_display_positions[event_id]) return <></>;
                     const display_x = event_display_positions[event_id][0];
                     const display_y = event_display_positions[event_id][1];
+                    const event_date = props.events[event_id].date;
+                    const date_title = unixTimeToDayDateString(event_date.getTime() / 1000);
+
                     return <>
                         <rect
                             key={index}
@@ -119,7 +123,7 @@ export const Timeline = function (props: {
                             onClick={props.events[event_id].onclick}
                             onMouseEnter={(e) => setHoveredEventId(event_id)}
                             onMouseLeave={(e) => setHoveredEventId('')}
-                        >{props.events[event_id].date.toLocaleString()}</text>
+                        >{date_title}</text>
                     </>
                 })
             }

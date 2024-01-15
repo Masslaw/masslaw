@@ -15,6 +15,7 @@ export enum ApplicationRoutes {
     CASE_CREATE = "/app/cases/create",
     CASE = "/app/cases/:caseId",
     CASE_MAIN = "/app/cases/:caseId/main",
+    CASE_DASHBOARD = "/app/cases/:caseId/dashboard",
     CASE_FILES = "/app/cases/:caseId/files",
     FILE_DISPLAY = "/app/cases/:caseId/files/display/:fileId",
     CASE_SEARCH = "/app/cases/:caseId/files/search",

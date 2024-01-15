@@ -24,6 +24,7 @@ import {CaseKnowledge} from "../../../pages/main_application/cases/case/knowledg
 import {NodeDisplay} from "../../../pages/main_application/cases/case/knowledge/node_display/node_display";
 import {CaseTimeline} from "../../../pages/main_application/cases/case/knowledge/case_timeline/case_timeline";
 import {CaseSubjects} from "../../../pages/main_application/cases/case/knowledge/case_subjects/case_subjects";
+import {CaseDashboard} from "../../../pages/main_application/cases/case/dashboard/case_dashboard";
 
 
 export function ApplicationRouter() {
@@ -148,6 +149,14 @@ export function ApplicationRouter() {
                                     element={
                                         <ApplicationPageRenderer
                                             pageComponent={CaseMain}
+                                        />
+                                    }
+                                />
+                                <Route
+                                    path={ApplicationRoutes.CASE_DASHBOARD}
+                                    element={
+                                        <ApplicationPageRenderer
+                                            pageComponent={CaseDashboard}
                                         />
                                     }
                                 />

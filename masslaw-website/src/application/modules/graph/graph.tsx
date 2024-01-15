@@ -17,6 +17,7 @@ interface Node {
     connected_nodes: [string, number, string][],
     state: string,
     simulated_time_since_creation: number,
+    simulated_time_since_modification: number,
 }
 
 interface Edge {
@@ -86,7 +87,8 @@ export const Graph = forwardRef<
                 drag: 10,
                 connected_nodes: [],
                 state: 'idle',
-                simulated_time_since_creation: 0
+                simulated_time_since_creation: 0,
+                simulated_time_since_modification: 0
             };
             return nodes_copy;
         });
@@ -266,6 +268,10 @@ export const Graph = forwardRef<
             for (let node_id of nodes_to_display.current) {
                 let node = new_nodes[node_id];
                 if (!node) continue;
+                if (draggingNodeRef.current === node_id) node.simulated_time_since_modification = 0;
+                const transition_time = 5; // seconds
+                const slowdown = 3;
+                const personal_dt = (Math.tanh(transition_time - node.simulated_time_since_modification) + slowdown - 1) / slowdown;
                 const nearbyNodes = grid.retrieve(node.position);
                 for (let other_node_id of nearbyNodes) {
                     if (other_node_id === node_id) continue;
@@ -276,15 +282,15 @@ export const Graph = forwardRef<
                     if (distance > 100) continue;
                     let delta_vector_normalized = [delta_vector[0] / distance, delta_vector[1] / distance];
                     let repulsion = 500 * ((1 + (nodes_to_display.current.length * 2 / MAXIMUM_NUMBER_OF_NODES_DISPLAYED)) ** 2) * ((1 + node.graph_contribution * 2)) / (distance + 1);
-                    node.velocity[0] += delta_vector_normalized[0] * repulsion * dt;
-                    node.velocity[1] += delta_vector_normalized[1] * repulsion * dt;
+                    node.velocity[0] += delta_vector_normalized[0] * repulsion * personal_dt;
+                    node.velocity[1] += delta_vector_normalized[1] * repulsion * personal_dt;
                 }
                 let delta_from_center = node.position;
                 let distance_from_center = Math.sqrt(delta_from_center[0] * delta_from_center[0] + delta_from_center[1] * delta_from_center[1]);
                 let delta_from_center_normalized = [delta_from_center[0] / distance_from_center, delta_from_center[1] / distance_from_center];
                 let attraction = node.graph_contribution * distance_from_center;
-                node.velocity[0] -= delta_from_center_normalized[0] * attraction * dt * 0.01;
-                node.velocity[1] -= delta_from_center_normalized[1] * attraction * dt * 0.01;
+                node.velocity[0] -= delta_from_center_normalized[0] * attraction * personal_dt * 0.01;
+                node.velocity[1] -= delta_from_center_normalized[1] * attraction * personal_dt * 0.01;
                 let node_connection_length_sum = 0;
                 for (let connected_node of node.connected_nodes) {
                     node_connection_length_sum += connected_node[1];
@@ -294,25 +300,27 @@ export const Graph = forwardRef<
                     let other_node = new_nodes[connected_node[0]];
                     if (!other_node) continue;
                     let normalized_length = (1 + (5 * connected_node[1] / node_connection_length_sum));
-                    other_node.velocity[0] -= (other_node.position[0] - node.position[0]) * normalized_length * dt * 0.1;
-                    other_node.velocity[1] -= (other_node.position[1] - node.position[1]) * normalized_length * dt * 0.1;
+                    other_node.velocity[0] -= (other_node.position[0] - node.position[0]) * normalized_length * personal_dt * 0.1;
+                    other_node.velocity[1] -= (other_node.position[1] - node.position[1]) * normalized_length * personal_dt * 0.1;
                 }
                 if (draggingNodeRef.current === node_id) {
-                    node.velocity[0] += (mousePositionRef.current[0] - node.position[0]) * dt * 20;
-                    node.velocity[1] += (mousePositionRef.current[1] - node.position[1]) * dt * 20;
+                    node.velocity[0] += (mousePositionRef.current[0] - node.position[0]) * personal_dt * 20;
+                    node.velocity[1] += (mousePositionRef.current[1] - node.position[1]) * personal_dt * 20;
                 }
 
-                node.velocity[0] -= avg_node_position[0] * dt;
-                node.velocity[1] -= avg_node_position[1] * dt;
+                node.velocity[0] -= avg_node_position[0] * personal_dt;
+                node.velocity[1] -= avg_node_position[1] * personal_dt;
 
-                let drag_factor = Math.pow(1 / node.drag, dt);
+                let drag_factor = Math.pow(1 / node.drag, personal_dt);
+                drag_factor *= 0.01 + (0.99 / (node.simulated_time_since_modification + 1));
                 node.velocity[0] *= drag_factor;
                 node.velocity[1] *= drag_factor;
 
-                node.position[0] += node.velocity[0] * dt;
-                node.position[1] += node.velocity[1] * dt;
+                node.position[0] += node.velocity[0] * personal_dt;
+                node.position[1] += node.velocity[1] * personal_dt;
 
                 node.simulated_time_since_creation += dt;
+                node.simulated_time_since_modification += dt;
             }
             return new_nodes;
         });
@@ -366,6 +374,7 @@ export const Graph = forwardRef<
                 viewport[1] = viewport[1] - delta;
                 viewport[2] = viewport[2] + delta * 2;
                 viewport[3] = viewport[3] + delta * 2;
+                event.stopPropagation();
             }}
             onMouseDown={() => {
                 setMouseDown(true);

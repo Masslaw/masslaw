@@ -65,11 +65,18 @@ export const CaseTimeline: ApplicationPage = (props: ApplicationPageProps) => {
                 if (!["DATE"].includes(entity_label)) continue;
                 let entity_id = entity.id;
                 let entity_title = entity.properties.title;
-                let entity_iso = entity.properties.iso;
+                let entity_date = entity.properties.datetime as { Y: string, M: string, D: string };
+                if (!entity_date) continue;
+                if (!entity_date.Y) continue;
+                let date = new Date();
+                date.setFullYear(parseInt(entity_date.Y));
+                if (entity_date.M) date.setMonth((parseInt(entity_date.M || '') || 1) - 1);
+                if (entity_date.D) date.setDate((parseInt(entity_date.D || '') || 1) - 1);
+                date.setHours(0);
+                date.setMinutes(0);
+                date.setSeconds(0);
                 let event = {
-                    title: entity_title,
-                    onclick: () => navigate_function(ApplicationRoutes.CASE_KNOWLEDGE_ENTITY, {caseId: caseId || '', entityId: entity_id || ''}),
-                    date: new Date(entity_iso),
+                    title: entity_title, onclick: () => navigate_function(ApplicationRoutes.CASE_KNOWLEDGE_ENTITY, {caseId: caseId || '', entityId: entity_id || ''}), date: date,
                 };
                 setEvents((current_events) => {
                     let new_events = {...current_events};
