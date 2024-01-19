@@ -10,6 +10,7 @@ class View():
     def __init__(self, model):
         self._model = model
         self._imgui_renderer = ImguiRenderer()
+        self._application_should_close = False
 
     def setup(self):
         self._imgui_renderer.setup()
@@ -20,6 +21,11 @@ class View():
 
     def destroy(self):
         self._imgui_renderer.destroy()
+
+    def should_close(self):
+        if self._application_should_close: return True
+        if self._imgui_renderer.should_close(): return True
+        return False
 
     def _imgui_body_render_function(self):
         ...

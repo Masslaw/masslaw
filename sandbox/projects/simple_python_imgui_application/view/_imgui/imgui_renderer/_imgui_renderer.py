@@ -17,6 +17,7 @@ class ImguiRenderer:
         self._loaded_font = None
         self._background_color = (0, 0, 0, 1)
         self._render_body_functions = []
+        self._should_close = False
 
     def setup(self):
         imgui.create_context()
@@ -47,6 +48,7 @@ class ImguiRenderer:
         imgui.render()
         self._impl.render(imgui.get_draw_data())
         glfw.swap_buffers(self._window)
+        self._should_close = self._should_close or glfw.window_should_close(self._window)
 
     def destroy(self):
         self._impl.shutdown()
@@ -67,3 +69,6 @@ class ImguiRenderer:
 
     def get_window_size(self):
         return glfw.get_window_size(self._window)
+
+    def should_close(self):
+        return self._should_close
