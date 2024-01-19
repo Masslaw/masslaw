@@ -1,9 +1,6 @@
 import os
 
-import imgui
-
 from view._imgui.imgui_renderer import ImguiRenderer
-from view._utils import file_selection_dialog
 
 FONT_PATH = os.path.join(os.path.dirname(__file__), 'assets', 'font.ttf')
 
