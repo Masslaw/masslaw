@@ -1,20 +1,17 @@
 import unittest
+import xml.etree.ElementTree as ET
 
-from logic_layer.text_structures.extracted_optical_text_structure import ExtractedOpticalTextDocument
-from logic_layer.text_structures.extracted_optical_text_structure.document_metadata import DocumentMetadataHandler
+from logic_layer.text_structures.extracted_optical_text_structure.document_metadata._metadata_handling_logic import put_metadata_item
 
 
-class TestClassDocumentMetadataHandler(unittest.TestCase):
+class TestFunctionPutMetadataItem(unittest.TestCase):
 
-    def test_put_metadata_items(self):
-        document = ExtractedOpticalTextDocument()
-        document_metadata_handler = DocumentMetadataHandler(document)
+    def test_put_metadata_item(self):
+        metadata_tree = ET.Element('metadata')
+        metadata_tree = put_metadata_item(metadata_tree, ['a', 'b'], 'label1', {'d': 'e'})
+        metadata_tree = put_metadata_item(metadata_tree, ['a', 'b', 'c'], 'label2', {'f': 'g'})
+        metadata_tree = put_metadata_item(metadata_tree, ['x', 'y'], 'label3', {'h': 'i'})
 
-        document_metadata_handler.put_metadata_item(['a', 'b'], 'label1', {'d': 'e'})
-        document_metadata_handler.put_metadata_item(['a', 'b', 'c'], 'label2', {'f': 'g'})
-        document_metadata_handler.put_metadata_item(['x', 'y'], 'label3', {'h': 'i'})
-
-        metadata_tree = document.get_metadata()
         self.assertEqual(metadata_tree.tag, 'metadata')
         self.assertEqual(len(metadata_tree), 2)
         self.assertEqual(metadata_tree[0].tag, 'a')
@@ -35,7 +32,8 @@ class TestClassDocumentMetadataHandler(unittest.TestCase):
         self.assertEqual(metadata_tree[1][0][0].attrib, {'h': 'i'})
 
     def test_with_empty_path(self):
-        with self.assertRaises(ValueError):
-            document = ExtractedOpticalTextDocument()
-            document_metadata_handler = DocumentMetadataHandler(document)
-            document_metadata_handler.put_metadata_item([], 'label1', {'d': 'e'})
+        metadata_tree = ET.Element('metadata')
+        metadata_tree = put_metadata_item(metadata_tree, [], 'label1', {'d': 'e'})
+
+        self.assertEqual(metadata_tree.tag, 'label1')
+        self.assertEqual(metadata_tree.attrib, {'d': 'e'})

@@ -1,6 +1,6 @@
 import json
 from typing import IO
-from typing import Type
+from xml.etree import ElementTree as ET
 
 from logic_layer.text_structures.extracted_optical_text_structure._document import ExtractedOpticalTextDocument
 from logic_layer.text_structures.extracted_optical_text_structure._structure_element import OpticalTextStructureElement
@@ -19,7 +19,7 @@ def _document_to_dict(optical_text_document: ExtractedOpticalTextDocument) -> di
     structure_data = _structure_root_to_dict(optical_text_document.get_structure_root())
     document_data['textStructure'] = structure_data
     document_metadata = optical_text_document.get_metadata()
-    document_data['metadata'] = document_metadata
+    document_data['metadata'] = _document_metadata_to_dict(document_metadata)
     return document_data
 
 
@@ -57,3 +57,13 @@ def _structure_element_data_to_dict(structure_element: OpticalTextStructureEleme
     element_data['p'] = element_properties
 
     return element_data
+
+
+def _document_metadata_to_dict(metadata_tree: ET.Element) -> dict:
+    document_metadata_dict = dict(metadata_tree.attrib)
+    document_metadata_dict['__label'] = metadata_tree.tag
+    document_metadata_dict['__children'] = [
+        _document_metadata_to_dict(child)
+        for child in metadata_tree
+    ]
+    return document_metadata_dict

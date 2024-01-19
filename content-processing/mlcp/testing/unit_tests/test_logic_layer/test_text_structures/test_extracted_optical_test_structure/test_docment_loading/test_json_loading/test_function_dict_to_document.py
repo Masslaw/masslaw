@@ -9,7 +9,7 @@ class TestFunctionDictToDocument(unittest.TestCase):
     def test_function_dict_to_document(self):
         document_dict = {
             'textStructure': {},
-            'metadata': {},
+            'metadata': {'__label': 'metadata', },
         }
         document = _dict_to_document(document_dict)
         self.assertIsInstance(document, ExtractedOpticalTextDocument)

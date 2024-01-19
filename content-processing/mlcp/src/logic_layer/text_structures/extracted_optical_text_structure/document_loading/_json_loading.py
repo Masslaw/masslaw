@@ -1,6 +1,7 @@
 import json
 from typing import IO
 from typing import Type
+from xml.etree import ElementTree as ET
 
 from logic_layer.text_structures.extracted_optical_text_structure import OpticalStructureHierarchyLevel
 from logic_layer.text_structures.extracted_optical_text_structure._document import ExtractedOpticalTextDocument
@@ -8,6 +9,7 @@ from logic_layer.text_structures.extracted_optical_text_structure._hierarchy_lev
 from logic_layer.text_structures.extracted_optical_text_structure._structure_element import OpticalTextStructureElement
 from logic_layer.text_structures.extracted_optical_text_structure._structure_root import OpticalTextStructureRoot
 from logic_layer.text_structures.extracted_optical_text_structure.document_loading._assertions import assert_load_input_file
+from logic_layer.text_structures.extracted_optical_text_structure.document_loading._exceptions import DocumentLoadingMetadataItemNoLabelException
 
 
 def load_document_from_json_format(input_file: IO) -> ExtractedOpticalTextDocument:
@@ -19,10 +21,10 @@ def load_document_from_json_format(input_file: IO) -> ExtractedOpticalTextDocume
 def _dict_to_document(document_data: dict) -> ExtractedOpticalTextDocument:
     structure_data = document_data.get('textStructure', {})
     structure_root = _dict_to_structure_root(structure_data)
-    document_metadata = document_data.get('metadata', {})
     optical_text_document = ExtractedOpticalTextDocument()
     optical_text_document.set_structure_root(structure_root)
-    optical_text_document.set_metadata(document_metadata)
+    document_metadata = document_data.get('metadata')
+    if document_metadata: optical_text_document.set_metadata(_load_document_metadata_dict(document_metadata))
     return optical_text_document
 
 
@@ -63,3 +65,18 @@ def _determine_child_type(element_data: dict) -> Type[OpticalTextStructureElemen
         hierarchy_level_class = hierarchy_level_to_element_class(hierarchy_level)
         hierarchy_level_label = hierarchy_level_class.get_label()
         if hierarchy_level_label in element_data: return hierarchy_level_class
+
+
+def _load_document_metadata_dict(metadata_dict: dict) -> ET.Element:
+    item_label = metadata_dict.get('__label', '')
+    if not item_label: raise DocumentLoadingMetadataItemNoLabelException()
+    item_children = metadata_dict.get('__children', [])
+    element = ET.Element(item_label)
+    if '__label' in metadata_dict: del metadata_dict['__label']
+    if '__children' in metadata_dict: del metadata_dict['__children']
+    for child_dict in item_children:
+        child_element = _load_document_metadata_dict(child_dict)
+        element.append(child_element)
+    for key, value in metadata_dict.items():
+        element.set(key, str(value))
+    return element

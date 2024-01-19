@@ -26,8 +26,7 @@ def _xml_element_to_document(xml_element: ET.Element) -> ExtractedOpticalTextDoc
             structure_root = _xml_element_to_structure_root(child)
             optical_text_document.set_structure_root(structure_root)
         elif child.tag == 'metadata':
-            metadata = _xml_element_to_metadata(child)
-            optical_text_document.set_metadata(metadata)
+            optical_text_document.set_metadata(child)
     return optical_text_document
 
 
@@ -71,19 +70,3 @@ def _extract_bounding_rect_from_attribute(attribute: str) -> OpticalStructureEle
         int(list_utils.get_element_at(split_rect_attr, 2, default=0)),
         int(list_utils.get_element_at(split_rect_attr, 3, default=0)),
     )
-
-
-def _xml_element_to_metadata(metadata_xml_element: ET.Element) -> dict:
-    def xml_element_to_metadata_item(xml_element: ET.Element) -> dict:
-        metadata_item = {}
-        label = xml_element.tag
-        metadata_item.update(xml_element.attrib)
-        metadata_item['__label'] = label
-        for child in xml_element:
-            metadata_child_item = xml_element_to_metadata_item(child)
-            metadata_item[child.tag] = metadata_child_item
-        return metadata_item
-    metadata = {}
-    for child in metadata_xml_element:
-        metadata[child.tag] = xml_element_to_metadata_item(child)
-    return metadata

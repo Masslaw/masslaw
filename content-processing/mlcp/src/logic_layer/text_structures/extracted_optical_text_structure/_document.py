@@ -1,5 +1,5 @@
 from logic_layer.text_structures.extracted_optical_text_structure._structure_root import OpticalTextStructureRoot
-
+from xml.etree import ElementTree as ET
 
 class ExtractedOpticalTextDocument:
     """
@@ -10,7 +10,7 @@ class ExtractedOpticalTextDocument:
 
     def __init__(self):
         self._structure_root = OpticalTextStructureRoot()
-        self._metadata = {}
+        self._metadata = ET.Element("metadata")
 
     def set_structure_root(self, structure_root: OpticalTextStructureRoot):
         self._structure_root = structure_root
@@ -18,8 +18,8 @@ class ExtractedOpticalTextDocument:
     def get_structure_root(self) -> OpticalTextStructureRoot:
         return self._structure_root
 
-    def set_metadata(self, metadata: dict):
+    def set_metadata(self, metadata: ET.Element):
         self._metadata = metadata
 
-    def get_metadata(self):
+    def get_metadata(self) -> ET.Element:
         return self._metadata

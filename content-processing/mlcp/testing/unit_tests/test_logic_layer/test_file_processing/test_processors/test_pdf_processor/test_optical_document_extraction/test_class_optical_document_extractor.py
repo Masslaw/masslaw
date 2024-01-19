@@ -53,7 +53,7 @@ class TestClassOpticalDocumentExtractor(unittest.TestCase):
         self.test_extractor._put_image_sizes_in_document_metadata(extracted_text_document, ['test_dir'])
 
         mocked_imread.assert_called_once_with('test_dir')
-        metadata_handler_instance.put_metadata_item.assert_called_once_with(['structure', 'image_sizes', '0'], 'image_size', {'n': 0, 'w': 200, 'h': 100})
+        metadata_handler_instance.put_metadata_item.assert_called_once_with(['structure', 'image_sizes'], 'image_size', {'n': 0, 'w': 200, 'h': 100})
 
     @patch.object(OpticalDocumentExtractor, '_extract_data_using_ocr')
     @patch.object(OpticalDocumentExtractor, '_build_text_document')

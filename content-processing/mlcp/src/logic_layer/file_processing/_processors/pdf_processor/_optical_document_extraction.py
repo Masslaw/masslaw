@@ -47,4 +47,4 @@ class OpticalDocumentExtractor:
             _image = cv2.imread(image_directory)
             image_size = _image.shape[:2]
             logger.debug(f'Image number: {common_formats.value(image_num)} size: {common_formats.value(image_size)}')
-            metadata_handler.put_metadata_item(['structure', 'image_sizes', str(image_num)], 'image_size', {'n': image_num, 'w': image_size[1], 'h': image_size[0], })
+            metadata_handler.put_metadata_item(['structure', 'image_sizes'], 'image_size', {'n': image_num, 'w': image_size[1], 'h': image_size[0], })

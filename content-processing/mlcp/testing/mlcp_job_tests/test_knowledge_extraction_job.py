@@ -11,7 +11,7 @@ from mlcp.testing.stubs.s3_stub import S3StubTestLoader
 from shared_layer.file_system_utils._file_system_utils import clear_directory
 from shared_layer.file_system_utils._file_system_utils import join_paths
 
-file_name = "A-Very-Short-Story.txt"
+file_name = "two_columns.xml"
 
 bucket_name = "mlcp-test-bucket"
 
