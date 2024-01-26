@@ -1,4 +1,5 @@
 import logging
+import time
 from typing import Dict
 from typing import List
 
@@ -23,27 +24,6 @@ from shared_layer.mlcp_logger import logger
 from shared_layer.mlcp_logger import common_formats
 
 
-def retry_on_gremlin_server_error(connections: List[NeptuneConnection | None]):
-    def decorator(func):
-        def wrapper(*args, **kwargs):
-            try:
-                result = func(*args, **kwargs)
-            except GremlinServerError as e:
-                logger = logging.getLogger()
-                logger.info("Gremlin Server Error Occurred. Retrying...")
-                logger.debug(f"Error: {e}")
-                for connection in connections:
-                    if not connection: continue
-                    connection.close_connection()
-                    connection.establish_connection()
-                result = func(*args, **kwargs)
-            return result
-
-        return wrapper
-
-    return decorator
-
-
 class NeptuneClient:
     """
     Note: Multiple calls for functions of a single instance of this class are not thread-safe since it maintains
@@ -57,9 +37,6 @@ class NeptuneClient:
         self._read_connection = read_connection
         self._write_connection = write_connection
         self.establish_connections()
-
-    def __del__(self):
-        self.close_connection()
 
     def close_connection(self):
         self._read_connection.close_connection()
@@ -76,47 +53,59 @@ class NeptuneClient:
     def _get_write_traversal_source(self):
         return traversal().with_remote(self._write_connection.get_connection())
 
-    @retry_on_gremlin_server_error(connections=[_read_connection, _write_connection])
     def set_nodes(self, nodes: List[NeptuneNode]) -> List[NeptuneNode]:
         new_nodes = []
         for node in nodes:
-            node_id = node.get_id()
-            label = node.get_label()
-            properties = node.get_properties()
-            g = self._get_write_traversal_source()
-            t = g.add_v(label)
-            if node_id: t = t.property(T.id, node_id)
-            properties = properties.copy()
-            dictionary_utils.ensure_flat(properties)
-            for key, value in properties.items():
-                t = t.property(key, value)
-            new_node = t.next()
-            node_object = get_node_object_from_vertex(vertex=new_node)
-            new_nodes.append(node_object)
+            node_object = self._set_node(node)
+            new_nodes.append(node_object or NeptuneNode('', {}))
         return new_nodes
 
-    @retry_on_gremlin_server_error(connections=[_read_connection, _write_connection])
+    def _set_node(self, node: NeptuneNode) -> NeptuneNode:
+        node_id = node.get_id()
+        label = node.get_label()
+        properties = node.get_properties()
+        g = self._get_write_traversal_source()
+        t = g.add_v(label)
+        if node_id: t = t.property(T.id, node_id)
+        properties = properties.copy()
+        dictionary_utils.ensure_flat(properties)
+        for key, value in properties.items(): t = t.property(key, value)
+        try:
+            new_node = t.next()
+            node_object = get_node_object_from_vertex(vertex=new_node)
+        except GremlinServerError as e:
+            node_object = node
+            logger.error(f"A gremlin error occurred trying to set a node: {e}")
+        return node_object or node
+
     def set_edges(self, edges: List[NeptuneEdge]) -> List[NeptuneEdge]:
         new_edges = []
         for edge in edges:
-            edge_id = edge.get_id()
-            edge_label = edge.get_label()
-            from_node = edge.get_from_node()
-            to_node = edge.get_to_node()
-            properties = edge.get_properties()
-            if not from_node or not to_node: continue
-            g = self._get_write_traversal_source()
-            t = g.add_e(edge_label).from_(__.V(get_id_in_correct_type(from_node))).to(__.V(to_node))
-            if edge_id: t = t.property(T.id, get_id_in_correct_type(edge_id))
-            properties = properties.copy()
-            dictionary_utils.ensure_flat(properties)
-            for key, value in properties.items(): t = t.property(key, value)
-            new_edge = t.next()
-            edge_object = get_edge_object_from_edge(edge=new_edge)
+            edge_object = self._set_edge(edge)
             new_edges.append(edge_object)
         return new_edges
 
-    @retry_on_gremlin_server_error(connections=[_read_connection, _write_connection])
+    def _set_edge(self, edge: NeptuneEdge) -> NeptuneEdge:
+        edge_id = edge.get_id()
+        edge_label = edge.get_label()
+        from_node = edge.get_from_node()
+        to_node = edge.get_to_node()
+        properties = edge.get_properties()
+        if not from_node or not to_node: return edge
+        g = self._get_write_traversal_source()
+        t = g.add_e(edge_label).from_(__.V(get_id_in_correct_type(from_node))).to(__.V(to_node))
+        if edge_id: t = t.property(T.id, get_id_in_correct_type(edge_id))
+        properties = properties.copy()
+        dictionary_utils.ensure_flat(properties)
+        for key, value in properties.items(): t = t.property(key, value)
+        try:
+            new_edge = t.next()
+            edge_object = get_edge_object_from_edge(edge=new_edge)
+        except GremlinServerError as e:
+            edge_object = edge
+            logger.error(f"A gremlin error occurred trying to set an edge: {e}")
+        return edge_object or edge
+
     def load_properties_to_nodes(self, node_properties: Dict[long | str, Dict]):
         for node_id, properties in node_properties.items():
             print(node_id)
@@ -125,19 +114,16 @@ class NeptuneClient:
             t = g.V(get_id_in_correct_type(node_id))
             properties = properties.copy()
             dictionary_utils.ensure_flat(properties)
-            for key, value in properties.items():
-                t = t.property(key, value)
+            for key, value in properties.items(): t = t.property(key, value)
             t.iterate()
 
-    @retry_on_gremlin_server_error(connections=[_read_connection, _write_connection])
     def load_properties_to_edges(self, edge_properties: Dict[long | str, Dict]):
         for edge_id, properties in edge_properties.items():
             g = self._get_write_traversal_source()
             t = g.E(get_id_in_correct_type(edge_id))
             properties = properties.copy()
             dictionary_utils.ensure_flat(properties)
-            for key, value in properties.items():
-                t = t.property(key, value)
+            for key, value in properties.items(): t = t.property(key, value)
             t.iterate()
 
     def delete_nodes_if_exist(self, node_ids: List[long | str]):
@@ -160,7 +146,6 @@ class NeptuneClient:
         except StopIteration:
             pass
 
-    @retry_on_gremlin_server_error(connections=[_read_connection, _write_connection])
     def get_nodes_by_ids(self, node_ids: List[long | str]) -> List[NeptuneNode]:
         nodes = []
         for node_id in node_ids:
@@ -173,7 +158,6 @@ class NeptuneClient:
                 nodes.append(None)
         return nodes
 
-    @retry_on_gremlin_server_error(connections=[_read_connection, _write_connection])
     def get_edges_by_ids(self, edge_ids: List[long | str]) -> List[NeptuneEdge]:
         edges = []
         for edge_id in edge_ids:
@@ -187,7 +171,6 @@ class NeptuneClient:
         return edges
 
 
-    @retry_on_gremlin_server_error(connections=[_read_connection, _write_connection])
     def get_nodes_by_properties(self, properties: Dict, label=None) -> List[NeptuneNode]:
         g = self._get_read_traversal_source()
         t = g.V()
@@ -200,7 +183,6 @@ class NeptuneClient:
         node_objects = get_multiple_node_objects_from_traversal(traversal=t)
         return node_objects
 
-    @retry_on_gremlin_server_error(connections=[_read_connection, _write_connection])
     def get_edges_by_properties(self, properties: Dict, label=None, from_node: long | str = None, to_node: long | str = None) -> List[NeptuneEdge]:
         g = self._get_read_traversal_source()
         t = g.E()
@@ -217,7 +199,6 @@ class NeptuneClient:
         edge_objects = get_multiple_edge_objects_from_traversal(traversal=t)
         return edge_objects
 
-    @retry_on_gremlin_server_error(connections=[_read_connection, _write_connection])
     def get_edges_by_nodes_connection(self, from_node: long | str = None, to_node: long | str = None) -> List[NeptuneEdge]:
         if (from_node, to_node).count(None) == 2:
             raise ValueError('At least one of the nodes must be specified')

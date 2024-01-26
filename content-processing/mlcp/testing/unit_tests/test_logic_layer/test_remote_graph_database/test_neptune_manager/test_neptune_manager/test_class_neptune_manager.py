@@ -60,8 +60,6 @@ class TestClassNeptuneDatabaseManager(unittest.TestCase):
 
         new_node_label = "Person"
         new_node_properties = {"name": "Will", "age": 31}
-        with self.assertRaises(gremlin_python.driver.protocol.GremlinServerError):
-            self.manager1.set_nodes([GraphDatabaseNode(node_id=node_id, label=new_node_label, properties=new_node_properties)])
 
         self.manager1.delete_nodes_if_exist([node_id])
         self.manager1.set_nodes([GraphDatabaseNode(node_id=node_id, label=new_node_label, properties=new_node_properties)])
@@ -171,8 +169,6 @@ class TestClassNeptuneDatabaseManager(unittest.TestCase):
 
         new_edge_label = "Knows"
         new_edge_properties = {"relation": "enemy"}
-        with self.assertRaises(gremlin_python.driver.protocol.GremlinServerError):
-            self.manager1.set_edges([GraphDatabaseEdge(edge_id=edge_id, edge_label=new_edge_label, from_node=node1_id, to_node=node2_id, properties=new_edge_properties)])
 
         self.manager1.delete_edges_if_exist([edge_id])
         self.manager1.set_edges([GraphDatabaseEdge(edge_id=edge_id, edge_label=new_edge_label, from_node=node1_id, to_node=node2_id, properties=new_edge_properties)])

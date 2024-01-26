@@ -1,5 +1,4 @@
 from enum import Enum
-from typing import List
 from typing import Tuple
 from typing import Type
 
@@ -18,6 +17,7 @@ class OpticalStructureHierarchyLevel(Enum):
     LINE = 'line'
     WORD = 'word'
     CHARACTER = 'char'
+
 
 # defined as (x1, y1, x2, y2)
 OpticalStructureElementBoundingRectangle: Type = Tuple[float, float, float, float]

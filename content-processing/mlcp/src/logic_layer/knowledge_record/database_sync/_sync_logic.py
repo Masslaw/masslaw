@@ -118,16 +118,16 @@ def _load_record_data_to_database(record: KnowledgeRecord, graph_database_manage
 
 @logger.process_function('Putting entities in database')
 def _put_entities_in_database(record_entities: List[KnowledgeRecordEntity], graph_database_manager: GraphDatabaseManager):
-    # new_entities, existing_entities = _separate_entities_to_new_and_existing(record_entities)
-    _load_new_entities_to_database(record_entities, graph_database_manager)
-    # _load_existing_entities_to_database(existing_entities, graph_database_manager)
+    new_entities, existing_entities = _separate_entities_to_new_and_existing(record_entities)
+    _load_new_entities_to_database(new_entities, graph_database_manager)
+    _load_existing_entities_to_database(existing_entities, graph_database_manager)
 
 
 @logger.process_function('Putting connections in database')
 def _put_connections_in_database(record_connections: List[KnowledgeRecordConnection], graph_database_manager: GraphDatabaseManager):
-    # new_connections, existing_connections = _separate_connections_to_new_and_existing(record_connections)
-    _load_new_connections_to_database(record_connections, graph_database_manager)
-    # _load_existing_connections_to_database(existing_connections, graph_database_manager)
+    new_connections, existing_connections = _separate_connections_to_new_and_existing(record_connections)
+    _load_new_connections_to_database(new_connections, graph_database_manager)
+    _load_existing_connections_to_database(existing_connections, graph_database_manager)
 
 
 def _separate_entities_to_new_and_existing(entities: List[KnowledgeRecordEntity]) -> Tuple[List[KnowledgeRecordEntity], List[KnowledgeRecordEntity]]:

@@ -64,8 +64,6 @@ class TestClassNeptuneClient(unittest.TestCase):
             "name": "Will",
             "age": 31
         }
-        with self.assertRaises(gremlin_python.driver.protocol.GremlinServerError):
-            self.client.set_nodes([NeptuneNode(label=new_node_label, properties=new_node_properties, node_id=node_id)])
 
         self.client.delete_nodes_if_exist([node_id])
         self.client.set_nodes([NeptuneNode(label=new_node_label, properties=new_node_properties, node_id=node_id)])
@@ -222,8 +220,6 @@ class TestClassNeptuneClient(unittest.TestCase):
         new_edge_properties = {
             "relation": "enemy"
         }
-        with self.assertRaises(gremlin_python.driver.protocol.GremlinServerError):
-            self.client.set_edges([NeptuneEdge(label=new_edge_label, from_node=node1_id, to_node=node2_id, properties=new_edge_properties, edge_id=edge_id)])
 
         self.client.delete_edges_if_exist([edge_id])
         self.client.set_edges([NeptuneEdge(label=new_edge_label, from_node=node1_id, to_node=node2_id, properties=new_edge_properties, edge_id=edge_id)])

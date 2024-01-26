@@ -31,8 +31,8 @@ def get_node_object_from_vertex(vertex: Vertex) -> NeptuneNode:
     node_label = str(vertex.label)
     node_properties = {p.key: p.value for p in vertex.properties or {}}
     node_properties = dictionary_utils.ensure_dict(node_properties)
-    node = NeptuneNode(node_id=node_id, label=node_label, properties=node_properties)
-    return node
+    neptune_node = NeptuneNode(node_id=node_id, label=node_label, properties=node_properties)
+    return neptune_node
 
 
 def _node_data_traversal_projection(traversal: GraphTraversal) -> GraphTraversal:
@@ -74,8 +74,8 @@ def parse_raw_neptune_edge_data(raw_data: Dict) -> NeptuneEdge:
     to_edge = get_id_in_correct_type(raw_data['inV'])
     edge_properties = raw_data.get('properties', {})
     edge_properties = dictionary_utils.ensure_dict(edge_properties)
-    edge = NeptuneEdge(edge_id=edge_id, label=edge_label, from_node=from_edge, to_node=to_edge, properties=edge_properties)
-    return edge
+    neptune_edge = NeptuneEdge(edge_id=edge_id, label=edge_label, from_node=from_edge, to_node=to_edge, properties=edge_properties)
+    return neptune_edge
 
 
 def get_edge_object_from_edge(edge: Edge) -> NeptuneEdge:
@@ -85,8 +85,8 @@ def get_edge_object_from_edge(edge: Edge) -> NeptuneEdge:
     to_edge = get_id_in_correct_type(edge.inV.id)
     edge_properties = {p.key: p.value for p in edge.properties or {}}
     edge_properties = dictionary_utils.ensure_dict(edge_properties)
-    edge = NeptuneEdge(edge_id=edge_id, label=edge_label, from_node=from_edge, to_node=to_edge, properties=edge_properties)
-    return edge
+    neptune_edge = NeptuneEdge(edge_id=edge_id, label=edge_label, from_node=from_edge, to_node=to_edge, properties=edge_properties)
+    return neptune_edge
 
 
 def _edge_data_traversal_projection(traversal: GraphTraversal) -> GraphTraversal:
