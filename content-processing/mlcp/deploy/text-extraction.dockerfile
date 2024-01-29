@@ -41,6 +41,7 @@ RUN pip3 install pypdf==3.17.1
 RUN pip3 install pytesseract==0.3.10
 RUN pip3 install python_dateutil==2.8.2
 RUN pip3 install reportlab==4.0.7
+RUN pip3 install fpdf==1.7.2
 
 # Copy the source code into the container
 COPY /src /src
