@@ -19,6 +19,9 @@ export const case_supported_file_types: string[] = [
     'webp',
     'doc',
     'docx',
+    'txt',
+    'text',
+    'log'
 ]
 
 export enum CaseAccessLevels {

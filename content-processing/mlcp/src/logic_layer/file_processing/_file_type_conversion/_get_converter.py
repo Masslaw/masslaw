@@ -4,6 +4,7 @@ from logic_layer.file_processing._file_type_conversion._converter import FileCon
 from logic_layer.file_processing._file_type_conversion._to_pdf import WordToPdf
 from logic_layer.file_processing._file_type_conversion._to_pdf import ImageToPdf
 from logic_layer.file_processing._file_type_conversion._to_pdf import PdfToPdf
+from logic_layer.file_processing._file_type_conversion._to_pdf import TxtToPdf
 from shared_layer.file_system_utils import file_system_utils
 
 
@@ -11,6 +12,7 @@ __all_converters: List[Type[FileConverter]] = [
     PdfToPdf,
     ImageToPdf,
     WordToPdf,
+    TxtToPdf,
 ]
 
 
