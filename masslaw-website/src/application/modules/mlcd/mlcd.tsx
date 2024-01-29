@@ -42,6 +42,9 @@ export function MasslawContentDisplay(props: MLCDProps) {
             case ('webp'):
             case ('doc'):
             case ('docx'):
+            case ('txt'):
+            case ('text'):
+            case ('log'):
                 RendererComponent = OpticalDocumentRenderer;
                 break;
         }
