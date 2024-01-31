@@ -9,7 +9,7 @@ class OpensearchQuery:
     def __init__(self):
         self._inner_query: OpensearchInnerQuery = OpensearchInnerQuery()
         self._fuzziness: str = "AUTO"
-        self._highlights: List[Tuple[str, int]] = []
+        self._highlights: List[Tuple[str, int, int]] = []
         self._sorting: List[Tuple[str, OpensearchQuerySortOrder]] = []
         self._include_source_fields: List[str] = []
         self._documents: List[str] = []
@@ -27,7 +27,13 @@ class OpensearchQuery:
 
         if self._highlights:
             payload['highlight'] = {
-                "fields": {_highlight_field: {"fragment_size": _highlight_padding} for _highlight_field, _highlight_padding in self._highlights},
+                "fields": {
+                    _highlight_field: {
+                        "number_of_fragments": _highlights_per_document,
+                        "fragment_size": _highlight_padding,
+                    }
+                    for _highlight_field, _highlight_padding, _highlights_per_document in self._highlights
+                },
                 "pre_tags": ["<search_result>"],
                 "post_tags": ["</search_result>"]
             }
@@ -46,8 +52,8 @@ class OpensearchQuery:
     def include_source_fields(self, source_fields):
         self._include_source_fields = source_fields
 
-    def enable_highlight(self, highlight_field: str, highlight_padding: int = 50):
-        self._highlights.append((highlight_field, highlight_padding))
+    def enable_highlight(self, highlight_field: str, highlight_padding: int = 50, _highlights_per_document: int = 0):
+        self._highlights.append((highlight_field, highlight_padding, _highlights_per_document))
 
     def add_sorting(self, sort_field: str, sort_order: OpensearchQuerySortOrder):
         self._sorting.append((sort_field, sort_order))

@@ -56,6 +56,12 @@ class GetCaseKnowledgeItemData(MasslawCaseManagementApiInvokedLambdaFunction):
             return
 
     def __handle_node(self):
+
+        response = {
+            'entities': [],
+            'connections': []
+        }
+
         with ThreadPoolExecutor() as executor:
             node_data_future = executor.submit(_neptune_client.get_node_by_id, self.__item_id)
             node_outgoing_connections_future = executor.submit(_neptune_client.get_edges_by_nodes_connection, self.__item_id, None)
@@ -65,10 +71,8 @@ class GetCaseKnowledgeItemData(MasslawCaseManagementApiInvokedLambdaFunction):
             node_outgoing_connections = node_outgoing_connections_future.result()
             node_ingoing_connections = node_ingoing_connections_future.result()
 
-        response = {
-            'entities': [],
-            'connections': []
-        }
+        if node_data is None:
+            return response
 
         with ThreadPoolExecutor() as executor:
             to_nodes_futures = []
