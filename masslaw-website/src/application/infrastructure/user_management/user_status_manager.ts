@@ -70,12 +70,12 @@ export class UserStatusManager {
     }
 
     private getCachedUserStatus() : UserStatus | undefined {
-        let currentStatus = parseInt(sessionStorage.getItem(this._cachedStatusKey) || '');
+        let currentStatus = -1;
         return currentStatus;
     }
 
     private getLastFetchedStatusTime() : number {
-        let lastFetchedStatus = parseInt(sessionStorage.getItem(this._lastFetchedStatusKey) || '');
+        let lastFetchedStatus = -1;
         return lastFetchedStatus;
     }
 
