@@ -20,31 +20,14 @@ export const CaseKnowledge: ApplicationPage = (props: ApplicationPageProps) => {
 
     const {caseId} = useParams();
 
-    const [files_data, setFilesData] = useState([] as CaseFileData[]);
-    const [knowledge, setKnowledge] = useState(null as { [file_id: string]: knowledge } | null);
-
-    const [selected_files, setSelectedFiles] = useState([] as string[]);
-    const [highlighted_files, setHighlightedFiles] = useState([] as string[]);
+    const [, setFilesData] = useState([] as CaseFileData[]);
+    const [knowledge, setKnowledge] = useState(null as knowledge | null);
 
     const graphRef = useRef<GraphInterface | null>(null);
 
     const getCaseKnowledge = useCallback(() => {
         (async () => {
-            let case_files_response = await CasesManager.getInstance().getCaseFiles(caseId || '');
-            setFilesData(case_files_response);
-            let knowledge = {} as { [file_id: string]: knowledge };
-            let promises = case_files_response.map((file_data) => {
-                let file_knowledge_extraction_status = ((file_data.processing || {})[FileProcessingStages.KnowledgeExtraction] || {})['status'] || 'never_executed';
-                if (file_knowledge_extraction_status !== 'done') return;
-                let file_id = file_data.id;
-                return (async () => {
-                    let download_url = (await CasesManager.getInstance().getFileContentDownloadURL(caseId || '', file_id || '', ['extracted_knowledge/knowledge.json']))['extracted_knowledge/knowledge.json'];
-                    if (!download_url) return;
-                    let file_knowledge = await fetch(download_url).then((response) => response.json());
-                    knowledge[file_id] = file_knowledge;
-                })();
-            });
-            await Promise.all(promises);
+            let knowledge = await CasesManager.getInstance().getCaseKnowledge(caseId || '');
             setKnowledge(knowledge);
         })()
     }, [caseId]);
@@ -52,35 +35,13 @@ export const CaseKnowledge: ApplicationPage = (props: ApplicationPageProps) => {
     useEffect(() => {
         if (!knowledge) return;
         if (!graphRef.current) return;
-        for (let file_id in knowledge) {
-            let file_knowledge = knowledge[file_id];
-            if (!file_knowledge) continue;
-            for (let entity of file_knowledge.entities) {
-                graphRef.current.addNode(entity.id, entity.label, entity.properties['title']);
-            }
-            for (let connection of file_knowledge.connections) {
-                graphRef.current.addEdge(connection.id, connection.from, connection.to, connection.properties['strength']);
-            }
+        for (let entity of knowledge.entities) {
+            graphRef.current.addNode(entity.id, entity.label, entity.properties['title']);
+        }
+        for (let connection of knowledge.connections) {
+            graphRef.current.addEdge(connection.id, connection.from, connection.to, connection.properties['strength']);
         }
     }, [knowledge, graphRef.current]);
-
-    useEffect(() => {
-        if (!knowledge) return;
-        if (!graphRef.current) return;
-        for (let file_id in knowledge) {
-            let file_knowledge = knowledge[file_id];
-            if (!file_knowledge) continue;
-            for (let entity of file_knowledge.entities) graphRef.current.setNodeState(entity.id, 'idle');
-            for (let connection of file_knowledge.connections) graphRef.current.setEdgeState(connection.id, 'idle');
-        }
-        for (let file_id of selected_files) {
-            let file_knowledge = knowledge[file_id];
-            if (!file_knowledge) continue;
-            for (let entity of file_knowledge.entities) graphRef.current.setNodeState(entity.id, 'highlight');
-            for (let connection of file_knowledge.connections) graphRef.current.setEdgeState(connection.id, 'highlighted');
-        }
-    }, [selected_files]);
-
     const nodeClickCallback = (node_id: string) => {
         navigate_function(ApplicationRoutes.CASE_KNOWLEDGE_ENTITY, {caseId: caseId || '', entityId: node_id || ''});
     };
@@ -114,25 +75,6 @@ export const CaseKnowledge: ApplicationPage = (props: ApplicationPageProps) => {
                             edgeHoverCallback={edgeHoverCallback}
                         />
                         <div className={'case-knowledge-graph-info-text'}>{`Only the 40 most relevant items are displayed.`}</div>
-                        <div className={'case-knowledge-files-list-title'}>{`Files`}</div>
-                        <div className={'case-knowledge-files-list-container'}>
-                            {files_data.map((file_data) => {
-                                return <>
-                                    <div
-                                        key={file_data.id}
-                                        className={`case-knowledge-file-item ${highlighted_files.includes(file_data.id) && 'highlighted' || ''}`}
-                                        onMouseEnter={() => {
-                                            setSelectedFiles((current_selected) => [...current_selected, file_data.id]);
-                                        }}
-                                        onMouseLeave={() => {
-                                            setSelectedFiles((current_selected) => current_selected.filter((file_id) => file_id !== file_data.id));
-                                        }}
-                                    >
-                                        {file_data.name}
-                                    </div>
-                                </>
-                            })}
-                        </div>
                     </>
                     :
                     <>

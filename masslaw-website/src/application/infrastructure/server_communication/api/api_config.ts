@@ -47,5 +47,6 @@ export const MasslawApiCalls = {
     SET_CASE_ANNOTATION : {method:HttpMethod.POST, rout:'/cases/case/annotations'} as ApiCallData,
     DELETE_CASE_ANNOTATION : {method:HttpMethod.DELETE, rout:'/cases/case/annotations'} as ApiCallData,
     SET_FILE_DESCRIPTION : {method:HttpMethod.POST, rout:'/cases/case/files/set-description'} as ApiCallData,
+    GET_CASE_KNOWLEDGE : {method:HttpMethod.GET, rout:'/cases/case/knowledge'} as ApiCallData,
     GET_CASE_KNOWLEDGE_ITEM_DATA : {method:HttpMethod.GET, rout:'/cases/case/knowledge/items/data'} as ApiCallData,
 }

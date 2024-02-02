@@ -30,7 +30,7 @@ class S3BucketManager(AWSServiceClient):
     def get_object(self, key):
         try:
             obj = self._resource.Object(self._bucket_name, key).get()
-            return (obj['Body'].read()).decode()
+            return (obj['Body'].read()).decode('utf-8')
         except:
             return None
 

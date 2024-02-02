@@ -25,10 +25,7 @@ export const CaseDashboard: ApplicationPage = (props: ApplicationPageProps) => {
     const {caseId} = useParams();
 
     const [files_data, setFilesData] = useState(null as CaseFileData[] | null);
-    const [knowledge, setKnowledge] = useState(null as { [file_id: string]: knowledge } | null);
-
-    const [selected_files, setSelectedFiles] = useState([] as string[]);
-    const [highlighted_files, setHighlightedFiles] = useState([] as string[]);
+    const [knowledge, setKnowledge] = useState(null as knowledge | null);
 
     const graphRef = useRef<GraphInterface | null>(null);
 
@@ -40,21 +37,7 @@ export const CaseDashboard: ApplicationPage = (props: ApplicationPageProps) => {
 
     const getCaseKnowledge = useCallback(() => {
         (async () => {
-            let case_files_response = await CasesManager.getInstance().getCaseFiles(caseId || '');
-            setFilesData(case_files_response);
-            let knowledge = {} as { [file_id: string]: knowledge };
-            let promises = case_files_response.map((file_data) => {
-                let file_knowledge_extraction_status = ((file_data.processing || {})[FileProcessingStages.KnowledgeExtraction] || {})['status'] || 'never_executed';
-                if (file_knowledge_extraction_status !== 'done') return;
-                let file_id = file_data.id;
-                return (async () => {
-                    let download_url = (await CasesManager.getInstance().getFileContentDownloadURL(caseId || '', file_id || '', ['extracted_knowledge/knowledge.json']))['extracted_knowledge/knowledge.json'];
-                    if (!download_url) return;
-                    let file_knowledge = await fetch(download_url).then((response) => response.json());
-                    knowledge[file_id] = file_knowledge;
-                })();
-            });
-            await Promise.all(promises);
+            let knowledge = await CasesManager.getInstance().getCaseKnowledge(caseId || '');
             setKnowledge(knowledge);
         })()
     }, [caseId]);
@@ -62,65 +45,40 @@ export const CaseDashboard: ApplicationPage = (props: ApplicationPageProps) => {
     useEffect(() => {
         if (!knowledge) return;
         if (!graphRef.current) return;
-        for (let file_id in knowledge) {
-            let file_knowledge = knowledge[file_id];
-            if (!file_knowledge) continue;
-            for (let entity of file_knowledge.entities) {
-                graphRef.current.addNode(entity.id, entity.label, entity.properties['title']);
-            }
-            for (let connection of file_knowledge.connections) {
-                graphRef.current.addEdge(connection.id, connection.from, connection.to, connection.properties['strength']);
-            }
+        for (let entity of knowledge.entities) {
+            graphRef.current.addNode(entity.id, entity.label, entity.properties['title']);
+        }
+        for (let connection of knowledge.connections) {
+            graphRef.current.addEdge(connection.id, connection.from, connection.to, connection.properties['strength']);
         }
     }, [knowledge, graphRef.current]);
 
     useEffect(() => {
         if (!knowledge) return;
-        if (!graphRef.current) return;
-        for (let file_id in knowledge) {
-            let file_knowledge = knowledge[file_id];
-            if (!file_knowledge) continue;
-            for (let entity of file_knowledge.entities) graphRef.current.setNodeState(entity.id, 'idle');
-            for (let connection of file_knowledge.connections) graphRef.current.setEdgeState(connection.id, 'idle');
-        }
-        for (let file_id of selected_files) {
-            let file_knowledge = knowledge[file_id];
-            if (!file_knowledge) continue;
-            for (let entity of file_knowledge.entities) graphRef.current.setNodeState(entity.id, 'highlight');
-            for (let connection of file_knowledge.connections) graphRef.current.setEdgeState(connection.id, 'highlighted');
-        }
-    }, [selected_files]);
-
-    useEffect(() => {
-        if (!knowledge) return;
-        for (let file_id in knowledge) {
-            let file_knowledge = knowledge[file_id];
-            if (!file_knowledge) continue;
-            for (let entity of file_knowledge.entities) {
-                if (!entity) continue;
-                let entity_label = entity.label;
-                if (!["DATE"].includes(entity_label)) continue;
-                let entity_id = entity.id;
-                let entity_title = entity.properties.title;
-                let entity_date = entity.properties.datetime as { Y: string, M: string, D: string };
-                if (!entity_date) continue;
-                if (!entity_date.Y) continue;
-                let date = new Date();
-                date.setFullYear(parseInt(entity_date.Y));
-                if (entity_date.M) date.setMonth((parseInt(entity_date.M || '') || 1) - 1);
-                if (entity_date.D) date.setDate((parseInt(entity_date.D || '') || 1) - 1);
-                date.setHours(0);
-                date.setMinutes(0);
-                date.setSeconds(0);
-                let event = {
-                    title: entity_title, onclick: () => navigate_function(ApplicationRoutes.CASE_KNOWLEDGE_ENTITY, {caseId: caseId || '', entityId: entity_id || ''}), date: date,
-                };
-                setEvents((current_events) => {
-                    let new_events = {...current_events};
-                    new_events[entity_id] = event;
-                    return new_events;
-                });
-            }
+        for (let entity of knowledge.entities) {
+            if (!entity) continue;
+            let entity_label = entity.label;
+            if (!["DATE"].includes(entity_label)) continue;
+            let entity_id = entity.id;
+            let entity_title = entity.properties.title;
+            let entity_date = entity.properties.datetime as { Y: string, M: string, D: string };
+            if (!entity_date) continue;
+            if (!entity_date.Y) continue;
+            let date = new Date();
+            date.setFullYear(parseInt(entity_date.Y));
+            if (entity_date.M) date.setMonth((parseInt(entity_date.M || '') || 1) - 1);
+            if (entity_date.D) date.setDate((parseInt(entity_date.D || '') || 1) - 1);
+            date.setHours(0);
+            date.setMinutes(0);
+            date.setSeconds(0);
+            let event = {
+                title: entity_title, onclick: () => navigate_function(ApplicationRoutes.CASE_KNOWLEDGE_ENTITY, {caseId: caseId || '', entityId: entity_id || ''}), date: date,
+            };
+            setEvents((current_events) => {
+                let new_events = {...current_events};
+                new_events[entity_id] = event;
+                return new_events;
+            });
         }
     }, [knowledge, graphRef.current]);
 

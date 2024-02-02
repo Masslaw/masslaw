@@ -1,10 +1,12 @@
-from typing import List
 from typing import Set
 
 from src.modules.aws_clients.dynamodb_client import DynamoDBTableManager
+from src.modules.aws_clients.s3_client import S3BucketManager
+from src.modules.dictionary_utils import dictionary_utils
 from src.modules.masslaw_case_data_formatting import masslaw_case_data_formatting
 from src.modules.masslaw_case_users_management import MasslawCaseUserAccessManager
 from src.modules.masslaw_case_users_management import masslaw_case_users_management_exceptions
+from src.modules.masslaw_cases_config._storage_config import CASES_KNOWLEDGE_BUCKET_ID
 from src.modules.masslaw_cases_objects import MasslawCaseInstance
 
 
@@ -52,3 +54,23 @@ class MasslawCaseDataCollector:
         annotations_table_manager = DynamoDBTableManager("MasslawFileAnnotations")
         items_data = annotations_table_manager.batch_get_items(list(annotation_ids))
         return items_data
+
+    def get_case_knowledge(self) -> dict:
+        s3_bucket_manager = S3BucketManager(CASES_KNOWLEDGE_BUCKET_ID)
+        s3_knowledge_key = f'{self.__case_instance.get_case_id()}/knowledge.json'
+        knowledge_data = s3_bucket_manager.get_object(s3_knowledge_key)
+        if not knowledge_data: return {
+            'connections': [],
+            'entities': []
+        }
+        knowledge = dictionary_utils.ensure_dict(knowledge_data)
+        case_files = set(self.__case_instance.get_data_property(['files'], []))
+        for entity in knowledge.get('entities', []):
+            entity_files = set(dictionary_utils.get_from(entity, ['properties', 'files', 'list'], []))
+            dictionary_utils.set_at(entity, ['files', 'list'], list(entity_files & case_files))
+        for connection in knowledge.get('connections', []):
+            connection_files = set(dictionary_utils.get_from(connection, ['properties', 'files', 'list'], []))
+            dictionary_utils.set_at(connection, ['properties', 'files', 'list'], list(connection_files & case_files))
+        knowledge['entities'] = [entity for entity in knowledge.get('entities', []) if dictionary_utils.get_from(entity, ['properties', 'files', 'list'], [])]
+        knowledge['connections'] = [connection for connection in knowledge.get('connections', []) if dictionary_utils.get_from(connection, ['properties', 'files', 'list'], [])]
+        return knowledge
