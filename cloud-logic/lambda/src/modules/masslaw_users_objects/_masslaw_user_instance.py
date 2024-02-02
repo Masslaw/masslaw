@@ -19,12 +19,10 @@ class MasslawUserInstance(DataHolder):
         DataHolder.__init__(self)
 
     def load_data(self):
-        if not self.__user_id:
-            return False
         DataHolder.load_data(self)
+        if not self.__user_id: return False
         user_data = users_table_manager.get_item(self.__user_id)
-        if not user_data:
-            return False
+        if not user_data: return False
         user_data = dictionary_utils.ensure_dict(user_data)
         self._set_data(user_data)
         return True

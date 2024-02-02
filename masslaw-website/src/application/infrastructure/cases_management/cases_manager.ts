@@ -50,10 +50,10 @@ export class CasesManager {
         return response.success;
     }
 
-    public async getCaseFiles(caseId: string) {
+    public async getCaseFiles(caseId: string, chunk?: number) {
         let response= await ApiManager.getInstance().MakeApiHttpRequest<{case_files: {files: CaseFileData[]}}>({
             call: MasslawApiCalls.GET_CASE_FILES,
-            queryStringParameters: {case_id: caseId} as {[key:string]: string},
+            queryStringParameters: {case_id: caseId, chunk: (chunk || 0).toString()} as {[key:string]: string},
         } as HTTPRequest);
         return response.data.case_files?.files;
     }

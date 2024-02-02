@@ -8,15 +8,14 @@ class MasslawCaseUserAccessManager:
     def __init__(self, case_instance: MasslawCaseInstance):
         self.__case_instance = case_instance
 
-    def get_formatted_case_instance_for_user(self, user_id):
+    def get_formatted_case_instance_for_user(self, user_id) -> 'UserReadFormattedCaseInstance':
         access_level = self.determine_user_access_level(user_id=user_id)
         formatted_case_instance = self.get_formatted_case_instance_for_entity(access_level)
-
         user_access_files = self.get_user_access_files(user_id)
         formatted_case_instance.set_data_property(['files'], user_access_files)
         return formatted_case_instance
 
-    def get_formatted_case_instance_for_entity(self, access_level):
+    def get_formatted_case_instance_for_entity(self, access_level) -> 'UserReadFormattedCaseInstance':
         formatted_case_instance = UserReadFormattedCaseInstance(self.__case_instance.get_case_id())
         entity_permitted_data_keys = self.get_permitted_keys_for_access(access_config.AccessActions.READ, access_level)
         formatted_case_instance.keep_keys(entity_permitted_data_keys)

@@ -10,8 +10,6 @@ import {
     CaseFileAnnotationTypes,
     CaseFileData
 } from "../../../../../../infrastructure/cases_management/data_structures";
-import {unixTimeToPastTimeString} from "../../../../../../shared/util/date_time_utiles";
-import {FileTypeDisplay} from "../../../../../../shared/components/file_type_display/file_type_display";
 import {faCopy, faHighlighter, faPencilAlt, faStickyNote, faTimes, faTrash} from "@fortawesome/free-solid-svg-icons";
 import {
     GlobalPopupsInterfaceState,
@@ -21,7 +19,6 @@ import {
 import {InputField} from "../../../../../../shared/components/input_field/input_field";
 import {MasslawButton, MasslawButtonTypes} from "../../../../../../shared/components/masslaw_button/masslaw_button";
 import {LoadingButton} from "../../../../../../shared/components/loading_button/loading_button";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {MasslawUserData} from "../../../../../../infrastructure/user_management/user_data";
 import {UsersManager} from "../../../../../../infrastructure/user_management/users_manager";
 import {LoadingIcon} from "../../../../../../shared/components/loading_icon/loading_icon";

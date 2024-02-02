@@ -47,6 +47,9 @@
     font-weight: bold;
     border: none;
 }
+.masslaw-generic-button.clear-button.click-blocked {
+    border: none !important;
+}
 .masslaw-generic-button.clear-button:hover {
 }
 .masslaw-generic-button.destructive-button {

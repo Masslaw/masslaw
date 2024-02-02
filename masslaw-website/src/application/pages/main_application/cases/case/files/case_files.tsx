@@ -2,56 +2,25 @@ import {useParams} from "react-router-dom";
 import {CasesManager} from "../../../../../infrastructure/cases_management/cases_manager";
 import React, {useCallback, useEffect, useState} from "react";
 import {MasslawButton, MasslawButtonTypes} from "../../../../../shared/components/masslaw_button/masslaw_button";
-import {
-    faArrowRight,
-    faCheck,
-    faClock,
-    faPlus,
-    faRedoAlt,
-    faTimes,
-    faTrash,
-    faTrashAlt
-} from "@fortawesome/free-solid-svg-icons";
+import {faArrowLeft, faArrowRight, faCheck, faClock, faPlus, faRedoAlt, faTimes, faTrash} from "@fortawesome/free-solid-svg-icons";
 
 import './css.css'
 import {DataTable} from "../../../../../shared/components/data_table/data_table";
 import {LoadingIcon} from "../../../../../shared/components/loading_icon/loading_icon";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {ProgressBar} from "../../../../../shared/components/progress_bar/progress_bar";
-import {
-    asyncSleep,
-    unixTimeToDateTimeString,
-    unixTimeToPastTimeString
-} from "../../../../../shared/util/date_time_utiles";
+import {asyncSleep, unixTimeToPastTimeString} from "../../../../../shared/util/date_time_utiles";
 import {ApplicationRoutes} from "../../../../../infrastructure/application_base/routing/application_routes";
-import {
-    GlobalPopupsInterfaceState,
-    PopupComponent,
-    PopupComponentProps
-} from "../../../../../infrastructure/application_base/global_functionality/global_components/application_global_layer/popups/popups";
-import {CaseFileAnnotationData, CaseFileData} from "../../../../../infrastructure/cases_management/data_structures";
-import {MasslawEllipsisMenu} from "../../../../../shared/components/masslaw_ellipsis_menu/masslaw_ellipsis_menu";
+import {GlobalPopupsInterfaceState, PopupComponent, PopupComponentProps} from "../../../../../infrastructure/application_base/global_functionality/global_components/application_global_layer/popups/popups";
+import {CaseData, CaseFileAnnotationData, CaseFileData} from "../../../../../infrastructure/cases_management/data_structures";
 import {FileTypeDisplay} from "../../../../../shared/components/file_type_display/file_type_display";
 import {FileUploadRegion} from "../../../../../shared/components/file_upload_region/file_upload_region";
-import {
-    ApplicationPage,
-    ApplicationPageProps
-} from "../../../../../infrastructure/application_base/routing/application_page_renderer";
+import {ApplicationPage, ApplicationPageProps} from "../../../../../infrastructure/application_base/routing/application_page_renderer";
 import {useGlobalState} from "../../../../../infrastructure/application_base/global_functionality/global_states";
-import {
-    NavigationFunctionState
-} from "../../../../../infrastructure/application_base/routing/application_global_routing";
-import {CognitoManager} from "../../../../../infrastructure/server_communication/server_modules/cognito_client";
-import {
-    get_file_current_ongoing_processing_stage,
-} from "../../../../../infrastructure/cases_management/case_data_utils";
-import {
-    case_supported_file_types,
-    FileProcessingStages
-} from "../../../../../infrastructure/cases_management/cases_consts";
-import {
-    CaseFileProcessingStage
-} from "../../../../../shared/components/case_file_processing_stage/case_file_processing_stage";
+import {NavigationFunctionState} from "../../../../../infrastructure/application_base/routing/application_global_routing";
+import {get_file_current_ongoing_processing_stage,} from "../../../../../infrastructure/cases_management/case_data_utils";
+import {case_supported_file_types, FileProcessingStages} from "../../../../../infrastructure/cases_management/cases_consts";
+import {CaseFileProcessingStage} from "../../../../../shared/components/case_file_processing_stage/case_file_processing_stage";
 import {CaseFileDataDisplay} from "../../../../../shared/components/case_file_data_display/case_file_data_display";
 
 
@@ -61,7 +30,12 @@ export const CaseFiles: ApplicationPage = (props: ApplicationPageProps) => {
 
     const {caseId} = useParams();
 
+    const [case_data, setCaseData] = useState({} as CaseData | undefined);
+
     const [case_files_data, setCaseFilesData] = useState([] as CaseFileData[]);
+
+    const [selected_page, setSelectedPage] = useState(0);
+
     const [uploading_files_list, setUploadingFilesList] = useState({} as {
         [key: string]: { progress: number, failed: boolean, file_name: string }
     });
@@ -83,140 +57,194 @@ export const CaseFiles: ApplicationPage = (props: ApplicationPageProps) => {
             break;
         }
         setCaseFilesData(tempFilesData)
-        await CasesManager.getInstance().deleteFile(
-            caseId,
-            fileData.id,
-        )
+        await CasesManager.getInstance().deleteFile(caseId, fileData.id,)
         await getCaseFiles();
         setLoadingFilesList(false);
     }
 
-    let getCaseFiles = async () => {
+    let getCaseFiles = useCallback(async () => {
         setLoadingFilesList(true);
-        setCaseFilesData(await CasesManager.getInstance().getCaseFiles(caseId || ''));
+        setCaseFilesData(await CasesManager.getInstance().getCaseFiles(caseId || '', selected_page || 0));
         setLoadingFilesList(false);
-    }
+    }, [caseId, selected_page]);
 
     useEffect(() => {
         getCaseFiles();
-    }, []);
+    }, [caseId, selected_page]);
 
-    return (
-        <>
-            <div className={'case-files-header'}>
-                <div className={'case-files-page-title page-title'}>{`Case Files`}</div>
-                <div className={'case-files-list-header-upload-button-container'}>
-                    <MasslawButton caption={'Upload'}
-                                   icon={faPlus}
-                                   buttonType={MasslawButtonTypes.MAIN}
-                                   size={{w: 120, h: 35}}
-                                   onClick={e => {
-                                       global_popups_interface.pushPopup({
-                                           popupComponent: FileUploadUIPopupComponent,
-                                           additionalProps: {
-                                               caseId: caseId,
-                                           },
-                                           onClose: getCaseFiles
-                                       })
-                                   }}/>
-                </div>
-                <div className={'case-files-list-header-reload-button-container'}>
-                    {
-                        loading_files_list ?
-                            <>
-                                <LoadingIcon
-                                    color={'#000000'}
-                                    ballSize={10}
-                                    width={40}
-                                />
-                            </>
-                            :
-                            <>
-                                <MasslawButton caption={''}
-                                               icon={faRedoAlt}
-                                               buttonType={MasslawButtonTypes.CLEAR}
-                                               size={{w: 50, h: 50}}
-                                               onClick={e => {
-                                                   getCaseFiles()
-                                               }}/>
-                            </>
-                    }
-                </div>
+    useEffect(() => {
+        (async () => {
+            setCaseData(await CasesManager.getInstance().getCaseData(caseId || ''));
+        })().then();
+    }, [caseId]);
+
+    return (<>
+        <div className={'case-files-header'}>
+            <div className={'case-files-page-title page-title'}>{`Case Files`}</div>
+            <div className={'case-files-list-header-upload-button-container'}>
+                <MasslawButton caption={'Upload'}
+                               icon={faPlus}
+                               buttonType={MasslawButtonTypes.MAIN}
+                               size={{w: 120, h: 35}}
+                               onClick={e => {
+                                   global_popups_interface.pushPopup({
+                                       popupComponent: FileUploadUIPopupComponent, additionalProps: {
+                                           caseId: caseId,
+                                       }, onClose: getCaseFiles
+                                   })
+                               }}/>
             </div>
-            <div className={'case-files-list-content'}>
-                {
-                    case_files_data && case_files_data.length > 0 ?
-                    <DataTable
-                        data={case_files_data}
-                        keys={[['type', 'File Type'], ['name', 'File Name'], ['description', 'File Description'], ['uploaded', 'Uploaded'], ['modified', 'Last Modified'], ['processing', 'Status'], ['num_annotations', 'Annotations']]}
-                        onItemClicked={(item_data) => {
-                           global_popups_interface.pushPopup({
-                               popupComponent: FileDataDisplayPopupComponent,
-                               additionalProps: {
-                                   caseId: caseId || '',
-                                   fileId: item_data.id,
-                                   functions: {
-                                       'delete': deleteCaseFile,
-                                   }
-                               }
-                           });
-                       }}
-                       elementDisplayMap={{
-                           'description': (description: string) => {
-                               return (
-                                   <>
-                                       <span style={{maxWidth: '200px'}}>{description || '--'}</span>
-                                   </>
-                               )
-                           },
-                           'uploaded': (upload_time: string) => {
-                               return (
-                                   <>
-                                       <span>{`${upload_time && unixTimeToPastTimeString(parseInt(upload_time.toString())) || '?'}`}</span>
-                                       <span style={{margin: '10px'}}><FontAwesomeIcon
-                                           icon={faClock}></FontAwesomeIcon></span>
-                                   </>
-                               )
-                           },
-                           'modified': (upload_time: string) => {
-                               return (
-                                   <>
-                                       <span>{`${upload_time && unixTimeToPastTimeString(parseInt(upload_time.toString())) || '?'}`}</span>
-                                       <span style={{margin: '10px'}}><FontAwesomeIcon
-                                           icon={faClock}></FontAwesomeIcon></span>
-                                   </>
-                               )
-                           },
-                           'type': (file_type: string) => {
-                               return <FileTypeDisplay type={file_type} />
-                           },
-                           'processing': (processing_data: CaseFileData['processing']) => {
-                               return <CaseFileProcessingStage fileData={{processing:processing_data} as CaseFileData} />
-                           }}}
+            <div className={'case-files-list-header-reload-button-container'}>
+                {loading_files_list ? <>
+                    <LoadingIcon
+                        color={'#000000'}
+                        ballSize={10}
+                        width={40}
                     />
-                    :
-                    <>
-                        <></>
-                    </>}
+                </> : <>
+                    <MasslawButton caption={''}
+                                   icon={faRedoAlt}
+                                   buttonType={MasslawButtonTypes.CLEAR}
+                                   size={{w: 50, h: 50}}
+                                   onClick={e => {
+                                       getCaseFiles()
+                                   }}/>
+                </>}
             </div>
-        </>
-    )
+        </div>
+        <div className={'case-files-pagination-container'}>
+
+            <div className={'case-files-pagination-ui-item'}>
+                <MasslawButton
+                    caption={''}
+                    icon={faArrowLeft}
+                    buttonType={MasslawButtonTypes.CLEAR}
+                    size={{w: 20, h: 20}}
+                    onClick={e => {
+                        setSelectedPage((selected_page) => Math.max(0, selected_page - 1))
+                    }}
+                    clickable={selected_page > 0}
+                />
+            </div>
+            {selected_page > 0 &&
+                <div className={'case-files-pagination-ui-item'}>
+                    <MasslawButton
+                        caption={'1'}
+                        buttonType={MasslawButtonTypes.CLEAR}
+                        size={{w: 20, h: 20}}
+                        onClick={e => {
+                            setSelectedPage(0)
+                        }}
+                        clickable={selected_page > 0}
+                    />
+                </div> || <></>}
+            {selected_page > 2 && <div className={'case-files-pagination-ui-item'}>...</div> || <></>}
+            {selected_page > 1 && <div className={'case-files-pagination-ui-item'}><MasslawButton
+                caption={(selected_page).toString()}
+                buttonType={MasslawButtonTypes.CLEAR}
+                size={{w: 20, h: 20}}
+                onClick={e => {
+                    setSelectedPage(selected_page - 1)
+                }}
+            /></div> || <></>}
+            <div className={'case-files-pagination-ui-item'}><MasslawButton
+                caption={(selected_page + 1).toString()}
+                buttonType={MasslawButtonTypes.CLEAR}
+                size={{w: 20, h: 20}}
+                onClick={e => {
+                    setSelectedPage(0)
+                }}
+                clickable={false}
+            /></div>
+            {Math.floor((case_data?.num_files || 0) / 100) - selected_page > 1 && <div className={'case-files-pagination-ui-item'}><MasslawButton
+                caption={(selected_page + 2).toString()}
+                buttonType={MasslawButtonTypes.CLEAR}
+                size={{w: 20, h: 20}}
+                onClick={e => {
+                    setSelectedPage(selected_page + 1)
+                }}
+            /></div> || <></>}
+            {Math.floor((case_data?.num_files || 0) / 100) - selected_page > 2 && <div className={'case-files-pagination-ui-item'}>...</div> || <></>}
+            {Math.floor((case_data?.num_files || 0) / 100) - selected_page > 0 && <div className={'case-files-pagination-ui-item'}><MasslawButton
+                caption={(Math.floor((case_data?.num_files || 0) / 100) + 1).toString()}
+                buttonType={MasslawButtonTypes.CLEAR}
+                size={{w: 20, h: 20}}
+                onClick={e => {
+                    setSelectedPage(0)
+                }}
+                clickable={Math.floor((case_data?.num_files || 0) / 100) - selected_page > 0}
+            /></div> || <></>}
+            <div className={'case-files-pagination-ui-item'}>
+                <MasslawButton
+                    caption={''}
+                    icon={faArrowRight}
+                    buttonType={MasslawButtonTypes.CLEAR}
+                    size={{w: 20, h: 20}}
+                    onClick={e => {
+                        setSelectedPage((selected_page) => Math.min(Math.floor((case_data?.num_files || 0) / 100), selected_page + 1))
+                    }}
+                    clickable={Math.floor((case_data?.num_files || 0) / 100) - selected_page > 0}
+                />
+            </div>
+        </div>
+        <div className={'case-files-list-content'}>
+            {case_files_data && case_files_data.length > 0 ? <DataTable
+                data={case_files_data}
+                keys={[['type', 'File Type'], ['name', 'File Name'], ['description', 'File Description'], ['uploaded', 'Uploaded'], ['modified', 'Last Modified'], ['processing', 'Status'], ['num_annotations', 'Annotations']]}
+                onItemClicked={(item_data) => {
+                    global_popups_interface.pushPopup({
+                        popupComponent: FileDataDisplayPopupComponent, additionalProps: {
+                            caseId: caseId || '', fileId: item_data.id, functions: {
+                                'delete': deleteCaseFile,
+                            }
+                        }
+                    });
+                }}
+                elementDisplayMap={{
+                    'description': (description: string) => {
+                        return (<>
+                            <span style={{maxWidth: '200px'}}>{description || '--'}</span>
+                        </>)
+                    }, 'uploaded': (upload_time: string) => {
+                        return (<>
+                            <span>{`${upload_time && unixTimeToPastTimeString(parseInt(upload_time.toString())) || '?'}`}</span>
+                            <span style={{margin: '10px'}}><FontAwesomeIcon
+                                icon={faClock}></FontAwesomeIcon></span>
+                        </>)
+                    }, 'modified': (upload_time: string) => {
+                        return (<>
+                            <span>{`${upload_time && unixTimeToPastTimeString(parseInt(upload_time.toString())) || '?'}`}</span>
+                            <span style={{margin: '10px'}}><FontAwesomeIcon
+                                icon={faClock}></FontAwesomeIcon></span>
+                        </>)
+                    }, 'type': (file_type: string) => {
+                        return <FileTypeDisplay type={file_type}/>
+                    }, 'processing': (processing_data: CaseFileData['processing']) => {
+                        return <CaseFileProcessingStage fileData={{processing: processing_data} as CaseFileData}/>
+                    }
+                }}
+            /> : <>
+                <></>
+            </>}
+        </div>
+    </>)
 }
 
-interface FileDataDisplayPopupProps extends PopupComponentProps{
+interface FileDataDisplayPopupProps extends PopupComponentProps {
     fileId: string,
     caseId: string,
-    functions: { [key:string]: (fileData: CaseFileData) => void},
+    functions: { [key: string]: (fileData: CaseFileData) => void },
 }
+
 const FileDataDisplayPopupComponent: PopupComponent = (props: FileDataDisplayPopupProps) => {
-    
+
     const [navigate_function, setNavigateFunction] = useGlobalState(NavigationFunctionState);
     const [global_popups_interface, setGlobalPopupsInterface] = useGlobalState(GlobalPopupsInterfaceState);
 
     const [file_data, setCaseFileData] = useState({} as CaseFileData);
     const [file_annotations, setFileAnnotations] = useState(null as CaseFileAnnotationData[] | null);
 
-    const [current_file_processing_stage, setCurrentFileProcessingStage] = useState<FileProcessingStages|undefined>(FileProcessingStages.Starting);
+    const [current_file_processing_stage, setCurrentFileProcessingStage] = useState<FileProcessingStages | undefined>(FileProcessingStages.Starting);
 
     const openable = useCallback(() => {
         return (((file_data.processing || {})[FileProcessingStages.TextExtraction] || {})['status'] || '') == 'done';
@@ -224,16 +252,15 @@ const FileDataDisplayPopupComponent: PopupComponent = (props: FileDataDisplayPop
 
     const obtainFileAnnotations = useCallback(async () => {
         setFileAnnotations(null);
-        const annotations = await CasesManager.getInstance().getCaseAnnotations(
-            file_data.case_id,
-            [file_data.id]
-        )
+        const annotations = await CasesManager.getInstance().getCaseAnnotations(file_data.case_id, [file_data.id])
         setFileAnnotations(annotations)
     }, [file_data])
 
     useEffect(() => {
         setCaseFileData({} as CaseFileData);
-        if (props.caseId === undefined) { return; }
+        if (props.caseId === undefined) {
+            return;
+        }
         CasesManager.getInstance().getFileData(props.caseId, props.fileId).then(fileData => {
             setCaseFileData(fileData);
         })
@@ -249,81 +276,73 @@ const FileDataDisplayPopupComponent: PopupComponent = (props: FileDataDisplayPop
         setFileAnnotations(null);
     }, []);
 
-    return (
-        <div className={`file-data-display-popup`}>
-        {
-            file_data.name === undefined ?
-                <>
-                    <div className={'loading-icon-container'} >
-                        <LoadingIcon
-                            color={'#000000'}
-                            width={70}
-                        />
-                    </div>
-                </>
-                :
-                <>
-                    <div className={'file-data-display-header'}>
-                        <div className={'case-file-name'}>
-                            {file_data.name}
-                        </div>
-                        <div className={'file-data-display-close-button-container'}>
-                            <MasslawButton
-                                caption={''}
-                                icon={faTimes}
-                                onClick={() => {
-                                    global_popups_interface.closeCurrentPopup()
-                                }}
-                                size={{w: 60, h: 60}}
-                                buttonType={MasslawButtonTypes.CLEAR}
-                            />
-                        </div>
-                    </div>
-                    <div className={'file-data-display-body'}>
-                        <CaseFileDataDisplay
-                            fileData={file_data}
-                            fileAnnotations={file_annotations}
-                            fileAnnotationClickedCallback={(annotationData) => {
-                                if (!props.caseId) return;
-                                if (!openable()) return;
-                                navigate_function(ApplicationRoutes.FILE_DISPLAY, {
-                                    'caseId': props.caseId,
-                                    'fileId': props.fileId,
-                                }, {
-                                    ['scroll_to']: `${annotationData.from_char}`
-                                });
-                                global_popups_interface.closeCurrentPopup();
-                            }}
-                        />
-                    </div>
-                    <div className={'file-data-display-footer'}>
-                        <div className={'file-data-display-open-file-button-container'}>
-                            <MasslawButton
-                                caption={''}
-                                icon={faArrowRight}
-                                buttonType={MasslawButtonTypes.MAIN}
-                                size={{w: 110, h: 35}}
-                                clickable={openable()}
-                                onClick={() => {
-                                    if (!props.caseId) return;
-                                    navigate_function(ApplicationRoutes.FILE_DISPLAY, {
-                                        'caseId': props.caseId,
-                                        'fileId': props.fileId,
-                                    });
-                                    global_popups_interface.closeCurrentPopup();
-                                }}
-                            />
-                        </div>
-                    </div>
-                </>
-        }
-    </div>
-    )
+    return (<div className={`file-data-display-popup`}>
+        {file_data.name === undefined ? <>
+            <div className={'loading-icon-container'}>
+                <LoadingIcon
+                    color={'#000000'}
+                    width={70}
+                />
+            </div>
+        </> : <>
+            <div className={'file-data-display-header'}>
+                <div className={'case-file-name'}>
+                    {file_data.name}
+                </div>
+                <div className={'file-data-display-close-button-container'}>
+                    <MasslawButton
+                        caption={''}
+                        icon={faTimes}
+                        onClick={() => {
+                            global_popups_interface.closeCurrentPopup()
+                        }}
+                        size={{w: 60, h: 60}}
+                        buttonType={MasslawButtonTypes.CLEAR}
+                    />
+                </div>
+            </div>
+            <div className={'file-data-display-body'}>
+                <CaseFileDataDisplay
+                    fileData={file_data}
+                    fileAnnotations={file_annotations}
+                    fileAnnotationClickedCallback={(annotationData) => {
+                        if (!props.caseId) return;
+                        if (!openable()) return;
+                        navigate_function(ApplicationRoutes.FILE_DISPLAY, {
+                            'caseId': props.caseId, 'fileId': props.fileId,
+                        }, {
+                            ['scroll_to']: `${annotationData.from_char}`
+                        });
+                        global_popups_interface.closeCurrentPopup();
+                    }}
+                />
+            </div>
+            <div className={'file-data-display-footer'}>
+                <div className={'file-data-display-open-file-button-container'}>
+                    <MasslawButton
+                        caption={''}
+                        icon={faArrowRight}
+                        buttonType={MasslawButtonTypes.MAIN}
+                        size={{w: 110, h: 35}}
+                        clickable={openable()}
+                        onClick={() => {
+                            if (!props.caseId) return;
+                            navigate_function(ApplicationRoutes.FILE_DISPLAY, {
+                                'caseId': props.caseId, 'fileId': props.fileId,
+                            });
+                            global_popups_interface.closeCurrentPopup();
+                        }}
+                    />
+                </div>
+            </div>
+        </>}
+    </div>)
 }
 
-interface FileDataDisplayPopupProps extends PopupComponentProps{
+interface FileDataDisplayPopupProps extends PopupComponentProps {
     caseId: string,
 }
+
 const FileUploadUIPopupComponent: PopupComponent = (props: FileDataDisplayPopupProps) => {
 
     interface selectedFileEntry {
@@ -333,7 +352,7 @@ const FileUploadUIPopupComponent: PopupComponent = (props: FileDataDisplayPopupP
         supported: false,
     }
 
-    const [selected_files, setSelectedFiles] = useState({} as {[file: string]: selectedFileEntry});
+    const [selected_files, setSelectedFiles] = useState({} as { [file: string]: selectedFileEntry });
 
     const [any_supported_selected, setAnySupportedSelected] = useState(false);
 
@@ -347,10 +366,7 @@ const FileUploadUIPopupComponent: PopupComponent = (props: FileDataDisplayPopupP
             for (let file of files) {
                 let typeName = file.name.split('.').pop() || '';
                 entries[file.name] = {
-                    file: file,
-                    uploadingProgress: 0,
-                    typeName: typeName,
-                    supported: case_supported_file_types.includes(typeName),
+                    file: file, uploadingProgress: 0, typeName: typeName, supported: case_supported_file_types.includes(typeName),
                 } as selectedFileEntry
             }
             return entries;
@@ -466,62 +482,42 @@ const FileUploadUIPopupComponent: PopupComponent = (props: FileDataDisplayPopupP
                 </div>
                 <div className={'file-upload-interface-popup-selected-files'}>
                     <b>{'Selected Files:'}</b>
-                    {
-                        Object.values(selected_files).length > 0 &&
-                        Object.values(selected_files).map((entry, key) => {
-                            return <div
-                                key={key}
-                                className={`file-upload-interface-popup-selected-file-item ` +
-                                    `${!entry.supported && 'not-supported' || ''} ` +
-                                    `${entry.uploadingProgress >= 1 && 'success' || ''} ` +
-                                    `${entry.uploadingProgress < 0 && 'failed' || ''} `}
-                            >
-                                <span className={'selected-file-icon'}>{<FileTypeDisplay type={entry.typeName} />}</span>
-                                <span className={'selected-file-name'}>{entry.file.name}</span>
-                                {
-                                    !entry.supported &&
-                                    <span className={'selected-file-not-supported-message'}>{'This file type is not supported in our services yet'}</span>
-                                }
-                                {
-                                    entry.uploadingProgress > 0 && entry.uploadingProgress < 1 &&
-                                    <span className={'selected-file-progressbar-container'}>
+                    {Object.values(selected_files).length > 0 && Object.values(selected_files).map((entry, key) => {
+                        return <div
+                            key={key}
+                            className={`file-upload-interface-popup-selected-file-item ` + `${!entry.supported && 'not-supported' || ''} ` + `${entry.uploadingProgress >= 1 && 'success' || ''} ` + `${entry.uploadingProgress < 0 && 'failed' || ''} `}
+                        >
+                            <span className={'selected-file-icon'}>{<FileTypeDisplay type={entry.typeName}/>}</span>
+                            <span className={'selected-file-name'}>{entry.file.name}</span>
+                            {!entry.supported && <span className={'selected-file-not-supported-message'}>{'This file type is not supported in our services yet'}</span>}
+                            {entry.uploadingProgress > 0 && entry.uploadingProgress < 1 && <span className={'selected-file-progressbar-container'}>
                                         <ProgressBar progress={entry.uploadingProgress}/>
-                                    </span>
-                                }
-                                {
-                                    entry.uploadingProgress == 0 &&
-                                    <span className={'remove-item-button'}>
+                                    </span>}
+                            {entry.uploadingProgress == 0 && <span className={'remove-item-button'}>
                                         <MasslawButton
                                             caption={''}
                                             icon={faTrash}
                                             size={{w: 40, h: 40}}
                                             buttonType={MasslawButtonTypes.CLEAR}
-                                            onClick={() => {removeEntry(entry)}}
+                                            onClick={() => {
+                                                removeEntry(entry)
+                                            }}
                                         />
-                                    </span>
-                                }
-                                {
-                                    entry.uploadingProgress >= 1 &&
-                                    <span className={'selected-file-upload-complete-status-icon'}>
+                                    </span>}
+                            {entry.uploadingProgress >= 1 && <span className={'selected-file-upload-complete-status-icon'}>
                                         <FontAwesomeIcon
                                             icon={faCheck}
                                         />
-                                    </span>
-                                }
-                                {
-                                    entry.uploadingProgress < 0 &&
-                                    <span className={'selected-file-upload-complete-status-icon'}>
+                                    </span>}
+                            {entry.uploadingProgress < 0 && <span className={'selected-file-upload-complete-status-icon'}>
                                         <FontAwesomeIcon
                                             icon={faTimes}
                                         />
-                                    </span>
-                                }
-                            </div>
-                        }) ||
-                        <div className={'file-upload-interface-popup-selected-files-non-selected'}>
-                            {'You haven\'t selected any files yet'}
+                                    </span>}
                         </div>
-                    }
+                    }) || <div className={'file-upload-interface-popup-selected-files-non-selected'}>
+                        {'You haven\'t selected any files yet'}
+                    </div>}
                 </div>
                 <div className={'file-upload-interface-popup-upload-button-container'}>
                     <div className={'file-upload-interface-popup-upload-button-wrapper'}>

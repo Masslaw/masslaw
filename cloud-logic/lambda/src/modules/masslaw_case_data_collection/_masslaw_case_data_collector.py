@@ -12,11 +12,10 @@ class MasslawCaseDataCollector:
 
     def __init__(self, case_instance: MasslawCaseInstance, access_user_id: str = None):
         self.__access_user_id = access_user_id
+        self.__case_instance = case_instance
         if self.__access_user_id:
             access_manager = MasslawCaseUserAccessManager(case_instance)
             self.__case_instance = access_manager.get_formatted_case_instance_for_user(self.__access_user_id)
-        else:
-            self.__case_instance = case_instance
 
     def get_case_data(self):
         case_data = masslaw_case_data_formatting.get_case_data_full_format_from_db_item(self.__case_instance.get_data_property([], {}), self.__access_user_id or '')
@@ -29,9 +28,9 @@ class MasslawCaseDataCollector:
     def get_case_files_data(self, chunk: int = 0):
         case_files = self.__case_instance.get_data_property(['files'], [])
         table_manager = DynamoDBTableManager("MasslawFiles")
-        files_to_retrieve = case_files[-100 * (chunk + 1) - 1: -100 * chunk - 1]
+        files_to_retrieve = case_files[-100 * (chunk + 1): len(case_files) - 100 * chunk]
         items_data = table_manager.batch_get_items(files_to_retrieve)
-        return [masslaw_case_data_formatting.get_case_file_data_base_format_from_db_item(item_data=item_data) for item_data in items_data]
+        return [masslaw_case_data_formatting.get_case_file_data_base_format_from_db_item(item_data=item_data) for item_data in items_data[::-1]]
 
     def get_file_data(self, file_id):
         case_files = self.__case_instance.get_data_property(['files'], [])

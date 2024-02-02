@@ -7,6 +7,7 @@ class DataHolder:
         self._valid = self.load_data()
         self._updated_attributes = []
         self._locked_attributes = locked_attributes or []
+        self._local = False
 
     def load_data(self):
         self._updated_attributes = []

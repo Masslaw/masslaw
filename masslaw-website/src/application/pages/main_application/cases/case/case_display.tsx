@@ -39,7 +39,7 @@ export const CaseDisplay: ApplicationPage = (props: ApplicationPageProps) => {
         (async () => {
             setCaseData(await CasesManager.getInstance().getCaseData(caseId || ''));
         })().then();
-    }, []);
+    }, [caseId]);
 
     const [route_match_function, setRoutMatchFunction] = useGlobalState(RouteMatchState);
 

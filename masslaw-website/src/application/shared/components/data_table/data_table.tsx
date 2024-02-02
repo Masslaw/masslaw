@@ -19,15 +19,6 @@ export function DataTable(props: {
 
     const [columnWidths, setColumnWidths] = useState<number[]>([]);
 
-    const onColumnSortButtonClicked = (columnName: string) => {
-        if (order_column === columnName) {
-            setOrderDirection(order_direction === "down" ? "up" : "down");
-        } else {
-            setOrderColumn(columnName);
-            setOrderDirection("down");
-        }
-    };
-
     const getMaxColumnItemsWidth = (columnIndex: number, tableRef: React.RefObject<HTMLTableElement>) => {
         if (!tableRef.current) return;
 
@@ -107,19 +98,9 @@ export function DataTable(props: {
                             return (<th key={index + Math.random()} style={{width: `${columnWidths[index]}px`}}>
                                     <div
                                         className={`${key[0]} table-column-header-container`}
-                                        onClick={(e) => {
-                                            onColumnSortButtonClicked(key[0]);
-                                        }}
                                     >
                                         <div className={`${key[0]} table-column-header-title`}>
                                             {key[1]}
-                                        </div>
-                                        <div
-                                            className={`${key[0]} table-column-header-sorting-arrow`}
-                                        >
-                                            {order_column === key[0] ? (<FontAwesomeIcon
-                                                icon={order_direction === "down" ? faAngleDown : faAngleUp}
-                                            />) : (<FontAwesomeIcon icon={faMinus}/>)}
                                         </div>
                                     </div>
                                 </th>);
