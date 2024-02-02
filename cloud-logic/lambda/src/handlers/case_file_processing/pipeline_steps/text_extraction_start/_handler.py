@@ -26,4 +26,6 @@ class TextExtractionStart(MasslawStepFunctionCaseFilePipelineNodeHandler):
         self.__file_instance.set_data_property(['processing', 'stage_metadata', 'knowledge_extraction', 'valid'], 'false')
 
 
-handler = TextExtractionStart()
+def handler(event, context):
+    handler_instance = TextExtractionStart()
+    return handler_instance.call_handler(event, context)

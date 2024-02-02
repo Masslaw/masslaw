@@ -40,4 +40,6 @@ class FinishCaseFileUpload(MasslawCaseManagementApiInvokedLambdaFunction):
             return
 
 
-handler = FinishCaseFileUpload()
+def handler(event, context):
+    handler_instance = FinishCaseFileUpload()
+    return handler_instance.call_handler(event, context)

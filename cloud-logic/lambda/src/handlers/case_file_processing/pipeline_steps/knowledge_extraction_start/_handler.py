@@ -25,4 +25,6 @@ class KnowledgeExtractionStart(MasslawStepFunctionCaseFilePipelineNodeHandler):
         ...
 
 
-handler = KnowledgeExtractionStart()
+def handler(event, context):
+    handler_instance = KnowledgeExtractionStart()
+    return handler_instance.call_handler(event, context)

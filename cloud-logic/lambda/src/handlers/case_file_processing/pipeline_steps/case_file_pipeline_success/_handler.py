@@ -14,4 +14,6 @@ class CaseFilePipelineSuccess(MasslawStepFunctionCaseFilePipelineNodeHandler):
         self.__file_instance.save_data()
 
 
-handler = CaseFilePipelineSuccess()
+def handler(event, context):
+    handler_instance = CaseFilePipelineSuccess()
+    return handler_instance.call_handler(event, context)

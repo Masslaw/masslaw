@@ -26,10 +26,11 @@ class MasslawCaseDataCollector:
         case_data = masslaw_case_data_formatting.get_case_data_base_format_from_db_item(self.__case_instance.get_data_property([], {}), self.__access_user_id or '')
         return case_data
 
-    def get_case_files_data(self):
+    def get_case_files_data(self, chunk: int = 0):
         case_files = self.__case_instance.get_data_property(['files'], [])
         table_manager = DynamoDBTableManager("MasslawFiles")
-        items_data = table_manager.batch_get_items(case_files)
+        files_to_retrieve = case_files[-100 * (chunk + 1) - 1: -100 * chunk - 1]
+        items_data = table_manager.batch_get_items(files_to_retrieve)
         return [masslaw_case_data_formatting.get_case_file_data_base_format_from_db_item(item_data=item_data) for item_data in items_data]
 
     def get_file_data(self, file_id):

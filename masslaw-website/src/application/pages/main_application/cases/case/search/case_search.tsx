@@ -21,7 +21,7 @@ import {
     useGlobalState
 } from "../../../../../infrastructure/application_base/global_functionality/global_states";
 
-interface searchResult {
+export interface searchResult {
     file_id: string,
     file_name: string,
     start_text: string,
@@ -220,6 +220,10 @@ function SearchResult(props: {
                                     },
                                     {
                                         'search': props.result.query
+                                    }, {
+                                        state: {
+                                            search_result: props.result
+                                        }
                                     }
                                 )
                             }}

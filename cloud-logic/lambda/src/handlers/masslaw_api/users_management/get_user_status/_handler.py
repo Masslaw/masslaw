@@ -5,4 +5,6 @@ class GetUserStatus(AuthenticatedMasslawUserHttpInvokedLambdaFunction):
     pass
 
 
-handler = GetUserStatus()
+def handler(event, context):
+    handler_instance = GetUserStatus()
+    return handler_instance.call_handler(event, context)

@@ -45,4 +45,6 @@ class GetCaseFileContent(MasslawCaseManagementApiInvokedLambdaFunction):
         self._set_response_attribute([lambda_constants.EventKeys.BODY, 'download_urls'], urls)
 
 
-handler = GetCaseFileContent()
+def handler(event, context):
+    handler_instance = GetCaseFileContent()
+    return handler_instance.call_handler(event, context)

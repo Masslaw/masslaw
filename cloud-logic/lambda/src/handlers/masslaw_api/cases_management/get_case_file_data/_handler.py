@@ -29,4 +29,6 @@ class GetCaseFileData(MasslawCaseManagementApiInvokedLambdaFunction):
         self._set_response_attribute([lambda_constants.EventKeys.BODY, 'file_data'], file_data)
 
 
-handler = GetCaseFileData()
+def handler(event, context):
+    handler_instance = GetCaseFileData()
+    return handler_instance.call_handler(event, context)

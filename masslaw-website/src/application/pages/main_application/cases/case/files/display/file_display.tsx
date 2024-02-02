@@ -1,4 +1,4 @@
-import {useParams} from "react-router-dom";
+import {useLocation, useParams} from "react-router-dom";
 
 import './css.css'
 import {MasslawContentDisplay} from "../../../../../../modules/mlcd/mlcd";
@@ -36,6 +36,7 @@ import {
     QueryStringParamsState
 } from "../../../../../../infrastructure/application_base/routing/application_global_routing";
 import {CaseFileDataDisplay} from "../../../../../../shared/components/case_file_data_display/case_file_data_display";
+import {searchResult} from "../../search/case_search";
 
 
 const file_annotation_colors = [
@@ -75,8 +76,14 @@ export const FileDisplay: ApplicationPage = (props: ApplicationPageProps) => {
 
     const [file_display_current_tab, setFileDisplayCurrentTab] = useState('FileInfoDisplay');
 
+    const location = useLocation();
+    const [search_result, setSearchResult] = useState(location.state?.search_result as searchResult | undefined);
+
     useEffect(() => {
         UsersManager.getInstance().updateMyCachedUserData();
+    }, []);
+
+    useEffect(() => {
     }, []);
 
     const reloadFileData = async () => {
@@ -226,6 +233,7 @@ export const FileDisplay: ApplicationPage = (props: ApplicationPageProps) => {
                         onAnnotationClicked={show_annotation}
                         scrollToChar={parseInt(query_string_params['scroll_to'])}
                         selectionToolkitButtons={selectionToolkitButtons}
+                        searchResult={search_result}
                     />
                 </div>
                 <div className={'file-data-display-area'}>

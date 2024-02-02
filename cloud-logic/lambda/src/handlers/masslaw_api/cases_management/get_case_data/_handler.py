@@ -26,4 +26,6 @@ class GetCaseData(MasslawCaseManagementApiInvokedLambdaFunction):
         self._set_response_attribute([lambda_constants.EventKeys.BODY, 'case_data'], case_data)
 
 
-handler = GetCaseData()
+def handler(event, context):
+    handler_instance = GetCaseData()
+    return handler_instance.call_handler(event, context)

@@ -40,4 +40,6 @@ class SetCaseFileDescription(MasslawCaseManagementApiInvokedLambdaFunction):
         file_instance.save_data()
 
 
-handler = SetCaseFileDescription()
+def handler(event, context):
+    handler_instance = SetCaseFileDescription()
+    return handler_instance.call_handler(event, context)

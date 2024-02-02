@@ -12,6 +12,7 @@ export interface MLCDProps  {
     onAnnotationClicked: (annotation: CaseFileAnnotationData) => void,
     scrollToChar?: number,
     onSelection?: (fromChar: number, toChar: number, text: string) => void,
+    searchResult?: {start_text: string, highlighted_text: string, end_text: string}
 }
 
 export function MasslawContentDisplay(props: MLCDProps) {

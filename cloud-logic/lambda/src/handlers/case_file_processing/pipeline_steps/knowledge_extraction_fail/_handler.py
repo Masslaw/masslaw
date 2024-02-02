@@ -13,4 +13,6 @@ class KnowledgeExtractionFail(MasslawStepFunctionCaseFilePipelineNodeHandler):
         self.__file_instance.save_data()
 
 
-handler = KnowledgeExtractionFail()
+def handler(event, context):
+    handler_instance = KnowledgeExtractionFail()
+    return handler_instance.call_handler(event, context)

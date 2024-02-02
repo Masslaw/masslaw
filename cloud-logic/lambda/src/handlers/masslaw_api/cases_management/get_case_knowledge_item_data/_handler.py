@@ -56,7 +56,6 @@ class GetCaseKnowledgeItemData(MasslawCaseManagementApiInvokedLambdaFunction):
             return
 
     def __handle_node(self):
-
         response = {
             'entities': [],
             'connections': []
@@ -141,4 +140,6 @@ class GetCaseKnowledgeItemData(MasslawCaseManagementApiInvokedLambdaFunction):
         MasslawCaseManagementApiInvokedLambdaFunction._handle_exception(self, exception)
 
 
-handler = GetCaseKnowledgeItemData()
+def handler(event, context):
+    handler_instance = GetCaseKnowledgeItemData()
+    return handler_instance.call_handler(event, context)

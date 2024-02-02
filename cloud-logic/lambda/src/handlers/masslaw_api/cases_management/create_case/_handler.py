@@ -23,4 +23,6 @@ class CreateCase(MasslawCaseManagementApiInvokedLambdaFunction):
         self._set_response_attribute([lambda_constants.EventKeys.BODY, 'case_id'], new_case.get_case_id())
 
 
-handler = CreateCase()
+def handler(event, context):
+    handler_instance = CreateCase()
+    return handler_instance.call_handler(event, context)

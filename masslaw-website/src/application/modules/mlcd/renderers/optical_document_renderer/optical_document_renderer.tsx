@@ -7,6 +7,8 @@ import {InputManager} from "../../../../shared/util/input_manager";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {MLCDContentRenderingComponent, MLCDProps} from "../../mlcd";
 import {centerChildInParent} from "../../../../shared/util/DOM_utils";
+import {useGlobalState} from "../../../../infrastructure/application_base/global_functionality/global_states";
+import {QueryStringParamsState} from "../../../../infrastructure/application_base/routing/application_global_routing";
 
 
 interface PageDisplayData {
@@ -37,6 +39,8 @@ export const OpticalDocumentRenderer: MLCDContentRenderingComponent = (props: ML
     const documentRendererInputManager = new InputManager(null, true);
     const document_renderer_ref = useRef<HTMLDivElement>(null);
 
+    const [query_string_params, setQueryStringParams] = useGlobalState(QueryStringParamsState);
+
     useEffect(() => {
         documentRendererInputManager.setTarget(document_renderer_ref.current);
         documentRendererInputManager.preventContextMenu();
@@ -54,6 +58,8 @@ export const OpticalDocumentRenderer: MLCDContentRenderingComponent = (props: ML
     const [selection_text, setSelectionText] = useState('');
 
     const [scroll_to_char, setScrollToChar] = useState(props.scrollToChar);
+
+    const [search_result_position, setSearchResultPosition] = useState({} as {start_char: number | undefined, end_char: number | undefined});
 
     const getRectFromCharacter = (characterElement: Element) => {
         let x1 = characterElement.getAttribute('x1');
@@ -278,6 +284,72 @@ export const OpticalDocumentRenderer: MLCDContentRenderingComponent = (props: ML
             return pagesMarkingsVisualData;
         })
     }, [text_markings, pages]);
+
+    useEffect(() => {
+        resolveSearchResult().then();
+    }, [props.searchResult, text_structure]);
+
+    const resolveSearchResult = useCallback(async () => {
+        let searchResult = props.searchResult;
+        if (!searchResult) return;
+        let document_characters = Array.from(text_structure.getElementsByTagName('cr'));
+        for (let character_index = 0; character_index < document_characters.length; character_index++) {
+            let searchResultStartIndex = undefined;
+            let searchResultEndIndex = undefined;
+            let searchIndex = 0;
+            for (let characterIndex = character_index; characterIndex < document_characters.length; characterIndex++) {
+                let character = document_characters[characterIndex];
+                let characterValue = (character.textContent || character.getAttribute('v')) || '';
+                if (characterValue.replace(" ", "").length == 0) continue;
+                let current_section = "";
+                if (searchIndex < searchResult.start_text.length) {
+                    current_section = searchResult.start_text;
+                } else if (searchIndex < searchResult.start_text.length + searchResult.highlighted_text.length) {
+                    current_section = searchResult.highlighted_text;
+                } else if (searchIndex < searchResult.start_text.length + searchResult.highlighted_text.length + searchResult.end_text.length) {
+                    current_section = searchResult.end_text;
+                }
+                current_section = current_section.replace("\n", "");
+                let searchCharacter = "";
+                while (searchCharacter.replace(" ", "").length == 0) {
+                    searchCharacter = current_section[searchIndex];
+                    searchIndex++;
+                    if (searchIndex >= current_section.length) break;
+                }
+                if (!searchCharacter) continue;
+                if (searchCharacter != characterValue) break;
+                if (searchIndex == searchResult.start_text.length) searchResultStartIndex = searchIndex;
+                if (searchIndex == searchResult.start_text.length + searchResult.highlighted_text.length) searchResultEndIndex = searchIndex;
+                if (searchIndex > searchResult.start_text.length + searchResult.highlighted_text.length + searchResult.end_text.length) {
+                    if (searchResultStartIndex == undefined || searchResultEndIndex == undefined) break;
+                    setSearchResultPosition({
+                        start_char: searchResultStartIndex,
+                        end_char: searchResultEndIndex,
+                    })
+                    return;
+                }
+            }
+        }
+    }, [props.searchResult, text_structure]);
+
+    useEffect(() => {
+        if (search_result_position.start_char == undefined || search_result_position.end_char == undefined) {
+            setQueryStringParams((state) => {
+                let new_state = {...state};
+                delete new_state['search_result_start_char'];
+                delete new_state['search_result_end_char'];
+                return new_state
+            });
+            return;
+        };
+        setQueryStringParams((state) => {
+            let new_state = {...state};
+            new_state['search_result_start_char'] = search_result_position.start_char && search_result_position.start_char.toString() || '';
+            new_state['search_result_end_char'] = search_result_position.end_char && search_result_position.end_char.toString() || '';
+            return new_state
+        });
+
+    }, [props.searchResult]);
 
     useEffect(() => {
         documentRendererInputManager.setClipboardTarget(selection_text);

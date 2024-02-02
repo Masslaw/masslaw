@@ -28,4 +28,6 @@ class DeleteCaseFile(MasslawCaseManagementApiInvokedLambdaFunction):
         case_instance.save_data()
 
 
-handler = DeleteCaseFile()
+def handler(event, context):
+    handler_instance = DeleteCaseFile()
+    return handler_instance.call_handler(event, context)

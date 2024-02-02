@@ -39,4 +39,6 @@ class SubmitToSearchIndex(MasslawStepFunctionCaseFilePipelineNodeHandler):
         return document
 
 
-handler = SubmitToSearchIndex()
+def handler(event, context):
+    handler_instance = SubmitToSearchIndex()
+    return handler_instance.call_handler(event, context)

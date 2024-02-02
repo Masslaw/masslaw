@@ -1,11 +1,11 @@
 import React, {useCallback, useContext, useEffect, useState} from "react";
 import {ApplicationRoutes} from "./application_routes";
 import {globalStateDeclaration, useGlobalState} from "../global_functionality/global_states";
-import {Outlet, useLocation, useNavigate, useParams} from "react-router-dom";
+import {NavigateOptions, Outlet, useLocation, useNavigate, useParams} from "react-router-dom";
 
 
 export const NavigationFunctionState: globalStateDeclaration<
-    (route: ApplicationRoutes, params?: {[key:string]: string}, queryStringParams?: {[key:string]: string}) => void> =
+    (route: ApplicationRoutes, params?: {[key:string]: string}, queryStringParams?: {[key:string]: string}, options?: NavigateOptions) => void> =
     ['NAVIGATION_FUNCTION', () => {}];
 export const RouteMatchState: globalStateDeclaration<(path:  string) => boolean> = ['ROUTE_MATCH', () => false];
 export const QueryStringParamsState: globalStateDeclaration<{[key:string]:string}> = ['QUERY_STRING_PARAMS', {}];
@@ -26,7 +26,8 @@ export function ApplicationGlobalRouting() {
     const navigateFunction = useCallback((
         route: ApplicationRoutes,
         params?: {[key:string]: string},
-        queryStringParams?: {[key:string]: string}
+        queryStringParams?: {[key:string]: string},
+        options?: NavigateOptions
     ) => {
 
         let finalRoute: string = route;
@@ -40,7 +41,7 @@ export function ApplicationGlobalRouting() {
             finalRoute += '?' + searchParams;
         }
 
-        navigate(finalRoute);
+        navigate(finalRoute, options);
     }, [navigate]);
 
     const routeMatch = useCallback((route: string) => {

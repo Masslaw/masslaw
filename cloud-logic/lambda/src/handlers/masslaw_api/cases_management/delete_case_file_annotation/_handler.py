@@ -27,4 +27,6 @@ class DeleteCaseFileAnnotation(MasslawCaseManagementApiInvokedLambdaFunction):
         annotations_manager.delete_annotation(annotation_id=self.__annotation_id, user_id=user_id)
 
 
-handler = DeleteCaseFileAnnotation()
+def handler(event, context):
+    handler_instance = DeleteCaseFileAnnotation()
+    return handler_instance.call_handler(event, context)

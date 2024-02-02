@@ -54,6 +54,9 @@ class LambdaHandler:
         pass  # can be implemented by inheriting handler classes
 
     def __call__(self, event, context):
+        self.call_handler(event, context)
+
+    def call_handler(self, event, context):
         self._log(f'Calling {self.name}')
         self.__reset_state()
         _start_execution_time_milliseconds = time.time()
@@ -62,8 +65,8 @@ class LambdaHandler:
             self.__response = (self.__default_response or {}).copy()
             self.__handle_event(event)
             self.__handle_context(context)
-            self.__call_function()
-            self._successful_execution()
+            self.__execution_body()
+            self.__successful_execution()
             res = True
         except Exception as e:
             self._log_exception(e)
@@ -93,7 +96,7 @@ class LambdaHandler:
     def _handle_context(self):
         pass  # can be implemented by inheriting handler classes
 
-    def __call_function(self):
+    def __execution_body(self):
         self._log('Executing function...')
         self._execute()
 
@@ -125,6 +128,10 @@ class LambdaHandler:
         logging.basicConfig(level=logging.DEBUG, format=LOGGING_FORMAT)
         self.logger = logging.getLogger()
         self.logger.setLevel(logging.DEBUG)
+
+    def __successful_execution(self):
+        self._log(f'Successfully executed {self.name}')
+        self._successful_execution()
 
     def _successful_execution(self):
         pass  # can be implemented by inheriting handler classes

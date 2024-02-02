@@ -46,4 +46,6 @@ class SetCaseData(MasslawCaseManagementApiInvokedLambdaFunction):
         return update_object
 
 
-handler = SetCaseData()
+def handler(event, context):
+    handler_instance = SetCaseData()
+    return handler_instance.call_handler(event, context)

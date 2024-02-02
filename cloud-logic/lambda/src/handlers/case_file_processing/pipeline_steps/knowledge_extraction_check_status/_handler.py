@@ -21,4 +21,6 @@ class KnowledgeExtractionCheckStatus(MasslawStepFunctionCaseFilePipelineNodeHand
         self._set_response_attribute(['file_data'], self.__file_instance.get_data_copy())
 
 
-handler = KnowledgeExtractionCheckStatus()
+def handler(event, context):
+    handler_instance = KnowledgeExtractionCheckStatus()
+    return handler_instance.call_handler(event, context)

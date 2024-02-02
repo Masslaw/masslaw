@@ -30,4 +30,6 @@ class GetUserData(AuthenticatedMasslawUserHttpInvokedLambdaFunction):
         self._set_response_attribute([lambda_constants.EventKeys.BODY, 'user_data'], user_data or {})
 
 
-handler = GetUserData()
+def handler(event, context):
+    handler_instance = GetUserData()
+    return handler_instance.call_handler(event, context)

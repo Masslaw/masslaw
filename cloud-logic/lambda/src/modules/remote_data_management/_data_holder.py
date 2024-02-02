@@ -24,8 +24,7 @@ class DataHolder:
         self._valid = True
 
     def get_data_property(self, key, default=None):
-        if isinstance(key, str):
-            key = [key]
+        if isinstance(key, str): key = [key]
         val = dictionary_utils.get_from(self._get_data(), key, default)
         return val
 

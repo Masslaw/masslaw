@@ -62,4 +62,6 @@ class SearchCaseFiles(MasslawCaseManagementApiInvokedLambdaFunction):
         return query
 
 
-handler = SearchCaseFiles()
+def handler(event, context):
+    handler_instance = SearchCaseFiles()
+    return handler_instance.call_handler(event, context)

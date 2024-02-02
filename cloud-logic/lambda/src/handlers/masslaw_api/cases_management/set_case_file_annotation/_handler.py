@@ -68,4 +68,6 @@ class SetCaseFileAnnotation(MasslawCaseManagementApiInvokedLambdaFunction):
         )
 
 
-handler = SetCaseFileAnnotation()
+def handler(event, context):
+    handler_instance = SetCaseFileAnnotation()
+    return handler_instance.call_handler(event, context)

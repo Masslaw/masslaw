@@ -13,4 +13,6 @@ class TextExtractionFail(MasslawStepFunctionCaseFilePipelineNodeHandler):
         self.__file_instance.save_data()
 
 
-handler = TextExtractionFail()
+def handler(event, context):
+    handler_instance = TextExtractionFail()
+    return handler_instance.call_handler(event, context)

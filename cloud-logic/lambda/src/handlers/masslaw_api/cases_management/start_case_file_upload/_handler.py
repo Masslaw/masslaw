@@ -45,4 +45,6 @@ class StartCaseFileUpload(MasslawCaseManagementApiInvokedLambdaFunction):
             return
 
 
-handler = StartCaseFileUpload()
+def handler(event, context):
+    handler_instance = StartCaseFileUpload()
+    return handler_instance.call_handler(event, context)

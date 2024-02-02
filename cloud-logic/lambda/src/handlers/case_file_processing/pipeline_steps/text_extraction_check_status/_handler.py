@@ -23,4 +23,6 @@ class TextExtractionCheckStatus(MasslawStepFunctionCaseFilePipelineNodeHandler):
         self._set_response_attribute(['file_data'], self.__file_instance.get_data_copy())
 
 
-handler = TextExtractionCheckStatus()
+def handler(event, context):
+    handler_instance = TextExtractionCheckStatus()
+    return handler_instance.call_handler(event, context)

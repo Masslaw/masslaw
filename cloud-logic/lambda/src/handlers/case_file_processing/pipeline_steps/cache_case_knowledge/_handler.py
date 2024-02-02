@@ -121,4 +121,6 @@ class CacheCaseKnowledge(MasslawStepFunctionCaseFilePipelineNodeHandler):
         self._log("Finished uploading")
 
 
-handler = CacheCaseKnowledge()
+def handler(event, context):
+    handler_instance = CacheCaseKnowledge()
+    return handler_instance.call_handler(event, context)

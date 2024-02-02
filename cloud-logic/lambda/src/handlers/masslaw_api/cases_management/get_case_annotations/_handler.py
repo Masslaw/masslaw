@@ -36,4 +36,6 @@ class GetCaseAnnotations(MasslawCaseManagementApiInvokedLambdaFunction):
         self._set_response_attribute([lambda_constants.EventKeys.BODY, 'annotations'], case_annotations)
 
 
-handler = GetCaseAnnotations()
+def handler(event, context):
+    handler_instance = GetCaseAnnotations()
+    return handler_instance.call_handler(event, context)
