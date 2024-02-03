@@ -22,10 +22,7 @@ def get_appropriate_element_for_entry_in_structure_hierarchy(entry: OpticalEleme
         element_instance.set_bounding_rect(bounding_rect=entry[1])
         return element_instance
     child_entries = entry_handling.split_entry_by_element_type(entry=entry, element_type=element_type)
-    if len(child_entries) == 1:
-        return get_appropriate_element_for_entry_in_structure_hierarchy(entry=entry, hierarchy_formation=hierarchy_formation[1:])
-    child_elements: List[OpticalTextStructureElement] = [get_appropriate_element_for_entry_in_structure_hierarchy(entry=child_entry, hierarchy_formation=hierarchy_formation[1:]) for child_entry in
-                                                         child_entries]
+    child_elements: List[OpticalTextStructureElement] = [get_appropriate_element_for_entry_in_structure_hierarchy(entry=child_entry, hierarchy_formation=hierarchy_formation[1:]) for child_entry in child_entries]
     element_instance = construct_element_with_hierarchy(structure_elements=child_elements, hierarchy_formation=hierarchy_formation)
     return element_instance
 

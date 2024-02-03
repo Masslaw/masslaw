@@ -28,9 +28,11 @@ class TestFunctionGetAppropriateElementForEntryInStructureHierarchy(unittest.Tes
     def test_with_line(self):
         entry = ('this is a line', (0, 0, 100, 10))
 
-        line = get_appropriate_element_for_entry_in_structure_hierarchy(entry=entry, hierarchy_formation=structure_hierarchy)
+        paragraph = get_appropriate_element_for_entry_in_structure_hierarchy(entry=entry, hierarchy_formation=structure_hierarchy)
 
-        self.assertEqual(line.__class__, OpticalTextStructureLine)
+        self.assertEqual(paragraph.__class__, OpticalTextStructureParagraph)
+        self.assertEqual(len(paragraph.get_children()), 1)
+        line = paragraph.get_children()[0]
         self.assertEqual(len(line.get_children()), 4)
         self.assertEqual(len(line.get_children()[0].get_children()), 4)
         self.assertEqual(len(line.get_children()[1].get_children()), 2)
@@ -40,7 +42,11 @@ class TestFunctionGetAppropriateElementForEntryInStructureHierarchy(unittest.Tes
     def test_with_word(self):
         entry = ('word', (0, 0, 40, 10))
 
-        word = get_appropriate_element_for_entry_in_structure_hierarchy(entry=entry, hierarchy_formation=structure_hierarchy)
+        paragraph = get_appropriate_element_for_entry_in_structure_hierarchy(entry=entry, hierarchy_formation=structure_hierarchy)
 
-        self.assertEqual(word.__class__, OpticalTextStructureWord)
+        self.assertEqual(paragraph.__class__, OpticalTextStructureParagraph)
+        self.assertEqual(len(paragraph.get_children()), 1)
+        line = paragraph.get_children()[0]
+        self.assertEqual(len(line.get_children()), 1)
+        word = line.get_children()[0]
         self.assertEqual(len(word.get_children()), 4)

@@ -151,3 +151,14 @@ def ensure_serializable(val):
         return val.isoformat()
     else:
         return val
+
+
+def deep_copy(d):
+    new_value = d
+    if isinstance(d, dict):
+        new_value = {}
+        for key, value in d.items():
+            new_value[key] = deep_copy(value)
+    elif isinstance(d, list):
+        new_value = [deep_copy(value) for value in d]
+    return new_value

@@ -23,6 +23,7 @@ interface TextMarkingData {
     to_char: number,
     type: string,
     color: string,
+    inRealCharacters?: boolean,
     onClick?: () => void,
 }
 
@@ -176,6 +177,7 @@ export const OpticalDocumentRenderer: MLCDContentRenderingComponent = (props: ML
         }[]);
 
     useEffect(() => {
+        console.log(current_selection_start, current_selection_end);
         setTextMarkings((state) => {
             let newState = {...state};
             newState['user-selection'] = {
@@ -218,6 +220,7 @@ export const OpticalDocumentRenderer: MLCDContentRenderingComponent = (props: ML
         setPagesMarkingVisualData((current) => {
             let selectionText = '';
             let _characterCount = 0;
+            let _t = ""
             let pagesMarkingsVisualData = [] as {[key: string]: TextMarkingVisualData}[] ;
             for (let pageNum = 0; pageNum < pages.length; pageNum++) {
                 let page = pages[pageNum];
@@ -234,7 +237,7 @@ export const OpticalDocumentRenderer: MLCDContentRenderingComponent = (props: ML
                                         color: markingData.color,
                                         hovered: pageNum < current.length && current[pageNum][markingId]?.hovered || false,
                                         onClick: markingData.onClick,
-                                    }
+                                    } as TextMarkingVisualData;
                                 if (markingData.from_char <= _characterCount+1 &&
                                     _characterCount <= markingData.to_char) {
                                     const characterRect = getRectFromCharacter(character);
@@ -262,12 +265,16 @@ export const OpticalDocumentRenderer: MLCDContentRenderingComponent = (props: ML
                                             })
                                         }
                                     }
+
+                                    if (markingData.type == 'search_result') {
+                                        console.log(character.textContent || character.getAttribute('v'));
+                                    }
                                 }
                                 pageMarkingsVisualData[markingId] = markingVisualData;
                             }
+                            _t += `${_characterCount} - ${character.textContent || character.getAttribute('v')}\n`;
                             _characterCount++;
                         }
-                        _characterCount++;
                         selectionText += ' ';
                     }
                     for (let markingId of Object.keys(text_markings)) {
@@ -281,6 +288,7 @@ export const OpticalDocumentRenderer: MLCDContentRenderingComponent = (props: ML
                 pagesMarkingsVisualData.push(pageMarkingsVisualData);
             }
             setSelectionText(selectionText);
+            console.log(_t);
             return pagesMarkingsVisualData;
         })
     }, [text_markings, pages]);
@@ -292,6 +300,7 @@ export const OpticalDocumentRenderer: MLCDContentRenderingComponent = (props: ML
     const resolveSearchResult = useCallback(async () => {
         let searchResult = props.searchResult;
         if (!searchResult) return;
+        let searchString = searchResult.start_text + searchResult.highlighted_text + searchResult.end_text;
         let document_characters = Array.from(text_structure.getElementsByTagName('cr'));
         for (let character_index = 0; character_index < document_characters.length; character_index++) {
             let searchResultStartIndex = undefined;
@@ -300,33 +309,29 @@ export const OpticalDocumentRenderer: MLCDContentRenderingComponent = (props: ML
             for (let characterIndex = character_index; characterIndex < document_characters.length; characterIndex++) {
                 let character = document_characters[characterIndex];
                 let characterValue = (character.textContent || character.getAttribute('v')) || '';
-                if (characterValue.replace(" ", "").length == 0) continue;
-                let current_section = "";
-                if (searchIndex < searchResult.start_text.length) {
-                    current_section = searchResult.start_text;
-                } else if (searchIndex < searchResult.start_text.length + searchResult.highlighted_text.length) {
-                    current_section = searchResult.highlighted_text;
-                } else if (searchIndex < searchResult.start_text.length + searchResult.highlighted_text.length + searchResult.end_text.length) {
-                    current_section = searchResult.end_text;
-                }
-                current_section = current_section.replace("\n", "");
+                if (['\n', ' '].includes(characterValue)) continue;
                 let searchCharacter = "";
-                while (searchCharacter.replace(" ", "").length == 0) {
-                    searchCharacter = current_section[searchIndex];
+                do {
+                    if (searchIndex == searchResult.start_text.length) {
+                        searchResultStartIndex = characterIndex;
+                    }
+                    if (searchIndex == searchResult.start_text.length + searchResult.highlighted_text.length) {
+                        searchResultEndIndex = characterIndex;
+                    }
+                    searchCharacter = searchString[searchIndex];
                     searchIndex++;
-                    if (searchIndex >= current_section.length) break;
+                } while (['\n', ' '].includes(searchCharacter));
+                if (searchIndex >= searchString.length){
+                    if (searchResultStartIndex != undefined && searchResultEndIndex != undefined) {
+                        setSearchResultPosition({
+                            start_char: searchResultStartIndex + 1,
+                            end_char: searchResultEndIndex - 1,
+                        })
+                        return;
+                    };
                 }
-                if (!searchCharacter) continue;
-                if (searchCharacter != characterValue) break;
-                if (searchIndex == searchResult.start_text.length) searchResultStartIndex = searchIndex;
-                if (searchIndex == searchResult.start_text.length + searchResult.highlighted_text.length) searchResultEndIndex = searchIndex;
-                if (searchIndex > searchResult.start_text.length + searchResult.highlighted_text.length + searchResult.end_text.length) {
-                    if (searchResultStartIndex == undefined || searchResultEndIndex == undefined) break;
-                    setSearchResultPosition({
-                        start_char: searchResultStartIndex,
-                        end_char: searchResultEndIndex,
-                    })
-                    return;
+                if (searchCharacter != characterValue) {
+                    break;
                 }
             }
         }
@@ -340,6 +345,11 @@ export const OpticalDocumentRenderer: MLCDContentRenderingComponent = (props: ML
                 delete new_state['search_result_end_char'];
                 return new_state
             });
+            setTextMarkings((state) => {
+                let newState = {...state};
+                delete newState['search-result'];
+                return newState;
+            });
             return;
         };
         setQueryStringParams((state) => {
@@ -348,8 +358,19 @@ export const OpticalDocumentRenderer: MLCDContentRenderingComponent = (props: ML
             new_state['search_result_end_char'] = search_result_position.end_char && search_result_position.end_char.toString() || '';
             return new_state
         });
-
-    }, [props.searchResult]);
+        setTextMarkings((state) => {
+            let newState = {...state};
+            newState['search-result'] = {
+                from_char: search_result_position.start_char || 0,
+                to_char: search_result_position.end_char || 0,
+                type: 'search_result',
+                inRealCharacters: true,
+                color: '#ffc400'
+            }
+            return newState;
+        });
+        setScrollToChar(search_result_position.start_char || 0);
+    }, [search_result_position]);
 
     useEffect(() => {
         documentRendererInputManager.setClipboardTarget(selection_text);
@@ -404,6 +425,7 @@ export const OpticalDocumentRenderer: MLCDContentRenderingComponent = (props: ML
     const renderedPages = useMemo(() => {
         setLoadingDisplay(true);
         let characterCount = 0;
+        let _t = "";
         const rendered = pages.map((pageDisplayData, pageIndex) => {
             const [pageWidth, pageHeight] = getPageDimentions(pageDisplayData);
             return (
@@ -426,32 +448,27 @@ export const OpticalDocumentRenderer: MLCDContentRenderingComponent = (props: ML
                         />
                         <div className={'optical-document-page-structure-container'}>
                             {
-                                Array.from(pageDisplayData.structure.getElementsByTagName('wd')).map((word, wordNum) => {
-                                    const wordElement = (<>{
-                                        Array.from(word.getElementsByTagName('cr')).map((character, characterNum) => {
-                                            const currentCharacterNumber = characterCount;
-                                            characterCount++;
-                                            const characterRect = getRectFromCharacter(character);
-                                            return <div
-                                                key={`char-${currentCharacterNumber}`}
-                                                id={`char-${currentCharacterNumber}`}
-                                                className={`optical-document-character-element`}
-                                                onMouseEnter={e => {
-                                                    onCharacterHover(currentCharacterNumber);
-                                                }}
-                                                style={{
-                                                    position: 'absolute',
-                                                    left: `${100 * characterRect[0] / pageWidth}%`,
-                                                    top: `${100 * characterRect[1] / pageHeight}%`,
-                                                    width: `${100 * (characterRect[2] - characterRect[0]) / pageWidth}%`,
-                                                    height: `${100 * (characterRect[3] - characterRect[1]) / pageHeight}%`,
-                                                    zIndex: '30',
-                                                }}
-                                            />
-                                        })
-                                    }</>)
+                                Array.from(pageDisplayData.structure.getElementsByTagName('cr')).map((character, characterNum) => {
+                                    const currentCharacterNumber = characterCount;
+                                    _t += `${characterCount} - ${character.textContent || character.getAttribute('v')}\n`;
                                     characterCount++;
-                                    return wordElement;
+                                    const characterRect = getRectFromCharacter(character);
+                                    return <div
+                                        key={`char-${currentCharacterNumber}`}
+                                        id={`char-${currentCharacterNumber}`}
+                                        className={`optical-document-character-element`}
+                                        onMouseEnter={e => {
+                                            onCharacterHover(currentCharacterNumber);
+                                        }}
+                                        style={{
+                                            position: 'absolute',
+                                            left: `${100 * characterRect[0] / pageWidth}%`,
+                                            top: `${100 * characterRect[1] / pageHeight}%`,
+                                            width: `${100 * (characterRect[2] - characterRect[0]) / pageWidth}%`,
+                                            height: `${100 * (characterRect[3] - characterRect[1]) / pageHeight}%`,
+                                            zIndex: '30',
+                                        }}
+                                    />
                                 })
                             }
                         </div>
@@ -460,6 +477,7 @@ export const OpticalDocumentRenderer: MLCDContentRenderingComponent = (props: ML
             )
         });
         setLoadingDisplay(false);
+        console.log(_t);
         return rendered;
     }, [pages, scroll_to_char]);
 

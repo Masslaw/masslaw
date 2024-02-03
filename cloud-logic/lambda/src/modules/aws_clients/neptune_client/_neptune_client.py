@@ -82,7 +82,7 @@ class NeptuneClient:
         t = g.add_v(label)
         if node_id:
             t = t.property(T.id, node_id)
-        properties = properties.copy()
+        properties = dictionary_utils.deep_copy(properties)
         dictionary_utils.ensure_flat(properties)
         for key, value in properties.items():
             t = t.property(key, value)
@@ -96,7 +96,7 @@ class NeptuneClient:
         t = g.add_e(edge_label).from_(__.V(get_id_in_correct_type(from_node))).to(__.V(to_node))
         if edge_id:
             t = t.property(T.id, get_id_in_correct_type(edge_id))
-        properties = properties.copy()
+        properties = dictionary_utils.deep_copy(properties)
         dictionary_utils.ensure_flat(properties)
         for key, value in properties.items():
             t = t.property(key, value)
@@ -108,7 +108,7 @@ class NeptuneClient:
     def load_properties_to_node(self, node_id: long | str, properties: Dict):
         g = self._get_write_traversal_source()
         t = g.V(get_id_in_correct_type(node_id))
-        properties = properties.copy()
+        properties = dictionary_utils.deep_copy(properties)
         dictionary_utils.ensure_flat(properties)
         for key, value in properties.items():
             t = t.property(key, value)
@@ -118,7 +118,7 @@ class NeptuneClient:
     def load_properties_to_edge(self, edge_id: long | str, properties: Dict):
         g = self._get_write_traversal_source()
         t = g.E(get_id_in_correct_type(edge_id))
-        properties = properties.copy()
+        properties = dictionary_utils.deep_copy(properties)
         dictionary_utils.ensure_flat(properties)
         for key, value in properties.items():
             t = t.property(key, value)
@@ -166,7 +166,7 @@ class NeptuneClient:
         t = g.V()
         if label:
             t = t.has_label(label)
-        properties = properties.copy()
+        properties = dictionary_utils.deep_copy(properties)
         dictionary_utils.ensure_flat(properties)
         for key, value in properties.items():
             t = t.has(key, value)
@@ -177,7 +177,7 @@ class NeptuneClient:
     def get_edges_by_properties(self, properties: Dict, label=None, from_node: long | str = None, to_node: long | str = None) -> List[NeptuneEdge]:
         g = self._get_read_traversal_source()
         t = g.E()
-        properties = properties.copy()
+        properties = dictionary_utils.deep_copy(properties)
         dictionary_utils.ensure_flat(properties)
         for key, value in properties.items():
             t = t.has(key, value)

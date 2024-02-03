@@ -19,9 +19,7 @@ RUN apt-get install -y \
     libtesseract-dev \
     libleptonica-dev \
     tesseract-ocr \
-    tesseract-ocr-eng \
-    tesseract-ocr-heb \
-    tesseract-ocr-ara
+    tesseract-ocr-eng
 # process office documents
 RUN apt-get update && apt-get install -y --no-install-recommends libreoffice-writer
 

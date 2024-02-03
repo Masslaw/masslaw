@@ -70,6 +70,11 @@
     border: none !important;
     pointer-events: none;
 }
+.optical-document-text-marking.search_result {
+    opacity: 0.5;
+    border-width: 3px !important;
+    pointer-events: none;
+}
 
 .optical-document-text-marking.sticky_note {
     border-bottom-width: 2px !important;

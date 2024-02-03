@@ -32,7 +32,7 @@ export interface searchResult {
 
 const RESULT_PRE_TAG = '<search_result>';
 const RESULT_POST_TAG = '</search_result>';
-const RESULT_PADDING = 750;
+const RESULT_PADDING = 150;
 
 
 export const CaseSearch: ApplicationPage = (props: ApplicationPageProps) => {
@@ -67,10 +67,11 @@ export const CaseSearch: ApplicationPage = (props: ApplicationPageProps) => {
             for (let result of results) {
                 for (let highlight of result.text_highlights) {
 
+                    highlight = highlight.replace(new RegExp(RESULT_POST_TAG + "\\s+" + RESULT_PRE_TAG, "g"), " ");
+
                     let preTagIndices: number[] = [];
                     let postTagIndices: number[] = [];
 
-                    // Find all locations of pre-tags and post-tags
                     let preTagMatch;
                     let preTagRegex = new RegExp(RESULT_PRE_TAG, 'g');
                     while ((preTagMatch = preTagRegex.exec(highlight)) !== null) {
@@ -83,14 +84,13 @@ export const CaseSearch: ApplicationPage = (props: ApplicationPageProps) => {
                         postTagIndices.push(postTagMatch.index + RESULT_POST_TAG.length);
                     }
 
-                    // Handle as pairs
                     for (let i = 0; i < preTagIndices.length; i++) {
                         const startIndexOfHighlight = preTagIndices[i] + RESULT_PRE_TAG.length;
                         const endIndexOfHighlight = postTagIndices[i] - RESULT_POST_TAG.length;
 
-                        const startText = highlight.substring(0, preTagIndices[i]);
+                        const startText = highlight.substring(Math.max(preTagIndices[i] - 150, 0), preTagIndices[i]);
                         const highlightedText = highlight.substring(startIndexOfHighlight, endIndexOfHighlight);
-                        const endText = highlight.substring(postTagIndices[i]);
+                        const endText = highlight.substring(postTagIndices[i], Math.min(postTagIndices[i] + 150, highlight.length));
 
                         const RESULT_HIGHLIGHT_TAGGING_REGEX = new RegExp(`${RESULT_PRE_TAG}(.*?)${RESULT_POST_TAG}`, 'g');
                         const cleanStartText = startText.replace(RESULT_HIGHLIGHT_TAGGING_REGEX, "$1");

@@ -19,9 +19,9 @@ class LambdaHandler:
             event_structure: dict = None
     ):
         self.name = name or str(self.__class__.__name__)
-        self.__event_structure = (event_structure or {}).copy()
-        self.__default_response = (default_response or {}).copy()
-        self.__response = (self.__default_response or {}).copy()
+        self.__event_structure = dictionary_utils.deep_copy(event_structure or {})
+        self.__default_response = dictionary_utils.deep_copy(default_response or {})
+        self.__response = dictionary_utils.deep_copy(self.__default_response or {})
         self.__event = {}
         self.__context = None
         self._stage = os.environ.get('STAGE', 'prod')
@@ -36,7 +36,7 @@ class LambdaHandler:
     def __reset_state(self):
         self._log(f'Resetting state')
         self._execution_exception = ''
-        self.__response = (self.__default_response or {}).copy()
+        self.__response = dictionary_utils.deep_copy(self.__default_response or {})
         self.__event = {}
         self.__context = None
         self._reset_state()
@@ -62,7 +62,7 @@ class LambdaHandler:
         _start_execution_time_milliseconds = time.time()
         res = False
         try:
-            self.__response = (self.__default_response or {}).copy()
+            self.__response = dictionary_utils.deep_copy(self.__default_response or {})
             self.__handle_event(event)
             self.__handle_context(context)
             self.__execution_body()

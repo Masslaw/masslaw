@@ -21,8 +21,9 @@ class MasslawUserInstance(DataHolder):
     def load_data(self):
         DataHolder.load_data(self)
         if not self.__user_id: return False
-        user_data = users_table_manager.get_item(self.__user_id)
-        if not user_data: return False
+        user_data = {}
+        user_data.update(cognitoManager.get_user_by_id(self.__user_id) or {})
+        user_data.update(users_table_manager.get_item(self.__user_id) or {})
         user_data = dictionary_utils.ensure_dict(user_data)
         self._set_data(user_data)
         return True

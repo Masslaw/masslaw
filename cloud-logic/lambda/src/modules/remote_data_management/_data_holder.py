@@ -78,10 +78,10 @@ class DataHolder:
         return
 
     def _set_data(self, new_data):
-        self.__data = new_data.copy()
+        self.__data = dictionary_utils.deep_copy(new_data)
 
     def _get_data(self):
-        return self.__data.copy()
+        return dictionary_utils.deep_copy(self.__data)
 
     def _assert_valid_data(self):
         pass
