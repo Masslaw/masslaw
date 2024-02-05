@@ -8,7 +8,7 @@ import {CaseFileData, knowledge, knowledgeEntity} from "../../../../../../infras
 import {LoadingIcon} from "../../../../../../shared/components/loading_icon/loading_icon";
 import {CasesManager} from "../../../../../../infrastructure/cases_management/cases_manager";
 import {Graph, GraphInterface} from "../../../../../../modules/graph/graph";
-import {faFile} from "@fortawesome/free-solid-svg-icons";
+import {faFile, faUser} from "@fortawesome/free-solid-svg-icons";
 import {ApplicationRoutes} from "../../../../../../infrastructure/application_base/routing/application_routes";
 import {Accordion} from "../../../../../../shared/components/accordion/accordion";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -23,70 +23,41 @@ export const CaseSubjects: ApplicationPage = (props: ApplicationPageProps) => {
 
     const {caseId, entityId} = useParams();
 
-    const [loaded, setLoaded] = useState(false);
 
-    const [knowledge, setKnowledge] = useState(null as { [file_id: string]: knowledge } | null);
-
-    const [files_data, setFilesData] = useState([] as CaseFileData[]);
+    const [knowledge, setKnowledge] = useState(null as knowledge | null);
 
     const [entities_by_id, setEntitiesById] = useState({} as {[entity_id: string]: knowledgeEntity});
-    const [entitiy_files_by_entity_id, setEntityFilesByEntityId] = useState({} as {[entity_id: string]: Set<string>});
     const [graph_contribution_by_entity_id, setGraphContributionByEntityId] = useState({} as {[entity_id: string]: number});
 
     const graphRef = useRef<GraphInterface | null>(null);
 
     const getCaseKnowledge = useCallback(() => {
         (async () => {
-            let case_files_response = await CasesManager.getInstance().getCaseFiles(caseId || '');
-            setFilesData(case_files_response);
-            let _knowledge = {} as { [file_id: string]: knowledge };
-            let promises = case_files_response.map((file_data) => {
-                let file_knowledge_extraction_status = ((file_data.processing || {})[FileProcessingStages.KnowledgeExtraction] || {})['status'] || 'never_executed';
-                if (file_knowledge_extraction_status !== 'done') return;
-                let file_id = file_data.id;
-                return (async () => {
-                    let download_url = (await CasesManager.getInstance().getFileContentDownloadURL(caseId || '', file_id || '', ['extracted_knowledge/knowledge.json']))['extracted_knowledge/knowledge.json'];
-                    if (!download_url) return;
-                    let file_knowledge = await fetch(download_url).then((response) => response.json());
-                    _knowledge[file_id] = file_knowledge;
-                })();
-            });
-            await Promise.all(promises);
-            setKnowledge(_knowledge);
+            let knowledge = await CasesManager.getInstance().getCaseKnowledge(caseId || '');
+            setKnowledge(knowledge);
         })()
     }, [caseId]);
 
     useEffect(() => {
         if (!knowledge) return;
         if (!graphRef.current) return;
-        for (let file_id in knowledge) {
-            let file_knowledge = knowledge[file_id];
-            if (!file_knowledge) continue;
-            for (let entity of file_knowledge.entities) {
-                if (!["PERSON"].includes(entity?.label)) continue;
-                setEntitiesById((prev) => ({...prev, [entity.id]: entity}));
-                setEntityFilesByEntityId((prev) => {
-                    let _prev = {...prev};
-                    let _set = _prev[entity.id] || new Set();
-                    _set.add(file_id);
-                    _prev[entity.id] = _set;
-                    return _prev;
-                });
-                graphRef.current.addNode(entity.id, entity.label, entity.properties['title']);
-            }
-            for (let connection of file_knowledge.connections) {
-                const from_entity = file_knowledge.entities.find((entity) => entity.id === connection.from);
-                const to_entity = file_knowledge.entities.find((entity) => entity.id === connection.to);
-                if (!from_entity || !["PERSON"].includes(from_entity.label || '')) continue;
-                if (!to_entity || !["PERSON"].includes(to_entity.label || '')) continue;
-                setGraphContributionByEntityId((prev) => {
-                    let _prev = {...prev};
-                    _prev[from_entity.id] = (_prev[from_entity.id] || 0) + connection.properties['strength'];
-                    _prev[to_entity.id] = (_prev[to_entity.id] || 0) + connection.properties['strength'];
-                    return _prev;
-                });
-                graphRef.current.addEdge(connection.id, connection.from, connection.to, connection.properties['strength']);
-            }
+        for (let entity of knowledge.entities) {
+            if (!["PERSON"].includes(entity?.label)) continue;
+            setEntitiesById((prev) => ({...prev, [entity.id]: entity}));
+            graphRef.current.addNode(entity.id, entity.label, entity.properties['title']);
+        }
+        for (let connection of knowledge.connections) {
+            const from_entity = knowledge.entities.find((entity) => entity.id === connection.from);
+            const to_entity = knowledge.entities.find((entity) => entity.id === connection.to);
+            if (!from_entity || !["PERSON"].includes(from_entity.label || '')) continue;
+            if (!to_entity || !["PERSON"].includes(to_entity.label || '')) continue;
+            setGraphContributionByEntityId((prev) => {
+                let _prev = {...prev};
+                _prev[from_entity.id] = (_prev[from_entity.id] || 0) + connection.properties['strength'];
+                _prev[to_entity.id] = (_prev[to_entity.id] || 0) + connection.properties['strength'];
+                return _prev;
+            });
+            graphRef.current.addEdge(connection.id, connection.from, connection.to, connection.properties['strength']);
         }
     }, [knowledge, graphRef.current]);
 
@@ -114,50 +85,37 @@ export const CaseSubjects: ApplicationPage = (props: ApplicationPageProps) => {
                     <div className={"page_title"}>Case Subjects</div>
                     <div className={'subjects-list'}>
                         {
-                            Object.keys(entities_by_id)
-                                .sort((a, b) => (graph_contribution_by_entity_id[b] || 0) - (graph_contribution_by_entity_id[a] || 0))
-                                .map((entity_id) => {
-                                    return <>
-                                        <div
-                                            className={"entity_item_data_display"}
-                                            onClick={e => nodeClickCallback(entity_id)}
-                                        >
+                            (() => {
+                                const totalContribution = [...Object.values(graph_contribution_by_entity_id)].reduce((a, b) => a + b, 0);
+                                return Object.keys(entities_by_id)
+                                    .sort((a, b) => (graph_contribution_by_entity_id[b] || 0) - (graph_contribution_by_entity_id[a] || 0))
+                                    .map((entity_id) => {
+                                        return <>
                                             <div
-                                                className={"entity_item_entity_name"}
-                                                onMouseEnter={e => {
-                                                    graphRef.current?.setNodeState(entity_id, 'highlight');
-                                                }}
-                                                onMouseLeave={e => {
-                                                    graphRef.current?.setNodeState(entity_id, 'idle');
-                                                }}
+                                                className={"entity_item_data_display"}
+                                                onClick={e => nodeClickCallback(entity_id)}
                                             >
-                                                {(entities_by_id[entity_id]?.properties || {}).title || ''}
-                                            </div>
-                                            <Accordion title={'Files'} component={
-                                                <div className={'entity_item_files_list'}>
-                                                    {
-                                                        Array.from(entitiy_files_by_entity_id[entity_id] || new Set()).map((file_id) => {
-                                                            return <div
-                                                                className={'entity_item_files_list_item'}
-                                                                onClick={e => {
-                                                                    e.stopPropagation();
-                                                                    navigate_function(ApplicationRoutes.FILE_DISPLAY, {'caseId': caseId || '', 'fileId': file_id})
-                                                                }}
-                                                            >
-                                                                <div className={'entity_item_files_list_item_file_icon'}>
-                                                                    <FontAwesomeIcon icon={faFile}/>
-                                                                </div>
-                                                                <div className={'entity_item_files_list_item_file_name'}>
-                                                                    {files_data.find((file_data) => file_data.id === file_id)?.name}
-                                                                </div>
-                                                            </div>
-                                                        })
-                                                    }
+                                                <div
+                                                    className={"entity_item_entity_name"}
+                                                    onMouseEnter={e => {
+                                                        graphRef.current?.setNodeState(entity_id, 'highlight');
+                                                    }}
+                                                    onMouseLeave={e => {
+                                                        graphRef.current?.setNodeState(entity_id, 'idle');
+                                                    }}
+                                                >
+                                                    <span><FontAwesomeIcon icon={faUser} /></span>
+                                                    <span style={{marginLeft: "5px"}}>{(entities_by_id[entity_id]?.properties || {}).title || ''}</span>
                                                 </div>
-                                            }/>
-                                        </div>
-                                    </>
-                                })
+                                                <div className={"entity_item_data_display_info"}>
+                                                    {`Contribution: ${Math.round(100 * (graph_contribution_by_entity_id[entity_id] || 0) / totalContribution)}%`}
+                                                    <br/>
+                                                    {`Appears in: ${(((entities_by_id[entity_id]?.properties || {})["files"] || {})["list"] || []).length} files`}
+                                                </div>
+                                            </div>
+                                        </>
+                                    })
+                            })()
                         }
                     </div>
                 </div>

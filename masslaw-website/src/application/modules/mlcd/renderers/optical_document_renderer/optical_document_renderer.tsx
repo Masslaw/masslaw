@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
+import {Document, Page, pdfjs} from "react-pdf";
 import {LoadingIcon} from "../../../../shared/components/loading_icon/loading_icon";
 import {CasesManager} from "../../../../infrastructure/cases_management/cases_manager";
-
 import './css.css';
 import {InputManager} from "../../../../shared/util/input_manager";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -11,11 +11,15 @@ import {useGlobalState} from "../../../../infrastructure/application_base/global
 import {QueryStringParamsState} from "../../../../infrastructure/application_base/routing/application_global_routing";
 
 
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
+
+
 interface PageDisplayData {
     structure: Element,
-    imageUrl: string,
+    displayUrl: string,
     pageNum: number,
-    sizeData: Element
+    sizeData: Element,
+    loaded?: boolean
 }
 
 interface TextMarkingData {
@@ -54,7 +58,7 @@ export const OpticalDocumentRenderer: MLCDContentRenderingComponent = (props: ML
 
     const [pages, setPages] = useState([] as PageDisplayData[]);
 
-    const [page_image_download_urls, setPageImageDownloadUrls] = useState({} as { [pageNumber: string]: string });
+    const [page_display_urls, setPageDisplayUrls] = useState({} as { [pageNumber: string]: string });
 
     const [selection_text, setSelectionText] = useState('');
 
@@ -105,13 +109,13 @@ export const OpticalDocumentRenderer: MLCDContentRenderingComponent = (props: ML
         let urls = await CasesManager.getInstance().getFileContentDownloadURL(
             props.fileData.case_id,
             props.fileData.id,
-            groupElements.map((_, pageNum) => `processed_assets/page_${pageNum}.png`)
+            groupElements.map((_, pageNum) => `processed_assets/page_${pageNum}.pdf`)
         );
-        let pageImageDownloadUrls = {} as { [key: string]: string };
+        let pageDisplayUrls = {} as { [key: string]: string };
         for (let pageNum in groupElements) {
-            pageImageDownloadUrls[pageNum] = urls[`processed_assets/page_${pageNum}.png`]
+            pageDisplayUrls[pageNum] = urls[`processed_assets/page_${pageNum}.pdf`]
         }
-        setPageImageDownloadUrls(pageImageDownloadUrls);
+        setPageDisplayUrls(pageDisplayUrls);
     }
 
     useEffect(() => {
@@ -129,14 +133,14 @@ export const OpticalDocumentRenderer: MLCDContentRenderingComponent = (props: ML
         for (let pageNum in groupElements) {
             pages.push({
                 structure: groupElements[pageNum],
-                imageUrl: page_image_download_urls[pageNum],
+                displayUrl: page_display_urls[pageNum],
                 pageNum: parseInt(pageNum),
                 sizeData: sizeElements[pageNum]
             })
         }
         pages = pages.sort((a, b) => (a.pageNum - b.pageNum))
         setPages(pages);
-    }, [text_structure, page_image_download_urls]);
+    }, [text_structure, page_display_urls]);
 
     const [current_selection_start, setCurrentSelectionStart] = useState(-1);
     const [current_selection_end, setCurrentSelectionEnd] = useState(-1);
@@ -220,7 +224,6 @@ export const OpticalDocumentRenderer: MLCDContentRenderingComponent = (props: ML
         setPagesMarkingVisualData((current) => {
             let selectionText = '';
             let _characterCount = 0;
-            let _t = ""
             let pagesMarkingsVisualData = [] as {[key: string]: TextMarkingVisualData}[] ;
             for (let pageNum = 0; pageNum < pages.length; pageNum++) {
                 let page = pages[pageNum];
@@ -272,7 +275,6 @@ export const OpticalDocumentRenderer: MLCDContentRenderingComponent = (props: ML
                                 }
                                 pageMarkingsVisualData[markingId] = markingVisualData;
                             }
-                            _t += `${_characterCount} - ${character.textContent || character.getAttribute('v')}\n`;
                             _characterCount++;
                         }
                         selectionText += ' ';
@@ -288,7 +290,6 @@ export const OpticalDocumentRenderer: MLCDContentRenderingComponent = (props: ML
                 pagesMarkingsVisualData.push(pageMarkingsVisualData);
             }
             setSelectionText(selectionText);
-            console.log(_t);
             return pagesMarkingsVisualData;
         })
     }, [text_markings, pages]);
@@ -425,7 +426,6 @@ export const OpticalDocumentRenderer: MLCDContentRenderingComponent = (props: ML
     const renderedPages = useMemo(() => {
         setLoadingDisplay(true);
         let characterCount = 0;
-        let _t = "";
         const rendered = pages.map((pageDisplayData, pageIndex) => {
             const [pageWidth, pageHeight] = getPageDimentions(pageDisplayData);
             return (
@@ -439,18 +439,31 @@ export const OpticalDocumentRenderer: MLCDContentRenderingComponent = (props: ML
                     <div
                         className={'optical-document-page-content'}
                     >
-                        <div className={'loading-image-icon-container'}>
-                            <LoadingIcon color={'#000000'}/>
-                        </div>
-                        <img
-                            className={'optical-document-page-image'}
-                            src={pageDisplayData.imageUrl}
-                        />
+                        {!pageDisplayData.loaded ? <div className={'loading-image-icon-container'}><LoadingIcon color={'#000000'}/></div> : <></>}
+                        {/*<object*/}
+                        {/*    className={'optical-document-page-display'}*/}
+                        {/*    data={pageDisplayData.displayUrl + "&#toolbar=0"}*/}
+                        {/*    width={"100%"} height={"100%"}*/}
+                        {/*    onLoadedData={() => setPages((_prev) => {*/}
+                        {/*        let newState = [..._prev];*/}
+                        {/*        newState[pageIndex].loaded = true;*/}
+                        {/*        return newState;*/}
+                        {/*    })}*/}
+                        {/*/>*/}
+                        <Document file={pageDisplayData.displayUrl}>
+                            <Page
+                                pageNumber={1}
+                                onLoadSuccess={() => setPages((_prev) => {
+                                    let newState = [..._prev];
+                                    newState[pageIndex].loaded = true;
+                                    return newState;
+                                })}
+                            />
+                        </Document>
                         <div className={'optical-document-page-structure-container'}>
                             {
                                 Array.from(pageDisplayData.structure.getElementsByTagName('cr')).map((character, characterNum) => {
                                     const currentCharacterNumber = characterCount;
-                                    _t += `${characterCount} - ${character.textContent || character.getAttribute('v')}\n`;
                                     characterCount++;
                                     const characterRect = getRectFromCharacter(character);
                                     return <div
@@ -477,7 +490,6 @@ export const OpticalDocumentRenderer: MLCDContentRenderingComponent = (props: ML
             )
         });
         setLoadingDisplay(false);
-        console.log(_t);
         return rendered;
     }, [pages, scroll_to_char]);
 

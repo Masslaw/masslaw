@@ -20,7 +20,6 @@ export const CaseKnowledge: ApplicationPage = (props: ApplicationPageProps) => {
 
     const {caseId} = useParams();
 
-    const [, setFilesData] = useState([] as CaseFileData[]);
     const [knowledge, setKnowledge] = useState(null as knowledge | null);
 
     const graphRef = useRef<GraphInterface | null>(null);

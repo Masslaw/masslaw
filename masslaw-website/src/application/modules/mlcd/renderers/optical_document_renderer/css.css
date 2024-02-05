@@ -32,11 +32,10 @@
     bottom: 0;
     right: 0;
     background: white;
-    border-radius: 5px;
     overflow: hidden;
 }
 
-.optical-document-page-image {
+.optical-document-page-display {
     display: block;
     position: absolute;
     width: 100%;
@@ -45,6 +44,8 @@
     z-index: 10;
     pointer-events: none;
     user-select: none;
+    margin: 0px;
+    padding: 0px;
 }
 
 .loading-image-icon-container {
@@ -99,4 +100,21 @@
     margin-top: -1px !important;
     margin-left: -1px !important;
     border-width: 2px !important;
+}
+
+.react-pdf__Page {
+    position: absolute !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+}
+
+.react-pdf__Page__canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.react-pdf__message {
+    display: none !important;
 }

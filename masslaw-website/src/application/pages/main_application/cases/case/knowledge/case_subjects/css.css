@@ -43,6 +43,7 @@
     overflow-x: hidden;
     margin: 0;
     padding: 0;
+    background: var(--masslaw-tertiary-background-shade);
 }
 
 .entity_item_data_display {
@@ -67,35 +68,9 @@
     margin: 5px 10px 0 10px;
 }
 
-.entity_item_files_list {
-    width: calc(100% - 10px);
-    margin: 5px;
-    overflow: hidden;
-
-}
-
-.entity_item_files_list_item {
-    display: flex;
-    flex-direction: row;
-    width: calc(100% - 20px);
-    margin: 5px;
-    background: white;
-    padding: 5px;
-    border-radius: 5px;
-    outline: 0 solid #000000;
-    color: var(--masslaw-dark-text-color);
-}
-
-.entity_item_files_list_item:hover {
-    outline: 1px solid var(--masslaw-primary-light);
-    color: var(--masslaw-primary-light);
-}
-
-.entity_item_files_list_item_file_icon {
-    margin: 5px;
-}
-
-.entity_item_files_list_item_file_name {
-    margin: 5px;
-    width: calc(100% - 30px);
+.entity_item_data_display_info {
+    font-size: 12px;
+    color: var(--masslaw-light-text-color);
+    line-height: 15px;
+    padding: 5px 5px 5px 10px;
 }
