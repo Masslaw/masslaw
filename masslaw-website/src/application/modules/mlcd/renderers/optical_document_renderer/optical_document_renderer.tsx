@@ -67,6 +67,8 @@ export const OpticalDocumentRenderer: MLCDContentRenderingComponent = (props: ML
 
     const [current_page_index, setCurrentPageIndex] = useState(0);
 
+    const [character_count_per_page, setCharacterCountPerPage] = useState([] as number[]);
+
     const getRectFromCharacter = (characterElement: Element) => {
         let x1 = characterElement.getAttribute('x1');
         let y1 = characterElement.getAttribute('y1');
@@ -122,6 +124,16 @@ export const OpticalDocumentRenderer: MLCDContentRenderingComponent = (props: ML
         pages = pages.sort((a, b) => (a.pageNum - b.pageNum))
         setPages(pages);
     }, [text_structure, page_display_urls]);
+
+    useEffect(() => {
+        let characterCountPerPage = [] as number[];
+        const groupElements = Array.from(text_structure.getElementsByTagName("gr"));
+        for (let pageElement of groupElements) {
+            let characterCount = Array.from(pageElement.getElementsByTagName('cr')).length;
+            characterCountPerPage.push(characterCount);
+        }
+        setCharacterCountPerPage(characterCountPerPage);
+    }, [text_structure]);
 
     const [current_selection_start, setCurrentSelectionStart] = useState(-1);
     const [current_selection_end, setCurrentSelectionEnd] = useState(-1);
@@ -370,7 +382,6 @@ export const OpticalDocumentRenderer: MLCDContentRenderingComponent = (props: ML
         onMouseUp={(e) => onMouseUpOnRenderer(e)}
     >
         <div className={'optical-document-layer'}>{(() => {
-            let characterCount = 0;
             const pdfDisplayUrl = page_display_urls['pdf'];
             return (<>
                 <Document file={pdfDisplayUrl}>
@@ -398,27 +409,33 @@ export const OpticalDocumentRenderer: MLCDContentRenderingComponent = (props: ML
                                         })}
                                     />
                                     <div className={'optical-document-page-structure-container'}>
-                                        {Array.from(pageDisplayData.structure.getElementsByTagName('cr')).map((character, characterNum) => {
-                                            const currentCharacterNumber = characterCount;
-                                            characterCount++;
-                                            const characterRect = getRectFromCharacter(character);
-                                            return <div
-                                                key={`char-${currentCharacterNumber}`}
-                                                id={`char-${currentCharacterNumber}`}
-                                                className={`optical-document-character-element`}
-                                                onMouseEnter={e => {
-                                                    onCharacterHover(currentCharacterNumber);
-                                                }}
-                                                style={{
-                                                    position: 'absolute',
-                                                    left: `${100 * characterRect[0] / pageWidth}%`,
-                                                    top: `${100 * characterRect[1] / pageHeight}%`,
-                                                    width: `${100 * (characterRect[2] - characterRect[0]) / pageWidth}%`,
-                                                    height: `${100 * (characterRect[3] - characterRect[1]) / pageHeight}%`,
-                                                    zIndex: '30',
-                                                }}
-                                            />
-                                        })}
+                                        {
+                                            (() => {
+                                                let characterCount = 0;
+                                                for (let i = 0; i < pageIndex; i++) characterCount += character_count_per_page[i];
+                                                return Array.from(pageDisplayData.structure.getElementsByTagName('cr')).map((character, characterNum) => {
+                                                   const currentCharacterNumber = characterCount;
+                                                   characterCount++;
+                                                   const characterRect = getRectFromCharacter(character);
+                                                   return <div
+                                                       key={`char-${currentCharacterNumber}`}
+                                                       id={`char-${currentCharacterNumber}`}
+                                                       className={`optical-document-character-element`}
+                                                       onMouseEnter={e => {
+                                                           onCharacterHover(currentCharacterNumber);
+                                                       }}
+                                                       style={{
+                                                           position: 'absolute',
+                                                           left: `${100 * characterRect[0] / pageWidth}%`,
+                                                           top: `${100 * characterRect[1] / pageHeight}%`,
+                                                           width: `${100 * (characterRect[2] - characterRect[0]) / pageWidth}%`,
+                                                           height: `${100 * (characterRect[3] - characterRect[1]) / pageHeight}%`,
+                                                           zIndex: '30',
+                                                       }}
+                                                   />
+                                               })
+                                            })()
+                                        }
                                     </div>
                                 </> || <></>}
                             </div>
