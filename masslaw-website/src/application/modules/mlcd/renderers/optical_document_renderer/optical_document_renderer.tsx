@@ -343,15 +343,26 @@ export const OpticalDocumentRenderer: MLCDContentRenderingComponent = (props: ML
     }, [props.scrollToChar]);
 
     useEffect(() => {
-        if (loading_display) return;
         if (!scroll_to_char) return;
         if (!document_renderer_ref.current || !scroll_to_char) return;
         const documentRendererElement = document_renderer_ref.current;
+        let charCount = 0;
+        let scrollToPage = 0;
+        for (let i = 0; i < character_count_per_page.length; i++) {
+            charCount += character_count_per_page[i];
+            if (charCount > scroll_to_char) {
+                scrollToPage = i;
+                break;
+            }
+        }
+        const pageElement = document.getElementById(`page-${scrollToPage}`) as HTMLDivElement;
+        if (!pageElement) return;
+        centerChildInParent(pageElement, documentRendererElement);
         const charElement = document.getElementById(`char-${scroll_to_char}`) as HTMLDivElement;
         if (!charElement) return;
         centerChildInParent(charElement, documentRendererElement);
         setScrollToChar(undefined);
-    }, [scroll_to_char, loading_display]);
+    }, [scroll_to_char, current_page_index]);
 
     useEffect(() => {
         if (!document_renderer_ref.current) return () => {
@@ -383,13 +394,14 @@ export const OpticalDocumentRenderer: MLCDContentRenderingComponent = (props: ML
     >
         <div className={'optical-document-layer'}>{(() => {
             const pdfDisplayUrl = page_display_urls['pdf'];
-            return (<>
+            const element = (<>
                 <Document file={pdfDisplayUrl}>
                     {pages.map((pageDisplayData, pageIndex) => {
                         const [pageWidth, pageHeight] = getPageDimentions(pageDisplayData);
                         const pageVisible = Math.abs(pageIndex - current_page_index) < 4;
                         return (<div
                             key={`page-${pageIndex}`}
+                            id={`page-${pageIndex}`}
                             className={'optical-document-page-container'}
                             style={{
                                 paddingBottom: `${100 * pageHeight / pageWidth}%`
@@ -443,6 +455,7 @@ export const OpticalDocumentRenderer: MLCDContentRenderingComponent = (props: ML
                     })}
                 </Document>
             </>)
+            return element;
         })()}</div>
         <div className={'optical-document-layer'}>{pages.map((pageDisplayData, pageIndex) => {
             const [pageWidth, pageHeight] = getPageDimentions(pageDisplayData);
