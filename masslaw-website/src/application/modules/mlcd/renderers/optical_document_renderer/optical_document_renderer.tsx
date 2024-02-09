@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
+import React, {useCallback, useEffect, useRef, useState} from "react";
 import {Document, Page, pdfjs} from "react-pdf";
 import {LoadingIcon} from "../../../../shared/components/loading_icon/loading_icon";
 import {CasesManager} from "../../../../infrastructure/cases_management/cases_manager";
@@ -6,7 +6,7 @@ import './css.css';
 import {InputManager} from "../../../../shared/util/input_manager";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {MLCDContentRenderingComponent, MLCDProps} from "../../mlcd";
-import {centerChildInParent} from "../../../../shared/util/DOM_utils";
+import {centerChildInParent, isElemVisibleWithinScrollableParent} from "../../../../shared/util/DOM_utils";
 import {useGlobalState} from "../../../../infrastructure/application_base/global_functionality/global_states";
 import {QueryStringParamsState} from "../../../../infrastructure/application_base/routing/application_global_routing";
 
@@ -53,18 +53,19 @@ export const OpticalDocumentRenderer: MLCDContentRenderingComponent = (props: ML
 
     const [loading_display, setLoadingDisplay] = useState(true);
 
-    const [text_structure, setTextStructure] =
-        useState(document.implementation.createDocument("", "", null));
+    const [text_structure, setTextStructure] = useState(document.implementation.createDocument("", "", null));
 
     const [pages, setPages] = useState([] as PageDisplayData[]);
 
-    const [page_display_urls, setPageDisplayUrls] = useState({} as { [pageNumber: string]: string });
+    const [page_display_urls, setPageDisplayUrls] = useState({} as { [key: string]: string });
 
     const [selection_text, setSelectionText] = useState('');
 
     const [scroll_to_char, setScrollToChar] = useState(props.scrollToChar);
 
-    const [search_result_position, setSearchResultPosition] = useState({} as {start_char: number | undefined, end_char: number | undefined});
+    const [search_result_position, setSearchResultPosition] = useState({} as { start_char: number | undefined, end_char: number | undefined });
+
+    const [current_page_index, setCurrentPageIndex] = useState(0);
 
     const getRectFromCharacter = (characterElement: Element) => {
         let x1 = characterElement.getAttribute('x1');
@@ -79,22 +80,13 @@ export const OpticalDocumentRenderer: MLCDContentRenderingComponent = (props: ML
             x2 = rect_values[2];
             y2 = rect_values[3];
         }
-        const rect = [
-            (x1 != null) && parseInt(x1) || -1,
-            (y1 != null) && parseInt(y1) || -1,
-            (x2 != null) && parseInt(x2) || -1,
-            (y2 != null) && parseInt(y2) || -1,
-        ]
+        const rect = [(x1 != null) && parseInt(x1) || -1, (y1 != null) && parseInt(y1) || -1, (x2 != null) && parseInt(x2) || -1, (y2 != null) && parseInt(y2) || -1,]
         return rect
     }
 
     const updateFileStructure = async () => {
         const textStructureContentPath = `extracted_text/text_structure`;
-        let structureDownloadURL = await CasesManager.getInstance().getFileContentDownloadURL(
-            props.fileData.case_id,
-            props.fileData.id,
-            [textStructureContentPath]
-        );
+        let structureDownloadURL = await CasesManager.getInstance().getFileContentDownloadURL(props.fileData.case_id, props.fileData.id, [textStructureContentPath]);
         const url = structureDownloadURL[textStructureContentPath]
         const response = await fetch(url);
         const xmlText = await response.text();
@@ -103,28 +95,20 @@ export const OpticalDocumentRenderer: MLCDContentRenderingComponent = (props: ML
         setTextStructure(xmlDoc);
     }
 
-    const collectPageImagesDownloadURLs = async () => {
-        const groupElements = Array.from(text_structure.getElementsByTagName("gr"));
-        if (!groupElements.length) return;
-        let urls = await CasesManager.getInstance().getFileContentDownloadURL(
-            props.fileData.case_id,
-            props.fileData.id,
-            groupElements.map((_, pageNum) => `processed_assets/page_${pageNum}.pdf`)
-        );
-        let pageDisplayUrls = {} as { [key: string]: string };
-        for (let pageNum in groupElements) {
-            pageDisplayUrls[pageNum] = urls[`processed_assets/page_${pageNum}.pdf`]
-        }
-        setPageDisplayUrls(pageDisplayUrls);
+    const getDisplayContentURLs = async () => {
+        let pdfStoragePath = 'converted_file/pdf.pdf';
+        let pdfUrl = (await CasesManager.getInstance().getFileContentDownloadURL(props.fileData.case_id, props.fileData.id, [pdfStoragePath]))[pdfStoragePath];
+        setPageDisplayUrls((prevState) => {
+            let newState = {...prevState};
+            newState['pdf'] = pdfUrl;
+            return newState;
+        });
     }
 
     useEffect(() => {
         updateFileStructure();
+        getDisplayContentURLs();
     }, [props.fileData]);
-
-    useEffect(() => {
-        collectPageImagesDownloadURLs();
-    }, [text_structure]);
 
     useEffect(() => {
         let pages: PageDisplayData[] = [];
@@ -132,10 +116,7 @@ export const OpticalDocumentRenderer: MLCDContentRenderingComponent = (props: ML
         const sizeElements = Array.from(text_structure.getElementsByTagName("image_size"));
         for (let pageNum in groupElements) {
             pages.push({
-                structure: groupElements[pageNum],
-                displayUrl: page_display_urls[pageNum],
-                pageNum: parseInt(pageNum),
-                sizeData: sizeElements[pageNum]
+                structure: groupElements[pageNum], displayUrl: page_display_urls[pageNum], pageNum: parseInt(pageNum), sizeData: sizeElements[pageNum]
             })
         }
         pages = pages.sort((a, b) => (a.pageNum - b.pageNum))
@@ -175,20 +156,15 @@ export const OpticalDocumentRenderer: MLCDContentRenderingComponent = (props: ML
 
     const [text_markings, setTextMarkings] = useState({} as { [key: string]: TextMarkingData });
 
-    const [pages_marking_visual_data, setPagesMarkingVisualData] =
-        useState([] as {
-            [key: string]: TextMarkingVisualData
-        }[]);
+    const [pages_marking_visual_data, setPagesMarkingVisualData] = useState([] as {
+        [key: string]: TextMarkingVisualData
+    }[]);
 
     useEffect(() => {
-        console.log(current_selection_start, current_selection_end);
         setTextMarkings((state) => {
             let newState = {...state};
             newState['user-selection'] = {
-                from_char: Math.min(current_selection_start, current_selection_end),
-                to_char: Math.max(current_selection_start, current_selection_end),
-                type: 'user_selection',
-                color: '#0056ff'
+                from_char: Math.min(current_selection_start, current_selection_end), to_char: Math.max(current_selection_start, current_selection_end), type: 'user_selection', color: '#0056ff'
             }
             return newState;
         });
@@ -199,11 +175,7 @@ export const OpticalDocumentRenderer: MLCDContentRenderingComponent = (props: ML
             let newState = {...state};
             for (let annotation of props.fileAnnotations) {
                 newState[annotation.annotation_id] = {
-                    from_char: annotation.from_char,
-                    to_char: annotation.to_char,
-                    type: annotation.type,
-                    color: annotation.color,
-                    onClick: () => {
+                    from_char: annotation.from_char, to_char: annotation.to_char, type: annotation.type, color: annotation.color, onClick: () => {
                         props.onAnnotationClicked(annotation);
                     }
                 } as TextMarkingData;
@@ -213,10 +185,8 @@ export const OpticalDocumentRenderer: MLCDContentRenderingComponent = (props: ML
     }, [props.fileAnnotations]);
 
     const getPageDimentions = (pageDisplayData: PageDisplayData) => {
-        const pageWidth = parseInt(pageDisplayData.structure.getAttribute('w') ||
-            (pageDisplayData.sizeData || new Element()).getAttribute('w') || '0') || 0;
-        const pageHeight = parseInt(pageDisplayData.structure.getAttribute('h') ||
-            (pageDisplayData.sizeData || new Element()).getAttribute('h') || '0') || 0;
+        const pageWidth = parseInt(pageDisplayData.structure.getAttribute('w') || (pageDisplayData.sizeData || new Element()).getAttribute('w') || '0') || 0;
+        const pageHeight = parseInt(pageDisplayData.structure.getAttribute('h') || (pageDisplayData.sizeData || new Element()).getAttribute('h') || '0') || 0;
         return [pageWidth, pageHeight]
     }
 
@@ -224,34 +194,23 @@ export const OpticalDocumentRenderer: MLCDContentRenderingComponent = (props: ML
         setPagesMarkingVisualData((current) => {
             let selectionText = '';
             let _characterCount = 0;
-            let pagesMarkingsVisualData = [] as {[key: string]: TextMarkingVisualData}[] ;
+            let pagesMarkingsVisualData = [] as { [key: string]: TextMarkingVisualData }[];
             for (let pageNum = 0; pageNum < pages.length; pageNum++) {
                 let page = pages[pageNum];
-                let pageMarkingsVisualData = {} as {[key: string]: TextMarkingVisualData};
+                let pageMarkingsVisualData = {} as { [key: string]: TextMarkingVisualData };
                 for (let line of Array.from(page.structure.getElementsByTagName('ln'))) {
                     for (let word of Array.from(line.getElementsByTagName('wd'))) {
                         for (let character of Array.from(word.getElementsByTagName('cr'))) {
                             for (let markingId of Object.keys(text_markings)) {
                                 const markingData = text_markings[markingId];
-                                let markingVisualData = pageMarkingsVisualData[markingId] ||
-                                    {
-                                        rects: [[-1, -1, -1, -1]],
-                                        type: markingData.type,
-                                        color: markingData.color,
-                                        hovered: pageNum < current.length && current[pageNum][markingId]?.hovered || false,
-                                        onClick: markingData.onClick,
-                                    } as TextMarkingVisualData;
-                                if (markingData.from_char <= _characterCount+1 &&
-                                    _characterCount <= markingData.to_char) {
+                                let markingVisualData = pageMarkingsVisualData[markingId] || {
+                                    rects: [[-1, -1, -1, -1]], type: markingData.type, color: markingData.color, hovered: pageNum < current.length && current[pageNum][markingId]?.hovered || false, onClick: markingData.onClick,
+                                } as TextMarkingVisualData;
+                                if (markingData.from_char <= _characterCount + 1 && _characterCount <= markingData.to_char) {
                                     const characterRect = getRectFromCharacter(character);
                                     const rectsList = markingVisualData.rects;
                                     let currentRect = rectsList[rectsList.length - 1];
-                                    currentRect = [
-                                        ((currentRect[0] >= 0 && characterRect[0] >= 0) && Math.min(currentRect[0], characterRect[0]) || Math.max(currentRect[0], characterRect[0])),
-                                        ((currentRect[1] >= 0 && characterRect[1] >= 0) && Math.min(currentRect[1], characterRect[1]) || Math.max(currentRect[1], characterRect[1])),
-                                        Math.max(currentRect[2], characterRect[2]),
-                                        Math.max(currentRect[3], characterRect[3]),
-                                    ]
+                                    currentRect = [((currentRect[0] >= 0 && characterRect[0] >= 0) && Math.min(currentRect[0], characterRect[0]) || Math.max(currentRect[0], characterRect[0])), ((currentRect[1] >= 0 && characterRect[1] >= 0) && Math.min(currentRect[1], characterRect[1]) || Math.max(currentRect[1], characterRect[1])), Math.max(currentRect[2], characterRect[2]), Math.max(currentRect[3], characterRect[3]),]
                                     markingVisualData.rects[rectsList.length - 1] = currentRect;
 
                                     if (markingData.type == 'user_selection') {
@@ -262,15 +221,9 @@ export const OpticalDocumentRenderer: MLCDContentRenderingComponent = (props: ML
                                         let toolkitY = Math.min(characterY2, parseInt(page.structure.getAttribute('h') || `${characterY2}`) || characterY2);
                                         if (_characterCount == markingData.to_char) {
                                             setSelectionToolkitPosition({
-                                                page: pageNum,
-                                                x: toolkitX,
-                                                y: toolkitY,
+                                                page: pageNum, x: toolkitX, y: toolkitY,
                                             })
                                         }
-                                    }
-
-                                    if (markingData.type == 'search_result') {
-                                        console.log(character.textContent || character.getAttribute('v'));
                                     }
                                 }
                                 pageMarkingsVisualData[markingId] = markingVisualData;
@@ -322,14 +275,14 @@ export const OpticalDocumentRenderer: MLCDContentRenderingComponent = (props: ML
                     searchCharacter = searchString[searchIndex];
                     searchIndex++;
                 } while (['\n', ' '].includes(searchCharacter));
-                if (searchIndex >= searchString.length){
+                if (searchIndex >= searchString.length) {
                     if (searchResultStartIndex != undefined && searchResultEndIndex != undefined) {
                         setSearchResultPosition({
-                            start_char: searchResultStartIndex + 1,
-                            end_char: searchResultEndIndex - 1,
+                            start_char: searchResultStartIndex + 1, end_char: searchResultEndIndex - 1,
                         })
                         return;
-                    };
+                    }
+
                 }
                 if (searchCharacter != characterValue) {
                     break;
@@ -352,7 +305,7 @@ export const OpticalDocumentRenderer: MLCDContentRenderingComponent = (props: ML
                 return newState;
             });
             return;
-        };
+        }
         setQueryStringParams((state) => {
             let new_state = {...state};
             new_state['search_result_start_char'] = search_result_position.start_char && search_result_position.start_char.toString() || '';
@@ -362,11 +315,7 @@ export const OpticalDocumentRenderer: MLCDContentRenderingComponent = (props: ML
         setTextMarkings((state) => {
             let newState = {...state};
             newState['search-result'] = {
-                from_char: search_result_position.start_char || 0,
-                to_char: search_result_position.end_char || 0,
-                type: 'search_result',
-                inRealCharacters: true,
-                color: '#ffc400'
+                from_char: search_result_position.start_char || 0, to_char: search_result_position.end_char || 0, type: 'search_result', inRealCharacters: true, color: '#ffc400'
             }
             return newState;
         });
@@ -392,224 +341,162 @@ export const OpticalDocumentRenderer: MLCDContentRenderingComponent = (props: ML
         setScrollToChar(undefined);
     }, [scroll_to_char, loading_display]);
 
-    const [visible_pages, setVisiblePages] = useState([] as boolean[]);
-
-    const isPageVisible = (pageElement: Element) => {
-        if (!document_renderer_ref.current) return false;
-
-        const documentRect = document_renderer_ref.current.getBoundingClientRect();
-        const pageRect = pageElement.getBoundingClientRect();
-
-        return (
-            pageRect.top <= documentRect.bottom &&
-            pageRect.bottom >= documentRect.top &&
-            pageRect.left <= documentRect.right &&
-            pageRect.right >= documentRect.left
-        );
-    }
-
-    const checkPagesVisibility = () => {
-        if (!document_renderer_ref.current) return;
-        let visiblePages = [];
-        const children = document_renderer_ref.current.getElementsByClassName('optical-document-page-container');
-        for(let i = 0; i < children.length; i++) {
-            const child = children.item(i);
-            visiblePages.push(child && isPageVisible(child) || false);
-        }
-        setVisiblePages(visiblePages);
-    }
-
     useEffect(() => {
-        checkPagesVisibility();
-    }, [pages]);
+        if (!document_renderer_ref.current) return () => {
+        };
+        const resolveCurrentPage = () => {
+            if (!document_renderer_ref.current) return;
+            let pageElements = Array.from(document_renderer_ref.current.getElementsByClassName('optical-document-page-container'));
+            for (let pageIndex = 0; pageIndex < pageElements.length; pageIndex++) {
+                let pageElement = pageElements[pageIndex] as HTMLElement;
+                if (!pageElement) continue;
+                if (isElemVisibleWithinScrollableParent(pageElement, document_renderer_ref.current)) {
+                    setCurrentPageIndex(pageIndex);
+                    return;
+                }
+            }
+            setCurrentPageIndex(0);
+        }
 
-    const renderedPages = useMemo(() => {
-        setLoadingDisplay(true);
-        let characterCount = 0;
-        const rendered = pages.map((pageDisplayData, pageIndex) => {
-            const [pageWidth, pageHeight] = getPageDimentions(pageDisplayData);
-            return (
-                <div
-                    key={`page-${pageIndex}`}
-                    className={'optical-document-page-container'}
-                    style={{
-                        paddingBottom: `${100 * pageHeight / pageWidth}%`
-                    }}
-                >
-                    <div
-                        className={'optical-document-page-content'}
-                    >
-                        {!pageDisplayData.loaded ? <div className={'loading-image-icon-container'}><LoadingIcon color={'#000000'}/></div> : <></>}
-                        {/*<object*/}
-                        {/*    className={'optical-document-page-display'}*/}
-                        {/*    data={pageDisplayData.displayUrl + "&#toolbar=0"}*/}
-                        {/*    width={"100%"} height={"100%"}*/}
-                        {/*    onLoadedData={() => setPages((_prev) => {*/}
-                        {/*        let newState = [..._prev];*/}
-                        {/*        newState[pageIndex].loaded = true;*/}
-                        {/*        return newState;*/}
-                        {/*    })}*/}
-                        {/*/>*/}
-                        <Document file={pageDisplayData.displayUrl}>
-                            <Page
-                                pageNumber={1}
-                                onLoadSuccess={() => setPages((_prev) => {
-                                    let newState = [..._prev];
-                                    newState[pageIndex].loaded = true;
-                                    return newState;
-                                })}
-                            />
-                        </Document>
-                        <div className={'optical-document-page-structure-container'}>
-                            {
-                                Array.from(pageDisplayData.structure.getElementsByTagName('cr')).map((character, characterNum) => {
-                                    const currentCharacterNumber = characterCount;
-                                    characterCount++;
-                                    const characterRect = getRectFromCharacter(character);
-                                    return <div
-                                        key={`char-${currentCharacterNumber}`}
-                                        id={`char-${currentCharacterNumber}`}
-                                        className={`optical-document-character-element`}
-                                        onMouseEnter={e => {
-                                            onCharacterHover(currentCharacterNumber);
-                                        }}
-                                        style={{
-                                            position: 'absolute',
-                                            left: `${100 * characterRect[0] / pageWidth}%`,
-                                            top: `${100 * characterRect[1] / pageHeight}%`,
-                                            width: `${100 * (characterRect[2] - characterRect[0]) / pageWidth}%`,
-                                            height: `${100 * (characterRect[3] - characterRect[1]) / pageHeight}%`,
-                                            zIndex: '30',
-                                        }}
-                                    />
-                                })
-                            }
-                        </div>
-                    </div>
-                </div>
-            )
-        });
-        setLoadingDisplay(false);
-        return rendered;
-    }, [pages, scroll_to_char]);
+        resolveCurrentPage();
+        document_renderer_ref.current.addEventListener('scroll', resolveCurrentPage);
+        return () => document_renderer_ref.current && document_renderer_ref.current.removeEventListener('scroll', resolveCurrentPage);
+    }, [document_renderer_ref.current]);
 
-    const renderedHighlightsLayer = useMemo(() => {
-        return pages.map((pageDisplayData, pageIndex) => {
-            const [pageWidth, pageHeight] = getPageDimentions(pageDisplayData);
-            return (
-                <div
-                    key={`page-${pageIndex}`}
-                    className={'optical-document-page-container'}
-                    style={{
-                        paddingBottom: `${100 * pageHeight / pageWidth}%`
-                    }}
-                >
-
-                    {
-                        Object.keys(pages_marking_visual_data[pageIndex] || {}).map((markingKey) => {
-                            const markingVisualData = pages_marking_visual_data[pageIndex][markingKey];
-                            return <>{
-                                markingVisualData.rects.map((rect, key) => {
-                                    if (rect[0] < 0 || rect[1] < 0 || rect[2] < 0 || rect[3] < 0) return <></>
-                                    return <div
-                                        key={`mark-${pageIndex}-${markingKey}-${key}`}
-                                        className={`optical-document-text-marking ${markingVisualData.type} ${markingVisualData.hovered && 'hovered' || ''}`}
-                                        style={{
-                                            background: `${markingVisualData.color}80`,
-                                            border: `1px solid ${markingVisualData.color}`,
-                                            position: 'absolute',
-                                            left: `${100 * rect[0] / pageWidth}%`,
-                                            top: `${100 * rect[1] / pageHeight}%`,
-                                            width: `${100 * (rect[2] - rect[0]) / pageWidth}%`,
-                                            height: `${100 * (rect[3] - rect[1]) / pageHeight}%`,
-                                            zIndex: '50',
-                                        }}
-                                        onMouseEnter={e => setPagesMarkingVisualData((state) => {
-                                            let newState = [...state];
-                                            for (let i = 0; i < newState.length; i++)
-                                                newState[i][markingKey].hovered = true;
-                                            return newState;
-                                        })}
-                                        onMouseLeave={e => setPagesMarkingVisualData((state) => {
-                                            let newState = [...state];
-                                            for (let i = 0; i < newState.length; i++)
-                                                newState[i][markingKey].hovered = false;
-                                            return newState;
-                                        })}
-                                        onClick={e => {
-                                            if (markingVisualData.onClick)
-                                                markingVisualData.onClick()
-                                        }}
-                                    />
-                                })
-                            }</>
-                        })
-                    }
-                    {
-                        (selection_toolkit_displaying && selection_toolkit_position.page == pageIndex) &&
-                        <div
-                            onMouseEnter={e => {
-                                setMouseOnSelectionToolkit(true);
-                            }}
-                            onMouseLeave={e => {
-                                setMouseOnSelectionToolkit(false);
-                            }}
-                            className={'selection-toolkit'}
+    return (<div
+        className={'optical-document-render-container'}
+        ref={document_renderer_ref}
+        onMouseDown={(e) => onMouseDownOnRenderer(e)}
+        onMouseUp={(e) => onMouseUpOnRenderer(e)}
+    >
+        <div className={'optical-document-layer'}>{(() => {
+            let characterCount = 0;
+            const pdfDisplayUrl = page_display_urls['pdf'];
+            return (<>
+                <Document file={pdfDisplayUrl}>
+                    {pages.map((pageDisplayData, pageIndex) => {
+                        const [pageWidth, pageHeight] = getPageDimentions(pageDisplayData);
+                        const pageVisible = Math.abs(pageIndex - current_page_index) < 4;
+                        return (<div
+                            key={`page-${pageIndex}`}
+                            className={'optical-document-page-container'}
                             style={{
-                                top: `${100 * selection_toolkit_position.y / pageHeight}%`,
-                                left: `${100 * selection_toolkit_position.x / pageWidth}%`,
-                                zIndex: '70'
+                                paddingBottom: `${100 * pageHeight / pageWidth}%`
                             }}
                         >
-                            {
-                                props.selectionToolkitButtons.map((buttonData, buttonKey) => {
-                                    return (
-                                        <button
-                                            className={'clickable selection-toolkit-button'}
-                                            title={buttonData.name}
-                                            onClick={(e) => {
-                                                buttonData.callback(
-                                                    current_selection_start,
-                                                    current_selection_end,
-                                                    selection_text
-                                                );
-                                            }}
-                                        >
-                                            <FontAwesomeIcon icon={buttonData.icon}/>
-                                        </button>
-                                    )
-                                })
-                            }
-                        </div>
-                        || <></>
-                    }
+                            <div
+                                className={'optical-document-page-content'}
+                            >
+                                {pageVisible && <>
+                                    {!pageDisplayData.loaded ? <div className={'loading-image-icon-container'}><LoadingIcon color={'#000000'}/></div> : <></>}
+                                    <Page
+                                        pageNumber={pageIndex + 1}
+                                        onLoadSuccess={() => setPages((_prev) => {
+                                            let newState = [..._prev];
+                                            newState[pageIndex].loaded = true;
+                                            return newState;
+                                        })}
+                                    />
+                                    <div className={'optical-document-page-structure-container'}>
+                                        {Array.from(pageDisplayData.structure.getElementsByTagName('cr')).map((character, characterNum) => {
+                                            const currentCharacterNumber = characterCount;
+                                            characterCount++;
+                                            const characterRect = getRectFromCharacter(character);
+                                            return <div
+                                                key={`char-${currentCharacterNumber}`}
+                                                id={`char-${currentCharacterNumber}`}
+                                                className={`optical-document-character-element`}
+                                                onMouseEnter={e => {
+                                                    onCharacterHover(currentCharacterNumber);
+                                                }}
+                                                style={{
+                                                    position: 'absolute',
+                                                    left: `${100 * characterRect[0] / pageWidth}%`,
+                                                    top: `${100 * characterRect[1] / pageHeight}%`,
+                                                    width: `${100 * (characterRect[2] - characterRect[0]) / pageWidth}%`,
+                                                    height: `${100 * (characterRect[3] - characterRect[1]) / pageHeight}%`,
+                                                    zIndex: '30',
+                                                }}
+                                            />
+                                        })}
+                                    </div>
+                                </> || <></>}
+                            </div>
+                        </div>)
+                    })}
+                </Document>
+            </>)
+        })()}</div>
+        <div className={'optical-document-layer'}>{pages.map((pageDisplayData, pageIndex) => {
+            const [pageWidth, pageHeight] = getPageDimentions(pageDisplayData);
+            return (<>
+                {<div
+                    key={`page-${pageIndex}`}
+                    className={'optical-document-page-container'}
+                    style={{
+                        paddingBottom: `${100 * pageHeight / pageWidth}%`
+                    }}
+                >
 
-                </div>
-            )
-        })
-    }, [
-        pages,
-        props.selectionToolkitButtons,
-        pages_marking_visual_data,
-        selection_toolkit_displaying,
-    ]);
-
-    return (
-        <div
-            className={'optical-document-render-container'}
-            ref={document_renderer_ref}
-            onMouseDown={(e) => onMouseDownOnRenderer(e)}
-            onMouseUp={(e) => onMouseUpOnRenderer(e)}
-        >
-            {
-                loading_display &&
-                <LoadingIcon color={'#000000'} width={200}/>
-                ||
-                <>
-                    <div className={'optical-document-layer'}>{renderedPages}</div>
-                    <div className={'optical-document-layer'}>{renderedHighlightsLayer}</div>
-                </>
-            }
-        </div>
-    )
+                    {Object.keys(pages_marking_visual_data[pageIndex] || {}).map((markingKey) => {
+                        const markingVisualData = pages_marking_visual_data[pageIndex][markingKey];
+                        return <>{markingVisualData.rects.map((rect, key) => {
+                            if (rect[0] < 0 || rect[1] < 0 || rect[2] < 0 || rect[3] < 0) return <></>
+                            return <div
+                                key={`mark-${pageIndex}-${markingKey}-${key}`}
+                                className={`optical-document-text-marking ${markingVisualData.type} ${markingVisualData.hovered && 'hovered' || ''}`}
+                                style={{
+                                    background: `${markingVisualData.color}80`,
+                                    border: `1px solid ${markingVisualData.color}`,
+                                    position: 'absolute',
+                                    left: `${100 * rect[0] / pageWidth}%`,
+                                    top: `${100 * rect[1] / pageHeight}%`,
+                                    width: `${100 * (rect[2] - rect[0]) / pageWidth}%`,
+                                    height: `${100 * (rect[3] - rect[1]) / pageHeight}%`,
+                                    zIndex: '50',
+                                }}
+                                onMouseEnter={e => setPagesMarkingVisualData((state) => {
+                                    let newState = [...state];
+                                    for (let i = 0; i < newState.length; i++) newState[i][markingKey].hovered = true;
+                                    return newState;
+                                })}
+                                onMouseLeave={e => setPagesMarkingVisualData((state) => {
+                                    let newState = [...state];
+                                    for (let i = 0; i < newState.length; i++) newState[i][markingKey].hovered = false;
+                                    return newState;
+                                })}
+                                onClick={e => {
+                                    if (markingVisualData.onClick) markingVisualData.onClick()
+                                }}
+                            />
+                        })}</>
+                    })}
+                    {(selection_toolkit_displaying && selection_toolkit_position.page == pageIndex) && <div
+                        onMouseEnter={e => {
+                            setMouseOnSelectionToolkit(true);
+                        }}
+                        onMouseLeave={e => {
+                            setMouseOnSelectionToolkit(false);
+                        }}
+                        className={'selection-toolkit'}
+                        style={{
+                            top: `${100 * selection_toolkit_position.y / pageHeight}%`, left: `${100 * selection_toolkit_position.x / pageWidth}%`, zIndex: '70'
+                        }}
+                    >
+                        {props.selectionToolkitButtons.map((buttonData, buttonKey) => {
+                            return (<button
+                                className={'clickable selection-toolkit-button'}
+                                title={buttonData.name}
+                                onClick={(e) => {
+                                    buttonData.callback(current_selection_start, current_selection_end, selection_text);
+                                }}
+                            >
+                                <FontAwesomeIcon icon={buttonData.icon}/>
+                            </button>)
+                        })}
+                    </div> || <></>}
+                </div> || <></>}
+            </>)
+        })}</div>
+    </div>)
 }

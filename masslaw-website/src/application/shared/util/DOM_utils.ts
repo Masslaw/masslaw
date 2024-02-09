@@ -47,4 +47,12 @@ export function centerChildInParent(child: HTMLElement, parent: HTMLElement) {
     smoothScroll(parent, scrollToLeft, scrollToTop, 1000);
 }
 
+export function isElemVisibleWithinScrollableParent(elem: HTMLElement, scrollableParent: HTMLElement): boolean {
+    const elemRect = elem.getBoundingClientRect();
+    const parentRect = scrollableParent.getBoundingClientRect();
+    const isVerticallyVisible = elemRect.top < parentRect.bottom && elemRect.bottom > parentRect.top;
+    const isHorizontallyVisible = elemRect.left < parentRect.right && elemRect.right > parentRect.left;
+    return isVerticallyVisible && isHorizontallyVisible;
+}
+
 export default {};

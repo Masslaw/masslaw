@@ -64,7 +64,7 @@ export const CaseFiles: ApplicationPage = (props: ApplicationPageProps) => {
 
     let getCaseFiles = useCallback(async () => {
         setLoadingFilesList(true);
-        setCaseFilesData(await CasesManager.getInstance().getCaseFiles(caseId || '', selected_page || 0));
+        setCaseFilesData((await CasesManager.getInstance().getCaseFiles(caseId || '', selected_page || 0))?.sort((a, b) => (parseInt(a.uploaded) || 0) - (parseInt(b.uploaded) || 0)) || []);
         setLoadingFilesList(false);
     }, [caseId, selected_page]);
 
