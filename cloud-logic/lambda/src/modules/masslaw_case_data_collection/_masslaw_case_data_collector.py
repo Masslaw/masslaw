@@ -6,7 +6,7 @@ from src.modules.dictionary_utils import dictionary_utils
 from src.modules.masslaw_case_data_formatting import masslaw_case_data_formatting
 from src.modules.masslaw_case_users_management import MasslawCaseUserAccessManager
 from src.modules.masslaw_case_users_management import masslaw_case_users_management_exceptions
-from src.modules.masslaw_cases_config._storage_config import CASES_KNOWLEDGE_BUCKET_ID
+from src.modules.masslaw_cases_config import storage_config
 from src.modules.masslaw_cases_objects import MasslawCaseInstance
 
 
@@ -56,7 +56,7 @@ class MasslawCaseDataCollector:
         return items_data
 
     def get_case_knowledge(self) -> dict:
-        s3_bucket_manager = S3BucketManager(CASES_KNOWLEDGE_BUCKET_ID)
+        s3_bucket_manager = S3BucketManager(storage_config.CASES_KNOWLEDGE_BUCKET_ID)
         s3_knowledge_key = f'{self.__case_instance.get_case_id()}/knowledge.json'
         knowledge_data = s3_bucket_manager.get_object(s3_knowledge_key)
         if not knowledge_data: return {

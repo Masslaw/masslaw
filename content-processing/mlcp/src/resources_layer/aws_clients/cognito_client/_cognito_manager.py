@@ -27,19 +27,14 @@ class CognitoUserPoolManager(AWSServiceClient):
 
     def get_user_id_by_access_token(self, access_token):
         try:
-            response = self._client.get_user(
-                AccessToken=access_token,
-            )
+            response = self._client.get_user(AccessToken=access_token, )
             return response['Username']
         except ClientError as e:
             return None
 
     def get_user_by_id(self, user_id):
         try:
-            response = self._client.admin_get_user(
-                Username=user_id,
-                UserPoolId=self.user_pool_id,
-            )
+            response = self._client.admin_get_user(Username=user_id, UserPoolId=self.user_pool_id, )
             user_data = self.__parse_get_user_response(response)
             user_data = self.__ensure_dict(user_data)
             return user_data
@@ -47,10 +42,7 @@ class CognitoUserPoolManager(AWSServiceClient):
             return None
 
     def get_user_by_email(self, email):
-        response = self._client.list_users(
-            UserPoolId=self.user_pool_id,
-            Filter=f"email = \"{email}\""
-        )
+        response = self._client.list_users(UserPoolId=self.user_pool_id, Filter=f"email = \"{email}\"")
         if len(response['Users']) == 0:
             raise ValueError(f"User with email {email} not found")
         user_data = self.__parse_get_user_response(response['Users'][0])
@@ -58,38 +50,24 @@ class CognitoUserPoolManager(AWSServiceClient):
 
     def check_user_verified(self, user_name):
         try:
-            response = self._client.admin_get_user(
-                Username=user_name,
-                UserPoolId=self.user_pool_id,
-            )
+            response = self._client.admin_get_user(Username=user_name, UserPoolId=self.user_pool_id, )
             return 'UserStatus' in response and response['UserStatus'] == 'CONFIRMED'
         except ClientError as e:
             return False
 
     def update_user_data(self, user_id, new_data):
-        new_data = self.__ensure_flat(new_data)
-        attributes = self.__format_user_data_for_write(new_data)
-        response = self._client.admin_update_user_attributes(
-            UserPoolId=self.user_pool_id,
-            Username=user_id,
-            UserAttributes=attributes,
-        )
+        user_data = new_data.copy()
+        self.__ensure_flat(user_data)
+        attributes = self.__format_user_data_for_write(user_data)
+        response = self._client.admin_update_user_attributes(UserPoolId=self.user_pool_id, Username=user_id, UserAttributes=attributes, )
         return response['ResponseMetadata']['HTTPStatusCode'] == 200
 
     def delete_user(self, user_id):
-        response = self._client.admin_delete_user(
-            UserPoolId=self.user_pool_id,
-            Username=user_id
-        )
+        response = self._client.admin_delete_user(UserPoolId=self.user_pool_id, Username=user_id)
         return response
 
     def list_users(self):
-        response = self._client.list_users(
-            UserPoolId=self.user_pool_id,
-            AttributesToGet=[
-                'email'
-            ]
-        )
+        response = self._client.list_users(UserPoolId=self.user_pool_id, AttributesToGet=['email'])
         users = [user['Attributes'][0]['Value'] for user in response['Users']]
         return users
 
@@ -104,8 +82,7 @@ class CognitoUserPoolManager(AWSServiceClient):
         pool_writeable_attributes = self.__get_pool_writeable_attributes()
         attributes = []
         for key, value in user_data.items():
-            if key not in pool_writeable_attributes and (key := f'custom:{key}') not in pool_writeable_attributes:
-                continue
+            if key not in pool_writeable_attributes and (key := f'custom:{key}') not in pool_writeable_attributes: continue
             attributes.append({'Name': key, 'Value': value})
         return attributes
 

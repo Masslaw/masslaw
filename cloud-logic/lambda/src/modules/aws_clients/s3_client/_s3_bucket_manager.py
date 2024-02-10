@@ -1,3 +1,4 @@
+import mimetypes
 import os
 
 import botocore
@@ -18,7 +19,8 @@ class S3BucketManager(AWSServiceClient):
         _, file_type = os.path.splitext(saved_as)
         is_folder = not file_type
         if not is_folder:
-            self._client.upload_file(saved_as, self._bucket_name, file_key)
+            content_type = self._get_content_type_for_file(file_key)
+            self._client.upload_file(saved_as, self._bucket_name, file_key, ExtraArgs={'ContentType': content_type})
         else:
             for entry in os.scandir(saved_as):
                 entry_key = os.path.join(file_key, entry.name)
@@ -50,9 +52,11 @@ class S3BucketManager(AWSServiceClient):
         return True
 
     def start_multipart_upload(self, file_key, num_parts):
+        content_type = self._get_content_type_for_file(file_key)
         mp_upload = self._client.create_multipart_upload(
             Bucket=self._bucket_name,
             Key=file_key,
+            ContentType=content_type
         )
 
         upload_urls = []
@@ -189,3 +193,7 @@ class S3BucketManager(AWSServiceClient):
         for obj in response.get('Contents', []):
             if obj['Key'].startswith(key):
                 return obj['Key']
+
+    def _get_content_type_for_file(self, file_path) -> str:
+        content_type, _ = mimetypes.guess_type(file_path)
+        return content_type or 'application/octet-stream'
