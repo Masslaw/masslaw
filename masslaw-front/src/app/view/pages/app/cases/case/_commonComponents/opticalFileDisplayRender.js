@@ -652,9 +652,7 @@ export function OpticalFileDisplayRender(props) {
                                 <LoadingIcon width={'20px'} height={'20px'}/>
                             </> }
                         </OpticalFileDisplayFileRenderSection>
-                        <OpticalFileDisplayFileCommentsSection>
-
-                        </OpticalFileDisplayFileCommentsSection>
+                        <OpticalFileDisplayFileCommentsSection/>
                     </OpticalFileDisplayPartsContainer>
                 </>}
             </OpticalFileDisplayRenderContainer>
@@ -751,9 +749,9 @@ class OpticalFileDisplayRenderingUtils {
             const pageGroup = pageGroups[pageNum];
             if (!pageGroup) continue;
             let pageCharacters = Array.from(pageGroup.getElementsByTagName('cr'));
-            if (pageNum === startPage && pageNum === endPage) pageCharacters = pageCharacters.slice(startChar, endChar+1);
+            if (pageNum === startPage && pageNum === endPage) pageCharacters = pageCharacters.slice(startChar, endChar + 1);
             else if (pageNum === startPage) pageCharacters = pageCharacters.slice(startChar);
-            else if (pageNum === endPage) pageCharacters = pageCharacters.slice(0, endChar+1);
+            else if (pageNum === endPage) pageCharacters = pageCharacters.slice(0, endChar + 1);
 
             let currentSectionLineParent = null;
             let currentSectionWordParent = null;
@@ -787,9 +785,9 @@ class OpticalFileDisplayRenderingUtils {
             const pageGroup = pageGroups[pageNum];
             if (!pageGroup) continue;
             let pageCharacters = Array.from(pageGroup.getElementsByTagName('cr'));
-            if (pageNum === startPage && pageNum === endPage) pageCharacters = pageCharacters.slice(startChar, endChar+1);
+            if (pageNum === startPage && pageNum === endPage) pageCharacters = pageCharacters.slice(startChar, endChar + 1);
             else if (pageNum === startPage) pageCharacters = pageCharacters.slice(startChar);
-            else if (pageNum === endPage) pageCharacters = pageCharacters.slice(0, endChar+1);
+            else if (pageNum === endPage) pageCharacters = pageCharacters.slice(0, endChar + 1);
 
             markingSectionRectanglesPerPage[pageNum] = [];
             let currentMarkingSectionCharacters = [];
@@ -824,7 +822,7 @@ class OpticalFileDisplayRenderingUtils {
 
     static getUserSelectionMarkingDataForUserInput(textStructure, inputStart, inputEnd) {
         const pageGroups = Array.from(textStructure.getElementsByTagName('gr'));
-        
+
         const calculateForOrientation = (startInput, endInput) => {
             const startPage = pageGroups[startInput.page];
             const endPage = pageGroups[endInput.page];
@@ -853,8 +851,8 @@ class OpticalFileDisplayRenderingUtils {
             endCharacterIndex = endCharacterIndex >= 0 ? endCharacterIndex : 0;
 
             return {
-                start: { page: startInput.page, char: startCharacterIndex },
-                end: { page: endInput.page, char: endCharacterIndex }
+                start: {page: startInput.page, char: startCharacterIndex},
+                end: {page: endInput.page, char: endCharacterIndex}
             }
         }
 
@@ -890,7 +888,7 @@ class OpticalFileDisplayRenderingUtils {
                 if (searchIndex === startText.length + highlightedText.length) searchResultEndIndex = characterIndex;
                 if (searchIndex >= searchString.length - 1) {
                     if (searchResultStartIndex !== undefined && searchResultEndIndex !== undefined) {
-                        return OpticalFileDisplayRenderingUtils.getMarkingDataForAbsoluteCharacterIndices(textStructure, searchResultStartIndex, searchResultEndIndex-1);
+                        return OpticalFileDisplayRenderingUtils.getMarkingDataForAbsoluteCharacterIndices(textStructure, searchResultStartIndex, searchResultEndIndex - 1);
                     }
                 }
                 searchIndex++;
