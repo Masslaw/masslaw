@@ -7,6 +7,7 @@ from src.modules.lambda_handler_template_http_invoked_masslaw_case_management_ap
 from src.modules.neptune_endpoints import get_neptune_read_endpoint_for_stage
 from src.modules.neptune_endpoints import get_neptune_write_endpoint_for_stage
 from src.modules.neptune_endpoints._get_neptune_endpoints import get_neptune_protocol_for_stage
+from src.modules.lambda_base import lambda_constants
 
 _stage = os.environ.get('STAGE', 'prod')
 neptune_read_endpoint = get_neptune_read_endpoint_for_stage(_stage)
@@ -49,10 +50,10 @@ class GetCaseKnowledgeItemData(MasslawCaseManagementApiInvokedLambdaFunction):
         if self.__item_type not in ('node', 'edge',):
             raise ValueError(f'item_type must be one of: "node", "edge". Got: {self.__item_type}')
         if self.__item_type == 'node':
-            self._set_response_attribute(['body', 'knowledge'], self.__handle_node())
+            self._set_response_attribute([lambda_constants.EventKeys.BODY, 'knowledge'], self.__handle_node())
             return
         if self.__item_type == 'edge':
-            self._set_response_attribute(['body', 'knowledge'], self.__handle_edge())
+            self._set_response_attribute([lambda_constants.EventKeys.BODY, 'knowledge'], self.__handle_edge())
             return
 
     def __handle_node(self):
@@ -142,4 +143,5 @@ class GetCaseKnowledgeItemData(MasslawCaseManagementApiInvokedLambdaFunction):
 
 def handler(event, context):
     handler_instance = GetCaseKnowledgeItemData()
-    return handler_instance.call_handler(event, context)
+    handler_instance.call_handler(event, context)
+    return handler_instance.get_response()

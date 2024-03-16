@@ -30,7 +30,8 @@ ACCESS_PERMITTED_KEYS = {
             'case_id',
             'information',
             'users',
-            'files',
+            'files',  # TODO: remove this when new client is out
+            'content',
             ['processing', 'stage_information']
         ],
         CaseAccessEntities.MANAGER_CLIENT: [
@@ -38,6 +39,7 @@ ACCESS_PERMITTED_KEYS = {
             'information',
             'users',
             'files',
+            'content',
             ['processing', 'stage_information']
         ],
         CaseAccessEntities.EDITOR_CLIENT: [
@@ -45,6 +47,7 @@ ACCESS_PERMITTED_KEYS = {
             'information',
             'users',
             'files',
+            'content',
             ['processing', 'stage_information']
         ],
         CaseAccessEntities.READER_CLIENT: [
@@ -52,6 +55,7 @@ ACCESS_PERMITTED_KEYS = {
             'information',
             'users',
             'files',
+            'content',
             ['processing', 'stage_information']
         ],
         CaseAccessEntities.EXTERNAL_CLIENT: [

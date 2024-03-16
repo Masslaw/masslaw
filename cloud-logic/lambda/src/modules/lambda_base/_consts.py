@@ -10,6 +10,7 @@ class StatusCodes:
 
 
 class EventKeys:
+    PATH_PARAMETERS = 'pathParameters'
     QUERY_STRING_PARAMETERS = 'queryStringParameters'
     PATH_PARAMETERS = 'pathParameters'
     HEADER_PARAMETERS = 'headers'

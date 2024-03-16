@@ -13,8 +13,8 @@ def get_case_data_base_format_from_db_item(item_data, user_id=''):
         'case_id': dictionary_utils.get_from(item_data, ['case_id'], ''),
         'title': dictionary_utils.get_from(item_data, ['information', 'title'], ''),
         'description': dictionary_utils.get_from(item_data, ['information', 'description'], ''),
-        'num_users': len(dictionary_utils.get_from(item_data, ['users'], {})),
-        'num_files': len(dictionary_utils.get_from(item_data, ['files'], [])),
+        'num_users': len(dictionary_utils.get_from(item_data, ['users'], {})),  # TODO: remove this when migrating to new website
+        'users': dictionary_utils.get_from(item_data, ['users'], {}),
         'creation_time': dictionary_utils.get_from(item_data, ['information', 'creation_time'], -1),
         'last_interaction': dictionary_utils.get_from(item_data, ['information', 'last_modified_time'], -1),
         'access_level': dictionary_utils.get_from(item_data, ['users', user_id, 'access_level'], access_config.CaseAccessEntities.EXTERNAL_CLIENT),
@@ -25,6 +25,7 @@ def get_case_file_data_full_format_from_db_item(item_data):
     base_data = get_case_file_data_base_format_from_db_item(item_data)
     data = base_data # add any additional attributes and data needed apart from the base data
     data['description'] = dictionary_utils.get_from(item_data, ['description'], '')
+    data['path'] = dictionary_utils.get_from(item_data, ['path'], '')
     return data
 
 
@@ -56,4 +57,27 @@ def get_case_file_annotations_full_format_from_db_item(item_data):
         'text': dictionary_utils.get_from(item_data, ['text'], 0),
         'annotated_text': dictionary_utils.get_from(item_data, ['annotated_text'], 0),
         'color': dictionary_utils.get_from(item_data, ['color'], ''),
+    }
+
+
+def get_case_comment_full_format_from_db_item(item_data):
+    comment_data = get_case_comment_base_format_from_db_item(item_data)
+    return comment_data
+
+
+def get_case_comment_base_format_from_db_item(item_data):
+    return {
+        'id': dictionary_utils.get_from(item_data, ['comment_id'], ''),
+        'owner': dictionary_utils.get_from(item_data, ['owner'], ''),
+        'file_id': dictionary_utils.get_from(item_data, ['file_id'], ''),
+        'case_id': dictionary_utils.get_from(item_data, ['case_id'], ''),
+        'modified': dictionary_utils.get_from(item_data, ['last_modified'], ''),
+        'from_char': dictionary_utils.get_from(item_data, ['from_char'], 0),
+        'to_char': dictionary_utils.get_from(item_data, ['to_char'], 0),
+        'from_page': dictionary_utils.get_from(item_data, ['from_page'], 0),
+        'to_page': dictionary_utils.get_from(item_data, ['to_page'], 0),
+        'comment_text': dictionary_utils.get_from(item_data, ['comment_text'], ''),
+        'marked_text': dictionary_utils.get_from(item_data, ['marked_text'], ''),
+        'color': dictionary_utils.get_from(item_data, ['color'], ''),
+        'replies': dictionary_utils.get_from(item_data, ['replies'], []),
     }

@@ -7,6 +7,7 @@ initialized_table_managers = {}
 
 
 class DynamodbDataHolder(DataHolder):
+
     def __init__(self, table_name: str, item_id: str, locked_attributes=None):
         self._db_manager = initialized_table_managers.get(table_name) or DynamoDBTableManager(table_name)
         initialized_table_managers[table_name] = self._db_manager
@@ -28,5 +29,5 @@ class DynamodbDataHolder(DataHolder):
     def save_data(self):
         DataHolder.save_data(self)
         data = self._get_data()
-        update_data = dictionary_utils.select_keys(data, self._updated_attributes)
+        update_data = dictionary_utils.select_keys(data, list(self._updated_attributes))
         self._db_manager.update_item(self._item_id, update_data)

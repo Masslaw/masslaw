@@ -1,0 +1,4 @@
+from ._lambda_handler_template_masslaw_api_case_comment_action_handler import MasslawCaseManagementApiCaseCommentActionHandler
+
+
+__all__ = ["MasslawCaseManagementApiCaseCommentActionHandler"]

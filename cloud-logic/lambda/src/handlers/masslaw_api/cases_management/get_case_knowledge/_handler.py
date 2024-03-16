@@ -33,4 +33,5 @@ class GetCaseFilesData(MasslawCaseManagementApiInvokedLambdaFunction):
 
 def handler(event, context):
     handler_instance = GetCaseFilesData()
-    return handler_instance.call_handler(event, context)
+    handler_instance.call_handler(event, context)
+    return handler_instance.get_response()

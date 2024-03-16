@@ -6,7 +6,9 @@
 /content-processing/.idea/
 /cloud-logic/.idea/
 /masslaw-website/.idea/
+/masslaw-front/.idea/
 /masslaw-website/node_modules/
+/masslaw-front/node_modules/
 /.idea/
 /masslaw.iml
 /cloud-logic/venv310/

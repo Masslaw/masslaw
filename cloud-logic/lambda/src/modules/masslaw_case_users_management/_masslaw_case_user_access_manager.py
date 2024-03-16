@@ -44,30 +44,27 @@ class MasslawCaseUserAccessManager:
                 # if the user that's requested to change is the owner of the case, return and block the change
                 return False
             if level == access_config.CaseAccessEntities.MANAGER_CLIENT and as_entity not in [access_config.CaseAccessEntities.OWNER_CLIENT]:
-                # if the user that's requested to change is a manager of the case, only the owner can change
+                # if the user that's requested to be changed is a manager of the case, only the owner can change
                 return False
-
         self.set_case_user_permissions(case_user_id, case_user_permission_level, case_user_restrictions)
-
         return True
 
     def set_case_user_permissions(self, case_user_id, case_user_permission_level, case_user_restrictions):
         self.__case_instance.set_data_property(['users', case_user_id], {'access_level': case_user_permission_level, 'access_restrictions': case_user_restrictions, })
-
         user_instance = MasslawUserInstance(case_user_id)
         user_instance.set_data_property(['cases', self.__case_instance.get_case_id()], {'access_level': case_user_permission_level})
-
         user_instance.save_data()
 
     def get_user_access_files(self, user_id):
         access_level = self.determine_user_access_level(user_id)
-        if access_level in (access_config.CaseAccessEntities.OWNER_CLIENT, access_config.CaseAccessEntities.MANAGER_CLIENT):
-            all_files = self.__case_instance.get_data_property(['files'], [])
-            return all_files
         if access_level in [access_config.CaseAccessEntities.EXTERNAL_CLIENT]:
             return []
+        if access_level in (access_config.CaseAccessEntities.OWNER_CLIENT, access_config.CaseAccessEntities.MANAGER_CLIENT):
+            all_files = self.collect_case_files_under_hierarchy_paths([[]])
+            return all_files
         access_restrictions = self.get_user_access_restrictions(user_id)
-        access_files = access_restrictions.get('access_files', [])
+        allowed_directories = access_restrictions.get('allowed_directories', None)
+        access_files = allowed_directories and self.collect_case_files_under_hierarchy_paths(allowed_directories) or []
         return access_files
 
     def determine_can_upload_file(self, user_id):
@@ -93,6 +90,15 @@ class MasslawCaseUserAccessManager:
 
     def determine_user_access_level(self, user_id):
         return self.__case_instance.get_data_property(['users', user_id, 'access_level'], access_config.CaseAccessEntities.EXTERNAL_CLIENT)
+
+    def collect_case_files_under_hierarchy_paths(self, hierarchy_paths):
+        all_files = []
+        case_content = self.__case_instance.get_data_property(['content'], {})
+        for path in hierarchy_paths:
+            sub_hierarchy = dictionary_utils.get_from(case_content, path, {})
+            for item_name, item_data in dictionary_utils.iterate_nested_items(sub_hierarchy):
+                if isinstance(item_data, str): all_files.append(item_data)
+        return all_files
 
 
 class UserReadFormattedCaseInstance(MasslawCaseInstance):

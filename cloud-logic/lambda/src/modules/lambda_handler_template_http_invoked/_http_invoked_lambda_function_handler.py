@@ -16,7 +16,7 @@ DEFAULT_RESPONSE_BODY = {
 
 
 class HTTPInvokedLambdaFunctionHandler(LambdaHandler):
-    def __init__(self, name=None, default_response_body=None, request_query_string_parameters_structure=None, request_body_structure=None):
+    def __init__(self, name=None, default_response_body=None, request_path_parameters_structure=None, request_query_string_parameters_structure=None, request_body_structure=None):
         self.__default_response_body = DEFAULT_RESPONSE_BODY
         self.__default_response_body.update(default_response_body or {})
 
@@ -25,16 +25,12 @@ class HTTPInvokedLambdaFunctionHandler(LambdaHandler):
             lambda_constants.EventKeys.HEADER_PARAMETERS: HARD_CODED_RESPONSE_HEADERS,
             lambda_constants.EventKeys.BODY: self.__default_response_body,
         }, event_structure={
+            lambda_constants.EventKeys.PATH_PARAMETERS: request_path_parameters_structure or {},
             lambda_constants.EventKeys.QUERY_STRING_PARAMETERS: request_query_string_parameters_structure or {},
             lambda_constants.EventKeys.BODY: request_body_structure or {}
         })
 
-        self._request_query_string_params = {}
-        self._request_headers = {}
-        self._request_body = {}
-
-    def _reset_state(self):
-        LambdaHandler._reset_state(self)
+        self._request_path_params = {}
         self._request_query_string_params = {}
         self._request_headers = {}
         self._request_body = {}
@@ -50,9 +46,14 @@ class HTTPInvokedLambdaFunctionHandler(LambdaHandler):
 
     def _handle_event(self):
         LambdaHandler._handle_event(self)
+        self._load_request_path_params()
         self._load_request_query_string_params()
         self._load_request_headers()
         self._load_request_body()
+
+    def _load_request_path_params(self):
+        event = LambdaHandler._get_request_event(self)
+        self._request_path_params = event.get(lambda_constants.EventKeys.PATH_PARAMETERS) or {}
 
     def _load_request_query_string_params(self):
         event = LambdaHandler._get_request_event(self)

@@ -7,6 +7,8 @@ from src.modules.masslaw_case_data_formatting import masslaw_case_data_formattin
 from src.modules.masslaw_case_users_management import MasslawCaseUserAccessManager
 from src.modules.masslaw_case_users_management import masslaw_case_users_management_exceptions
 from src.modules.masslaw_cases_config import storage_config
+from src.modules.masslaw_cases_objects import MasslawCaseCommentInstance
+from src.modules.masslaw_cases_objects import MasslawCaseFileInstance
 from src.modules.masslaw_cases_objects import MasslawCaseInstance
 
 
@@ -34,6 +36,17 @@ class MasslawCaseDataCollector:
         items_data = table_manager.batch_get_items(files_to_retrieve)
         return [masslaw_case_data_formatting.get_case_file_data_base_format_from_db_item(item_data=item_data) for item_data in items_data[::-1]]
 
+    def get_case_content_hierarchy(self):
+        case_content = self.__case_instance.get_data_property(['content'], {})
+        return case_content
+
+    def get_case_files_metadata(self, files_ids: Set[str]):
+        case_files = self.__case_instance.get_data_property(['files'], [])
+        files_to_fetch = files_ids & set(case_files)
+        table_manager = DynamoDBTableManager("MasslawFiles")
+        files_data = table_manager.batch_get_items(list(files_to_fetch))
+        return [masslaw_case_data_formatting.get_case_file_data_base_format_from_db_item(item_data=item_data) for item_data in files_data]
+
     def get_file_data(self, file_id):
         case_files = self.__case_instance.get_data_property(['files'], [])
         if not file_id in case_files:
@@ -54,6 +67,18 @@ class MasslawCaseDataCollector:
         annotations_table_manager = DynamoDBTableManager("MasslawFileAnnotations")
         items_data = annotations_table_manager.batch_get_items(list(annotation_ids))
         return items_data
+
+    def get_case_file_comments_data(self, file_id: str):
+        comment_instance = MasslawCaseFileInstance(file_id)
+        file_comments = comment_instance.get_data_property(['comments'], [])
+        files_table_manager = DynamoDBTableManager("MasslawCaseComments")
+        comments_data = files_table_manager.batch_get_items(list(file_comments))
+        return [masslaw_case_data_formatting.get_case_comment_base_format_from_db_item(comment_data) for comment_data in comments_data]
+
+    def get_case_comment_data(self, comment_id: str):
+        comment_instance = MasslawCaseCommentInstance(comment_id)
+        comment_instance_data = comment_instance.get_data_property([], {})
+        return masslaw_case_data_formatting.get_case_comment_full_format_from_db_item(comment_instance_data)
 
     def get_case_knowledge(self) -> dict:
         s3_bucket_manager = S3BucketManager(storage_config.CASES_KNOWLEDGE_BUCKET_ID)

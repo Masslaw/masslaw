@@ -7,6 +7,7 @@ import time
 import traceback
 from src.modules.dictionary_utils import dictionary_utils
 from src.modules.lambda_base._exceptions import InvalidEventLambdaException
+from src.modules.remote_data_management import DataHolder
 
 LOGGING_FORMAT = '[%(name)s] %(asctime)s :::: [%(levelname)s] %(message)s'
 
@@ -35,10 +36,7 @@ class LambdaHandler:
 
     def __reset_state(self):
         self._log(f'Resetting state')
-        self._execution_exception = ''
-        self.__response = dictionary_utils.deep_copy(self.__default_response or {})
-        self.__event = {}
-        self.__context = None
+        DataHolder.reset_cache()
         self._reset_state()
 
     @abstractmethod
@@ -73,9 +71,11 @@ class LambdaHandler:
             self._handle_exception(e)
             self._execution_exception = traceback.format_exc()
         self._log(f'Finished executing.\n Success: {res}.\n Execution Time: {time.time() - _start_execution_time_milliseconds} milliseconds')
-        final_response = self._prepare_final_response(self.__response)
-        self._log(f'Function response: \n {final_response}', level=logging.DEBUG)
-        return final_response
+        self.__response = self._prepare_final_response(self.__response)
+        self._log(f'Function response: \n {self.__response}', level=logging.DEBUG)
+
+    def get_response(self):
+        return self.__response
 
     def __handle_event(self, event):
         self._log("Handling event")

@@ -40,6 +40,7 @@ class CacheCaseKnowledge(MasslawStepFunctionCaseFilePipelineNodeHandler):
     def __get_entities(self):
         request_query_properties = {'case_id': self.__case_id}
         neptune_nodes_response = _neptune_client.get_nodes_by_properties(request_query_properties)
+        self._log(f'neptune_nodes_response: {neptune_nodes_response}')
         entities_response = []
         for neptune_node in neptune_nodes_response:
             if not self.__validate_node(neptune_node): continue
@@ -96,4 +97,5 @@ class CacheCaseKnowledge(MasslawStepFunctionCaseFilePipelineNodeHandler):
 
 def handler(event, context):
     handler_instance = CacheCaseKnowledge()
-    return handler_instance.call_handler(event, context)
+    handler_instance.call_handler(event, context)
+    return handler_instance.get_response()

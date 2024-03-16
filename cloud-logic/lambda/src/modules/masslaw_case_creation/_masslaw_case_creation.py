@@ -22,7 +22,9 @@ def create_a_new_case(creator_user_id, case_creation_data):
             'last_modified_time': now,
             'creation_time': now
         },
-        'users': {}
+        'users': {},
+        'content': {},
+        'files': {}
     })
 
     case_user_access_manager = MasslawCaseUserAccessManager(case_instance)

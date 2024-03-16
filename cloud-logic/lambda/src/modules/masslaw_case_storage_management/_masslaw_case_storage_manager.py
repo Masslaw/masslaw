@@ -1,6 +1,7 @@
 import secrets
 import time
 
+from src.modules.dictionary_utils import dictionary_utils
 from src.modules.aws_clients.open_search_client import OpenSearchIndexManager
 from src.modules.aws_clients.s3_client import S3BucketManager
 from src.modules.aws_clients.step_functions_client import StateMachineManager
@@ -36,9 +37,8 @@ class MasslawCaseStorageManager:
 
         return url
 
-    def start_uploading_file(self, user_id, file_name, num_parts, file_languages):
-        if not self.__case_user_access_manager.determine_can_upload_file(user_id):
-            return False
+    def start_uploading_file(self, user_id, file_name, file_path, num_parts, file_languages):
+        if not self.__case_user_access_manager.determine_can_upload_file(user_id): return False
 
         file_type = file_name.split('.').pop()
         file_id = secrets.token_hex(16)
@@ -53,15 +53,13 @@ class MasslawCaseStorageManager:
         self.__case_instance.set_data_property(['uploading_files'], uploading_files)
 
         file_instance = MasslawCaseFileInstance(file_id)
-        file_instance.update_data({'name': file_name, 'type': file_type, 'languages': file_languages, 'upload_id': mp_upload_data['upload_id'], 'case_id': self.__case_instance.get_case_id(), })
+        file_instance.update_data({'name': file_name, 'type': file_type, 'languages': file_languages, 'upload_id': mp_upload_data['upload_id'], 'case_id': self.__case_instance.get_case_id(), 'path': file_path, 'upload_time': '', 'last_modified': ''})
         file_instance.save_data()
 
         return mp_upload_data
 
     def complete_uploading_file(self, user_id, file_id, parts_list):
-        if not self.__case_user_access_manager.determine_can_upload_file(user_id):
-            return False
-
+        if not self.__case_user_access_manager.determine_can_upload_file(user_id): return False
         file_instance = MasslawCaseFileInstance(file_id)
 
         file_type = file_instance.get_data_property(['type'])
@@ -79,18 +77,24 @@ class MasslawCaseStorageManager:
         uploading_files.remove(file_id)
         self.__case_instance.set_data_property(['uploading_files'], uploading_files)
 
+        file_name = file_instance.get_data_property(['name'])
+        content_path = file_instance.get_data_property(['path'], [])
+        self.__case_instance.set_data_property(['content'] + content_path + [file_name], file_id)
+
+        # TODO: remove this - will be deprecated when the new client comes out
         case_files = self.__case_instance.get_data_property(['files'], [])
         case_files.append(file_id)
         self.__case_instance.set_data_property(['files'], case_files)
 
         file_instance.save_data()
 
+        self.__case_instance.save_data()
+
         return file_instance
 
     def delete_file_as_user(self, file_id, user_id):
         user_permitted_files = self.__case_user_access_manager.get_user_access_files(user_id=user_id)
-        if not file_id in user_permitted_files:
-            return False
+        if not file_id in user_permitted_files: return False
         return self.delete_file(file_id)
 
     def delete_file(self, file_id):

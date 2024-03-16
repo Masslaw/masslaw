@@ -3,9 +3,7 @@ import json
 import boto3
 from botocore.auth import SigV4Auth
 from botocore.awsrequest import AWSRequest
-
 from src.modules.aws_clients.open_search_client._exceptions import OpenSearchRequestFailedException
-from src.modules.aws_clients.open_search_client._opensearch_query import OpensearchQuery
 
 
 class OpenSearchIndexManager:
@@ -48,8 +46,7 @@ class OpenSearchIndexManager:
         response = self.__execute_request('DELETE', url)
         return json.loads(response.read())
 
-    def execute_query(self, query: OpensearchQuery):
-        payload = query.get_payload()
+    def execute_query(self, payload):
         response = self.__execute_request('POST', self.index_name + "/_search", payload)
         return json.loads(response.read())
 

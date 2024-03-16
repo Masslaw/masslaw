@@ -6,8 +6,8 @@ from src.modules.masslaw_users_config import user_statuses
 
 
 class MasslawCaseManagementApiInvokedLambdaFunction(AuthenticatedMasslawUserHttpInvokedLambdaFunction):
-    def __init__(self, name=None, default_response_body=None, request_query_string_parameters_structure=None, request_body_structure=None):
-        AuthenticatedMasslawUserHttpInvokedLambdaFunction.__init__(self, name=name, default_response_body=default_response_body, request_query_string_parameters_structure=request_query_string_parameters_structure, request_body_structure=request_body_structure,
+    def __init__(self, name=None, default_response_body=None, request_path_parameters_structure=None, request_query_string_parameters_structure=None, request_body_structure=None):
+        AuthenticatedMasslawUserHttpInvokedLambdaFunction.__init__(self, name=name, default_response_body=default_response_body, request_path_parameters_structure=request_path_parameters_structure, request_query_string_parameters_structure=request_query_string_parameters_structure, request_body_structure=request_body_structure,
             minimum_user_status_level=user_statuses.UserStatuses.FULLY_APPROVED)
 
     def _reset_state(self):

@@ -27,7 +27,3 @@ class MasslawCaseInstance(DynamodbDataHolder):
         provided_title = self.get_data_property(['information', 'title'], '')
         if len(provided_title) <= 2 or len(provided_title) > 100:
             raise MasslawCaseDataUpdateException('invalid title')
-
-        provided_description = self.get_data_property(['information', 'description'], '')
-        if len(provided_description) <= 2 or len(provided_description) > 1000:
-            raise MasslawCaseDataUpdateException('invalid description')

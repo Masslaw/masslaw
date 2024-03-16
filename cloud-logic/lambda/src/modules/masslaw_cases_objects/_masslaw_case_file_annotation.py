@@ -39,16 +39,10 @@ class MasslawCaseFileAnnotationInstance(DynamodbDataHolder):
         file_id = self.get_data_property(['file_id'], '')
         if len(file_id) < 1:
             raise MasslawCaseFileAnnotationDataUpdateException('invalid file id')
+
         case_file_instance = MasslawCaseFileInstance(file_id=file_id)
         if not case_file_instance.is_valid():
             raise MasslawCaseFileAnnotationDataUpdateException('invalid file id')
-
-        from_char = int(self.get_data_property(['from_char'], -1))
-        to_char = int(self.get_data_property(['to_char'], -1))
-        if not to_char >= from_char > -1:
-            raise MasslawCaseFileAnnotationDataUpdateException('invalid char range')
-        if abs(to_char - from_char) > annotations_config.ANNOTATION_LENGTH_HARD_LIMIT:
-            raise MasslawCaseFileAnnotationDataUpdateException(F'invalid annotated text length. Passed the hard limit of {annotations_config.ANNOTATION_LENGTH_HARD_LIMIT} characters')
 
         text = self.get_data_property(['text'], '')
         if len(text) > annotations_config.ANNOTATION_TEXT_LENGTH_HARD_LIMIT:

@@ -18,6 +18,7 @@ class ImguiRenderer:
         self._background_color = (0, 0, 0, 1)
         self._render_body_functions = []
         self._should_close = False
+        self._window_size = (0, 0)
 
     def setup(self):
         imgui.create_context()
@@ -26,6 +27,8 @@ class ImguiRenderer:
         self._loaded_font = io.fonts.add_font_from_file_ttf(DEFAULT_FONT_PATH, 30)
         self._impl = GlfwRenderer(self._window)
         gl.glClearColor(*self._background_color)
+        self._window_size = glfw.get_window_size(self._window)
+        glfw.set_window_size_callback(self._window, self._on_window_resize)
 
     def render_frame(self):
         self._imgui_frame_start()
@@ -48,6 +51,7 @@ class ImguiRenderer:
         imgui.render()
         self._impl.render(imgui.get_draw_data())
         glfw.swap_buffers(self._window)
+        glfw.poll_events()
         self._should_close = self._should_close or glfw.window_should_close(self._window)
 
     def destroy(self):
@@ -68,7 +72,12 @@ class ImguiRenderer:
         self._render_body_functions.append(function)
 
     def get_window_size(self):
-        return glfw.get_window_size(self._window)
+        return self._window_size
+
+    def _on_window_resize(self, window, width, height):
+        print("window resized to: ", width, height)
+        self._window_size = (width, height)
+        imgui.get_io().display_size = width, height
 
     def should_close(self):
         return self._should_close

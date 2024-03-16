@@ -1,0 +1,9 @@
+role: arn:aws:iam::746826375642:role/LambdaMasslawCasesHandlerRole
+timeout: 30 # 30 seconds
+environment:
+  deployed: true
+events:
+  - http:
+      path: /cases/{case_id}/files/search
+      method: GET
+      cors: true

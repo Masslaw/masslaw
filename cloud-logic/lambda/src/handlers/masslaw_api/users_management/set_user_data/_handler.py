@@ -29,4 +29,5 @@ class SetUserData(AuthenticatedMasslawUserHttpInvokedLambdaFunction):
 
 def handler(event, context):
     handler_instance = SetUserData()
-    return handler_instance.call_handler(event, context)
+    handler_instance.call_handler(event, context)
+    return handler_instance.get_response()

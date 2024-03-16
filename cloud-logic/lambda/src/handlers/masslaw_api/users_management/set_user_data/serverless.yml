@@ -3,6 +3,6 @@ environment:
   deployed: true
 events:
   - http:
-      path: /users/user-data
+      path: /users/me
       method: POST
       cors: true

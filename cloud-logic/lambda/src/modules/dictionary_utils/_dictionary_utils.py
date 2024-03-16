@@ -162,3 +162,11 @@ def deep_copy(d):
     elif isinstance(d, list):
         new_value = [deep_copy(value) for value in d]
     return new_value
+
+
+def iterate_nested_items(d: dict):
+    for key, value in d.items():
+        yield key, value
+        if isinstance(value, dict):
+            for sub_key, sub_value in iterate_nested_items(value):
+                yield sub_key, sub_value

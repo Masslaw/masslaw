@@ -12,6 +12,7 @@ class AuthenticatedMasslawUserHttpInvokedLambdaFunction(HTTPInvokedLambdaFunctio
             self,
             name=None,
             default_response_body=None,
+            request_path_parameters_structure=None,
             request_query_string_parameters_structure=None,
             request_body_structure=None,
             minimum_user_status_level=user_statuses.UserStatuses.GUEST
@@ -19,6 +20,7 @@ class AuthenticatedMasslawUserHttpInvokedLambdaFunction(HTTPInvokedLambdaFunctio
         HTTPInvokedLambdaFunctionHandler.__init__(
             self,
             name=name,
+            request_path_parameters_structure=request_path_parameters_structure,
             default_response_body=default_response_body,
             request_query_string_parameters_structure=request_query_string_parameters_structure,
             request_body_structure=request_body_structure
@@ -32,11 +34,6 @@ class AuthenticatedMasslawUserHttpInvokedLambdaFunction(HTTPInvokedLambdaFunctio
 
         self._log(f'Calling an authenticated user http invoked lambda handler. \n'
                   f'Minimum allowed user status: {minimum_user_status_level}')
-
-    def _reset_state(self):
-        HTTPInvokedLambdaFunctionHandler._reset_state(self)
-        self._access_token = ''
-        self._caller_user_instance = None
 
     def _load_request_headers(self):
         HTTPInvokedLambdaFunctionHandler._load_request_headers(self)

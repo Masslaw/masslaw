@@ -1,0 +1,46 @@
+{
+  "name": "masslaw-front",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "amazon-cognito-identity-js": "^6.3.7",
+    "axios": "^1.6.7",
+    "jwt-decode": "^4.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-pdf": "^7.7.0",
+    "react-easy-crop": "^5.0.5",
+    "react-router-dom": "^6.22.0",
+    "react-scripts": "5.0.1",
+    "styled-components": "^6.1.8",
+    "web-vitals": "^2.1.4"
+  },
+  "scripts": {
+    "start": "REACT_APP_DEVELOPMENT_STAGE=dev REACT_APP_API_BASE_URL=https://qc2p9dc2fe.execute-api.us-east-1.amazonaws.com/dev react-scripts start",
+    "build": "REACT_APP_DEVELOPMENT_STAGE=prod react-scripts build && javascript-obfuscator ./build/static/js/*.js",
+    "build-dev": "REACT_APP_DEVELOPMENT_STAGE=dev react-scripts build",
+    "test": "REACT_APP_DEVELOPMENT_STAGE=dev react-scripts test",
+    "eject": "REACT_APP_DEVELOPMENT_STAGE=prod react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
