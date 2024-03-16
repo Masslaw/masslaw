@@ -9,10 +9,6 @@ import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 import {centerChildInParent, isElemVisibleWithinScrollableParent, smoothScroll} from "../../../../../../controller/functionality/dom-utils/domUtils";
 import {CatchAndPassMouseInputs} from "../../../../../components/catchAndPassMouseInputs";
 import {SVG_PATHS} from "../../../../../config/svgPaths";
-import {ProfilePicture} from "../../../../../components/profilePicture";
-import {LongTextInput} from "../../../../../components/longTextInput";
-import {MeatballsMenu} from "../../../../../components/meatballsMenu";
-import {wait} from "@testing-library/user-event/dist/utils";
 import {CaseFileComment} from "./caseFileComment";
 
 
