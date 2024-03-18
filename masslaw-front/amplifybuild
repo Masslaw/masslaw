@@ -1,0 +1,18 @@
+version: 1
+applications:
+  - frontend:
+      phases:
+        preBuild:
+          commands:
+            - npm ci
+        build:
+          commands:
+            - REACT_APP_API_BASE_URL=$API_BASE_URL REACT_APP_DEVELOPMENT_STAGE=$DEVELOPMENT_STAGE npm run build
+      artifacts:
+        baseDirectory: build
+        files:
+          - '**/*'
+      cache:
+        paths:
+          - node_modules/**/*
+    appRoot: masslaw-front
