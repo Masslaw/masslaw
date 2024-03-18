@@ -23,7 +23,7 @@ export class CasesManager extends BaseService{
         const responsePayload = request.getResponsePayload() || {};
         const cases = responsePayload.cases || [];
         this.model.cases.all = {};
-        for (const caseData of cases) this.model.cases.all[caseData.id] = caseData;
+        for (const caseData of cases) this.model.cases.all[caseData.case_id] = caseData;
         return request;
     }
 

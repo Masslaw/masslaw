@@ -9,6 +9,9 @@ import {CaseDisplayPopup} from "./_caseDisplayPopup";
 import {accessLevelsOrder} from "../../../../config/caseConsts";
 import {ProfilePicture} from "../../../components/profilePicture";
 import {LoadingIcon} from "../../../components/loadingIcon";
+import {UsersListProfilePictures} from "../../../components/usersListProfilePictures";
+import {VerticalGap} from "../../../components/bits-and-pieces/verticalGap";
+import {CaseDataDisplay} from "./case/_commonComponents/caseDataDisplay";
 
 const PageContainer = styled.div`
     display: flex;
@@ -37,7 +40,7 @@ const PageSubTitle = styled.h2`
 const CaseList = styled.div`
     position: relative;
     display: grid;
-    grid-template-columns: repeat(auto-fill, calc(320px + 32px));
+    grid-template-columns: repeat(auto-fill, calc(256px + 32px + 16px));
     justify-content: space-between;
     flex-grow: 1;
     border-radius: 12px;
@@ -108,11 +111,11 @@ export function MyCases(props) {
 const CaseItemContainer = styled.div`
     display: flex;
     flex-direction: column;
-    width: 320px;
+    width: 256px;
     height: max-content;
     background-color: #2f2f2f;
     margin: 16px 8px;
-    padding: 8px;
+    padding: 16px;
     border-radius: 12px;
     transition: 0.5s linear;
     pointer-events: all;
@@ -124,76 +127,11 @@ const CaseItemContainer = styled.div`
     }
 `
 
-const CaseItemTitle = styled.h1`
-    font-size: 20px;
-    font-weight: bold;
-    color: white;
-    margin: 8px 16px 8px 16px;
-`
-
-const CaseItemDescription = styled.h2`
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: normal;
-    height: 48px;
-    font-size: 14px;
-    line-height: 16px;
-    font-weight: 500;
-    margin: 8px 16px 8px 16px;
-    color: #999999;
-`
-
-const CaseParticipantsPictures = styled.div`
-    display: grid;
-    grid-template-columns: repeat(auto-fill, 18px);
-    width: calc(100% - 32px);
-    margin: 8px 16px;
-`
-
-const CaseParticipantPictureContainer = styled.div`
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 32px;
-    height: 32px;
-    background: #969696;
-    border-radius: 50%;
-    overflow: hidden;
-    ${({zIndex}) => zIndex ? `z-index: ${zIndex};` : ""}
-`
-
-const NumberOfFiles = styled.h2`
-    font-size: 20px;
-    font-weight: 500;
-    margin: 8px 16px 16px 16px;
-    color: white;
-    border-left: 3px solid white;
-    padding-left: 8px;
-`
-
 export function CaseItem(props) {
-
-    const m_userPictures = useMemo(() => {
-        let users = Object.keys(props.caseData.users || {}).map((userId) => {return {...props.caseData.users[userId], id: userId};})
-        users = [...users];
-        users.sort((a, b) => accessLevelsOrder.indexOf(a.access_level) - accessLevelsOrder.indexOf(b.access_level));
-        const usersToDisplay = users.slice(0, 9);
-        const restCount = users.length - usersToDisplay.length;
-        return <>
-            {usersToDisplay.map((user) => <CaseParticipantPictureContainer><ProfilePicture userId={user.id} size={'small'}/></CaseParticipantPictureContainer>)}
-            {restCount && <CaseParticipantPictureContainer zIndex={1}>+{restCount}</CaseParticipantPictureContainer> || <></>}
-        </>
-    }, [props.caseData.users]);
 
     return <>
         <CaseItemContainer onClick={() => pushPopup({component: CaseDisplayPopup, componentProps: {caseData: props.caseData}})}>
-            <CaseItemTitle>{props.caseData.title}</CaseItemTitle>
-            <CaseParticipantsPictures> {m_userPictures}</CaseParticipantsPictures>
-            <CaseItemDescription>{props.caseData.description}</CaseItemDescription>
-            <NumberOfFiles>{`${props.caseData.num_files || 0} Files`}</NumberOfFiles>
+            <CaseDataDisplay caseData={props.caseData}/>
         </CaseItemContainer>
     </>
 }

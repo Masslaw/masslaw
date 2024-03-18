@@ -21,7 +21,7 @@ const CreateCasePopupTitle = styled.h1`
     font-size: 24px;
     font-weight: bold;
     color: white;
-    margin: 16px 32px 16px 32px;
+    margin: 16px 32px;
 `
 
 const CreateCasePopupSubTitle = styled.h2`
@@ -95,8 +95,9 @@ export function CreateCasePopup(props) {
 
     return <>
         <CreateCasePopupContainer>
+            <VerticalGap gap={'8px'} />
             <CreateCasePopupTitle>Create A New Case</CreateCasePopupTitle>
-            <CreateCasePopupSubTitle>A new case will be created at your will</CreateCasePopupSubTitle>
+            <CreateCasePopupSubTitle>Start your next project from scratch</CreateCasePopupSubTitle>
             <VerticalGap gap={"16px"}/>
             <CreateCaseInputWrapper>
                 <TextInput

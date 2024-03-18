@@ -1,0 +1,42 @@
+import {VerticalGap} from "../../../../../components/bits-and-pieces/verticalGap";
+import {UsersListProfilePictures} from "../../../../../components/usersListProfilePictures";
+import React from "react";
+import styled from "styled-components";
+
+const CaseItemTitle = styled.h1`
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin: 0;
+`
+
+const CaseItemDescription = styled.h2`
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal;
+    height: 48px;
+    font-size: 14px;
+    line-height: 16px;
+    font-weight: 500;
+    color: #999999;
+    margin: 0;
+`
+
+export function CaseDataDisplay(props) {
+    return <>
+        <CaseItemTitle>{props.caseData.title}</CaseItemTitle>
+        <VerticalGap gap={'12px'} />
+        <CaseItemDescription>{props.caseData.description}</CaseItemDescription>
+        <VerticalGap gap={'8px'} />
+        <UsersListProfilePictures
+            users={Object.keys(props.caseData.users || {}).map((userId) => ({...props.caseData.users[userId], id: userId}))}
+            usersToDisplay={9}
+        />
+    </>
+}

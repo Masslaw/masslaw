@@ -35,9 +35,9 @@ const CaseSidePanelAlignment = styled.div`
 
 const CaseSidePanelContainer = styled.div`
     display: block;
-    width: 255px;
+    width: 256px;
     height: 100%;
-    background-color: #303030;
+    background-color: #202020;
     border-right: 1px solid #999999;
     color: white;
     overflow-x: hidden;
@@ -152,7 +152,7 @@ const CaseSidePanelTitle = styled.div`
     text-overflow: ellipsis;
     white-space: nowrap;
     border-bottom: 1px solid #505050;
-    background: #303030;
+    background: #202020;
     z-index: 1;
 `
 
@@ -249,15 +249,13 @@ function CaseSidePanelFilesSection(props) {
 
     return <>
         <CaseSidePanelFilesSectionContainer>
-            <CaseSidePanelOpenedSection>
-                <CaseSidePanelFilesSectionUploadButton onClick={() => pushPopup({component: UploadCaseFilesPopup})}>
-                    <svg viewBox={'0 0 1050 1050'}><path d={SVG_PATHS.addFile}/></svg>
-                    Upload Files
-                </CaseSidePanelFilesSectionUploadButton>
-                <VerticalGap gap={'8px'}/>
-                <CaseSidePanelFileHierarchy/>
-                <VerticalGap gap={'8px'}/>
-            </CaseSidePanelOpenedSection>
+            <CaseSidePanelFilesSectionUploadButton onClick={() => pushPopup({component: UploadCaseFilesPopup})}>
+                <svg viewBox={'0 0 1050 1050'}><path d={SVG_PATHS.addFile}/></svg>
+                Upload Files
+            </CaseSidePanelFilesSectionUploadButton>
+            <VerticalGap gap={'8px'}/>
+            <CaseSidePanelFileHierarchy/>
+            <VerticalGap gap={'8px'}/>
             <CaseSidePanelSeparator/>
         </CaseSidePanelFilesSectionContainer>
     </>
