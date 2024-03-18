@@ -16,23 +16,23 @@ import {SearchParamsManager} from "./navigation-management/searchParamsManager";
 import {CasesKnowledgeManager} from "./applicationManagement/cases/casesKnowledgeManager";
 
 
-const SERVICES = [
-    ModelStateManager,
-    ModelResetsManager,
-    ModelToLocalStorageManager,
-    ModelUpdatesRecorder,
-    MasslawHttpApiClient,
-    CognitoClient,
-    PagePermissionsManager,
-    SearchParamsManager,
-    UsersManager,
-    CasesManager,
-    CaseFilesManager,
-    CaseCommentsManager,
-    CaseSearchesManager,
-    CasesKnowledgeManager,
-    ContentUploader,
-];
+const SERVICES = {
+    modelStateManager: ModelStateManager,
+    modelResetsManager: ModelResetsManager,
+    modelToLocalStorageManager: ModelToLocalStorageManager,
+    modelUpdatesRecorder: ModelUpdatesRecorder,
+    masslawHttpApiClient: MasslawHttpApiClient,
+    cognitoClient: CognitoClient,
+    pagePermissionsManager: PagePermissionsManager,
+    searchParamsManager: SearchParamsManager,
+    usersManager: UsersManager,
+    casesManager: CasesManager,
+    caseFilesManager: CaseFilesManager,
+    caseCommentsManager: CaseCommentsManager,
+    caseSearchesManager: CaseSearchesManager,
+    casesKnowledgeManager: CasesKnowledgeManager,
+    contentUploader: ContentUploader,
+};
 
 export function initServices() {
     _constructServices();
@@ -41,9 +41,8 @@ export function initServices() {
 
 function _constructServices() {
     model.services = {};
-    for (const service of SERVICES) {
-        let serviceName = service.name;
-        serviceName = serviceName.charAt(0).toLowerCase() + serviceName.slice(1);
+    for (const serviceName in SERVICES) {
+        let service = SERVICES[serviceName];
         model.services[serviceName] = new service();
         console.log("Service created: " + serviceName + ".")
     }
