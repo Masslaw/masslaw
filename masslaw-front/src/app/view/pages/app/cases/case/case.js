@@ -202,6 +202,16 @@ function CaseSidePanel(props) {
         <VerticalGap gap={'8px'}/>
         {/*...*/}
         <VerticalGap gap={'256px'}/>
+        <VerticalGap gap={'8px'}/>
+        <CaseSidePanelSeparator/>
+        <VerticalGap gap={'8px'}/>
+        <RedirectButtonWrapper href={constructUrl(ApplicationRoutes.CASE_SETTINGS, {caseId: s_caseId})}>
+            <CaseSidePanelButton open={s_currentPage === 'CaseSubjects'}>
+                <svg viewBox={'0 0 1000 1000'}><path d={SVG_PATHS.gear}/></svg>
+                Settings
+            </CaseSidePanelButton>
+        </RedirectButtonWrapper>
+        <VerticalGap gap={'256px'}/>
     </>
 }
 
