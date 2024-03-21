@@ -3,5 +3,5 @@ import {model} from "../../model/model";
 
 export function Navigator(props) {
     model.application.navigate = useNavigate();
-    return <Outlet/>
+    return <>{props.children}</>
 }
