@@ -281,7 +281,7 @@ const CaseSidePanelFileHierarchyFolderContainer = styled.div`
     position: relative;
     display: flex;
     flex-direction: column;
-    padding: 4px 0 4px 4px;
+    padding: 4px 0 0 4px;
 `
 
 const CaseSidePanelFileHierarchyTitleContainer = styled.div`
@@ -333,8 +333,8 @@ const CaseSidePanelFileHierarchyFolderContentContainer = styled.div`
     position: relative;
     display: flex;
     flex-direction: column;
-    margin-left: 12px;
-    padding-left: 16px;
+    margin: 0 0 0 8px;
+    padding: 0 0 0 8px;
     border-left: 1px solid #404040;
 `
 
@@ -413,7 +413,7 @@ const CaseSidePanelFileHierarchyFileIcon = styled.div`
     width: 16px;
     min-width: 16px;
     height: 16px;
-    margin-left: 8px;
+    margin-left: 16px;
 
     svg {
         width: 100%;
