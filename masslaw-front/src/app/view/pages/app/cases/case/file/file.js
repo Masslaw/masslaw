@@ -2,14 +2,14 @@ import {useParams} from "react-router-dom";
 import styled from "styled-components";
 import {useCallback, useEffect, useRef, useState} from "react";
 import {TabbedDisplay} from "../../../../../components/tabbedDisplay";
-import {CaseFileData} from "../_commonComponents/caseFileData";
-import {OpticalFileDisplayRender} from "../_commonComponents/opticalFileDisplayRender";
+import {CaseFileData} from "../../../../../components/caseFileData";
+import {OpticalFileDisplayRender} from "../../../../../components/opticalFileDisplayRender";
 import {model} from "../../../../../../model/model";
-import {CaseTextSearch} from "../_commonComponents/caseTextSearch";
+import {CaseTextSearch} from "../../../../../components/caseTextSearch";
 import {useModelValueAsReactState} from "../../../../../../controller/functionality/model/modelReactHooks";
-import {CaseFileComment} from "../_commonComponents/caseFileComment";
-import {VerticalGap} from "../../../../../components/bits-and-pieces/verticalGap";
-import {CaseKnowledgeGraphDisplay} from "../_commonComponents/caseKnowledgeGraphDisplay";
+import {CaseFileComment} from "../../../../../components/caseFileComment";
+import {VerticalGap} from "../../../../../components/verticalGap";
+import {CaseKnowledgeGraphDisplay} from "../../../../../components/caseKnowledgeGraphDisplay";
 
 const FileDisplayContainer = styled.div`
     position: relative;

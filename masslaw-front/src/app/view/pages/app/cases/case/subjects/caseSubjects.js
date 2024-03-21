@@ -1,4 +1,4 @@
-import {CaseKnowledgeGraphDisplay} from "../_commonComponents/caseKnowledgeGraphDisplay";
+import {CaseKnowledgeGraphDisplay} from "../../../../../components/caseKnowledgeGraphDisplay";
 import {model} from "../../../../../../model/model";
 
 export function CaseSubjects(props) {

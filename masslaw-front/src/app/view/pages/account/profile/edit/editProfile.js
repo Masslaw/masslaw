@@ -3,7 +3,7 @@ import {model} from "../../../../../model/model";
 import {useModelValueAsReactState} from "../../../../../controller/functionality/model/modelReactHooks";
 import styled from "styled-components";
 import {UserStatus} from "../../../../../config/userStatus";
-import {VerticalGap} from "../../../../components/bits-and-pieces/verticalGap";
+import {VerticalGap} from "../../../../components/verticalGap";
 import {RedirectButtonWrapper} from "../../../../components/redirectButtonWrapper";
 import {ApplicationRoutes} from "../../../../../config/applicaitonRoutes";
 import {constructUrl} from "../../../../../controller/functionality/navigation/urlConstruction";

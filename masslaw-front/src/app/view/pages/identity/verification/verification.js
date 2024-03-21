@@ -4,7 +4,7 @@ import {model} from "../../../../model/model";
 import {IdentityBackground} from "../_shared/background";
 import {IdentityForm} from "../_shared/form";
 import {TextInput} from "../../../components/textInput";
-import {VerticalGap} from "../../../components/bits-and-pieces/verticalGap";
+import {VerticalGap} from "../../../components/verticalGap";
 import {UserStatus} from "../../../../config/userStatus";
 import {useModelValueAsReactState} from "../../../../controller/functionality/model/modelReactHooks";
 

@@ -1,7 +1,7 @@
 import {useEffect, useMemo, useState} from "react";
 import {model} from "../../../../../model/model";
 import styled from "styled-components";
-import {CaseFileData} from "./_commonComponents/caseFileData";
+import {CaseFileData} from "../../../../components/caseFileData";
 import {constructUrl} from "../../../../../controller/functionality/navigation/urlConstruction";
 import {ApplicationRoutes} from "../../../../../config/applicaitonRoutes";
 import {useModelValueAsReactState} from "../../../../../controller/functionality/model/modelReactHooks";

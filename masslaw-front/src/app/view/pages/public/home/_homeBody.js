@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import {VerticalGap} from "../../../components/bits-and-pieces/verticalGap";
+import {VerticalGap} from "../../../components/verticalGap";
 import {SVG_PATHS} from "../../../config/svgPaths";
 
 const Separator = styled.div`

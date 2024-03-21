@@ -3,7 +3,7 @@ import styled from "styled-components";
 import {model} from "../../../../model/model";
 import {constructUrl} from "../../../../controller/functionality/navigation/urlConstruction";
 import {ApplicationRoutes} from "../../../../config/applicaitonRoutes";
-import {LogoSvg} from "../../../components/common/logoSvg";
+import {LogoSvg} from "../../../components/logoSvg";
 
 const Container = styled.div`
     position: relative;

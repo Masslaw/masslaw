@@ -6,7 +6,7 @@ import {IdentityForm} from "../_shared/form";
 import {constructUrl} from "../../../../controller/functionality/navigation/urlConstruction";
 import {ApplicationRoutes} from "../../../../config/applicaitonRoutes";
 import {TextInput} from "../../../components/textInput";
-import {VerticalGap} from "../../../components/bits-and-pieces/verticalGap";
+import {VerticalGap} from "../../../components/verticalGap";
 import {SVG_PATHS} from "../../../config/svgPaths";
 import {MasslawApiCalls} from "../../../../config/masslawAPICalls";
 import {UserStatus} from "../../../../config/userStatus";

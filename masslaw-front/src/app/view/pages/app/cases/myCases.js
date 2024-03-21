@@ -10,8 +10,8 @@ import {accessLevelsOrder} from "../../../../config/caseConsts";
 import {ProfilePicture} from "../../../components/profilePicture";
 import {LoadingIcon} from "../../../components/loadingIcon";
 import {UsersListProfilePictures} from "../../../components/usersListProfilePictures";
-import {VerticalGap} from "../../../components/bits-and-pieces/verticalGap";
-import {CaseDataDisplay} from "./case/_commonComponents/caseDataDisplay";
+import {VerticalGap} from "../../../components/verticalGap";
+import {CaseDataDisplay} from "../../../components/caseDataDisplay";
 
 const PageContainer = styled.div`
     display: flex;
@@ -88,7 +88,7 @@ export function MyCases(props) {
 
     useEffect(() => {
         if (s_userStatus < UserStatus.FULLY_APPROVED) return;
-        if (s_casesList && s_casesList.length > 0) return;
+        if (Object.keys(s_casesList || {}).length > 0) return;
         casesManager.fetchCases().then(() => setLoadingList(false));
     }, [s_userStatus, s_casesList]);
     

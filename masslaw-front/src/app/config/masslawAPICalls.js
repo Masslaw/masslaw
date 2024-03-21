@@ -8,7 +8,8 @@ export const MasslawApiCalls = {
     GET_USER_DATA:                  {rout: '/users/{user_id}', method: HttpMethod.GET,},
 
     GET_CASES:                      {rout: '/cases', method: HttpMethod.GET,},
-    POST_CASE:                      {rout: '/cases', method: HttpMethod.POST,},
+    PUT_CASE:                       {rout: '/cases', method: HttpMethod.PUT,},
+    POST_CASE:                      {rout: '/cases/{case_id}', method: HttpMethod.POST,},
     GET_CASE_DATA:                  {rout: '/cases/{case_id}', method: HttpMethod.GET,},
     GET_CASE_CONTENT_HIERARCHY:     {rout: '/cases/{case_id}/content_hierarchy', method: HttpMethod.GET,},
     SEARCH_CASE_FILES_TEXT:         {rout: '/cases/{case_id}/files/search', method: HttpMethod.GET,},

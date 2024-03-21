@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {model} from "../../../../../model/model";
-import {VerticalGap} from "../../../../components/bits-and-pieces/verticalGap";
+import {VerticalGap} from "../../../../components/verticalGap";
 import {caseSupportedFileTypes} from "../../../../../config/caseConsts";
 import {useModelValueAsReactState} from "../../../../../controller/functionality/model/modelReactHooks";
 import {SVG_PATHS} from "../../../../config/svgPaths";

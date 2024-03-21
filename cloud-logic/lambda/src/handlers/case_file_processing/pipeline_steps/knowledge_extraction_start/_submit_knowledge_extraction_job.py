@@ -2,6 +2,7 @@ from typing import List
 
 from src.modules.aws_clients.batch_client import batch_management
 from src.modules.masslaw_cases_objects import MasslawCaseFileInstance
+from src.modules.masslaw_cases_objects import MasslawCaseInstance
 from src.modules.masslaw_cloud_configurations import configuration_keys
 from src.modules.masslaw_cloud_configurations import get_configuration_value
 from src.modules.mlcp_management import MLCPSubmission
@@ -11,7 +12,9 @@ from src.modules.neptune_endpoints._get_neptune_endpoints import get_neptune_pro
 
 
 def submit_knowledge_extraction_job(file_instance: MasslawCaseFileInstance, stage='prod') -> List[str]:
-    languages = file_instance.get_data_property(["languages"], ['eng'])
+    case_id = file_instance.get_data_property(['case_id'])
+    case_instance = MasslawCaseInstance(case_id=case_id)
+    languages = case_instance.get_data_property(["languages"], ['eng'])
     supported_languages = get_configuration_value(configuration_keys.SUPPORTED_MLCP_KNOWLEDGE_EXTRACTION_LANGUAGES)
     languages_to_process = list(set(languages) & set(supported_languages))
     processing_job_ids = []

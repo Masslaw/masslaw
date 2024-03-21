@@ -2,7 +2,7 @@ import {IdentityBackground} from "../_shared/background";
 import {IdentityForm} from "../_shared/form";
 import {TextInput} from "../../../components/textInput";
 import styled from "styled-components";
-import {VerticalGap} from "../../../components/bits-and-pieces/verticalGap";
+import {VerticalGap} from "../../../components/verticalGap";
 import React, {useEffect, useMemo} from "react";
 import {model} from "../../../../model/model";
 import {constructUrl} from "../../../../controller/functionality/navigation/urlConstruction";

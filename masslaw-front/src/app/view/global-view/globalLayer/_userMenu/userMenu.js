@@ -5,7 +5,7 @@ import {model} from "../../../../model/model";
 import {constructUrl} from "../../../../controller/functionality/navigation/urlConstruction";
 import {ApplicationRoutes} from "../../../../config/applicaitonRoutes";
 import {pushPopup} from "../_global-layer-components/popups";
-import {VerticalGap} from "../../../components/bits-and-pieces/verticalGap";
+import {VerticalGap} from "../../../components/verticalGap";
 
 const UserMenuCatchClicks = styled.div`
     position: absolute;

@@ -37,7 +37,7 @@ class MasslawCaseStorageManager:
 
         return url
 
-    def start_uploading_file(self, user_id, file_name, file_path, num_parts, file_languages):
+    def start_uploading_file(self, user_id, file_name, file_path, num_parts):
         if not self.__case_user_access_manager.determine_can_upload_file(user_id): return False
 
         file_type = file_name.split('.').pop()
@@ -53,7 +53,7 @@ class MasslawCaseStorageManager:
         self.__case_instance.set_data_property(['uploading_files'], uploading_files)
 
         file_instance = MasslawCaseFileInstance(file_id)
-        file_instance.update_data({'name': file_name, 'type': file_type, 'languages': file_languages, 'upload_id': mp_upload_data['upload_id'], 'case_id': self.__case_instance.get_case_id(), 'path': file_path, 'upload_time': '', 'last_modified': ''})
+        file_instance.update_data({'name': file_name, 'type': file_type, 'upload_id': mp_upload_data['upload_id'], 'case_id': self.__case_instance.get_case_id(), 'path': file_path, 'upload_time': '', 'last_modified': ''})
         file_instance.save_data()
 
         return mp_upload_data

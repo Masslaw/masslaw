@@ -67,7 +67,18 @@ export class CasesManager extends BaseService{
     async createCase(caseData) {
         if (this.model.users.mine.authentication.status < UserStatus.FULLY_APPROVED) return;
         const request = await this.masslawHttpApiClient.makeApiHttpRequest({
+            call: MasslawApiCalls.PUT_CASE,
+            body: {case_data: caseData}
+        });
+        return request;
+    }
+
+    async postCaseData(caseData, caseId=null) {
+        if (this.model.users.mine.authentication.status < UserStatus.FULLY_APPROVED) return;
+        caseId = caseId || this.model.cases.currentOpen.id;
+        const request = await this.masslawHttpApiClient.makeApiHttpRequest({
             call: MasslawApiCalls.POST_CASE,
+            pathParameters: {case_id: caseId},
             body: {case_data: caseData}
         });
         return request;

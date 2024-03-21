@@ -12,7 +12,7 @@ import {CaseFilePopup} from "./_caseFilePopup";
 import {RedirectButtonWrapper} from "../../../../components/redirectButtonWrapper";
 import {constructUrl} from "../../../../../controller/functionality/navigation/urlConstruction";
 import {ApplicationRoutes} from "../../../../../config/applicaitonRoutes";
-import {VerticalGap} from "../../../../components/bits-and-pieces/verticalGap";
+import {VerticalGap} from "../../../../components/verticalGap";
 
 const CaseContainer = styled.div`
     display: flex;
@@ -197,12 +197,6 @@ function CaseSidePanel(props) {
                 Timeline
             </CaseSidePanelButton>
         </RedirectButtonWrapper>
-        <RedirectButtonWrapper href={constructUrl(ApplicationRoutes.CASE_SUBJECTS, {caseId: s_caseId})}>
-            <CaseSidePanelButton open={s_currentPage === 'CaseSubjects'}>
-                <svg viewBox={'0 0 1000 1000'}><path d={SVG_PATHS.subjects}/></svg>
-                Subjects
-            </CaseSidePanelButton>
-        </RedirectButtonWrapper>
         <VerticalGap gap={'8px'}/>
         <CaseSidePanelSeparator/>
         <VerticalGap gap={'8px'}/>
@@ -294,8 +288,7 @@ const CaseSidePanelFileHierarchyTitleContainer = styled.div`
 
 const CaseSidePanelFileHierarchyArrowIcon = styled.div`
     position: relative;
-    width: 16px;
-    height: 16px;
+    width: 12px;
 
     svg {
         width: 100%;
@@ -364,7 +357,7 @@ function CaseSidePanelFileHierarchyFolder(props) {
         <CaseSidePanelFileHierarchyFolderContainer>
             <CaseSidePanelFileHierarchyTitleContainer onClick={() => setOpen(_ => !_)} title={props.name}>
                 <CaseSidePanelFileHierarchyArrowIcon>
-                    <svg viewBox={s_open ? "-100 -100 1000 700" : "-100 -100 700 1000"}>
+                    <svg viewBox={s_open ? "0 0 1000 1000" : "0 0 1000 1000"}>
                         <path d={s_open ? SVG_PATHS.arrowDown : SVG_PATHS.arrowRight}/>
                     </svg>
                 </CaseSidePanelFileHierarchyArrowIcon>

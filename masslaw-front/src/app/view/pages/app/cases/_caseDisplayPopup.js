@@ -3,8 +3,8 @@ import {model} from "../../../../model/model";
 import React, {useCallback, useMemo} from "react";
 import {constructUrl} from "../../../../controller/functionality/navigation/urlConstruction";
 import {ApplicationRoutes} from "../../../../config/applicaitonRoutes";
-import {CaseDataDisplay} from "./case/_commonComponents/caseDataDisplay";
-import {VerticalGap} from "../../../components/bits-and-pieces/verticalGap";
+import {CaseDataDisplay} from "../../../components/caseDataDisplay";
+import {VerticalGap} from "../../../components/verticalGap";
 
 
 const CaseDisplayPopupContainer = styled.div`

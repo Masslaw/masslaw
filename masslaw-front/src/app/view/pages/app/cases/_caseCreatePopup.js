@@ -1,9 +1,11 @@
 import styled from "styled-components";
 import {model} from "../../../../model/model";
-import React, {useCallback, useEffect, useMemo} from "react";
-import {VerticalGap} from "../../../components/bits-and-pieces/verticalGap";
+import React, {useCallback, useEffect, useMemo, useState} from "react";
+import {VerticalGap} from "../../../components/verticalGap";
 import {TextInput} from "../../../components/textInput";
 import {LongTextInput} from "../../../components/longTextInput";
+import {ItemSelectionInput} from "../../../components/ItemSelectionInput";
+import {CASE_LANGUAGES} from "../../../../config/caseLanguages";
 
 
 const CreateCasePopupContainer = styled.div`
@@ -72,18 +74,24 @@ export function CreateCasePopup(props) {
 
     const [s_caseName, setCaseName] = React.useState("");
     const [s_caseDescription, setCaseDescription] = React.useState("");
+    const [s_selectedLanguages, setSelectedLanguages] = useState([]);
 
     const [s_errorMessage, setErrorMessage] = React.useState("");
 
     const m_canCreateCase = useMemo(() => {
-        return (s_caseName.trim().length > 1) && (s_caseName.trim().length < 150) && (s_caseDescription.trim().length < 350);
-    }, [s_caseName]);
+        return (s_caseName.trim().length > 1) &&
+            (s_caseName.trim().length < 150) &&
+            (s_caseDescription.trim().length < 350) &&
+            (s_selectedLanguages.length > 0);
+    }, [s_caseName, s_caseDescription, s_selectedLanguages]);
 
     const c_createCase = useCallback(async () => {
         const caseData = {
             title: s_caseName.trim(),
             description: s_caseDescription.trim(),
+            languages: s_selectedLanguages.map(language => CASE_LANGUAGES[language]),
         }
+        console.log(caseData);
         const res = await casesManager.createCase(caseData);
         if (!res.getResponseSuccess()) {
             setErrorMessage("Could not create case.");
@@ -91,7 +99,7 @@ export function CreateCasePopup(props) {
         }
         await casesManager.fetchCases();
         props.dismiss();
-    }, [props.dismiss, s_caseName, s_caseDescription]);
+    }, [props.dismiss, s_caseName, s_caseDescription, s_selectedLanguages]);
 
     return <>
         <CreateCasePopupContainer>
@@ -125,6 +133,15 @@ export function CreateCasePopup(props) {
                     height={'64px'}
                 />
             </CreateCaseInputWrapper>
+            <ItemSelectionInput
+                label={'Languages'}
+                subLabel={'Select the languages in which the text of your case\'s files is written'}
+                selectedItems={s_selectedLanguages}
+                setSelectedItems={setSelectedLanguages}
+                optionsList={Object.keys(CASE_LANGUAGES)}
+                containerWidth={'calc(100% - 64px)'}
+                containerMargin={'32px'}
+            />
             {s_errorMessage && <ErrorMessage>{s_errorMessage}</ErrorMessage>}
             <FinishCreateCaseButton onClick={() => c_createCase()} enabled={m_canCreateCase}>Create</FinishCreateCaseButton>
         </CreateCasePopupContainer>

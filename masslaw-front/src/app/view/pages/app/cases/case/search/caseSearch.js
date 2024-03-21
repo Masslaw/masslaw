@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import {CaseTextSearch} from "../_commonComponents/caseTextSearch";
+import {CaseTextSearch} from "../../../../../components/caseTextSearch";
 import {model} from "../../../../../../model/model";
 import {ApplicationRoutes} from "../../../../../../config/applicaitonRoutes";
 import {useParams} from "react-router-dom";

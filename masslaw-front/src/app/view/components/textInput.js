@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import React from "react";
 import {SVG_PATHS} from "../config/svgPaths";
-import {VerticalGap} from "./bits-and-pieces/verticalGap";
+import {VerticalGap} from "./verticalGap";
 
 const FormContainer = styled.div`
     position: relative;

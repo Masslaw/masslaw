@@ -1,6 +1,7 @@
 from typing import List
 
 from src.modules.masslaw_cases_objects import MasslawCaseFileInstance
+from src.modules.masslaw_cases_objects import MasslawCaseInstance
 from src.modules.mlcp_management import MLCPSubmission
 from src.modules.aws_clients.batch_client import batch_management
 
@@ -9,7 +10,8 @@ def submit_text_extraction_job(file_instance: MasslawCaseFileInstance, stage='pr
     file_id = file_instance.get_file_id()
     case_id = file_instance.get_data_property(['case_id'])
     file_type = file_instance.get_data_property(["type"])
-    languages = file_instance.get_data_property(["languages"], ['eng'])
+    case_instance = MasslawCaseInstance(case_id=case_id)
+    languages = case_instance.get_data_property(["languages"], ['eng'])
 
     file_key = f'{file_id}/raw.{file_type}'
     file_name = f'{file_id}.{file_type}'

@@ -22,6 +22,7 @@ def create_a_new_case(creator_user_id, case_creation_data):
             'last_modified_time': now,
             'creation_time': now
         },
+        'languages': case_creation_data.get('languages', ['eng']),
         'users': {},
         'content': {},
         'files': {}
@@ -33,5 +34,4 @@ def create_a_new_case(creator_user_id, case_creation_data):
         access_config.CaseAccessEntities.OWNER_CLIENT,
         {}
     )
-
     return case_instance
