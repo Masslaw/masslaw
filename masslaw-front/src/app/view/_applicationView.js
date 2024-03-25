@@ -26,6 +26,10 @@ const Application = styled.div`
     & button:hover {
         transition-duration: 0s;
     }
+    
+    & h2 {
+        font-weight: normal;
+    }
 
     &::-webkit-scrollbar {
         width: 8px;
