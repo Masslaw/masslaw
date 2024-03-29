@@ -6,7 +6,7 @@ export class CaseCommentsManager extends BaseService {
         this.masslawHttpApiClient = this.model.services['masslawHttpApiClient'];
     }
 
-    async fetchFileComments(fileId=null, force=false) {
+    async fetchFileComments(fileId=null) {
         const caseId = this.model.cases.currentOpen.id;
         fileId = fileId || this.model.cases.currentOpen.files.currentOpen.id;
         const request = await this.masslawHttpApiClient.makeApiHttpRequest({
@@ -66,7 +66,7 @@ export class CaseCommentsManager extends BaseService {
             call: MasslawApiCalls.DELETE_COMMENT,
             pathParameters: {case_id: caseId, file_id: fileId, comment_id: commentId},
         });
-        return request;;
+        return request;
     }
 
     async fetchCommentReplies(commentId, fileId=null, force=false) {

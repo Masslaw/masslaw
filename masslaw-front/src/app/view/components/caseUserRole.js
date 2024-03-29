@@ -20,16 +20,12 @@ const CaseUserDataUserRole = styled.div`
 
 export function CaseUserRole(props) {
 
-    const casesManager = model.services['casesManager'];
-
     const [s_caseData, setCaseData] = useState(null);
 
     useEffect(() => {
         if (!props.caseId) return;
-        casesManager.fetchCaseData(props.caseId).then(() => {
-            const caseData = model.cases.all[props.caseId];
-            setCaseData(caseData);
-        });
+        const caseData = model.cases.all[props.caseId];
+        setCaseData(caseData);
     }, [props.caseId])
 
     const [s_userData, setUserData] = useState({});

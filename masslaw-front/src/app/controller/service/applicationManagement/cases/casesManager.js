@@ -35,13 +35,14 @@ export class CasesManager extends BaseService{
             return;
         }
         await this.fetchCaseData();
+        await this.fetchCaseContentHierarchy();
     }
 
-    async fetchCaseData(caseId = null, force= false) {
+    async fetchCaseData(caseId = null, force=false) {
         caseId = caseId || this.model.cases.currentOpen.id;
         if (!caseId) return;
         if (this.model.users.mine.authentication.status < UserStatus.FULLY_APPROVED) return;
-        if (!force && Object.keys(this.model.cases.all[caseId] || {}).length) return;
+        if (force || !Object.keys(this.model.cases.all[caseId] || {}).length) return;
         const request = await this.masslawHttpApiClient.makeApiHttpRequest({
             call: MasslawApiCalls.GET_CASE_DATA,
             pathParameters: {case_id: caseId}
@@ -49,7 +50,6 @@ export class CasesManager extends BaseService{
         const responsePayload = request.getResponsePayload() || {};
         const caseData = responsePayload.case_data || {};
         this.model.cases.all[caseId] = {...this.model.cases.all[caseId], ...caseData};
-        await this.fetchCaseContentHierarchy();
         return request;
     }
 

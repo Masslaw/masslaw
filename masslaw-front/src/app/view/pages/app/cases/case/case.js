@@ -30,7 +30,7 @@ const CaseSidePanelAlignment = styled.div`
     flex-direction: row;
     flex-grow: 1;
     flex-shrink: 0;
-    flex-basis: 0;
+    flex-basis: 100%;
     position: relative;
     width: 100%;
     height: 100%;
@@ -45,6 +45,9 @@ const CaseSidePanelContainer = styled.div`
     color: white;
     overflow-x: hidden;
     overflow-y: auto;
+    flex-basis: 256px;
+    flex-shrink: 0;
+    flex-grow: 0;
     &::-webkit-scrollbar { display: none; }
 `
 
@@ -83,6 +86,7 @@ export function Case(props) {
         setLoadingCase(true);
         model.cases.currentOpen.id = caseId;
         casesManager.fetchCaseData().then(() => {setLoadingCase(false)});
+        casesManager.fetchCaseContentHierarchy().then(() => {});
     }, [s_userStatus, caseId]);
 
 
@@ -133,15 +137,6 @@ const CaseSidePanelButton = styled.button`
         fill: white;
         margin-right: 8px;
     }
-`
-
-const CaseSidePanelOpenedSection = styled.div`
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    width: calc(100% - 5px);
-    border-left: 1px solid #505050;
-    margin-left: 4px;
 `
 
 const CaseSidePanelTitle = styled.div`

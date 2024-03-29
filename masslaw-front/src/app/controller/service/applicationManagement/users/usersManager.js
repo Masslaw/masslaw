@@ -15,7 +15,7 @@ export class UsersManager extends BaseService {
         return request;
     }
 
-    async fetchMyUserData(force = false) {
+    async fetchMyUserData() {
         const request = await this.masslawHttpApiClient.makeApiHttpRequest({call: MasslawApiCalls.GET_USER_DATA, pathParameters: {user_id: 'me'}});
         const responsePayload = request.getResponsePayload() || {};
         const userData = responsePayload.user_data;
@@ -32,7 +32,7 @@ export class UsersManager extends BaseService {
         return request;
     }
 
-    async fetchUserData(userId, force= false) {
+    async fetchUserData(userId, force=false) {
         const userDataModelPath = `$.users.data.${userId}`;
         if (!force && this.model.users.data[userId] && this.modelUpdatesRecorder.getTimeSinceLastModelChangeAtPath(userDataModelPath) < 5000) return;
         this.modelUpdatesRecorder.recordModelValueChangeTimesAtPath(userDataModelPath);

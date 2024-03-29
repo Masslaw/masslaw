@@ -1,4 +1,4 @@
-import React from "react";
+import {useState} from "react";
 import {model} from "../../../model/model";
 
 
@@ -10,7 +10,7 @@ export function useModelValueAsReactState(path, defaultInitialState = null) {
     const initValue = [null, undefined].includes(currentModelValue) ? defaultInitialState : currentModelValue;
     modelStateManager.setModelValueAtPath(path, initValue)
 
-    const [state, setState] = React.useState(initValue);
+    const [state, setState] = useState(initValue);
 
     const newSetState = v => {
         if (typeof v === 'function') v = v(modelStateManager.getModelValueAtPath(path));
