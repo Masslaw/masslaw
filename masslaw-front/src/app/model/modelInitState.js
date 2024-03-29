@@ -50,7 +50,6 @@ export const modelInitState = {
         all: {},
     },
     application: {
-        contextKey: '0',
         navigate: (p) => {},
         searchParams: {},
         pages: {

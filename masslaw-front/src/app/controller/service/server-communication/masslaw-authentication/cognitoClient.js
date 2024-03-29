@@ -95,7 +95,6 @@ export class CognitoClient extends BaseService {
     logOut() {
         this.endRefreshingCycle();
         this.modelResetsManager.resetModelEntirely();
-        this.model.application.contextKey = Math.random().toString();
     }
 
     startRefreshingCycle() {

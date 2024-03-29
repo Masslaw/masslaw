@@ -60,8 +60,7 @@ const Application = styled.div`
 `
 
 export function ApplicationView(props) {
-    const [s_applicationContextKey, _] = useModelValueAsReactState('$.application.contextKey')
-    return <Application key={s_applicationContextKey}>
+    return <Application>
         <ApplicationGlobalLayer>
             <ApplicationRouter/>
         </ApplicationGlobalLayer>
