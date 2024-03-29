@@ -12,7 +12,6 @@ const Container = styled.div`
     cursor: pointer;
     justify-content: center;
     align-items: center;
-    filter: drop-shadow(0 0 8px yellow);
     
     svg {
         height: calc(100% - 20px);
