@@ -2,6 +2,7 @@ import styled from "styled-components";
 import {ApplicationRouter} from "./routing/applicaitonRouter";
 import {ApplicationGlobalLayer} from "./global-view/globalLayer/applicationGlobalLayer";
 import React from "react";
+import {useModelValueAsReactState} from "../controller/functionality/model/modelReactHooks";
 
 
 const Application = styled.div`
@@ -59,7 +60,8 @@ const Application = styled.div`
 `
 
 export function ApplicationView(props) {
-    return <Application>
+    const [s_applicationContextKey, _] = useModelValueAsReactState('$.application.contextKey')
+    return <Application key={s_applicationContextKey}>
         <ApplicationGlobalLayer>
             <ApplicationRouter/>
         </ApplicationGlobalLayer>

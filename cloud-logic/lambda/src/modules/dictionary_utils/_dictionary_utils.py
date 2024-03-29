@@ -14,19 +14,22 @@ def get_from(d: dict, path: list, default=None):
     return v
 
 
+def has_path(d: dict, path: list):
+    if not path: return True;
+    if not path[-1] in d: return False
+    return has_path(d[path[-1]], path[1:])
+
+
 def set_at(d: dict, path: list, element):
     if len(path) == 0:
-        if not isinstance(element, dict):
-            return
-        for key, value in element.items():
-            d[key] = value
+        if not isinstance(element, dict): return
+        for key, value in element.items(): d[key] = value
         return
     if len(path) == 1:
         d[path[0]] = element
         return
     sub_value = d.get(path[0]) or {}
-    if not isinstance(sub_value, dict):
-        sub_value = {}
+    if not isinstance(sub_value, dict): sub_value = {}
     set_at(sub_value, path[1:], element)
     d[path[0]] = sub_value
 
@@ -36,7 +39,7 @@ def select_keys(d: dict, keys):
     for key in keys:
         if isinstance(key, str): key = [key]
         val = get_from(d, key)
-        if val: set_at(new_dict, key, val)
+        set_at(new_dict, key, val)
     return new_dict
 
 

@@ -6,6 +6,10 @@ export class ModelResetsManager extends BaseService {
         this.modelStateManager = this.model.services['modelStateManager'];
     }
 
+    resetModelEntirely() {
+        for (const key in modelInitStateCopy) this.model[key] = modelInitStateCopy[key];
+    }
+
     resetModelStateAtPath(path) {
         const initStateAtPath = this.getModelInitStateAtPath(path);
         this.modelStateManager.setModelValueAtPath(path, initStateAtPath);

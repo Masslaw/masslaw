@@ -27,7 +27,7 @@ class SearchCaseFiles(MasslawCaseManagementApiCaseActionHandler):
         MasslawCaseManagementApiCaseActionHandler._execute(self)
         user_id = self._caller_user_instance.get_user_id()
         case_user_access = MasslawCaseUserAccessManager(case_instance=self._case_instance)
-        user_access_files = case_user_access.get_user_access_files(user_id)
+        user_access_files = case_user_access.get_user_accessible_files(user_id)
         self.__search_files = list(set(self.__files or user_access_files) & set(user_access_files))
         payload = self.construct_query_payload()
         case_index_manager = OpenSearchIndexManager(opensearch_config.MASSLAW_CASES_ES_ENDPOINT, f'{self._case_id}{opensearch_config.MASSLAW_CASE_FILES_SEARCH_INDEX_SUFFIX}')

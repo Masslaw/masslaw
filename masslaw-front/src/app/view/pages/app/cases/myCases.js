@@ -6,11 +6,7 @@ import {pushPopup} from "../../../global-view/globalLayer/_global-layer-componen
 import {useModelValueAsReactState} from "../../../../controller/functionality/model/modelReactHooks";
 import {CreateCasePopup} from "./_caseCreatePopup";
 import {CaseDisplayPopup} from "./_caseDisplayPopup";
-import {accessLevelsOrder} from "../../../../config/caseConsts";
-import {ProfilePicture} from "../../../components/profilePicture";
 import {LoadingIcon} from "../../../components/loadingIcon";
-import {UsersListProfilePictures} from "../../../components/usersListProfilePictures";
-import {VerticalGap} from "../../../components/verticalGap";
 import {CaseDataDisplay} from "../../../components/caseDataDisplay";
 
 const PageContainer = styled.div`
@@ -40,7 +36,7 @@ const PageSubTitle = styled.h2`
 const CaseList = styled.div`
     position: relative;
     display: grid;
-    grid-template-columns: repeat(auto-fill, calc(256px + 32px + 16px));
+    grid-template-columns: repeat(auto-fill, calc(320px + 32px + 16px));
     justify-content: space-between;
     flex-grow: 1;
     border-radius: 12px;
@@ -48,6 +44,7 @@ const CaseList = styled.div`
     padding: 16px;
     width: calc(100% - 64px);
     overflow-y: auto;
+    &::-webkit-scrollbar { display: none; }
 `
 
 const CreateCaseButton = styled.button`
@@ -84,11 +81,12 @@ export function MyCases(props) {
 
     const [s_casesList, setCases] = useModelValueAsReactState("$.cases.all");
 
-    const [s_loadingList, setLoadingList] = useState(true);
+    const [s_loadingList, setLoadingList] = useState(false);
 
     useEffect(() => {
         if (s_userStatus < UserStatus.FULLY_APPROVED) return;
         if (Object.keys(s_casesList || {}).length > 0) return;
+        setLoadingList(true);
         casesManager.fetchCases().then(() => setLoadingList(false));
     }, [s_userStatus, s_casesList]);
     
@@ -111,8 +109,8 @@ export function MyCases(props) {
 const CaseItemContainer = styled.div`
     display: flex;
     flex-direction: column;
-    width: 256px;
-    height: max-content;
+    width: 320px;
+    height: 175px;
     background-color: #2f2f2f;
     margin: 16px 8px;
     padding: 16px;

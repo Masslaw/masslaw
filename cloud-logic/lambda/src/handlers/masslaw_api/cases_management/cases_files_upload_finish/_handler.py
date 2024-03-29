@@ -18,7 +18,7 @@ class FinishCaseFileUpload(MasslawCaseManagementApiCaseActionHandler):
     def _execute(self):
         MasslawCaseManagementApiCaseActionHandler._execute(self)
         case_storage_manager = MasslawCaseStorageManager(case_instance=self._case_instance)
-        self._file_instance = case_storage_manager.complete_uploading_file(user_id=self._caller_user_instance.get_user_id(), file_id=self.__file_id, parts_list=self.__parts)
+        self._file_instance = case_storage_manager.complete_uploading_file(file_id=self.__file_id, parts_list=self.__parts)
         if not self._file_instance: raise Exception('Something went wrong')
         case_storage_manager.start_case_file_processing_pipeline(self._file_instance, self._stage)
         self._file_instance.save_data()

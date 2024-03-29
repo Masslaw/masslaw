@@ -2,11 +2,12 @@ import re
 
 from src.modules.aws_clients.cognito_client import CognitoUserPoolManager
 from src.modules.aws_clients.dynamodb_client import DynamoDBTableManager
-from src.modules.masslaw_users_objects._exceptions import MasslawUserDataUpdateException
-from src.modules.remote_data_management import DataHolder
+from src.modules.aws_clients.open_search_client import OpenSearchIndexManager
 from src.modules.dictionary_utils import dictionary_utils
 from src.modules.masslaw_users_config import read_only_user_attributes
-
+from src.modules.masslaw_users_objects._exceptions import MasslawUserDataUpdateException
+from src.modules.remote_data_management import DataHolder
+from src.modules.masslaw_users_config import opensearch_config
 
 cognitoManager = CognitoUserPoolManager("MasslawUsers")
 users_table_manager = DynamoDBTableManager('MasslawUsers')
@@ -30,9 +31,19 @@ class MasslawUserInstance(DataHolder):
 
     def save_data(self):
         DataHolder.save_data(self)
+        self._save_data_to_dynamodb()
+        self._save_data_to_opensearch()
+        self._valid = True
+
+    def _save_data_to_dynamodb(self):
         write_user_data = self._get_write_data_object()
         users_table_manager.update_item(self.__user_id, write_user_data)
-        self._valid = True
+
+    def _save_data_to_opensearch(self):
+        opensearch_document = self._get_opensearch_document()
+        users_index_manager = OpenSearchIndexManager(opensearch_config.MASSLAW_USERS_OPENSEARCH_ENDPOINT, opensearch_config.MASSLAW_USERS_OPENSEARCH_INDEX_NAME)
+        users_index_manager.ensure_exists()
+        users_index_manager.add_document(self.__user_id, opensearch_document)
 
     def get_user_id(self):
         return self.__user_id
@@ -43,6 +54,11 @@ class MasslawUserInstance(DataHolder):
             if attr in user_data:
                 del user_data[attr]
         return user_data
+
+    def _get_opensearch_document(self):
+        user_data = self._get_data()
+        document = dictionary_utils.select_keys(user_data, ['User_ID', 'email', 'first_name', 'last_name'])
+        return document
 
     def _assert_valid_data(self):
         DataHolder._assert_valid_data(self)

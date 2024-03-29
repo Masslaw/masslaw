@@ -40,6 +40,14 @@ export const accessLevelDisplayNames = {
     [caseAccessLevels.external]: 'External User',
 }
 
+export const accessLevelDisplayColors = {
+    [caseAccessLevels.owner]: '#192a75',
+    [caseAccessLevels.manager]: '#1f7519',
+    [caseAccessLevels.editor]: '#5b1975',
+    [caseAccessLevels.reader]: '#19756a',
+    [caseAccessLevels.external]: '#751919',
+}
+
 export const accessLevelsOrder = [
     caseAccessLevels.owner,
     caseAccessLevels.manager,

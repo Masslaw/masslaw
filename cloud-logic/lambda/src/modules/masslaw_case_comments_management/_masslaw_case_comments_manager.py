@@ -6,7 +6,6 @@ from src.modules.masslaw_case_users_management import MasslawCaseUserAccessManag
 from src.modules.masslaw_case_users_management import masslaw_case_users_management_exceptions
 from src.modules.masslaw_cases_objects import MasslawCaseCommentInstance
 from src.modules.masslaw_cases_objects import MasslawCaseInstance
-from src.modules.masslaw_case_comments_management._exceptions import MasslawInvalidChildCommentException
 
 
 class MasslawCaseCommentsManager:
@@ -21,7 +20,7 @@ class MasslawCaseCommentsManager:
             case_comment_instance = MasslawCaseCommentInstance(comment_id)
             if not case_comment_instance.is_valid(): break
 
-        user_access_files = self.__case_user_access_manager.get_user_access_files(user_id)
+        user_access_files = self.__case_user_access_manager.get_user_accessible_files(user_id)
         if file_id not in user_access_files:
             raise masslaw_case_users_management_exceptions.MasslawCaseUnauthorizedUserActionException('Attempting to put an comment in a file the user has no access to')
 
@@ -64,5 +63,5 @@ class MasslawCaseCommentsManager:
         if file_id and file_id != comment_file_id: raise masslaw_case_users_management_exceptions.MasslawCaseUnauthorizedUserActionException('Attempting to edit an comment in a file the user has no access to')
         owner = case_comment_instance.get_data_property(['owner'])
         if write and owner != user_id: raise MasslawCaseCommentUnauthorizedAccessException('Attempting to edit an comment that was created by another user')
-        user_access_files = self.__case_user_access_manager.get_user_access_files(user_id)
+        user_access_files = self.__case_user_access_manager.get_user_accessible_files(user_id)
         if comment_file_id not in user_access_files: raise masslaw_case_users_management_exceptions.MasslawCaseUnauthorizedUserActionException('Attempting to edit an comment in a file the user has no access to')

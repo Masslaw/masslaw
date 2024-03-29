@@ -6,6 +6,7 @@ export const MasslawApiCalls = {
     SET_USER_DATA:                  {rout: '/users/me', method: HttpMethod.POST,},
     POST_PROFILE_PICTURE:           {rout: '/users/me/pfp', method: HttpMethod.POST,},
     GET_USER_DATA:                  {rout: '/users/{user_id}', method: HttpMethod.GET,},
+    SEARCH_USERS:                   {rout: '/users/search', method: HttpMethod.GET,},
 
     GET_CASES:                      {rout: '/cases', method: HttpMethod.GET,},
     PUT_CASE:                       {rout: '/cases', method: HttpMethod.PUT,},
@@ -26,4 +27,5 @@ export const MasslawApiCalls = {
     GET_COMMENT_CHILDREN:           {rout: '/cases/{case_id}/files/{file_id}/comments/{comment_id}/children', method: HttpMethod.POST,},
     GET_CASE_KNOWLEDGE:             {rout: '/cases/{case_id}/knowledge', method: HttpMethod.GET,},
     GET_CASE_KNOWLEDGE_ITEM:        {rout: '/cases/{case_id}/knowledge/{item_type}/{item_id}', method: HttpMethod.GET,},
+    POST_CASE_USER:                 {rout: '/cases/{case_id}/users/{user_id}', method: HttpMethod.POST,},
 }

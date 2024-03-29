@@ -1,6 +1,7 @@
 import {BaseService} from "../../_baseService";
 import {MasslawApiCalls} from "../../../../config/masslawAPICalls";
 import {UserStatus} from "../../../../config/userStatus";
+import {caseAccessLevels} from "../../../../config/caseConsts";
 
 export class CasesManager extends BaseService{
     start() {
@@ -8,11 +9,12 @@ export class CasesManager extends BaseService{
         this.modelResetsManager = this.model.services['modelResetsManager'];
         this.masslawHttpApiClient = this.model.services['masslawHttpApiClient'];
 
-        this.modelStateManager.listenToModelChange('$.users.mine.data.id', (c) => this.onUserId(c));
+        this.modelStateManager.listenToModelChange('$.users.mine.data.User_ID', (c) => this.onUserId(c));
         this.modelStateManager.listenToModelChange('$.cases.currentOpen.id', (c) => this.onCaseOpen(c));
     }
 
     onUserId(userId) {
+        this.modelResetsManager.resetModelStateAtPath('$.cases');
         if (!userId) return;
         this.fetchCases();
     }
@@ -35,10 +37,11 @@ export class CasesManager extends BaseService{
         await this.fetchCaseData();
     }
 
-    async fetchCaseData(caseId = null) {
-        caseId = caseId || this.model.cases.currentOpen.id || '';
+    async fetchCaseData(caseId = null, force= false) {
+        caseId = caseId || this.model.cases.currentOpen.id;
         if (!caseId) return;
         if (this.model.users.mine.authentication.status < UserStatus.FULLY_APPROVED) return;
+        if (!force && Object.keys(this.model.cases.all[caseId] || {}).length) return;
         const request = await this.masslawHttpApiClient.makeApiHttpRequest({
             call: MasslawApiCalls.GET_CASE_DATA,
             pathParameters: {case_id: caseId}
@@ -50,9 +53,10 @@ export class CasesManager extends BaseService{
         return request;
     }
 
-    async fetchCaseContentHierarchy(caseId = null) {
+    async fetchCaseContentHierarchy(caseId = null, force=false) {
         caseId = caseId || this.model.cases.currentOpen.id || '';
         if (!caseId) return;
+        if (!force && (this.model.cases.all[caseId] || {}).contentHierarchy) return;
         if (this.model.users.mine.authentication.status < UserStatus.FULLY_APPROVED) return;
         const request = await this.masslawHttpApiClient.makeApiHttpRequest({
             call: MasslawApiCalls.GET_CASE_CONTENT_HIERARCHY,

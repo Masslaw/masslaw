@@ -13,12 +13,12 @@ export class ModelUpdatesRecorder extends BaseService {
     }
 
     getLastModelChangeTimeAtPath(path) {
-        return this.modelPathsUpdateTime[path] || null;
+        return this.modelPathsUpdateTime[path] || 0;
     }
 
     getTimeSinceLastModelChangeAtPath(path) {
         const lastChangeTime = this.getLastModelChangeTimeAtPath(path);
-        return lastChangeTime ? Date.now() - lastChangeTime : null;
+        return Date.now() - lastChangeTime;
     }
 
     _onModelValueChange(path) {

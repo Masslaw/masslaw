@@ -60,7 +60,7 @@ class MasslawCaseAnnotationsManager:
         if case_annotation_instance.get_data_property(['creator'], user_id) != user_id:
             raise MasslawCaseAnnotationUnauthorizedAccessException('Attempting to edit an annotation that was created by another user')
 
-        user_access_files = self.__case_user_access_manager.get_user_access_files(user_id)
+        user_access_files = self.__case_user_access_manager.get_user_accessible_files(user_id)
         if file_id not in user_access_files:
             raise masslaw_case_users_management_exceptions.MasslawCaseUnauthorizedUserActionException('Attempting to edit an annotation in a file the user has no access to')
 

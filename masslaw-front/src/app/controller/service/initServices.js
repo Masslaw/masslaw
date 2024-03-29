@@ -14,6 +14,7 @@ import {CaseCommentsManager} from "./applicationManagement/cases/caseCommentsMan
 import {CaseSearchesManager} from "./applicationManagement/cases/caseSearchesManager";
 import {SearchParamsManager} from "./navigation-management/searchParamsManager";
 import {CasesKnowledgeManager} from "./applicationManagement/cases/casesKnowledgeManager";
+import {CaseUsersManager} from "./applicationManagement/cases/casesUsersManager";
 
 
 const SERVICES = {
@@ -31,6 +32,7 @@ const SERVICES = {
     caseCommentsManager: CaseCommentsManager,
     caseSearchesManager: CaseSearchesManager,
     casesKnowledgeManager: CasesKnowledgeManager,
+    caseUsersManager: CaseUsersManager,
     contentUploader: ContentUploader,
 };
 

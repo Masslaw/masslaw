@@ -16,10 +16,7 @@ export const modelInitState = {
                     lastCodeSendingTime: 0,
                 }
             },
-            data: {
-                server: null,
-                client: null,
-            },
+            data: {},
         },
         data: {},
         profilePictureModificationTimes: {},
@@ -53,6 +50,7 @@ export const modelInitState = {
         all: {},
     },
     application: {
+        contextKey: '0',
         navigate: (p) => {},
         searchParams: {},
         pages: {

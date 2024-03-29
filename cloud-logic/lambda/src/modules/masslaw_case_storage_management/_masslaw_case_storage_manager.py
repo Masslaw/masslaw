@@ -26,7 +26,7 @@ class MasslawCaseStorageManager:
         self.__case_user_access_manager = MasslawCaseUserAccessManager(self.__case_instance)
 
     def get_case_file_download_url(self, user_id, file_id, content_path):
-        access_files = self.__case_user_access_manager.get_user_access_files(user_id=user_id)
+        access_files = self.__case_user_access_manager.get_user_accessible_files(user_id=user_id)
         if access_files:
             if file_id not in access_files:
                 return None
@@ -38,7 +38,7 @@ class MasslawCaseStorageManager:
         return url
 
     def start_uploading_file(self, user_id, file_name, file_path, num_parts):
-        if not self.__case_user_access_manager.determine_can_upload_file(user_id): return False
+        if not self.__case_user_access_manager.determine_can_upload_file(user_id, file_path): return False
 
         file_type = file_name.split('.').pop()
         file_id = secrets.token_hex(16)
@@ -58,8 +58,7 @@ class MasslawCaseStorageManager:
 
         return mp_upload_data
 
-    def complete_uploading_file(self, user_id, file_id, parts_list):
-        if not self.__case_user_access_manager.determine_can_upload_file(user_id): return False
+    def complete_uploading_file(self, file_id, parts_list):
         file_instance = MasslawCaseFileInstance(file_id)
 
         file_type = file_instance.get_data_property(['type'])
@@ -93,7 +92,7 @@ class MasslawCaseStorageManager:
         return file_instance
 
     def delete_file_as_user(self, file_id, user_id):
-        user_permitted_files = self.__case_user_access_manager.get_user_access_files(user_id=user_id)
+        user_permitted_files = self.__case_user_access_manager.get_user_accessible_files(user_id=user_id)
         if not file_id in user_permitted_files: return False
         return self.delete_file(file_id)
 

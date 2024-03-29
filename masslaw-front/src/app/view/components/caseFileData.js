@@ -2,13 +2,15 @@ import {LoadingIcon} from "./loadingIcon";
 import {useParams} from "react-router-dom";
 import {model} from "../../model/model";
 import {useModelValueAsReactState} from "../../controller/functionality/model/modelReactHooks";
-import {useCallback, useEffect, useMemo, useState} from "react";
+import React, {useCallback, useEffect, useMemo, useState} from "react";
 import styled from "styled-components";
 import {SVG_PATHS} from "../config/svgPaths";
 import {LongTextInput} from "./longTextInput";
 import {unixTimeToDayDateString, unixTimeToPastTimeString} from "../../controller/functionality/time-utils/dateTimeUtils";
 import {VerticalGap} from "./verticalGap";
 import {FileProcessingStage} from "./fileStage";
+import {useCaseUserAccessLevel} from "../hooks/useCaseUserAccessLevel";
+import {caseAccessLevels} from "../../config/caseConsts";
 
 const CaseFilePopupFileName = styled.h1`
     font-size: 24px;
@@ -286,6 +288,8 @@ export function CaseFileData(props) {
         setReloadingStage(false);
     }, []);
 
+    const m_myUserAccessLevel = useCaseUserAccessLevel(props.caseId);
+    
     return <>
         {s_loading ? <LoadingIcon width={"32px"} height={"32px"}/> : <>
             <CaseFilePopupFileName>{(s_fileData || {}).name}</CaseFilePopupFileName>
@@ -308,7 +312,7 @@ export function CaseFileData(props) {
             <CaseFilePopupDescriptionSection>
                 <CaseFilePopupDescriptionTitleSection>
                     <CaseFilePopupDescriptionTitle>Description</CaseFilePopupDescriptionTitle>
-                    {!s_editingDescription ? <>
+                    {[caseAccessLevels.owner, caseAccessLevels.manager, caseAccessLevels.editor].includes(m_myUserAccessLevel) && !s_editingDescription ? <>
                         <CaseFilePopupDescriptionEditIcon onClick={() => setEditingDescription(true)}><svg viewBox={'-200 -200 1400 1400'}><path d={SVG_PATHS.pen} /></svg></CaseFilePopupDescriptionEditIcon>
                     </> : <></>}
                 </CaseFilePopupDescriptionTitleSection>

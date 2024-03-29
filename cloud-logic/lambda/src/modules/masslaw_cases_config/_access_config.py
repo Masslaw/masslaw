@@ -70,3 +70,17 @@ CAN_ADD_USERS = [
     CaseAccessEntities.OWNER_CLIENT,
     CaseAccessEntities.MANAGER_CLIENT,
 ]
+
+HARD_CODED_POLICIES = {
+    CaseAccessEntities.OWNER_CLIENT: [
+        (['files', 'allowed_paths'], [[]]),
+        (['files', 'prohibited_paths'], [])
+    ],
+    CaseAccessEntities.MANAGER_CLIENT: [
+        (['files', 'allowed_paths'], [[]]),
+        (['files', 'prohibited_paths'], [])
+    ],
+    CaseAccessEntities.EDITOR_CLIENT: [],
+    CaseAccessEntities.READER_CLIENT: [],
+    CaseAccessEntities.EXTERNAL_CLIENT: [],
+}

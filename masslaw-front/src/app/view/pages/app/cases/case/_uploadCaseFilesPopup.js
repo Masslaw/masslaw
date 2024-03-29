@@ -433,7 +433,7 @@ const SelectedFilesList = styled.div`
 
 function SelectFiles(props) {
 
-    const inputRef = useRef(null);
+    const r_inputRef = useRef(null);
 
     const [s_selectedFiles, setSelectedFiles] = useState([]);
 
@@ -455,8 +455,8 @@ function SelectFiles(props) {
         <SelectFilesContainer>
             <SelectedFilesHeader>
                 <SelectedFilesTitle>Selected Files</SelectedFilesTitle>
-                <SelectedFilesAddFilesButton onClick={() => inputRef.current.click()}>Add Files</SelectedFilesAddFilesButton>
-                <input style={{display: "none"}} ref={inputRef} type={'file'} multiple={true} onChange={e => setSelectedFiles(f => [...f, ...e.target.files])}/>
+                <SelectedFilesAddFilesButton onClick={() => r_inputRef.current.click()}>Add Files</SelectedFilesAddFilesButton>
+                <input style={{display: "none"}} ref={r_inputRef} type={'file'} multiple={true} onChange={e => setSelectedFiles(f => [...f, ...e.target.files])}/>
             </SelectedFilesHeader>
             <SelectedFilesList>{m_selectedFileItems}</SelectedFilesList>
         </SelectFilesContainer>

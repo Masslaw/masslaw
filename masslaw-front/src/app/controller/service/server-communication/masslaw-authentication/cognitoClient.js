@@ -14,6 +14,7 @@ export class CognitoClient extends BaseService {
 
     start() {
         this.modelStateManager = this.model.services['modelStateManager'];
+        this.modelResetsManager = this.model.services['modelResetsManager'];
         this.modelToLocalStorageManager = this.model.services['modelToLocalStorageManager'];
         this.modelToLocalStorageManager.addPathToSavedPaths('$.users.mine.authentication.login.email')
         this.logIn().then(() => this.startRefreshingCycle);
@@ -92,10 +93,9 @@ export class CognitoClient extends BaseService {
     }
 
     logOut() {
-        this.model.users.mine.authentication.tokens.access = null;
-        this.model.users.mine.authentication.login.email = null;
-        this.model.users.mine.authentication.login.password = null;
         this.endRefreshingCycle();
+        this.modelResetsManager.resetModelEntirely();
+        this.model.application.contextKey = Math.random().toString();
     }
 
     startRefreshingCycle() {

@@ -2,6 +2,8 @@ import {VerticalGap} from "./verticalGap";
 import {UsersListProfilePictures} from "./usersListProfilePictures";
 import React from "react";
 import styled from "styled-components";
+import {CaseUserRole} from "./caseUserRole";
+import {model} from "../../model/model";
 
 const CaseItemTitle = styled.h1`
     font-size: 20px;
@@ -20,7 +22,8 @@ const CaseItemDescription = styled.h2`
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: normal;
-    height: 48px;
+    height: max-content;
+    max-height: 48px;
     font-size: 14px;
     line-height: 16px;
     font-weight: 500;
@@ -28,15 +31,30 @@ const CaseItemDescription = styled.h2`
     margin: 0;
 `
 
+const CaseItemRole = styled.div`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    color: #999999;
+    margin: 0;
+    font-size: 12px;
+    span { margin-right: 8px; }
+`
+
 export function CaseDataDisplay(props) {
     return <>
         <CaseItemTitle>{props.caseData.title}</CaseItemTitle>
         <VerticalGap gap={'12px'} />
         <CaseItemDescription>{props.caseData.description}</CaseItemDescription>
-        <VerticalGap gap={'8px'} />
+        <VerticalGap gap={'16px'} />
         <UsersListProfilePictures
             users={Object.keys(props.caseData.users || {}).map((userId) => ({...props.caseData.users[userId], id: userId}))}
             usersToDisplay={9}
         />
+        <VerticalGap gap={'16px'} />
+        <CaseItemRole>
+            <span>Your role:</span>
+            <CaseUserRole caseId={props.caseData.case_id} userId={model.users.mine.data.User_ID}/>
+        </CaseItemRole>
     </>
 }

@@ -11,8 +11,8 @@ class MasslawCaseUserAccessManager:
     def get_formatted_case_instance_for_user(self, user_id) -> 'UserReadFormattedCaseInstance':
         access_level = self.determine_user_access_level(user_id=user_id)
         formatted_case_instance = self.get_formatted_case_instance_for_entity(access_level)
-        user_access_files = self.get_user_access_files(user_id)
-        formatted_case_instance.set_data_property(['files'], user_access_files)
+        accessible_hierarchy = self.get_user_accessible_case_content_hierarchy(user_id)
+        formatted_case_instance.set_data_property(['content'], accessible_hierarchy)
         return formatted_case_instance
 
     def get_formatted_case_instance_for_entity(self, access_level) -> 'UserReadFormattedCaseInstance':
@@ -21,83 +21,94 @@ class MasslawCaseUserAccessManager:
         formatted_case_instance.keep_keys(entity_permitted_data_keys)
         return formatted_case_instance
 
-    def update_data_as_user(self, user_id, update_obj):
-        access_level = self.determine_user_access_level(user_id=user_id)
-        self.update_data_as_entity(access_level, update_obj)
+    def set_case_user_permissions_as_user(self, as_user_id, case_user_id, case_user_access_level, case_access_policy):
+        user_access_level = self.determine_user_access_level(as_user_id)
+        self.set_case_user_permissions_as_entity(user_access_level, case_user_id, case_user_access_level, case_access_policy)
 
-    def update_data_as_entity(self, access_level, update_obj):
-        entity_permitted_data_keys = self.get_permitted_keys_for_access(access_config.AccessActions.EDIT, access_level)
-        update_obj = dictionary_utils.select_keys(update_obj, entity_permitted_data_keys)
-        self.__case_instance.update_data(update_obj)
-
-    def set_case_user_permissions_as_user(self, case_user_id, case_user_permission_level, case_user_restrictions):
-        user_access_level = self.determine_user_access_level(case_user_id)
-        self.set_case_user_permissions_as_entity(user_access_level, case_user_id, case_user_permission_level, case_user_restrictions)
-
-    def set_case_user_permissions_as_entity(self, as_entity, case_user_id, case_user_permission_level, case_user_restrictions):
-        case_users = self.__case_instance.get_data_property('users')
-        case_users = isinstance(case_users, dict) and case_users or {}
-        if case_user_id in case_users:
-            user_access_data = case_users.get(case_user_id, {})
-            level = user_access_data.get('access_level')
-            if level == access_config.CaseAccessEntities.OWNER_CLIENT:
-                # if the user that's requested to change is the owner of the case, return and block the change
-                return False
-            if level == access_config.CaseAccessEntities.MANAGER_CLIENT and as_entity not in [access_config.CaseAccessEntities.OWNER_CLIENT]:
-                # if the user that's requested to be changed is a manager of the case, only the owner can change
-                return False
-        self.set_case_user_permissions(case_user_id, case_user_permission_level, case_user_restrictions)
+    def set_case_user_permissions_as_entity(self, as_entity, case_user_id, case_user_access_level, case_access_policy=None):
+        access_level = self.determine_user_access_level(case_user_id)
+        case_access_policy = case_access_policy or self.get_user_access_policy(case_user_id)
+        if access_level == access_config.CaseAccessEntities.OWNER_CLIENT: return False # if the user that's requested to change is the owner of the case, return and block the change
+        if access_level == access_config.CaseAccessEntities.MANAGER_CLIENT and as_entity not in [access_config.CaseAccessEntities.OWNER_CLIENT]: return False # if the user that's requested to be changed is a manager of the case, only the owner can change
+        self.apply_hardcoded_policy_for_entity(access_level, case_access_policy)
+        self.set_case_user_permissions(case_user_id, case_user_access_level, case_access_policy)
         return True
 
-    def set_case_user_permissions(self, case_user_id, case_user_permission_level, case_user_restrictions):
-        self.__case_instance.set_data_property(['users', case_user_id], {'access_level': case_user_permission_level, 'access_restrictions': case_user_restrictions, })
+    def set_case_user_permissions(self, case_user_id, case_user_access_level, case_user_access_policy):
+        self.__case_instance.set_data_property(['users', case_user_id], {'access_level': case_user_access_level, 'access_policy': case_user_access_policy, })
         user_instance = MasslawUserInstance(case_user_id)
-        user_instance.set_data_property(['cases', self.__case_instance.get_case_id()], {'access_level': case_user_permission_level})
+        user_instance.set_data_property(['cases', self.__case_instance.get_case_id()], {'access_level': case_user_access_level})
         user_instance.save_data()
 
-    def get_user_access_files(self, user_id):
+    def get_user_accessible_files(self, user_id):
         access_level = self.determine_user_access_level(user_id)
-        if access_level in [access_config.CaseAccessEntities.EXTERNAL_CLIENT]:
-            return []
-        if access_level in (access_config.CaseAccessEntities.OWNER_CLIENT, access_config.CaseAccessEntities.MANAGER_CLIENT):
-            all_files = self.collect_case_files_under_hierarchy_paths([[]])
-            return all_files
-        access_restrictions = self.get_user_access_restrictions(user_id)
-        allowed_directories = access_restrictions.get('allowed_directories', None)
-        access_files = allowed_directories and self.collect_case_files_under_hierarchy_paths(allowed_directories) or []
-        return access_files
+        if access_level in [access_config.CaseAccessEntities.EXTERNAL_CLIENT]: return []
+        accessible_hierarchy = self.get_user_accessible_case_content_hierarchy(user_id)
+        accessible_files = self.collect_case_files_in_hierarchy(accessible_hierarchy)
+        return accessible_files
 
-    def determine_can_upload_file(self, user_id):
+    def get_user_accessible_case_content_hierarchy(self, user_id):
+        access_level = self.determine_user_access_level(user_id)
+        if access_level in [access_config.CaseAccessEntities.EXTERNAL_CLIENT]: return {}
+        access_policy = self.get_user_access_policy(user_id)
+        accessible_hierarchy = self.get_case_content_hierarchy_for_access_policy(access_policy)
+        return accessible_hierarchy
+
+    def get_case_content_hierarchy_for_access_policy(self, access_policy):
+        case_content_hierarchy = self.__case_instance.get_data_property(['content'], {})
+        accessible_hierarchy = self.select_accessible_from_dictionary_hierarchy(access_policy, case_content_hierarchy)
+        return accessible_hierarchy
+
+    def check_content_path_accessible_by_access_policy(self, access_policy, content_path):
+        case_content_hierarchy = self.__case_instance.get_data_property(['content'], {})
+        dictionary_utils.set_at(case_content_hierarchy, content_path, {})
+        accessible_hierarchy = self.select_accessible_from_dictionary_hierarchy(access_policy, case_content_hierarchy)
+        path_accessible = dictionary_utils.has_path(accessible_hierarchy, content_path)
+        return path_accessible
+
+    def select_accessible_from_dictionary_hierarchy(self, access_policy, dictionary):
+        files_access_policy = access_policy.get('files', {})
+        allowed_paths = files_access_policy.get('allowed_paths', [])
+        prohibited_paths = files_access_policy.get('prohibited_paths', [])
+        accessible_hierarchy = dictionary_utils.select_keys(dictionary, allowed_paths)
+        dictionary_utils.delete_keys(accessible_hierarchy, prohibited_paths)
+        return accessible_hierarchy
+
+    def determine_can_upload_file(self, user_id, to_path):
         user_access_level = self.determine_user_access_level(user_id)
         if user_access_level in [access_config.CaseAccessEntities.OWNER_CLIENT, access_config.CaseAccessEntities.MANAGER_CLIENT]:
             return True
         elif user_access_level in [access_config.CaseAccessEntities.EDITOR_CLIENT]:
-            access_restrictions = self.get_user_access_restrictions(user_id=user_id)
-            access_files = access_restrictions.get('access_files')
-            access_files = isinstance(access_files, dict) and access_files or {}
-            can_upload = access_restrictions.get('can_upload')
-            return len(access_files.keys()) and can_upload != 'false'
+            access_policy = self.get_user_access_policy(user_id)
+            can_upload = self.check_content_path_accessible_by_access_policy(access_policy, to_path)
+            return can_upload
         return False
 
-    def get_permitted_keys_for_access(self, for_action, as_entity):
-        return dictionary_utils.get_from(access_config.ACCESS_PERMITTED_KEYS, [for_action, as_entity])
+    def apply_hardcoded_policy_for_entity(self, entity, policy):
+        hardcoded_policy_updates = access_config.HARD_CODED_POLICIES[entity] or []
+        for policy_update_path, policy_update_value in hardcoded_policy_updates:
+            dictionary_utils.set_at(policy, policy_update_path, policy_update_value)
 
-    def get_user_access_restrictions(self, user_id):
-        return self.__case_instance.get_data_property(['users', user_id, 'access_restrictions'], {})
+    def get_permitted_keys_for_access(self, for_action, as_entity):
+        keys = dictionary_utils.get_from(access_config.ACCESS_PERMITTED_KEYS, [for_action, as_entity])
+        return keys
+
+    def get_user_access_policy(self, user_id):
+        access_level = self.determine_user_access_level(user_id)
+        access_policy = self.__case_instance.get_data_property(['users', user_id, 'access_policy'], {})
+        self.apply_hardcoded_policy_for_entity(access_level, access_policy)
+        return access_policy
 
     def get_user_access_level_name(self, user_id):
-        return self.determine_user_access_level(user_id=user_id)
+        access_level = self.determine_user_access_level(user_id=user_id)
+        return access_level
 
     def determine_user_access_level(self, user_id):
-        return self.__case_instance.get_data_property(['users', user_id, 'access_level'], access_config.CaseAccessEntities.EXTERNAL_CLIENT)
+        access_level = self.__case_instance.get_data_property(['users', user_id, 'access_level'], access_config.CaseAccessEntities.EXTERNAL_CLIENT)
+        return access_level
 
-    def collect_case_files_under_hierarchy_paths(self, hierarchy_paths):
-        all_files = []
-        case_content = self.__case_instance.get_data_property(['content'], {})
-        for path in hierarchy_paths:
-            sub_hierarchy = dictionary_utils.get_from(case_content, path, {})
-            for item_name, item_data in dictionary_utils.iterate_nested_items(sub_hierarchy):
-                if isinstance(item_data, str): all_files.append(item_data)
+    def collect_case_files_in_hierarchy(self, content_hierarchy):
+        all_files = [item_data for item_name, item_data in dictionary_utils.iterate_nested_items(content_hierarchy) if isinstance(item_data, str)]
         return all_files
 
 

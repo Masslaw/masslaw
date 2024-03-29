@@ -5,6 +5,9 @@ from src.modules.lambda_handler_template_http_invoked_masslaw_case_management_ap
 from src.modules.masslaw_case_data_formatting import masslaw_case_data_formatting
 
 
+masslaw_cases_table_manager = DynamoDBTableManager("MasslawCases")
+
+
 class GetMyCases(MasslawCaseManagementApiInvokedLambdaFunction):
     def __init__(self):
         MasslawCaseManagementApiInvokedLambdaFunction.__init__(self, default_response_body={'cases': [], })
@@ -13,8 +16,7 @@ class GetMyCases(MasslawCaseManagementApiInvokedLambdaFunction):
         MasslawCaseManagementApiInvokedLambdaFunction._execute(self)
         user_id = self._caller_user_instance.get_user_id()
         my_cases = self._caller_user_instance.get_data_property(['cases'], {})
-        table_manager = DynamoDBTableManager("MasslawCases")
-        items_data = table_manager.batch_get_items(list(my_cases.keys()))
+        items_data = masslaw_cases_table_manager.batch_get_items(list(my_cases.keys()))
         items_data = [dictionary_utils.ensure_dict(item_data) for item_data in items_data]
         cases_data = [masslaw_case_data_formatting.get_case_data_base_format_from_db_item(item_data=item_data, user_id=user_id) for item_data in items_data]
         self._set_response_attribute([lambda_constants.EventKeys.BODY, 'cases'], cases_data)

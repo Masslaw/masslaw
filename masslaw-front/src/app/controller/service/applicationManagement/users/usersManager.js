@@ -11,7 +11,8 @@ export class UsersManager extends BaseService {
     }
 
     async fetchMyStatus() {
-        await this.masslawHttpApiClient.makeApiHttpRequest({call: MasslawApiCalls.GET_MY_STATUS});
+        const request = await this.masslawHttpApiClient.makeApiHttpRequest({call: MasslawApiCalls.GET_MY_STATUS});
+        return request;
     }
 
     async fetchMyUserData(force = false) {
@@ -21,12 +22,14 @@ export class UsersManager extends BaseService {
         if (!userData) return;
         this.model.users.mine.data = JSON.parse(JSON.stringify(userData));
         this.model.users.data[userData.User_ID] = JSON.parse(JSON.stringify(userData));
+        return request;
     }
 
     async submitMyUserData(userData) {
-        await this.masslawHttpApiClient.makeApiHttpRequest({call: MasslawApiCalls.SET_USER_DATA, body: {user_data: userData}});
+        const request = await this.masslawHttpApiClient.makeApiHttpRequest({call: MasslawApiCalls.SET_USER_DATA, body: {user_data: userData}});
         this.model.users.mine.data = JSON.parse(JSON.stringify(userData));
         this.model.users.data[userData.User_ID] = JSON.parse(JSON.stringify(userData));
+        return request;
     }
 
     async fetchUserData(userId, force= false) {
@@ -38,6 +41,22 @@ export class UsersManager extends BaseService {
         const responsePayload = request.getResponsePayload() || {};
         const userData = responsePayload.user_data;
         if (!userData) return;
-        this.model.users.data[userId] = JSON.parse(JSON.stringify(userData));
+        this.model.users.data[userId] = {...(this.model.users.data[userId] || {}), ...JSON.parse(JSON.stringify(userData))};
+        return request;
+    }
+
+    async searchUsers(query){
+        if (query.length < 2) return [];
+        const request = await this.masslawHttpApiClient.makeApiHttpRequest({call: MasslawApiCalls.SEARCH_USERS, queryStringParameters: {search_query: query}});
+        const responsePayload = request.getResponsePayload();
+        const results = responsePayload.results || [];
+        const resultUserIds = [];
+        for (const result of results) {
+            const resultUserId = result.User_ID;
+            if (!resultUserId) continue;
+            this.model.users.data[resultUserId] = {...(this.model.users.data[resultUserId] || {}), ...result};
+            resultUserIds.push(resultUserId);
+        }
+        return resultUserIds;
     }
 }

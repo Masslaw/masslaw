@@ -32,6 +32,11 @@ def create_a_new_case(creator_user_id, case_creation_data):
     case_user_access_manager.set_case_user_permissions(
         creator_user_id,
         access_config.CaseAccessEntities.OWNER_CLIENT,
-        {}
+        {
+            'files': {
+                'allowed_paths': [[]],  # all hierarchy
+                'prohibited_paths': [],  # no paths
+            }
+        }
     )
     return case_instance

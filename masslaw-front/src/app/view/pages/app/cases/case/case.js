@@ -13,6 +13,9 @@ import {RedirectButtonWrapper} from "../../../../components/redirectButtonWrappe
 import {constructUrl} from "../../../../../controller/functionality/navigation/urlConstruction";
 import {ApplicationRoutes} from "../../../../../config/applicaitonRoutes";
 import {VerticalGap} from "../../../../components/verticalGap";
+import {LoadingIcon} from "../../../../components/loadingIcon";
+import {useCaseUserAccessLevel} from "../../../../hooks/useCaseUserAccessLevel";
+import {caseAccessLevels} from "../../../../../config/caseConsts";
 
 const CaseContainer = styled.div`
     display: flex;
@@ -90,7 +93,7 @@ export function Case(props) {
                     <CaseSidePanel/>
                 </CaseSidePanelContainer>
                 <CaseDisplayOutletWrapper>
-                    {s_loadingCase ? <></> : <Outlet/>}
+                    {s_loadingCase ? <><LoadingIcon width={'30px'} height={'30px'}/></> : <Outlet/>}
                 </CaseDisplayOutletWrapper>
             </CaseSidePanelAlignment>
         </CaseContainer>
@@ -143,17 +146,36 @@ const CaseSidePanelOpenedSection = styled.div`
 
 const CaseSidePanelTitle = styled.div`
     position: sticky;
+    display: flex;
+    flex-direction: row;
+    z-index: 1;
     top: 0;
-    color: white;
-    padding: 16px;
-    font-size: 22px;
-    width: calc(100% - 32px);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
     border-bottom: 1px solid #505050;
     background: #202020;
-    z-index: 1;
+    span {
+        color: white;
+        padding: 16px;
+        font-size: 22px;
+        flex-grow: 1;
+        flex-shrink: 0;
+        flex-basis: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    button {
+        position: relative;
+        top: 50%;
+        transform: translateY(-50%);
+        height: 32px;
+        width: 32px;
+        cursor: pointer;
+        border: none;
+        outline: none;
+        background: none;
+        margin: 0 8px;
+        svg { fill: white; }
+    }
 `
 
 function CaseSidePanel(props) {
@@ -166,7 +188,16 @@ function CaseSidePanel(props) {
     const m_caseData = useMemo(() => (s_casesData[s_caseId] || {}), [s_caseId, s_casesData]);
 
     return <>
-        <CaseSidePanelTitle>{m_caseData.title}</CaseSidePanelTitle>
+        <CaseSidePanelTitle>
+            <span>{m_caseData.title}</span>
+            <RedirectButtonWrapper href={constructUrl(ApplicationRoutes.CASE_SETTINGS, {caseId: s_caseId})}>
+                <button>
+                    <svg viewBox={'0 0 1000 1000'}>
+                        <path d={SVG_PATHS.gear}/>
+                    </svg>
+                </button>
+            </RedirectButtonWrapper>
+        </CaseSidePanelTitle>
         <FilesUploading/>
         <CaseSidePanelFilesSection/>
         <VerticalGap gap={'8px'}/>
@@ -200,17 +231,15 @@ function CaseSidePanel(props) {
         <VerticalGap gap={'8px'}/>
         <CaseSidePanelSeparator/>
         <VerticalGap gap={'8px'}/>
-        {/*...*/}
-        <VerticalGap gap={'256px'}/>
+        <RedirectButtonWrapper href={constructUrl(ApplicationRoutes.CASE_USERS, {caseId: s_caseId})}>
+            <CaseSidePanelButton open={s_currentPage === 'CaseUsers'}>
+                <svg viewBox={'0 0 1000 1000'}><path d={SVG_PATHS.person}/></svg>
+                Participants
+            </CaseSidePanelButton>
+        </RedirectButtonWrapper>
         <VerticalGap gap={'8px'}/>
         <CaseSidePanelSeparator/>
         <VerticalGap gap={'8px'}/>
-        <RedirectButtonWrapper href={constructUrl(ApplicationRoutes.CASE_SETTINGS, {caseId: s_caseId})}>
-            <CaseSidePanelButton open={s_currentPage === 'CaseSubjects'}>
-                <svg viewBox={'0 0 1000 1000'}><path d={SVG_PATHS.gear}/></svg>
-                Settings
-            </CaseSidePanelButton>
-        </RedirectButtonWrapper>
         <VerticalGap gap={'256px'}/>
     </>
 }
@@ -251,12 +280,18 @@ const CaseSidePanelFilesSectionUploadButton = styled.button`
 
 function CaseSidePanelFilesSection(props) {
 
+    const m_myUserAccessLevel = useCaseUserAccessLevel(props.caseId);
+
     return <>
         <CaseSidePanelFilesSectionContainer>
-            <CaseSidePanelFilesSectionUploadButton onClick={() => pushPopup({component: UploadCaseFilesPopup})}>
-                <svg viewBox={'0 0 1050 1050'}><path d={SVG_PATHS.addFile}/></svg>
-                Upload Files
-            </CaseSidePanelFilesSectionUploadButton>
+            {[caseAccessLevels.owner, caseAccessLevels.manager, caseAccessLevels.editor].includes(m_myUserAccessLevel) ? <>
+                <CaseSidePanelFilesSectionUploadButton onClick={() => pushPopup({component: UploadCaseFilesPopup})}>
+                    <svg viewBox={'0 0 1050 1050'}>
+                        <path d={SVG_PATHS.addFile}/>
+                    </svg>
+                    Upload Files
+                </CaseSidePanelFilesSectionUploadButton>
+            </> : <></>}
             <VerticalGap gap={'8px'}/>
             <CaseSidePanelFileHierarchy/>
             <VerticalGap gap={'8px'}/>

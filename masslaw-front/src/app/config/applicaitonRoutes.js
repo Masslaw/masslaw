@@ -24,4 +24,5 @@ export const ApplicationRoutes = {
     CASE_TIMELINE:              "/app/cases/:caseId/timeline",
     CASE_KNOWLEDGE_ENTITY:      "/app/cases/:caseId/knowledge/:entityId",
     CASE_SETTINGS:              "/app/cases/:caseId/settings",
+    CASE_USERS:                 "/app/cases/:caseId/participants",
 }

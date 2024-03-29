@@ -30,11 +30,13 @@ export class ModelToLocalStorageManager extends BaseService {
         const value = this._modelStateManager.getModelValueAtPath(path);
         if (!value) return;
         console.log("saving model value at path: ", path, " value: ", value);
-        localStorage.setItem(path, value);
+        localStorage.setItem(path, JSON.stringify({v: value}));
     }
 
     loadModelValueAtPath(path) {
-        const value = localStorage.getItem(path);
+        let value;
+        try { value = JSON.parse(localStorage.getItem(path)).v; }
+        catch { value = localStorage.getItem(path); }
         if (!value) return;
         console.log("loading model value at path: ", path, " value: ", value);
         this._modelStateManager.setModelValueAtPath(path, value);
