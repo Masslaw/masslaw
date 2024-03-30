@@ -2,6 +2,8 @@ import {accessLevelDisplayColors, accessLevelDisplayNames} from "../../config/ca
 import {model} from "../../model/model";
 import {useEffect, useState} from "react";
 import styled from "styled-components";
+import {LoadingIcon} from "./loadingIcon";
+import {useCaseUserAccessLevel} from "../hooks/useCaseUserAccessLevel";
 
 
 const CaseUserDataUserRole = styled.div`
@@ -20,31 +22,15 @@ const CaseUserDataUserRole = styled.div`
 
 export function CaseUserRole(props) {
 
-    const [s_caseData, setCaseData] = useState(null);
-
-    useEffect(() => {
-        if (!props.caseId) return;
-        const caseData = model.cases.all[props.caseId];
-        setCaseData(caseData);
-    }, [props.caseId])
-
-    const [s_userData, setUserData] = useState({});
-
-    useEffect(() => {
-        if (!s_caseData) return;
-        if (!props.userId) return;
-        const caseUsers = s_caseData.users || {};
-        const caseUserData = caseUsers[props.userId] || {};
-        setUserData(p => ({...p, ...caseUserData}));
-    }, [s_caseData, props.userId]);
+    const m_accessLevel = useCaseUserAccessLevel(props.caseId, props.userId);
 
     return <>
         <CaseUserDataUserRole
             width={props.width}
             height={props.height}
-            color={accessLevelDisplayColors[s_userData.access_level] || '#00000000'}
+            color={accessLevelDisplayColors[m_accessLevel] || '#808080'}
         >
-            {accessLevelDisplayNames[s_userData.access_level]}
+            {m_accessLevel ? accessLevelDisplayNames[m_accessLevel] : <LoadingIcon width={'20px'} height={'20px'} />}
         </CaseUserDataUserRole>
     </>
 }

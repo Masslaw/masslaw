@@ -55,10 +55,10 @@ const FileDisplayFileData = styled.div`
 
 const CaseFileDataContainer = styled.div`
     position: relative;
-    width: 100%;
+    width: calc(100% - 32px);
     height: max-content;
     overflow: hidden;
-    padding-bottom: 32px;
+    padding: 32px;
 `
 
 const CaseFileSearchContainer = styled.div`

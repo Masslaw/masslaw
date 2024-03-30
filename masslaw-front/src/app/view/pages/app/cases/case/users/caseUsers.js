@@ -136,7 +136,8 @@ const CaseUserItemDisplayContainer = styled.div`
     flex-direction: column;
     width: 512px;
     height: max-content;
-    background: #404040;
+    background: #202020;
+    border: 1px solid #808080;
     margin: 16px 8px;
     padding: 8px;
     border-radius: 12px;

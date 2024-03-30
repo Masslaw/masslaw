@@ -114,6 +114,7 @@ export function AddCaseUsersPopup(props) {
                         <CaseUserAccessData
                             caseId={props.caseId}
                             userId={userId}
+                            accessData={s_selectedUsersAccessData[userId] || {}}
                             setAccessData={(c) => setSelectedUsersAccessData(p => ({...p, ...{[userId]: c}}))}
                         />
                     </SelectedUserItemContainer>

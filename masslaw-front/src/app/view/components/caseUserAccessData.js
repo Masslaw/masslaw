@@ -99,7 +99,8 @@ export function CaseUserAccessData(props) {
     const [s_cases, setCases] = useModelValueAsReactState('$.cases.all');
 
     useEffect(() => {
-        setAccessData(caseUsersManager.getUserAccessData(props.caseId, props.userId));
+        const userAccessData = caseUsersManager.getUserAccessData(props.caseId, props.userId);
+        setAccessData(p => ({...p, ...userAccessData}));
     }, [s_cases, props.caseId, props.userId]);
 
     useEffect(() => {

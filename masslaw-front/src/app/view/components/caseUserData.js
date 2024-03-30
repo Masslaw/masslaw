@@ -82,7 +82,7 @@ export function CaseUserData(props) {
 
     return <>
         <CaseUserDataContainer>
-            {Object.keys(s_userData).length ? <>
+            {s_userData.first_name && s_userData.last_name ? <>
                 <CaseUserDataTopSection>
                     <CaseUserDataProfilePictureContainer>
                         <ProfilePicture userId={props.userId} size={'small'}/>

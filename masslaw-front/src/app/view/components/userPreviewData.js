@@ -52,12 +52,12 @@ export function UserPreviewData(props) {
 
     return <>
         <UserPreviewDataContainer>
-            {s_userData ? <>
+            {s_userData.first_name && s_userData.last_name ? <>
                 <UserPreviewDataProfilePictureContainer>
                     <ProfilePicture userId={props.userId} size={'small'} />
                 </UserPreviewDataProfilePictureContainer>
                 <UserPreviewDataUserName>
-                    {`${s_userData.first_name} ${s_userData.last_name}`.trim() || <LoadingIcon width={'8px'} height={'8px'} />}
+                    {`${s_userData.first_name || ''} ${s_userData.last_name || ''}`.trim() || <LoadingIcon width={'8px'} height={'8px'} />}
                 </UserPreviewDataUserName>
             </> : <>
                 <LoadingIcon width={'20px'} height={'20px'} />
