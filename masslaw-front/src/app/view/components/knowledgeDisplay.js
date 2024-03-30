@@ -30,6 +30,7 @@ const KnowledgeDisplayContainer = styled.div`
 const KnowledgeGraphSection = styled.div`
     overflow: hidden;
     background: #101010;
+    position: relative;
 `
 
 const KnowledgeInfoSection = styled.div`

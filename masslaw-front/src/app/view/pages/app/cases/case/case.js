@@ -295,12 +295,18 @@ function CaseSidePanelFilesSection(props) {
     </>
 }
 
+const CaseSidePanelFileHierarchyContainer = styled.div`
+    position: relative;
+    width: 100%;
+`
+
 const CaseSidePanelFileHierarchyReloadButton = styled.div`
     position: absolute;
-    right: 6px;
-    top: 60px;
+    right: 0;
+    top: 0;
     width: 20px;
     height: 20px;
+    margin: 2px 4px;
     padding: 4px;
     border-radius: 8px;
     display: flex;
@@ -337,17 +343,19 @@ function CaseSidePanelFileHierarchy(props) {
     }, [s_reloadingContentHierarchy]);
 
     return <>
-        <CaseSidePanelFileHierarchyFolder name={m_caseData.title} hierarchy={m_caseData.contentHierarchy}/>
-        <CaseSidePanelFileHierarchyReloadButton
-            reloading={s_reloadingContentHierarchy}
-            onClick={c_reloadHierarchy}
-        >
-            {s_reloadingContentHierarchy ? <>
-                <LoadingIcon width={'20px'} height={'20px'} />
-            </> : <>
-                <svg viewBox={'0 0 1000 1000'}><path d={SVG_PATHS.circleArrow}/></svg>
-            </>}
-        </CaseSidePanelFileHierarchyReloadButton>
+        <CaseSidePanelFileHierarchyContainer>
+            <CaseSidePanelFileHierarchyFolder name={m_caseData.title} hierarchy={m_caseData.contentHierarchy}/>
+            <CaseSidePanelFileHierarchyReloadButton
+                reloading={s_reloadingContentHierarchy}
+                onClick={c_reloadHierarchy}
+            >
+                {s_reloadingContentHierarchy ? <>
+                    <LoadingIcon width={'20px'} height={'20px'} />
+                </> : <>
+                    <svg viewBox={'0 0 1000 1000'}><path d={SVG_PATHS.circleArrow}/></svg>
+                </>}
+            </CaseSidePanelFileHierarchyReloadButton>
+        </CaseSidePanelFileHierarchyContainer>
     </>
 }
 

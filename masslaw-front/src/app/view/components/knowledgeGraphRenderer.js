@@ -3,7 +3,6 @@ import React, {forwardRef, useCallback, useEffect, useImperativeHandle, useRef, 
 import {now} from "lodash";
 import styled from "styled-components";
 import {setColorSV, stringToColor} from "../../controller/functionality/visual-utils/colorUtils";
-import {Color} from "../../controller/functionality/visual-utils/color";
 
 const GraphNode = styled.g`
     cursor: pointer;
@@ -147,7 +146,7 @@ export const KnowledgeGraphRenderer = forwardRef((props, ref) => {
         }
         for (let nodeId in nodesCopy) {
             let node = nodesCopy[nodeId];
-            node.graphContribution = 0;
+            node.graphContribution = 1;
             node.connectedNodes = [];
         }
         for (let edgeId in edgesCopy) {
@@ -157,7 +156,10 @@ export const KnowledgeGraphRenderer = forwardRef((props, ref) => {
             let edgeTo = nodesCopy[edge.toEntity];
             edgeFrom.graphContribution += edge.weight;
             edgeTo.graphContribution += edge.weight;
-            maxContribution = Math.max(maxContribution, edgeFrom.graphContribution, edgeTo.graphContribution);
+        }
+        for (let nodeId in nodesCopy) {
+            let node = nodesCopy[nodeId];
+            maxContribution = Math.max(maxContribution, node.graphContribution);
         }
         for (let nodeId in nodesCopy) {
             let node = nodesCopy[nodeId];
@@ -386,6 +388,7 @@ export const KnowledgeGraphRenderer = forwardRef((props, ref) => {
                 if (nodeFrom.simulatedTimeSinceCreation < timeOfInitialSimulation) return;
                 if (nodeTo.simulatedTimeSinceCreation < timeOfInitialSimulation) return;
                 let lineWidth = edge.state === 'hovered' ? 5 : edge.state === 'highlighted' ? 1 + edge.width : edge.width;
+                if (!edge || !nodeFrom.displayPosition[0] || !nodeFrom.displayPosition[1] || !nodeTo.displayPosition[0] || !nodeTo.displayPosition[1] || !lineWidth) return <></>
                 return <GraphEdge
                     key={edgeId}
                     id={edgeId}
@@ -426,6 +429,7 @@ export const KnowledgeGraphRenderer = forwardRef((props, ref) => {
                 let nodeTitle = node.title || '';
                 nodeTitle = nodeTitle.length > 20 ? nodeTitle.substring(0, 20) + '...' : nodeTitle;
                 const nodeColor = stringToColor(node.label);
+                if (!node || !node.displayPosition[0] || !node.displayPosition[1] || !size) return <></>
                 return <GraphNode
                     key={nodeId}
                     id={nodeId}
