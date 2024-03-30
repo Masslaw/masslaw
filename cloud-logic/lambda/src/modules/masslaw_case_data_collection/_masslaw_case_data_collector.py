@@ -30,9 +30,6 @@ class MasslawCaseDataCollector:
         return case_content
 
     def get_file_data(self, file_id):
-        case_files = self.__case_instance.get_data_property(['files'], [])
-        if not file_id in case_files:
-            raise masslaw_case_users_management_exceptions.MasslawCaseUnauthorizedUserActionException(f"An attempt was made to get the data of a file which is not included in a user's case permissions")
         table_manager = DynamoDBTableManager("MasslawFiles")
         item_data = table_manager.get_item(file_id)
         file_data = masslaw_case_data_formatting.get_case_file_data_full_format_from_db_item(item_data)

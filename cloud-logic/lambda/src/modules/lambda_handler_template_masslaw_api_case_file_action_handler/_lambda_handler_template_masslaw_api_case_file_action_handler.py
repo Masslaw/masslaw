@@ -39,7 +39,7 @@ class MasslawCaseManagementApiFileActionHandler(MasslawCaseManagementApiCaseActi
     def _handle_exception(self, exception: Exception):
         if isinstance(exception, masslaw_cases_objects_exceptions.MasslawCaseFileDataUpdateException):
             self._set_response_attribute([lambda_constants.EventKeys.STATUS_CODE], lambda_constants.StatusCodes.BAD_REQUEST)
-            self._set_response_attribute([lambda_constants.EventKeys.BODY, lambda_constants.EventKeys.RESPONSE_MESSAGE], f'Invalid File Data: {exception}')
+            self._set_response_attribute([lambda_constants.EventKeys.BODY, lambda_constants.EventKeys.RESPONSE_MESSAGE], f'Unauthorized')
             return
 
         MasslawCaseManagementApiCaseActionHandler._handle_exception(self, exception)
