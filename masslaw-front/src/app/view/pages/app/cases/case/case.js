@@ -41,7 +41,7 @@ const CaseSidePanelContainer = styled.div`
     width: 256px;
     height: 100%;
     background-color: #202020;
-    border-right: 1px solid #999999;
+    border-right: 1px solid #808080;
     color: white;
     overflow-x: hidden;
     overflow-y: auto;
@@ -333,7 +333,7 @@ const CaseSidePanelFileHierarchyArrowIcon = styled.div`
     svg {
         width: 100%;
         height: 100%;
-        fill: #999999;
+        fill: #808080;
     }
 `
 
@@ -498,7 +498,7 @@ const FilesUploadingTitle = styled.div`
 
 const FilesUploadingLeftCounter = styled.div`
     position: relative;
-    color: #999999;
+    color: #808080;
     width: calc(100% - 16px);
     padding: 8px;
     font-size: 12px;

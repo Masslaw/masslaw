@@ -37,7 +37,7 @@ const UserMenuSectionTitle = styled.div`
     position: relative;
     display: flex;
     flex-direction: row;
-    color: #999999;
+    color: #808080;
     width: calc(100% - 24px);
     margin: 12px 16px 4px 16px;
     border: 0 solid lightgrey;
@@ -92,22 +92,22 @@ const LogoutPopupContainer = styled.div`
     position: relative;
     display: flex;
     flex-direction: column;
-    width: 312px;
+    width: 384px;
+    height: 128px;
     background: #303030;
     border-radius: 12px;
+    padding: 32px
 `
 
 const LogoutPopupTitle = styled.div`
     position: relative;
     color: white;
-    margin: 16px;
     font-size: 16px;
 `
 
 const LogoutPopupText = styled.div`
     position: relative;
-    color: lightgrey;
-    margin: 0 16px;
+    color: #808080;
     font-size: 14px;
 `
 
@@ -117,12 +117,13 @@ const LogoutPopupButtonsSection = styled.div`
     display: flex;
     flex-direction: row-reverse;
     align-self: flex-end;
+    margin-top: auto;
     
     & button {
         position: relative;
         border: 1px solid white;
         height: 32px;
-        margin: 16px 16px 16px 0;
+        margin-left: 8px;
         width: 72px;
         border-radius: 8px;
         font-size: 14px;
@@ -158,8 +159,8 @@ export function LogoutPopup(props) {
     return <>
         <LogoutPopupContainer>
             <LogoutPopupTitle>Log Out</LogoutPopupTitle>
+            <VerticalGap gap={"8px"} />
             <LogoutPopupText>Are you sure you want to log out?</LogoutPopupText>
-            <VerticalGap gap={'32px'}/>
             <LogoutPopupButtonsSection>
                 <LogoutPopupLogoutButton onClick={() => logout()}>Log Out</LogoutPopupLogoutButton>
                 <LogoutPopupCancelButton onClick={() => props.dismiss()}>Cancel</LogoutPopupCancelButton>

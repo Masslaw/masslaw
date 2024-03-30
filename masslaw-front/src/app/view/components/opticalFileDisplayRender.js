@@ -28,7 +28,7 @@ const OpticalFileDisplayToolbarContainer = styled.div`
     align-items: center;
     width: 100%;
     height: 40px;
-    border-bottom: 1px solid #999999;
+    border-bottom: 1px solid #808080;
     background: #202020;
 `
 
@@ -51,7 +51,7 @@ const OpticalFileDisplayToolbarButton = styled.button`
     svg {
         width: 100%;
         height: 100%;
-        fill: ${({enabled}) => enabled ? '#e0e0e0' : '#999999'};
+        fill: ${({enabled}) => enabled ? '#e0e0e0' : '#808080'};
     }
 `
 

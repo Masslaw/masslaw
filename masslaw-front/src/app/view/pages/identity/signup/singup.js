@@ -10,7 +10,7 @@ import {ApplicationRoutes} from "../../../../config/applicaitonRoutes";
 import {UserStatus} from "../../../../config/userStatus";
 import {RedirectButtonWrapper} from "../../../components/redirectButtonWrapper";
 
-const Title = styled.p`
+const Title = styled.div`
     position: relative;
     font-size: 2em;
     margin: 0.75em;
@@ -71,7 +71,7 @@ const PasswordValidationToolkit = styled.div`
     border: 1px solid white;
 `
 
-const PasswordValidationToolkitItem = styled.p`
+const PasswordValidationToolkitItem = styled.div`
     position: relative;
     font-size: 1em;
     width: calc(100% - 2em);

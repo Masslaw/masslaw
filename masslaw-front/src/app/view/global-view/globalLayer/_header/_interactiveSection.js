@@ -83,7 +83,7 @@ const LoggedInUserProfilePictureContainer = styled.div`
     width: 32px;
     height: 32px;
     border-radius: 8px;
-    background: #999999;
+    background: #808080;
     overflow: hidden;
     border: 1px solid white;
 `

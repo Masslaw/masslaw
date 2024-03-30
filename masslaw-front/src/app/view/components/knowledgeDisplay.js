@@ -22,8 +22,8 @@ const KnowledgeDisplayContainer = styled.div`
     & > div:nth-child(2) {
         width: ${({orientation}) => orientation === 'vertical' ? '100%' : 'calc(30% - 1px)'};
         height: ${({orientation}) => orientation === 'vertical' ? 'calc(30% - 1px)' : '100%'};
-        border-left: ${({orientation}) => orientation === 'vertical' ? 'none' : '1px solid #999999'};
-        border-top: ${({orientation}) => orientation === 'vertical' ? '1px solid #999999' : 'none'};
+        border-left: ${({orientation}) => orientation === 'vertical' ? 'none' : '1px solid #808080'};
+        border-top: ${({orientation}) => orientation === 'vertical' ? '1px solid #808080' : 'none'};
     }
 `
 
@@ -78,7 +78,7 @@ const KnowledgeEntityInfoItemTitle = styled.div`
     text-overflow: ellipsis;
     white-space: nowrap;
     span {
-        color: #999999;
+        color: #808080;
         margin-left: 8px;
     }
 `
@@ -88,7 +88,7 @@ const KnowledgeEntityInfoItemInfo = styled.div`
     font-weight: normal;
     margin: 4px;
     max-width: calc(100% - 8px);
-    color: #999999;
+    color: #808080;
     span {
         color: white;
         margin-left: 4px;

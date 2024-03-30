@@ -14,18 +14,18 @@ const PageContainer = styled.div`
     overflow-y: auto;
 `
 
-const PageTitle = styled.h1`
+const PageTitle = styled.div`
     font-size: 24px;
     font-weight: bold;
     margin: 16px 16px 8px 16px;
     color: white;
 `
 
-const PageSubTitle = styled.h2`
+const PageSubTitle = styled.div`
     font-size: 16px;
     font-weight: normal;
     margin: 8px 16px;
-    color: #999999;
+    color: #808080;
 `
 
 const SearchTextInputContainer = styled.div`
@@ -82,7 +82,7 @@ const NoSearchResults = styled.div`
     align-items: center;
     justify-content: center;
     font-size: 16px;
-    color: #999999;
+    color: #808080;
 `
 
 export function CaseSearch(props) {

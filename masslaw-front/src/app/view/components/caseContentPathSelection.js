@@ -17,7 +17,7 @@ const CaseContentPathSelectionContainer = styled.div`
     &::-webkit-scrollbar { display: none; }
 `
 
-const Title = styled.h1`
+const Title = styled.div`
     font-size: 14px;
     color: white;
     font-weight: normal;
@@ -30,7 +30,7 @@ const CaseContentPathInputContainer = styled.div`
     width: calc(100% - 16px - 2px);
     margin: 8px;
     background: #303030;
-    border: 1px solid #999999;
+    border: 1px solid #808080;
     border-radius: 4px;
     display: flex;
     flex-direction: row-reverse;
@@ -54,7 +54,7 @@ const CaseContentPathInputElementsContainer = styled.div`
 
 const CaseContentPathInputPlaceHolder = styled.div`
     font-size: 12px;
-    color: #999999
+    color: #808080
 `
 
 const CaseContentPathInputClickableArea = styled.div`
@@ -84,7 +84,7 @@ const CaseContentPathInputAddButton = styled.button`
     svg {
         width: 100%;
         height: 100%;
-        fill: #999999;
+        fill: #808080;
     }
 `
 
@@ -105,7 +105,7 @@ const CaseContentPathSelectedHierarchyElement = styled.div`
 const CaseContentPathSelectedHierarchySeparator = styled.svg`
     height: 100%;
     width: 12px;
-    fill: #999999;
+    fill: #808080;
     margin: 0 6px;
     position: relative;
     flex-grow: 1;
@@ -219,7 +219,7 @@ const SelectedPathLevel = styled.div`
 const SelectedPathLevelsSeparator = styled.svg`
     height: 100%;
     width: 12px;
-    fill: #999999;
+    fill: #808080;
     margin: 0 6px;
     position: relative;
     flex-grow: 0;

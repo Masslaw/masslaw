@@ -80,11 +80,6 @@ class MasslawCaseStorageManager:
         content_path = file_instance.get_data_property(['path'], [])
         self.__case_instance.set_data_property(['content'] + content_path + [file_name], file_id)
 
-        # TODO: remove this - will be deprecated when the new client comes out
-        case_files = self.__case_instance.get_data_property(['files'], [])
-        case_files.append(file_id)
-        self.__case_instance.set_data_property(['files'], case_files)
-
         file_instance.save_data()
 
         self.__case_instance.save_data()

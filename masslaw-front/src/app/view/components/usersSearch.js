@@ -41,7 +41,7 @@ const NoResultsMessage = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #999999;
+    color: #808080;
     font-size: 12px;
 `
 

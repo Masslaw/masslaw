@@ -26,7 +26,7 @@ const SubLabel = styled.label`
     overflow: hidden;
     font-size: 0.7em;
     margin-left: 0.3em;
-    color: #999999;
+    color: #808080;
     height: ${({height}) => height};
     line-height: ${({height}) => height};
 `;

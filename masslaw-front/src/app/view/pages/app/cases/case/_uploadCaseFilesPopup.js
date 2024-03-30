@@ -15,51 +15,58 @@ const UploadCaseFilesPopupContainer = styled.div`
     color: white;
     border-radius: 12px;
     z-index: 100;
+    padding: 32px;
 `
 
-const UploadCaseFilesPopupTitle = styled.h1`
+const UploadCaseFilesPopupTitle = styled.div`
     font-size: 24px;
     font-weight: bold;
     color: white;
-    margin: 16px 32px 16px 32px;
+    margin: 0;
 `
 
-const UploadCaseFilesPopupSubTitle = styled.h2`
+const UploadCaseFilesPopupSubTitle = styled.div`
     font-size: 14px;
     font-weight: 500;
-    margin: 0 32px 16px 32px;
-    color: #999999;
+    color: #808080;
+    margin: 0;
+`
+
+const UploadCaseFilesSectionContainer = styled.div`
+    border-radius: 8px;
+    border: 1px solid #808080;
+    padding: 16px;
+    width: calc(100% - 32px);
 `
 
 const UploadCaseFilesSectionTitle = styled.div`
     font-size: 16px;
     font-weight: bold;
     color: white;
-    margin: 16px 32px 16px 32px;
 `
 
 const UploadCaseFilesSectionSubTitle = styled.div`
     font-size: 14px;
     font-weight: 500;
-    margin: 0 32px 16px 32px;
-    color: #999999;
+    color: #808080;
 `
 
 const UploadCaseFilesStartUploadingButton = styled.button`
     position: relative;
-    margin: 32px 32px 16px auto;
-    background: ${({enabled}) => enabled ? "white" : "none"};
+    margin-left: auto;
+    background: ${({clickable}) => clickable ? "white" : "none"};
     width: 128px;
     height: 32px;
     border: 1px solid white;
-    color: ${({enabled}) => enabled ? "black" : "white"};
+    color: ${({clickable}) => clickable ? "black" : "white"};
     border-radius: 12px;
     font-size: 14px;
     letter-spacing: .5px;
-    pointer-events: ${({enabled}) => enabled ? "all" : "none"};
+    pointer-events: ${({clickable}) => clickable ? "all" : "none"};
+    cursor: ${({clickable}) => clickable ? "pointer" : "normal"};
 
     &:hover {
-        ${({enabled}) => enabled ? "filter: drop-shadow(0 0 5px white)" : ""}
+        ${({clickable}) => clickable ? "filter: drop-shadow(0 0 5px white)" : ""}
     }
 `
 
@@ -76,6 +83,7 @@ export function UploadCaseFilesPopup(props) {
     const [s_caseFilesToUpload, setCaseFilesToUpload] = useModelValueAsReactState(`$.cases.currentOpen.files.filesToUpload`);
 
     const c_uploadFiles = useCallback(() => {
+        if (!s_selectedFiles.length) return;
         const caseFilesToUpload = [];
         for (const file of s_selectedFiles) {
             if (caseSupportedFileTypes.includes(file.name.split('.').pop()) === false) continue;
@@ -99,24 +107,32 @@ export function UploadCaseFilesPopup(props) {
     return <>
         <UploadCaseFilesPopupContainer>
             <UploadCaseFilesPopupTitle>Upload Files</UploadCaseFilesPopupTitle>
+            <VerticalGap gap={'8px'}/>
             <UploadCaseFilesPopupSubTitle>Upload files to this case</UploadCaseFilesPopupSubTitle>
-
-            <UploadCaseFilesSectionTitle>Select Directory</UploadCaseFilesSectionTitle>
-            <UploadCaseFilesSectionSubTitle>Select the directory in the case storage to which the files will be uploaded</UploadCaseFilesSectionSubTitle>
-            <DirectorySelection setSelectedDirectory={setSelectedDirectory}/>
-
-            <UploadCaseFilesSectionTitle>Select Files</UploadCaseFilesSectionTitle>
-            <UploadCaseFilesSectionSubTitle>Select the files you wish to upload in your local file system</UploadCaseFilesSectionSubTitle>
-            <SelectFiles
-                setSelectedFiles={setSelectedFiles}
-                existingFiles={m_existingFilesInDirectory}
-                fileProgressByName={s_fileProgressByName}
-            />
-
+            <VerticalGap gap={'16px'}/>
+            <UploadCaseFilesSectionContainer>
+                <UploadCaseFilesSectionTitle>Select Files</UploadCaseFilesSectionTitle>
+                <VerticalGap gap={'8px'}/>
+                <UploadCaseFilesSectionSubTitle>Select the files you wish to upload in your local file system</UploadCaseFilesSectionSubTitle>
+                <VerticalGap gap={'8px'}/>
+                <SelectFiles
+                    setSelectedFiles={setSelectedFiles}
+                    existingFiles={m_existingFilesInDirectory}
+                    fileProgressByName={s_fileProgressByName}
+                />
+            </UploadCaseFilesSectionContainer>
+            <VerticalGap gap={'16px'}/>
+            <UploadCaseFilesSectionContainer>
+                <UploadCaseFilesSectionTitle>Select Directory</UploadCaseFilesSectionTitle>
+                <VerticalGap gap={'8px'}/>
+                <UploadCaseFilesSectionSubTitle>Select the directory in the case storage to which the files will be uploaded</UploadCaseFilesSectionSubTitle>
+                <VerticalGap gap={'8px'}/>
+                <DirectorySelection setSelectedDirectory={setSelectedDirectory}/>
+            </UploadCaseFilesSectionContainer>
             <VerticalGap gap={'16px'}/>
             <UploadCaseFilesStartUploadingButton
                 onClick={() => c_uploadFiles()}
-                enabled={s_selectedFiles.length}
+                clickable={!!s_selectedFiles.length}
             >Start Uploading</UploadCaseFilesStartUploadingButton>
         </UploadCaseFilesPopupContainer>
     </>
@@ -126,8 +142,7 @@ const DirectorySelectionContainer = styled.div`
     position: relative;
     display: flex;
     flex-direction: column;
-    width: calc(100% - 96px);
-    margin: 8px 32px;
+    width: calc(100% - 32px);
     padding: 16px;
     background: #505050;
     border-radius: 12px;
@@ -137,11 +152,10 @@ const SelectedDirectoryContainer = styled.div`
     position: relative;
     display: flex;
     flex-direction: row;
-    width: calc(100% - 64px - 16px);
+    width: calc(100% - 16px);
     height: 16px;
     line-height: 16px;
     font-size: 14px;
-    margin: 8px 32px 8px 32px;
     padding: 8px;
     background: #505050;
     border-radius: 12px;
@@ -160,11 +174,10 @@ const NewDirectoryContainer = styled.div`
     position: relative;
     display: flex;
     flex-direction: row;
-    width: calc(100% - 64px - 16px);
+    width: calc(100% - 16px);
     height: 20px;
     line-height: 20px;
     font-size: 14px;
-    margin: 8px 32px 8px 32px;
     padding: 8px;
     background: #505050;
     border-radius: 12px;
@@ -270,11 +283,13 @@ function DirectorySelection(props) {
                 <DirectorySeparator>/</DirectorySeparator>
             </>)}
         </SelectedDirectoryContainer>
+        <VerticalGap gap={'8px'}/>
         <NewDirectoryContainer>
             <NewDirectoryTitle>New Directory:</NewDirectoryTitle>
             <NewDirectoryInput value={s_newDirectoryName} onChange={e => setNewDirectoryName(e.target.value)}/>
             <NewDirectoryCreateButton onClick={() => c_createNewDirectory()}>Create</NewDirectoryCreateButton>
         </NewDirectoryContainer>
+        <VerticalGap gap={'8px'}/>
         {Object.keys(c_getDirectoryAtPath(s_hierarchy, s_selectedDirectory.slice(1)) || {}).includes(s_newDirectoryName) ? <DirectoryAlreadyExistsError>Directory already exists</DirectoryAlreadyExistsError> : <></>}
         <DirectorySelectionContainer>
             <HierarchyLevelDisplay
@@ -291,7 +306,7 @@ const HierarchyLevelDisplayContainer = styled.div`
     position: relative;
     display: flex;
     flex-direction: column;
-    border-left: 1px solid #999999;
+    border-left: 1px solid #808080;
     padding: 4px 0 4px 4px;
 `
 
@@ -342,7 +357,7 @@ const NoSubdirectories = styled.div`
     flex-direction: column;
     padding: 4px;
     font-size: 14px;
-    color: #999999;
+    color: #808080;
 `
 
 function HierarchyLevelDisplay(props) {
@@ -379,8 +394,7 @@ const SelectFilesContainer = styled.div`
     position: relative;
     display: flex;
     flex-direction: column;
-    width: calc(100% - 64px);
-    margin: 8px 32px;
+    width: calc(100%);
     background: #505050;
     border-radius: 12px;
 `
@@ -431,6 +445,16 @@ const SelectedFilesList = styled.div`
     border-radius: 12px;
 `
 
+const NoFilesSelectedPrompt = styled.div`
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: #808080;
+`
+
 function SelectFiles(props) {
 
     const r_inputRef = useRef(null);
@@ -458,7 +482,13 @@ function SelectFiles(props) {
                 <SelectedFilesAddFilesButton onClick={() => r_inputRef.current.click()}>Add Files</SelectedFilesAddFilesButton>
                 <input style={{display: "none"}} ref={r_inputRef} type={'file'} multiple={true} onChange={e => setSelectedFiles(f => [...f, ...e.target.files])}/>
             </SelectedFilesHeader>
-            <SelectedFilesList>{m_selectedFileItems}</SelectedFilesList>
+            <SelectedFilesList>
+            {m_selectedFileItems.length ? <>
+                {m_selectedFileItems}
+            </> : <>
+                <NoFilesSelectedPrompt>No Files Are Selected...</NoFilesSelectedPrompt>
+            </>}
+            </SelectedFilesList>
         </SelectFilesContainer>
     </>
 }

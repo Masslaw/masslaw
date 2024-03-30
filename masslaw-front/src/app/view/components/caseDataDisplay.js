@@ -5,7 +5,7 @@ import styled from "styled-components";
 import {CaseUserRole} from "./caseUserRole";
 import {model} from "../../model/model";
 
-const CaseItemTitle = styled.h1`
+const CaseItemTitle = styled.div`
     font-size: 20px;
     font-weight: bold;
     color: white;
@@ -15,7 +15,7 @@ const CaseItemTitle = styled.h1`
     margin: 0;
 `
 
-const CaseItemDescription = styled.h2`
+const CaseItemDescription = styled.div`
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
@@ -27,7 +27,7 @@ const CaseItemDescription = styled.h2`
     font-size: 14px;
     line-height: 16px;
     font-weight: 500;
-    color: #999999;
+    color: #808080;
     margin: 0;
 `
 
@@ -35,7 +35,7 @@ const CaseItemRole = styled.div`
     display: flex;
     flex-direction: row;
     align-items: center;
-    color: #999999;
+    color: #808080;
     margin: 0;
     font-size: 12px;
     span { margin-right: 8px; }

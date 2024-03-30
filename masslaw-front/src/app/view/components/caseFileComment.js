@@ -136,7 +136,7 @@ const CaseFileSingleCommentText = styled.div`
 const CaseFileSingleCommentToggleLongShortButton = styled.button`
     position: relative;
     display: flex;
-    color: #999999;
+    color: #808080;
     background: none;
     border: none;
     cursor: pointer;
@@ -146,7 +146,7 @@ const NoCommentsMessage = styled.div`
     position: relative;
     font-size: 12px;
     padding: 4px 8px;
-    color: #999999;
+    color: #808080;
 `
 
 const NoCommentsButton = styled.div`
@@ -155,7 +155,7 @@ const NoCommentsButton = styled.div`
     padding: 2px 4px;
     margin: 2px 4px;
     width: calc(100% - 16px);
-    color: #999999;
+    color: #808080;
     pointer-events: all;
     cursor: pointer;
     background: none;
@@ -169,7 +169,7 @@ const NoCommentsButton = styled.div`
 const CaseFileSingleCommentShowHideRepliesButton = styled.button`
     position: relative;
     display: flex;
-    color: #999999;
+    color: #808080;
     background: none;
     border: none;
     cursor: pointer;
@@ -332,13 +332,12 @@ function CaseFileSingleComment(props) {
             {m_ownerUserData ? <>
                 {s_editing ? <>
                     <LongTextInput
-                        fontSize={'12px'}
                         value={s_editData.comment_text}
                         setValue={(v) => setEditData((e) => ({...e, comment_text: v}))}
                         height={'48px'}
                         width={'calc(100% - 16px)'}
                         color={'black'}
-                        borderColor={'#999999'}
+                        borderColor={'#808080'}
                         backgroundColor={'#e0e0e0'}
                         maxLength={500}
                     />
@@ -396,7 +395,7 @@ function CaseFileSingleComment(props) {
                                     {s_loadingReplies ? <LoadingIcon
                                         width={'10px'}
                                         height={'10px'}
-                                        color={'#999999'}
+                                        color={'#808080'}
                                     /> : 'show more'}
                                 </CaseFileSingleCommentShowHideRepliesButton>
                             </>}

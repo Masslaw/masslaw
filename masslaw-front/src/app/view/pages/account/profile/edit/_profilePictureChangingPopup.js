@@ -10,18 +10,18 @@ const ChangeProfilePictureContainer = styled.div`
     flex-direction: column;
 `
 
-const ChangeProfilePicturePopupTitle = styled.h1`
+const ChangeProfilePicturePopupTitle = styled.div`
     font-size: 24px;
     font-weight: bold;
     color: white;
     margin: 16px 32px 16px 32px;
 `
 
-const ChangeProfilePicturePopupSubTitle = styled.h2`
+const ChangeProfilePicturePopupSubTitle = styled.div`
     font-size: 14px;
     font-weight: 500;
     margin: 0 32px 16px 32px;
-    color: #999999;
+    color: #808080;
 `
 
 const ChooseImageInput = styled.button`

@@ -48,8 +48,8 @@ const FileDisplayFileData = styled.div`
     background: #202020;
     ${({orientation}) =>
             (orientation === 'horizontal') ?
-            'width: calc(35% - 1px); height: 100%; max-width: calc(35% - 1px); max-height: 100%; border-left: 1px solid #999999;' :
-            'width: 100%; height: calc(50% - 1px); max-width: 100%; max-height: calc(50% - 1px); border-top: 1px solid #999999;'
+            'width: calc(35% - 1px); height: 100%; max-width: calc(35% - 1px); max-height: 100%; border-left: 1px solid #808080;' :
+            'width: 100%; height: calc(50% - 1px); max-width: 100%; max-height: calc(50% - 1px); border-top: 1px solid #808080;'
     }
 `
 
@@ -150,7 +150,7 @@ const NoCommentsMessage = styled.div`
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    color: #999999;
+    color: #808080;
 `
 
 function CaseFileCommentsList(props) {

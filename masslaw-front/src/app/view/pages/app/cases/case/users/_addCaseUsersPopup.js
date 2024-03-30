@@ -15,18 +15,18 @@ const AddCaseUserPopupContainer = styled.div`
     &::-webkit-scrollbar { display: none; }
 `
 
-const AddCaseUsersPopupTitle = styled.h1`
+const AddCaseUsersPopupTitle = styled.div`
     font-size: 24px;
     font-weight: bold;
     color: white;
     margin: 16px;
 `
 
-const AddCaseUsersPopupSubTitle = styled.h2`
+const AddCaseUsersPopupSubTitle = styled.div`
     font-size: 14px;
     font-weight: 500;
     margin: 0 16px 16px 16px;
-    color: #999999;
+    color: #808080;
 `
 
 const AddCaseUsersPopupSectionTitle = styled.h3`

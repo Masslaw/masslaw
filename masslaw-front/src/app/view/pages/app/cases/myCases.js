@@ -19,18 +19,18 @@ const PageContainer = styled.div`
     border-radius: 5px;
 `
 
-const PageTitle = styled.h1`
+const PageTitle = styled.div`
     font-size: 24px;
     font-weight: bold;
     color: white;
     margin: 32px 32px 16px 32px;
 `
 
-const PageSubTitle = styled.h2`
+const PageSubTitle = styled.div`
     font-size: 14px;
     font-weight: 500;
     margin: 0 32px 16px 32px;
-    color: #999999;
+    color: #808080;
 `
 
 const CaseList = styled.div`

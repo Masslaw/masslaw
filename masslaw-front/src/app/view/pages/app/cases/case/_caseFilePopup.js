@@ -19,28 +19,16 @@ const CaseFilePopupContainer = styled.div`
     z-index: 100;
     height: calc(100vh - 64px);
     max-height: 512px;
-    overflow-y: hidden;
-`
-
-const CaseFilePopupFileDataContainer = styled.div`
-    position: relative;
-    display: -ms-flexbox;
-    flex-direction: column;
-    width: 100%;
-    flex-grow: 1;
-    flex-shrink: 0;
-    flex-basis: 0;
     overflow-y: auto;
-    overflow-x: hidden;
+    padding: 32px;
+    &::-webkit-scrollbar { display: none; }
 `
 
-const CaseFilePopupOpenFileFooter = styled.div`
-    display: flex;
-    flex-direction: row-reverse;
-    align-items: center;
-    background: #303030;
+const CaseFileDataContainer = styled.div`
     width: 100%;
-    height: 64px;
+    height: max-content;
+    flex-shrink: 0;
+    flex-basis: max-content;
 `
 
 const CaseFilePopupOpenFileButton = styled.button`
@@ -50,9 +38,12 @@ const CaseFilePopupOpenFileButton = styled.button`
     align-items: center;
     width: 128px;
     height: 32px;
-    margin: 16px 32px;
+    flex-basis: 32px;
+    flex-shrink: 0;
+    margin-left: auto;
+    margin-top: auto;
     background: ${({clickable}) => clickable ? 'white' : 'none'};
-    color: ${({clickable}) => clickable ? 'black' : '#999999'};
+    color: ${({clickable}) => clickable ? 'black' : '#808080'};
     border: 1px solid white;
     border-radius: 6px;
     font-size: 16px;
@@ -75,17 +66,17 @@ export function CaseFilePopup(props) {
 
     return <>
         <CaseFilePopupContainer>
-            <CaseFilePopupFileDataContainer><CaseFileData fileId={props.fileId}/></CaseFilePopupFileDataContainer>
-            <CaseFilePopupOpenFileFooter>
-                <CaseFilePopupOpenFileButton
-                    clickable={m_openable}
-                    onClick={() => {
-                        if (!m_openable) return;
-                        model.application.navigate(constructUrl(ApplicationRoutes.FILE_DISPLAY, {caseId: props.caseId, fileId: props.fileId}));
-                        props.dismiss();
-                    }}
-                >View</CaseFilePopupOpenFileButton>
-            </CaseFilePopupOpenFileFooter>
+            <CaseFileDataContainer>
+                <CaseFileData fileId={props.fileId}/>
+            </CaseFileDataContainer>
+            <CaseFilePopupOpenFileButton
+                clickable={m_openable}
+                onClick={() => {
+                    if (!m_openable) return;
+                    model.application.navigate(constructUrl(ApplicationRoutes.FILE_DISPLAY, {caseId: props.caseId, fileId: props.fileId}));
+                    props.dismiss();
+                }}
+            >View</CaseFilePopupOpenFileButton>
         </CaseFilePopupContainer>
     </>
 }

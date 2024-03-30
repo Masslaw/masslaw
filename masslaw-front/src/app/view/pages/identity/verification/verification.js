@@ -11,7 +11,7 @@ import {useModelValueAsReactState} from "../../../../controller/functionality/mo
 const inputWidth = "calc(33vh + 3em)";
 const inputHeight = "3em";
 
-const Title = styled.p`
+const Title = styled.div`
     position: relative;
     font-size: 2em;
     margin: 0.75em;

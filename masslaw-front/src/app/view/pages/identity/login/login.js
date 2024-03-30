@@ -8,11 +8,10 @@ import {ApplicationRoutes} from "../../../../config/applicaitonRoutes";
 import {TextInput} from "../../../components/textInput";
 import {VerticalGap} from "../../../components/verticalGap";
 import {SVG_PATHS} from "../../../config/svgPaths";
-import {MasslawApiCalls} from "../../../../config/masslawAPICalls";
 import {UserStatus} from "../../../../config/userStatus";
 import {RedirectButtonWrapper} from "../../../components/redirectButtonWrapper";
 
-const Title = styled.p`
+const Title = styled.div`
     position: relative;
     font-size: 2em;
     margin: 0.75em;
@@ -50,7 +49,7 @@ const ContinueButton = styled.button`
     font-size: 1em;
     width: 12em;
     height: 3em;
-    border-radius: 1.5em;
+    border-radius: 0.75em;
     border: 0.1em solid ${({clickable}) => clickable ? "white" : "gray"};
     background: ${({clickable}) => clickable ? "white" : "none"};
     color: ${({clickable}) => clickable ? "black" : "gray"};
@@ -158,7 +157,7 @@ export function Login(props) {
                 value={s_email}
                 setValue={setEmail}
             />
-            <VerticalGap gap={"1em"}/>
+            <VerticalGap gap={"2em"}/>
             <TextInput
                 id={"password"}
                 label={"Password"}

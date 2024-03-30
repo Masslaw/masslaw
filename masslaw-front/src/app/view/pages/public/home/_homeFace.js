@@ -32,7 +32,7 @@ const FaceFloatingSection = styled.div`
     font-family: sans-serif;
 `
 
-const FaceTextTitle = styled.p`
+const FaceTextTitle = styled.div`
     position: relative;
     font-size: 4.5vw;
     font-weight: bold;
@@ -42,7 +42,7 @@ const FaceTextTitle = styled.p`
     margin: 1vw;
 `
 
-const FaceTextSubTitle = styled.p`
+const FaceTextSubTitle = styled.div`
     position: relative;
     font-size: 2.5vw;
     height: 3vw;
@@ -52,7 +52,7 @@ const FaceTextSubTitle = styled.p`
     letter-spacing: 2px;
 `
 
-const FaceText = styled.p`
+const FaceText = styled.div`
     position: relative;
     font-size: 1.25vw;
     letter-spacing: 2px;

@@ -5,17 +5,15 @@ import {VerticalGap} from "./verticalGap";
 
 const FormContainer = styled.div`
     position: relative;
-    font-size: ${({fontsize}) => fontsize || "1em"};
     width: ${({width}) => width};
 `;
 
 const Label = styled.label`
     display: block;
     position: relative;
-    width: calc(100% - 0.25em);
+    width: calc(100% - 2px);
     overflow: hidden;
-    font-size: 1em;
-    margin-left: 0.25em;
+    font-size: 14px;
     color: white;
     height: ${({height}) => height};
     line-height: ${({height}) => height};
@@ -24,11 +22,10 @@ const Label = styled.label`
 const SubLabel = styled.label`
     display: block;
     position: relative;
-    width: calc(100% - 0.25em);
+    width: calc(100% - 4px);
     overflow: hidden;
-    font-size: 0.7em;
-    margin-left: 0.3em;
-    color: #999999;
+    font-size: 12px;
+    color: #808080;
     height: ${({height}) => height};
     line-height: ${({height}) => height};
 `;
@@ -40,27 +37,29 @@ const InputContainer = styled.div`
     align-items: center;
     background: ${({backgroundColor}) => backgroundColor || 'none'};
     border: 1px solid ${({borderColor}) => borderColor};
-    border-radius: ${({borderRadius}) => borderRadius || "0.5em"};
+    border-radius: 8px;
     overflow: hidden;
     color: ${({color}) => color};
-    width: 100%;
+    width: calc(100% - 16px - 2px);
     height: ${({height}) => height};
+    padding: 8px;
 `;
 
 const Input = styled.textarea`
-    width: calc(100% - 1em);
-    height: calc(100% - 1em);
+    width: 100%;
+    height: 100%;
     color: ${({color}) => color || 'white'};
     background: ${({backgroundColor}) => backgroundColor || 'none'};
     caret-color: ${({color}) => color || 'white'};
     outline: none;
     border: none;
     padding: 0;
-    margin: 0.5em;
     resize: none;
     overflow-y: scroll;
     overflow-x: hidden;
     font: inherit;
+    font-size: 14px;
+    line-height: 16px;
     
     &:-internal-autofill-selected {
         background: none !important;
@@ -78,7 +77,7 @@ const ValidIndicator = styled.div`
     background: none;
     border: none;
     padding: 0;
-    margin: 0.5em;
+    margin: 4px;
     text-align: right;
 `;
 

@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import React from "react";
+import React, {useMemo, useState} from "react";
 import {SVG_PATHS} from "../config/svgPaths";
 import {VerticalGap} from "./verticalGap";
 
@@ -11,25 +11,19 @@ const FormContainer = styled.div`
 const Label = styled.label`
     display: block;
     position: relative;
-    width: calc(100% - 0.25em);
+    width: calc(100% - 2px);
     overflow: hidden;
-    font-size: 1em;
-    margin-left: 0.25em;
+    font-size: 14px;
     color: white;
-    height: ${({height}) => height};
-    line-height: ${({height}) => height};
 `;
 
 const SubLabel = styled.label`
     display: block;
     position: relative;
-    width: calc(100% - 0.25em);
+    width: calc(100% - 4px);
     overflow: hidden;
-    font-size: 0.7em;
-    margin-left: 0.3em;
-    color: #999999;
-    height: ${({height}) => height};
-    line-height: ${({height}) => height};
+    font-size: 12px;
+    color: #808080;
 `;
 
 const InputContainer = styled.div`
@@ -38,24 +32,24 @@ const InputContainer = styled.div`
     flex-direction: row;
     align-items: center;
     border: 1px solid ${({borderColor}) => borderColor};
-    border-radius: ${({borderRadius}) => borderRadius || "0.5em"};
+    border-radius: ${({borderRadius}) => borderRadius || "8px"};
     overflow: hidden;
     color: ${({color}) => color};
-    width: 100%;
-    height: ${({height}) => height};
+    width: calc(100% - 16px - 2px);
+    padding: 8px;
 `;
 
 const Input = styled.input`
-    font-size: 1em;
-    width: calc(100% - 1em);
-    height: 100%;
+    width: 100%;
     color: white;
     outline: none;
     background: none;
     border: none;
     padding: 0;
-    margin: 0.5em;
     caret-color: white;
+    font-size: 14px;
+    height: 16px;
+    line-height: 16px;
 
     &:-internal-autofill-selected {
         background: none !important;
@@ -83,21 +77,21 @@ const ValidIndicator = styled.div`
 
 const ShowPasswordButton = styled.div`
     position: relative;
-    height: 0.5em;
+    height: 8px;
     color: cornflowerblue;
     cursor: pointer;
-    font-size: 0.75em;
-    margin: 0.5em;
+    font-size: 12px;
+    margin: 8px;
 `
 
 export function TextInput(props) {
     const {indicatorGoodPath = "checkMark", indicatorBadPath = "crossMark"} = props;
-    const indicatorLogoPath = React.useMemo(() => SVG_PATHS[props.valid === true ? indicatorGoodPath : indicatorBadPath], [props.valid]);
-    const indicatorLogoColor = React.useMemo(() => props.indicatorColor || (props.valid === true ? "forestgreen" : "red"), [props.valid, props.indicatorColor]);
+    const indicatorLogoPath = useMemo(() => SVG_PATHS[props.valid === true ? indicatorGoodPath : indicatorBadPath], [props.valid]);
+    const indicatorLogoColor = useMemo(() => props.indicatorColor || (props.valid === true ? "forestgreen" : "red"), [props.valid, props.indicatorColor]);
 
-    const [showPassword, setShowPassword] = React.useState(false);
+    const [showPassword, setShowPassword] = useState(false);
 
-    const inputType = React.useMemo(() => {
+    const inputType = useMemo(() => {
         if (props.type === "password") return showPassword ? "text" : "password";
         return props.type;
     }, [props.type, showPassword]);
@@ -105,18 +99,17 @@ export function TextInput(props) {
     return (<>
         <FormContainer id={props.id} width={props.width}>
             {props.label && <>
-                <Label height="2em">{props.label}</Label>
-                <VerticalGap gap="0.2em"/>
+                <Label>{props.label}</Label>
+                <VerticalGap gap="8px"/>
             </>}
             {props.subLabel && <>
-                <SubLabel height="1em">{props.subLabel}</SubLabel>
-                <VerticalGap gap="0.8em"/>
+                <SubLabel>{props.subLabel}</SubLabel>
+                <VerticalGap gap="8px"/>
             </>}
             <InputContainer
                 color={props.color}
                 borderColor={props.borderColor}
                 borderRadius={props.borderRadius}
-                height={props.height}
             >
                 <Input
                     type={inputType}

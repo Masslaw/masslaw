@@ -61,7 +61,7 @@ const NoSearchResults = styled.div`
     align-items: center;
     justify-content: center;
     font-size: 16px;
-    color: #999999;
+    color: #808080;
 `
 
 export function CaseTextSearch(props) {
@@ -146,7 +146,7 @@ export function CaseTextSearch(props) {
         </SearchTextInputContainer>
         {m_resultsItems && m_resultsItems.length > 0 ? <>
             <SearchResultsStickySection>
-                Search Results <span style={{marginLeft: '8px', color: '#999999'}}>({m_resultsItems.length})</span>
+                Search Results <span style={{marginLeft: '8px', color: '#808080'}}>({m_resultsItems.length})</span>
             </SearchResultsStickySection>
             <SearchResultsContainer>
                 {m_resultsItems}
@@ -183,7 +183,7 @@ const SearchResultFileName = styled.div`
 const SearchResultScore = styled.div`
     font-size: 11px;
     font-weight: bold;
-    color: #999999;
+    color: #808080;
 `
 
 const SearchResultTextPreview = styled.div`

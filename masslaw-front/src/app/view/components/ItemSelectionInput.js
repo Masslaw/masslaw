@@ -13,8 +13,8 @@ const Label = styled.label`
     position: relative;
     width: calc(100% - 0.25em);
     overflow: hidden;
-    font-size: 1em;
-    margin-left: 0.25em;
+    font-size: 14px;
+    margin-left: 2px;
     color: white;
     height: ${({height}) => height};
     line-height: ${({height}) => height};
@@ -25,9 +25,9 @@ const SubLabel = styled.label`
     position: relative;
     width: calc(100% - 0.25em);
     overflow: hidden;
-    font-size: 0.7em;
-    margin-left: 0.3em;
-    color: white;
+    font-size: 12px;
+    margin-left: 4px;
+    color: #808080;
     height: ${({height}) => height};
     line-height: ${({height}) => height};
 `;
@@ -53,7 +53,7 @@ const ItemSelectionItemsArea = styled.div`
     flex-grow: 1;
     flex-shrink: 0;
     flex-basis: 0;
-    padding: 4px;
+    padding: 8px;
 `
 
 const ItemSelectionShowListButton = styled.button`
@@ -81,7 +81,6 @@ const ItemSelectionItem = styled.div`
     border: none;
     height: 16px;
     border-radius: 8px;
-    margin: 4px;
     line-height: 16px;
     font-size: 12px;
     width: max-content;
@@ -109,10 +108,8 @@ const ItemSelectionItem = styled.div`
 
 const ItemSelectionTextInput = styled.input`
     height: 16px;
-    margin: 4px;
     line-height: 16px;
     font-size: 14px;
-    padding: 4px;
     border: none;
     background: none;
     outline: none;
@@ -121,6 +118,7 @@ const ItemSelectionTextInput = styled.input`
     flex-grow: 1;
     flex-shrink: 0;
     flex-basis: 0;
+    padding: 0;
 
     &:-internal-autofill-selected {
         background: none !important;

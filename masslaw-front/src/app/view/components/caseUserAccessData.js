@@ -22,15 +22,15 @@ const accessLevelComments = {
     [caseAccessLevels.reader]: "Readers can only view the content of the case. In the storage hierarchy configured as accessible by them, they can view and comment on any file or document.",
 }
 
-const SectionLabel = styled.p`
+const SectionLabel = styled.div`
     font-size: 14px;
     color: white;
     margin: 8px 16px;
 `
 
-const SectionSubLabel = styled.p`
+const SectionSubLabel = styled.div`
     font-size: 12px;
-    color: #999999;
+    color: #808080;
     margin: 8px 16px;
 `
 
@@ -77,7 +77,7 @@ const AccessLevelDropDownContainer = styled.div`
 const AccessLevelComment = styled.div`
     width: calc(100% - 48px);
     margin: 8px 24px;
-    color: #999999;
+    color: #808080;
     font-size: 12px;
 `
 

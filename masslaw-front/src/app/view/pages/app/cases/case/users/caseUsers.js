@@ -41,7 +41,7 @@ const CaseUsersTitleSubTitleSection = styled.div`
     
     span:nth-child(2) {
         font-size: 14px;
-        color: #999999;
+        color: #808080;
     }
 `
 
@@ -149,7 +149,7 @@ const CaseUserPermissionsContainer = styled.div`
 `
 
 const CaseUserPermissionsShowHideButton = styled.button`
-    color: #999999;
+    color: #808080;
     border: none;
     background: none;
     outline: none;
@@ -163,7 +163,7 @@ const CaseUserPermissionsShowHideButton = styled.button`
         height: 12px;
         transform: scaleY(${({open}) => open ? '-1' : '1'});
         margin-right: 8px;
-        fill: #999999;
+        fill: #808080;
     }
 `
 

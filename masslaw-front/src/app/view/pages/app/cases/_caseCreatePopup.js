@@ -13,24 +13,23 @@ const CreateCasePopupContainer = styled.div`
     display: flex;
     flex-direction: column;
     width: 512px;
-    background-color: #1f1f1f;
+    background-color: #303030;
     color: white;
     border-radius: 12px;
     z-index: 100;
+    padding: 32px;
 `
 
-const CreateCasePopupTitle = styled.h1`
+const CreateCasePopupTitle = styled.div`
     font-size: 24px;
     font-weight: bold;
     color: white;
-    margin: 16px 32px;
 `
 
-const CreateCasePopupSubTitle = styled.h2`
+const CreateCasePopupSubTitle = styled.div`
     font-size: 14px;
     font-weight: 500;
-    margin: 0 32px 16px 32px;
-    color: #999999;
+    color: #808080;
 `
 
 const CreateCaseInputWrapper = styled.div`
@@ -44,7 +43,8 @@ const CreateCaseInputWrapper = styled.div`
 
 const FinishCreateCaseButton = styled.button`
     position: relative;
-    margin: 32px 32px 16px auto;
+    margin-left: auto;
+    margin-top: auto;
     background: ${({enabled}) => enabled ? "white" : "none"};
     width: 96px;
     height: 32px;
@@ -103,8 +103,8 @@ export function CreateCasePopup(props) {
 
     return <>
         <CreateCasePopupContainer>
-            <VerticalGap gap={'8px'} />
             <CreateCasePopupTitle>Create A New Case</CreateCasePopupTitle>
+            <VerticalGap gap={'8px'} />
             <CreateCasePopupSubTitle>Start your next project from scratch</CreateCasePopupSubTitle>
             <VerticalGap gap={"16px"}/>
             <CreateCaseInputWrapper>
@@ -116,11 +116,11 @@ export function CreateCasePopup(props) {
                     setValue={setCaseName}
                     type={"text"}
                     placeholder={"My New Case Name"}
-                    width={'calc(512px - 64px)'}
+                    width={'512px'}
                     height={'32px'}
                 />
             </CreateCaseInputWrapper>
-            <VerticalGap gap={"32px"}/>
+            <VerticalGap gap={"16px"}/>
             <CreateCaseInputWrapper>
                 <LongTextInput
                     id={"casedescription"}
@@ -129,20 +129,25 @@ export function CreateCasePopup(props) {
                     value={s_caseDescription}
                     setValue={setCaseDescription}
                     maxLength={350}
-                    width={'calc(512px - 64px)'}
+                    width={'512px'}
                     height={'64px'}
                 />
             </CreateCaseInputWrapper>
+            <VerticalGap gap={"16px"}/>
             <ItemSelectionInput
                 label={'Languages'}
                 subLabel={'Select the languages in which the text of your case\'s files is written'}
                 selectedItems={s_selectedLanguages}
                 setSelectedItems={setSelectedLanguages}
                 optionsList={Object.keys(CASE_LANGUAGES)}
-                containerWidth={'calc(100% - 64px)'}
-                containerMargin={'32px'}
+                containerWidth={'100%'}
+                containerMargin={'0'}
             />
-            {s_errorMessage && <ErrorMessage>{s_errorMessage}</ErrorMessage>}
+            {s_errorMessage && <>
+                <VerticalGap gap={"16px"}/>
+                <ErrorMessage>{s_errorMessage}</ErrorMessage>
+            </>}
+            <VerticalGap gap={"32px"}/>
             <FinishCreateCaseButton onClick={() => c_createCase()} enabled={m_canCreateCase}>Create</FinishCreateCaseButton>
         </CreateCasePopupContainer>
     </>

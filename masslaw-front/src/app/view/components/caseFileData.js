@@ -12,11 +12,11 @@ import {FileProcessingStage} from "./fileStage";
 import {useCaseUserAccessLevel} from "../hooks/useCaseUserAccessLevel";
 import {caseAccessLevels} from "../../config/caseConsts";
 
-const CaseFilePopupFileName = styled.h1`
+const CaseFilePopupFileName = styled.div`
     font-size: 24px;
     font-weight: bold;
     color: white;
-    margin: 32px 32px 16px 32px;
+    margin: 0;
     width: calc(100% - 64px);
     overflow: hidden;
     text-overflow: ellipsis;
@@ -27,9 +27,9 @@ const CaseFilePopupDirectory = styled.div`
     display: flex;
     flex-direction: row;
     align-items: center;
-    color: #999999;
+    color: #808080;
     font-size: 14px;
-    margin: 4px 32px;
+    margin: 0;
     padding: 4px;
     width: max-content;
     max-width: calc(100% - 64px - 8px);
@@ -55,7 +55,7 @@ const CaseFilePopupDirectorySeparator = styled.span`
 const CaseFilePopupStageContainer = styled.div`
     display: flex;
     flex-direction: column;
-    margin: 16px 32px 8px 32px;
+    margin: 0;
     font-size: 14px;
     height: max-content;
     width: calc(100% - 64px);
@@ -68,7 +68,6 @@ const CaseFilePopupStageTitle = styled.div`
     font-weight: bold;
     color: #c0c0c0;
     margin-right: 8px;
-    margin-bottom: 8px;
 `
 
 const CaseFileProcessingStageReloadButton = styled.div`
@@ -116,12 +115,11 @@ const CaseFilePopupDescriptionSection = styled.div`
     display: flex;
     flex-direction: column;
     width: calc(100% - 64px);
-    margin: 16px 32px 8px 32px;
     color: white;
     font-size: 14px;
 `
 
-const CaseFilePopupDescriptionTitleSection = styled.h2`
+const CaseFilePopupDescriptionTitleSection = styled.div`
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -129,8 +127,7 @@ const CaseFilePopupDescriptionTitleSection = styled.h2`
     margin-bottom: 8px;
 `
 
-const CaseFilePopupDescriptionTitle = styled.h2`
-    font-size: 16px;
+const CaseFilePopupDescriptionTitle = styled.div`
     font-weight: bold;
     margin: 0;
     color: #c0c0c0;
@@ -207,13 +204,13 @@ const CaseFilePopupDescriptionEditSubmittingLoadingContainer = styled.div`
     margin: 8px;
 `
 
-const CaseFilePopupDescriptionText = styled.p`
+const CaseFilePopupDescriptionText = styled.div`
     margin: 0;
 `
 
-const CaseFilePopupNoDescriptionText = styled.p`
+const CaseFilePopupNoDescriptionText = styled.div`
     margin: 0;
-    color: #999999;
+    color: #808080;
 `
 
 const CaseFilePopupTimeDisplay = styled.div`
@@ -293,7 +290,9 @@ export function CaseFileData(props) {
     return <>
         {s_loading ? <LoadingIcon width={"32px"} height={"32px"}/> : <>
             <CaseFilePopupFileName>{(s_fileData || {}).name}</CaseFilePopupFileName>
+            <VerticalGap gap={'16px'} />
             {m_directory}
+            <VerticalGap gap={'16px'} />
             <CaseFilePopupStageContainer>
                 <CaseFilePopupStageTitle>
                     <span>Processing Stage</span>
@@ -307,8 +306,10 @@ export function CaseFileData(props) {
                         </CaseFileProcessingStageReloadButton>
                     </>}
                 </CaseFilePopupStageTitle>
+                <VerticalGap gap={'8px'} />
                 <FileProcessingStage fileData={s_fileData}/>
             </CaseFilePopupStageContainer>
+            <VerticalGap gap={'16px'} />
             <CaseFilePopupDescriptionSection>
                 <CaseFilePopupDescriptionTitleSection>
                     <CaseFilePopupDescriptionTitle>Description</CaseFilePopupDescriptionTitle>
@@ -316,6 +317,7 @@ export function CaseFileData(props) {
                         <CaseFilePopupDescriptionEditIcon onClick={() => setEditingDescription(true)}><svg viewBox={'-200 -200 1400 1400'}><path d={SVG_PATHS.pen} /></svg></CaseFilePopupDescriptionEditIcon>
                     </> : <></>}
                 </CaseFilePopupDescriptionTitleSection>
+                <VerticalGap gap={'8px'} />
                 {s_editingDescription ? <>
                     <LongTextInput
                         value={s_descriptionInput}

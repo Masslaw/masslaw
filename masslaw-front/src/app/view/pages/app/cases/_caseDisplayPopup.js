@@ -12,7 +12,7 @@ const CaseDisplayPopupContainer = styled.div`
     display: flex;
     flex-direction: column;
     width: 384px;
-    background-color: #1f1f1f;
+    background-color: #303030;
     color: white;
     border-radius: 12px;
     z-index: 100;
