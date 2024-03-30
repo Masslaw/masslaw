@@ -47,6 +47,7 @@ const ItemSelectionItemsArea = styled.div`
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
+    align-items: center;
     height: max-content;
     overflow: hidden;
     color: white;
@@ -85,6 +86,7 @@ const ItemSelectionItem = styled.div`
     font-size: 12px;
     width: max-content;
     padding: 4px;
+    margin-right: 6px;
 
     button {
         display: flex;
@@ -133,9 +135,10 @@ const ItemsListContainer = styled.div`
     top: 100%;
     left: 0;
     background: #303030;
+    border: 1px solid #808080;
     height: max-content;
     max-height: 256px;
-    width: 100%;
+    width: calc(100% - 2px);
     border-radius: 8px;
     overflow-x: hidden;
     overflow-y: auto;
@@ -254,7 +257,7 @@ export function ItemSelectionInput(props) {
                         }}
                     />
                 </ItemSelectionItemsArea>
-                {s_inputText || s_itemsListShown ? <>
+                {(s_inputText || s_itemsListShown) && m_itemsList.length ? <>
                     <ItemsListContainer>
                         {m_itemsList}
                     </ItemsListContainer>

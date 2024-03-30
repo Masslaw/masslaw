@@ -13,7 +13,7 @@ const CreateCasePopupContainer = styled.div`
     display: flex;
     flex-direction: column;
     width: 512px;
-    background-color: #303030;
+    background: #303030;
     color: white;
     border-radius: 12px;
     z-index: 100;
@@ -45,18 +45,18 @@ const FinishCreateCaseButton = styled.button`
     position: relative;
     margin-left: auto;
     margin-top: auto;
-    background: ${({enabled}) => enabled ? "white" : "none"};
+    background: ${({isclickable}) => isclickable ? "white" : "none"};
     width: 96px;
     height: 32px;
     border: 1px solid white;
-    color: ${({enabled}) => enabled ? "black" : "white"};
+    color: ${({isclickable}) => isclickable ? "black" : "white"};
     border-radius: 12px;
     font-size: 14px;
     letter-spacing: .5px;
-    pointer-events: ${({enabled}) => enabled ? "all" : "none"};
+    pointer-events: ${({isclickable}) => isclickable ? "all" : "none"};
     
     &:hover {
-        ${({enabled}) => enabled ? "filter: drop-shadow(0 0 5px white)" : ""}
+        ${({isclickable}) => isclickable ? "filter: drop-shadow(0 0 5px white)" : ""}
     }
 `
 
@@ -65,7 +65,8 @@ const ErrorMessage = styled.div`
     width: 100%;
     margin: 16px 0;
     text-align: center;
-    color: red;
+    color: #ff2020;
+    font-size: 14px;
 `
 
 export function CreateCasePopup(props) {
@@ -86,12 +87,12 @@ export function CreateCasePopup(props) {
     }, [s_caseName, s_caseDescription, s_selectedLanguages]);
 
     const c_createCase = useCallback(async () => {
+        if (!m_canCreateCase) return;
         const caseData = {
             title: s_caseName.trim(),
             description: s_caseDescription.trim(),
             languages: s_selectedLanguages.map(language => CASE_LANGUAGES[language]),
         }
-        console.log(caseData);
         const res = await casesManager.createCase(caseData);
         if (!res.getResponseSuccess()) {
             setErrorMessage("Could not create case.");
@@ -99,14 +100,14 @@ export function CreateCasePopup(props) {
         }
         await casesManager.fetchCases();
         props.dismiss();
-    }, [props.dismiss, s_caseName, s_caseDescription, s_selectedLanguages]);
+    }, [m_canCreateCase, props.dismiss, s_caseName, s_caseDescription, s_selectedLanguages]);
 
     return <>
         <CreateCasePopupContainer>
             <CreateCasePopupTitle>Create A New Case</CreateCasePopupTitle>
             <VerticalGap gap={'8px'} />
             <CreateCasePopupSubTitle>Start your next project from scratch</CreateCasePopupSubTitle>
-            <VerticalGap gap={"16px"}/>
+            <VerticalGap gap={"32px"}/>
             <CreateCaseInputWrapper>
                 <TextInput
                     id={"casename"}
@@ -148,7 +149,10 @@ export function CreateCasePopup(props) {
                 <ErrorMessage>{s_errorMessage}</ErrorMessage>
             </>}
             <VerticalGap gap={"32px"}/>
-            <FinishCreateCaseButton onClick={() => c_createCase()} enabled={m_canCreateCase}>Create</FinishCreateCaseButton>
+            <FinishCreateCaseButton
+                onClick={() => c_createCase()}
+                isclickable={m_canCreateCase}
+            >Create</FinishCreateCaseButton>
         </CreateCasePopupContainer>
     </>
 }
