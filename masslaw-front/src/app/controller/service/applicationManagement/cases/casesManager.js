@@ -42,7 +42,7 @@ export class CasesManager extends BaseService{
         caseId = caseId || this.model.cases.currentOpen.id;
         if (!caseId) return;
         if (this.model.users.mine.authentication.status < UserStatus.FULLY_APPROVED) return;
-        if (force || !Object.keys(this.model.cases.all[caseId] || {}).length) return;
+        if (!force && Object.keys(this.model.cases.all[caseId] || {}).length) return;
         const request = await this.masslawHttpApiClient.makeApiHttpRequest({
             call: MasslawApiCalls.GET_CASE_DATA,
             pathParameters: {case_id: caseId}
