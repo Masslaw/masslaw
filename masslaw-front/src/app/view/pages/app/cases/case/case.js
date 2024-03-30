@@ -1,6 +1,6 @@
 import {Outlet, useParams} from "react-router-dom";
 import styled from "styled-components";
-import React, {useEffect, useMemo, useState} from "react";
+import React, {useCallback, useEffect, useMemo, useState} from "react";
 import {model} from "../../../../../model/model";
 import {UserStatus} from "../../../../../config/userStatus";
 import {useModelValueAsReactState} from "../../../../../controller/functionality/model/modelReactHooks";
@@ -295,15 +295,59 @@ function CaseSidePanelFilesSection(props) {
     </>
 }
 
+const CaseSidePanelFileHierarchyReloadButton = styled.div`
+    position: absolute;
+    right: 6px;
+    top: 60px;
+    width: 20px;
+    height: 20px;
+    padding: 4px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    pointer-events: ${({reloading}) => reloading ? 'none' : 'all'};
+    cursor: ${({reloading}) => reloading ? 'normal' : 'pointer'};
+    &:hover {
+        background: ${({reloading}) => reloading ? 'none' : '#505050'};
+    }
+    svg {
+        width: 100%;
+        height: 100%;
+        fill: white;
+    }
+`
+
 function CaseSidePanelFileHierarchy(props) {
+
+    const {casesManager} = model.services
 
     const [s_caseId, setCaseId] = useModelValueAsReactState("$.cases.currentOpen.id", '');
     const [s_casesData, setCaseData] = useModelValueAsReactState("$.cases.all", {});
 
     const m_caseData = useMemo(() => (s_casesData[s_caseId] || {}), [s_caseId, s_casesData]);
 
+    const [s_reloadingContentHierarchy, setReloadingContentHierarchy] = useState(false);
+
+    const c_reloadHierarchy = useCallback(() => {
+        if (s_reloadingContentHierarchy) return;
+        setReloadingContentHierarchy(true);
+        casesManager.fetchCaseContentHierarchy(null, true).then(() => setReloadingContentHierarchy(false));
+    }, [s_reloadingContentHierarchy]);
+
     return <>
         <CaseSidePanelFileHierarchyFolder name={m_caseData.title} hierarchy={m_caseData.contentHierarchy}/>
+        <CaseSidePanelFileHierarchyReloadButton
+            reloading={s_reloadingContentHierarchy}
+            onClick={c_reloadHierarchy}
+        >
+            {s_reloadingContentHierarchy ? <>
+                <LoadingIcon width={'20px'} height={'20px'} />
+            </> : <>
+                <svg viewBox={'0 0 1000 1000'}><path d={SVG_PATHS.circleArrow}/></svg>
+            </>}
+        </CaseSidePanelFileHierarchyReloadButton>
     </>
 }
 

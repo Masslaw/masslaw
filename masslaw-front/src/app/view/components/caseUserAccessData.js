@@ -87,6 +87,7 @@ const CaseContentPathSelectionContainer = styled.div`
     background: #303030;
     border-radius: 8px;
     overflow: hidden;
+    border: 1px solid #808080;
 `
 
 export function CaseUserAccessData(props) {
@@ -117,7 +118,7 @@ export function CaseUserAccessData(props) {
                 onChange={o => setAccessData(p => ({...p, access_level: o.value}))}
             />
         </AccessLevelDropDownContainer>
-        <AccessLevelComment>{accessLevelComments[s_accessData.access_level]}</AccessLevelComment>
+        <AccessLevelComment>{accessLevelComments[s_accessData.access_level || caseAccessLevels.manager]}</AccessLevelComment>
         {[caseAccessLevels.editor, caseAccessLevels.reader].includes(s_accessData.access_level) ? <>
             <VerticalGap gap={'8px'} />
             <SectionLabel>Accessible Folders</SectionLabel>
@@ -137,7 +138,7 @@ export function CaseUserAccessData(props) {
                 />
             </CaseContentPathSelectionContainer>
             <VerticalGap gap={'8px'} />
-            <SectionLabel>Prohibited Content</SectionLabel>
+            <SectionLabel>Blocked Content</SectionLabel>
             <SectionSubLabel>Within the folders that are accessible by the user, these paths be excluded and blocked for this user</SectionSubLabel>
             <VerticalGap gap={'8px'} />
             <CaseContentPathSelectionContainer>

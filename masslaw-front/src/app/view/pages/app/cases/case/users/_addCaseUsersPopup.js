@@ -43,10 +43,10 @@ const UsersSearchContainer = styled.div`
 
 const SelectedUserItemContainer = styled.div`
     width: calc(100% - 32px);
-    background: #505050;
+    background: #202020;
     border-radius: 8px;
     margin: 2px 16px;
-    outline: 1px solid white;
+    outline: 1px solid #808080;
 `
 
 const RemoveSelectedUserButton = styled.button`
@@ -118,13 +118,12 @@ export function AddCaseUsersPopup(props) {
                         />
                     </SelectedUserItemContainer>
                 </>)}
-                <VerticalGap gap={'32px'} />
+                <VerticalGap gap={'64px'} />
                 <AddUsersButton onClick={() => c_addUsers().then(props.dismiss())}>
                     {s_addingUsers ? <>
                         <LoadingIcon width={'20px'} height={'20px'} color={'black'} />
                     </> : 'Add Participants'}
                 </AddUsersButton>
-                <VerticalGap gap={'64px'} />
             </> : <></>}
             <VerticalGap gap={'32px'} />
         </AddCaseUserPopupContainer>
