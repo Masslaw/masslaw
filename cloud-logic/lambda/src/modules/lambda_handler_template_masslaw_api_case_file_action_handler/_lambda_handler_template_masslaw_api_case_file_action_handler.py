@@ -34,7 +34,7 @@ class MasslawCaseManagementApiFileActionHandler(MasslawCaseManagementApiCaseActi
         user_id = self._caller_user_instance.get_user_id()
         case_user_access = MasslawCaseUserAccessManager(case_instance=self._case_instance)
         user_access_files = case_user_access.get_user_accessible_files(user_id)
-        if self._file_id not in user_access_files: raise masslaw_case_users_management_exceptions.MasslawCaseUnauthorizedUserActionException(f"An attempt was made to set the description of a file which is not included in a user's case permissions")
+        if self._file_id not in user_access_files: raise masslaw_case_users_management_exceptions.MasslawCaseUnauthorizedUserActionException(f"An attempt was made to access a file that the user does not have access to. File ID: {self._file_id}")
 
     def _handle_exception(self, exception: Exception):
         if isinstance(exception, masslaw_cases_objects_exceptions.MasslawCaseFileDataUpdateException):

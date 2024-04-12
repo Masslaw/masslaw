@@ -1,12 +1,6 @@
-from typing import Set
-
 from src.modules.aws_clients.dynamodb_client import DynamoDBTableManager
-from src.modules.aws_clients.s3_client import S3BucketManager
-from src.modules.dictionary_utils import dictionary_utils
 from src.modules.masslaw_case_data_formatting import masslaw_case_data_formatting
 from src.modules.masslaw_case_users_management import MasslawCaseUserAccessManager
-from src.modules.masslaw_case_users_management import masslaw_case_users_management_exceptions
-from src.modules.masslaw_cases_config import storage_config
 from src.modules.masslaw_cases_objects import MasslawCaseCommentInstance
 from src.modules.masslaw_cases_objects import MasslawCaseFileInstance
 from src.modules.masslaw_cases_objects import MasslawCaseInstance
@@ -14,12 +8,10 @@ from src.modules.masslaw_cases_objects import MasslawCaseInstance
 
 class MasslawCaseDataCollector:
 
-    def __init__(self, case_instance: MasslawCaseInstance, access_user_id: str = None):
+    def __init__(self, case_instance: MasslawCaseInstance, access_user_id: str):
         self.__access_user_id = access_user_id
-        self.__case_instance = case_instance
-        if self.__access_user_id:
-            access_manager = MasslawCaseUserAccessManager(case_instance)
-            self.__case_instance = access_manager.get_formatted_case_instance_for_user(self.__access_user_id)
+        self.__access_manager = MasslawCaseUserAccessManager(case_instance)
+        self.__case_instance = self.__access_manager.get_formatted_case_instance_for_user(self.__access_user_id)
 
     def get_case_data(self):
         case_data = masslaw_case_data_formatting.get_case_data_full_format_from_db_item(self.__case_instance.get_data_property([], {}), self.__access_user_id or '')
@@ -46,23 +38,3 @@ class MasslawCaseDataCollector:
         comment_instance = MasslawCaseCommentInstance(comment_id)
         comment_instance_data = comment_instance.get_data_property([], {})
         return masslaw_case_data_formatting.get_case_comment_full_format_from_db_item(comment_instance_data)
-
-    def get_case_knowledge(self) -> dict:
-        s3_bucket_manager = S3BucketManager(storage_config.CASES_KNOWLEDGE_BUCKET_ID)
-        s3_knowledge_key = f'{self.__case_instance.get_case_id()}/knowledge.json'
-        knowledge_data = s3_bucket_manager.get_object(s3_knowledge_key)
-        if not knowledge_data: return {
-            'connections': [],
-            'entities': []
-        }
-        knowledge = dictionary_utils.ensure_dict(knowledge_data)
-        case_files = set(self.__case_instance.get_data_property(['files'], []))
-        for entity in knowledge.get('entities', []):
-            entity_files = set(dictionary_utils.get_from(entity, ['properties', 'files', 'list'], []))
-            dictionary_utils.set_at(entity, ['files', 'list'], list(entity_files & case_files))
-        for connection in knowledge.get('connections', []):
-            connection_files = set(dictionary_utils.get_from(connection, ['properties', 'files', 'list'], []))
-            dictionary_utils.set_at(connection, ['properties', 'files', 'list'], list(connection_files & case_files))
-        knowledge['entities'] = [entity for entity in knowledge.get('entities', []) if dictionary_utils.get_from(entity, ['properties', 'files', 'list'], [])]
-        knowledge['connections'] = [connection for connection in knowledge.get('connections', []) if dictionary_utils.get_from(connection, ['properties', 'files', 'list'], [])]
-        return knowledge
