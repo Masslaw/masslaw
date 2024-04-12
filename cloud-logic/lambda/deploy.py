@@ -190,7 +190,7 @@ def install_requirements(build_package_path: str):
     if not os.path.exists(requirements_file): return
     install_path = os.path.join(build_package_path, 'site-packages')
     os.system(f"pip install --upgrade pip")
-    os.system(f"pip install -r {requirements_file} -t {install_path}")
+    os.system(f"pip install -r {requirements_file} -t {install_path} --platform manylinux2014_x86_64 --only-binary=:all:")
     package_name = os.path.basename(os.path.normpath(build_package_path))
     init_file = os.path.join(build_package_path, '__init__.py')
     with open(init_file, 'r') as file:

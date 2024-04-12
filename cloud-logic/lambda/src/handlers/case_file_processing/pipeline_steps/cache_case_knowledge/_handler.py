@@ -22,9 +22,6 @@ _neptune_client = NeptuneClient(read_connection=NeptuneConnection(connection_end
 
 _s3_bucket_manager = S3BucketManager(storage_config.CASES_KNOWLEDGE_BUCKET_ID)
 
-CACHED_NODE_PROPERTIES = ['files', 'title', 'datetime', ]
-CACHED_EDGE_PROPERTIES = ['files', 'strength', ]
-
 
 class CacheCaseKnowledge(MasslawStepFunctionCaseFilePipelineNodeHandler):
 
@@ -41,45 +38,39 @@ class CacheCaseKnowledge(MasslawStepFunctionCaseFilePipelineNodeHandler):
         request_query_properties = {'case_id': self.__case_id}
         neptune_nodes_response = _neptune_client.get_nodes_by_properties(request_query_properties)
         self._log(f'neptune_nodes_response: {neptune_nodes_response}')
-        entities_response = []
         for neptune_node in neptune_nodes_response:
             if not self.__validate_node(neptune_node): continue
             entity_id = neptune_node.get_id()
             entity_label = neptune_node.get_label()
             entity_properties = neptune_node.get_properties()
-            selected_entity_properties = dictionary_utils.select_keys(entity_properties, CACHED_NODE_PROPERTIES)
             entity_data = {
                 'id': entity_id,
                 'label': entity_label,
-                'properties': selected_entity_properties
+                'properties': entity_properties
             }
             self.__knowledge['entities'].append(entity_data)
-        self._entities_data = entities_response
 
     def __validate_node(self, neptune_node: NeptuneNode) -> bool:
-        if neptune_node.get_properties().get('case_id', '') != self.__case_id:
-            return False
+        if neptune_node.get_properties().get('case_id', '') != self.__case_id: return False
         return True
 
     def __get_connections(self):
         request_query_properties = {'case_id': self.__case_id}
         neptune_edges_response = _neptune_client.get_edges_by_properties(request_query_properties)
-        connections_response = []
+        self._log(f'neptune_edges_response: {neptune_edges_response}')
         for neptune_edge in neptune_edges_response:
             if not self.__validate_edge(neptune_edge): continue
             connection_id = neptune_edge.get_id()
             connection_label = neptune_edge.get_label()
             connection_properties = neptune_edge.get_properties()
-            selected_connection_properties = dictionary_utils.select_keys(connection_properties, CACHED_EDGE_PROPERTIES)
             connection_data = {
                 'id': connection_id,
                 'label': connection_label,
                 'from': neptune_edge.get_from_node(),
                 'to': neptune_edge.get_to_node(),
-                'properties': selected_connection_properties
+                'properties': connection_properties
             }
             self.__knowledge['connections'].append(connection_data)
-        self._connections_data = connections_response
 
     def __validate_edge(self, neptune_edge: NeptuneEdge) -> bool:
         if neptune_edge.get_properties().get('case_id', '') != self.__case_id:

@@ -1,0 +1,10 @@
+role: arn:aws:iam::746826375642:role/LambdaMasslawCasesHandlerRole
+timeout: 120 # 120 seconds ~ 2 minutes
+environment:
+  deployed: true
+  OPENAI_API_KEY: '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'
+events:
+  - http:
+      path: /cases/{case_id}/conversations/{conversation_id}/messages/
+      method: POST
+      cors: true

@@ -1,0 +1,4 @@
+from ._lambda_handler_template_masslaw_api_case_conversation_action_handler import MasslawCaseManagementApiConversationActionHandler
+
+
+__all__ = ["MasslawCaseManagementApiConversationActionHandler"]
