@@ -25,4 +25,6 @@ export const ApplicationRoutes = {
     CASE_KNOWLEDGE_ENTITY:      "/app/cases/:caseId/knowledge/:entityId",
     CASE_SETTINGS:              "/app/cases/:caseId/settings",
     CASE_USERS:                 "/app/cases/:caseId/participants",
+    CASE_CONVERSATIONS:         "/app/cases/:caseId/conversations",
+    CASE_CONVERSATION:          "/app/cases/:caseId/conversations/:conversationId",
 }

@@ -58,7 +58,7 @@ export function LoadingScreen(props) {
 
     return <LoadingScreenBackground displaying={`${Object.values(s_loading).reduce((a, b) => a || b, false)}`}>
         <LoadingScreenLogo>
-            <svg viewBox={"-50 0 2100 1000"}>
+            <svg viewBox={"0 0 1000 1000"}>
                 <path d={SVG_PATHS.logo}/>
             </svg>
         </LoadingScreenLogo>

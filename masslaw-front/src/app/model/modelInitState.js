@@ -46,6 +46,10 @@ export const modelInitState = {
                 entities: [],
                 connections: []
             },
+            conversations: {
+                data: {},
+                content: {}
+            },
         },
         all: {},
     },

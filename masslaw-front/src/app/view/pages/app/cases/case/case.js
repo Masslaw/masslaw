@@ -108,7 +108,8 @@ const CaseSidePanelSeparator = styled.div`
     position: relative;
     width: 100%;
     height: 1px;
-    background: #505050;
+    background: #202020;
+    background: linear-gradient(90deg, #202020 0%, #505050 20%, #505050 80%, #202020 100%);
     margin: 0;
 `
 
@@ -200,6 +201,15 @@ function CaseSidePanel(props) {
             <CaseSidePanelButton open={s_currentPage === 'CaseDashboard'}>
                 <svg viewBox={'0 0 1000 1000'}><path d={SVG_PATHS.dashboard}/></svg>
                 Dashboard
+            </CaseSidePanelButton>
+        </RedirectButtonWrapper>
+        <VerticalGap gap={'8px'}/>
+        <CaseSidePanelSeparator/>
+        <VerticalGap gap={'8px'}/>
+        <RedirectButtonWrapper href={constructUrl(ApplicationRoutes.CASE_CONVERSATIONS, {caseId: s_caseId})}>
+            <CaseSidePanelButton open={s_currentPage === 'CaseConversations'}>
+                <svg viewBox={'0 0 1000 1000'}><path d={SVG_PATHS.conversations}/></svg>
+                Conversations
             </CaseSidePanelButton>
         </RedirectButtonWrapper>
         <VerticalGap gap={'8px'}/>

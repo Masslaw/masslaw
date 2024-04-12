@@ -42,7 +42,7 @@ const InputContainer = styled.div`
     color: ${({color}) => color};
     width: calc(100% - 16px - 2px);
     height: ${({height}) => height};
-    padding: 8px;
+    padding: ${({padding}) => padding || '8px'};
 `;
 
 const Input = styled.textarea`
@@ -58,8 +58,8 @@ const Input = styled.textarea`
     overflow-y: scroll;
     overflow-x: hidden;
     font: inherit;
-    font-size: 14px;
-    line-height: 16px;
+    font-size: ${({fontsize}) => fontsize || '14px'};
+    line-height: ${({fontsize}) => `calc(${fontsize || '14px'} + 4px)`};
     
     &:-internal-autofill-selected {
         background: none !important;
@@ -85,30 +85,39 @@ export function LongTextInput(props) {
 
     return (<>
             <FormContainer id={props.id} fontsize={props.fontSize} width={props.width}>
-                {props.label && (<Label height="2em">{props.label}</Label>)}
-                {props.subLabel && (<SubLabel height="1em">{props.subLabel}</SubLabel>)}
-                <VerticalGap gap="0.8em"/>
+                {props.label ? <>
+                    <Label>{props.label}</Label>
+                    <VerticalGap gap="8px"/>
+                </> : <></>}
+                {props.subLabel ? <>
+                    <SubLabel>{props.subLabel}</SubLabel>
+                    <VerticalGap gap="8px"/>
+                </> : <></>}
                 <InputContainer
                     color={props.color}
                     borderColor={props.borderColor}
                     borderRadius={props.borderRadius}
                     backgroundColor={props.backgroundColor}
                     height={props.height}
+                    padding={props.padding}
                 >
                     <Input
                         color={props.color}
                         placeholder={props.placeholder}
                         value={props.value}
                         backgroundColor={props.backgroundColor}
+                        fontsize={props.fontSize}
                         onChange={e => {
                             e.preventDefault();
                             e.stopPropagation();
                             props.setValue(e.target.value);
                         }}
                     />
-                    <ValidIndicator color={(props.value || '').length > (props.maxLength || 0) ? 'red' : 'forestgreen'}>
-                        {`${(props.value || '').length}/${props.maxLength || 0}`}
-                    </ValidIndicator>
+                    {props.hideValidIndicator ? <></> : <>
+                        <ValidIndicator color={(props.value || '').length > (props.maxLength || 0) ? 'red' : 'forestgreen'}>
+                            {`${(props.value || '').length}/${props.maxLength || 0}`}
+                        </ValidIndicator>
+                    </>}
                 </InputContainer>
             </FormContainer>
         </>);

@@ -62,7 +62,7 @@ export function CaseFilePopup(props) {
 
     const m_openable = useMemo(() => {
         return (((s_fileData.processing || {})[fileProcessingStages.TextExtraction] || {})['status'] || '') === 'done';
-    }, [s_fileData])
+    }, [s_fileData]);
 
     return <>
         <CaseFilePopupContainer>
