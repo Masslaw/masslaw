@@ -1,12 +1,13 @@
-import {useEffect, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {useParams} from "react-router-dom";
 import {useModelValueAsReactState} from "../../controller/functionality/model/modelReactHooks";
-import {KnowledgeDisplay} from "./knowledgeDisplay";
 import {LoadingIcon} from "./loadingIcon";
 import {model} from "../../model/model";
+import {CaseTimeline} from "./caseTimeline";
+import {ApplicationRoutes} from "../../config/applicaitonRoutes";
 
 
-export function CaseKnowledgeGraphDisplay(props) {
+export function CaseTimelineDisplay(props) {
 
     const {caseId} = useParams();
 
@@ -37,11 +38,36 @@ export function CaseKnowledgeGraphDisplay(props) {
         setDisplayKnowledge(displayKnowledge);
     }, [s_caseKnowledge, props.files, props.labels]);
 
+    const m_events = useMemo(() => {
+        const events = {};
+        if (!(s_displayKnowledge || {}).entities) return;
+        for (let entity of s_displayKnowledge.entities) {
+            if (!entity) continue;
+            let entity_label = entity.label;
+            if (!["DATE"].includes(entity_label)) continue;
+            let entity_id = entity.id;
+            let entity_title = entity.properties.title;
+            let entity_date = entity.properties.datetime;
+            if (!entity_date) continue;
+            if (!entity_date.Y) continue;
+            let date = new Date();
+            date.setFullYear(parseInt(entity_date.Y));
+            if (entity_date.M) date.setMonth((parseInt(entity_date.M || '') || 1) - 1);
+            if (entity_date.D) date.setDate((parseInt(entity_date.D || '') || 1) - 1);
+            date.setHours(0);
+            date.setMinutes(0);
+            date.setSeconds(0);
+            events[entity_id] = { title: entity_title, onclick: () => model.application.navigate(ApplicationRoutes.CASE_KNOWLEDGE_ENTITY, {caseId: caseId || '', entityId: entity_id || ''}), date: date,};
+        }
+        console.log(events);
+        return events;
+    }, [s_displayKnowledge])
+
     return <>
         {s_loading ? <>
             <LoadingIcon width={'30px'} height={'30px'}/>
         </> : <>
-            <KnowledgeDisplay knowledge={s_displayKnowledge}/>
+            <CaseTimeline events={m_events}/>
         </>}
     </>
 }

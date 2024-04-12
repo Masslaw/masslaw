@@ -7,9 +7,9 @@ export class CasesKnowledgeManager extends BaseService{
         this.masslawHttpApiClient = this.model.services['masslawHttpApiClient'];
     }
 
-    async fetchCaseKnowledge(caseId=null, force=false) {
-        caseId = caseId || this.model.cases.currentOpen.id;
+    async fetchCaseKnowledge(force=false) {
         if (!force && this.model.cases.currentOpen.knowledge.entities.length && this.model.cases.currentOpen.knowledge.connections.length) return;
+        const caseId = this.model.cases.currentOpen.id;
         const request = await this.masslawHttpApiClient.makeApiHttpRequest({
             call: MasslawApiCalls.GET_CASE_KNOWLEDGE,
             pathParameters: {case_id: caseId},

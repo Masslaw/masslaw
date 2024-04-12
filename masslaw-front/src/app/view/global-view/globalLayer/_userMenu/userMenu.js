@@ -142,11 +142,11 @@ const LogoutPopupCancelButton = styled.button`
 
 export function LogoutPopup(props) {
 
-    const logout = useCallback(() => {
+    const c_logout = useCallback(() => {
         model.users.mine.authentication.login = {email: '', password: ''};
         model.users.mine.authentication.tokens = {refresh: '', access: ''};
         model.users.mine.authentication.status = 0;
-        model.application.navigate(constructUrl(ApplicationRoutes.LOGIN));
+        window.location.href = constructUrl(ApplicationRoutes.LOGIN);
 
         const modelToLocalStorageManager = model.services['modelToLocalStorageManager'];
         modelToLocalStorageManager.removePathFromSavedPaths('$.users.mine.authentication.login.email');
@@ -162,7 +162,7 @@ export function LogoutPopup(props) {
             <VerticalGap gap={"8px"} />
             <LogoutPopupText>Are you sure you want to log out?</LogoutPopupText>
             <LogoutPopupButtonsSection>
-                <LogoutPopupLogoutButton onClick={() => logout()}>Log Out</LogoutPopupLogoutButton>
+                <LogoutPopupLogoutButton onClick={() => c_logout()}>Log Out</LogoutPopupLogoutButton>
                 <LogoutPopupCancelButton onClick={() => props.dismiss()}>Cancel</LogoutPopupCancelButton>
             </LogoutPopupButtonsSection>
         </LogoutPopupContainer>

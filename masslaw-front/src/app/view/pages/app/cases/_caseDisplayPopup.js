@@ -39,7 +39,7 @@ const OpenCaseDisplayButton = styled.button`
 export function CaseDisplayPopup(props) {
 
     const c_openCase = useCallback(() => {
-        model.application.navigate(constructUrl(ApplicationRoutes.CASE_DASHBOARD, {caseId: props.caseData.case_id}));
+        window.location.href = constructUrl(ApplicationRoutes.CASE_DASHBOARD, {caseId: props.caseData.case_id});
         props.dismiss();
     }, []);
 

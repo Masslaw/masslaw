@@ -15,6 +15,7 @@ import {CaseKnowledge} from "../pages/app/cases/case/knowledge/caseKnowledge";
 import {CaseDashboard} from "../pages/app/cases/case/dashboard/caseDashboard";
 import {CaseSubjects} from "../pages/app/cases/case/subjects/caseSubjects";
 import {CaseUsers} from "../pages/app/cases/case/users/caseUsers";
+import {CaseTimelineDisplay} from "../components/caseTimelineDisplay";
 
 const RedirectHome = () => {
     window.location.href = ApplicationRoutes.HOME;
@@ -41,7 +42,7 @@ export function ApplicationRouter(props) {
                         <Route path={ApplicationRoutes.CASE_SEARCH} element={<CaseSearch/>}/>
                         <Route path={ApplicationRoutes.CASE_KNOWLEDGE} element={<CaseKnowledge/>}/>
                         <Route path={ApplicationRoutes.CASE_SUBJECTS} element={<CaseSubjects/>}/>
-                        <Route path={ApplicationRoutes.CASE_TIMELINE} element={<div></div>}/>
+                        <Route path={ApplicationRoutes.CASE_TIMELINE} element={<CaseTimelineDisplay />}/>
                         <Route path={ApplicationRoutes.CASE_KNOWLEDGE_ENTITY} element={<div></div>}/>
                         <Route path={ApplicationRoutes.CASE_USERS} element={<CaseUsers />}/>
                     </Route>
