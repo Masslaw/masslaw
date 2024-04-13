@@ -24,7 +24,6 @@ const AddCaseUsersPopupTitle = styled.div`
 
 const AddCaseUsersPopupSubTitle = styled.div`
     font-size: 14px;
-    font-weight: 500;
     margin: 0 16px 16px 16px;
     color: #808080;
 `

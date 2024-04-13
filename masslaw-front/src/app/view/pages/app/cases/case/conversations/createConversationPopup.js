@@ -30,7 +30,6 @@ const CreateConversationPopupTitle = styled.div`
 
 const CreateConversationPopupSubTitle = styled.div`
     font-size: 14px;
-    font-weight: 500;
     color: #808080;
     margin: 0;
 `

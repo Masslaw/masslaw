@@ -27,7 +27,6 @@ const UploadCaseFilesPopupTitle = styled.div`
 
 const UploadCaseFilesPopupSubTitle = styled.div`
     font-size: 14px;
-    font-weight: 500;
     color: #808080;
     margin: 0;
 `
@@ -47,7 +46,6 @@ const UploadCaseFilesSectionTitle = styled.div`
 
 const UploadCaseFilesSectionSubTitle = styled.div`
     font-size: 14px;
-    font-weight: 500;
     color: #808080;
 `
 

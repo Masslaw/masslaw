@@ -28,7 +28,6 @@ const CreateCasePopupTitle = styled.div`
 
 const CreateCasePopupSubTitle = styled.div`
     font-size: 14px;
-    font-weight: 500;
     color: #808080;
 `
 
