@@ -20,7 +20,9 @@ class PostCaseConversationMessage(MasslawCaseManagementApiConversationActionHand
         MasslawCaseManagementApiConversationActionHandler._execute(self)
         user_id = self._caller_user_instance.get_user_id()
         case_conversations_manager = MasslawCaseConversationsManager(case_instance=self._case_instance)
+        self._log(f"Conversation prompt: {self._prompt}")
         context = self._obtain_context_for_message()
+        self._log(f"Obtained context: {context}")
         new_conversation_content = case_conversations_manager.send_message_to_conversation_as_user(user_id, self._conversation_id, self._prompt, context)
         self._set_response_attribute([lambda_constants.EventKeys.BODY, 'content'], new_conversation_content)
 
