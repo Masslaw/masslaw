@@ -151,7 +151,7 @@ export function CaseConversation(props) {
 
     return <>
         <PageContainer>
-            {s_loadingConversation || true ? <>
+            {s_loadingConversation ? <>
                 <LoadingIcon width={'20px'} height={'20px'} />
             </> : <>
                 <ConversationContainer>
