@@ -11,6 +11,7 @@ import {ProfilePicture} from "../../../../../components/profilePicture";
 
 
 const PageContainer = styled.div`
+    position: relative;
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -150,7 +151,7 @@ export function CaseConversation(props) {
 
     return <>
         <PageContainer>
-            {s_loadingConversation ? <>
+            {s_loadingConversation || true ? <>
                 <LoadingIcon width={'20px'} height={'20px'} />
             </> : <>
                 <ConversationContainer>
