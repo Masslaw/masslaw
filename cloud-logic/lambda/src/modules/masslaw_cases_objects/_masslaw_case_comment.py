@@ -66,7 +66,7 @@ class MasslawCaseCommentInstance(DynamodbDataHolder):
         owner = self.get_data_property(['comments'])
         open_search_index_name = f'{case_id}{opensearch_config.MASSLAW_CASE_COMMENTS_SEARCH_INDEX_SUFFIX}'
         case_search_index_manager = OpenSearchIndexManager(opensearch_config.MASSLAW_CASES_ES_ENDPOINT, open_search_index_name)
-        case_search_index_manager.ensure_exists()
+        case_search_index_manager.ensure_exists({})
         case_search_index_manager.add_document(comment_id, {
             'id': comment_id,
             'comment_text': comment_text,

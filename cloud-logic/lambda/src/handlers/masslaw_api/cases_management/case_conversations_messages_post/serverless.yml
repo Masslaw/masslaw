@@ -1,5 +1,5 @@
 role: arn:aws:iam::746826375642:role/LambdaMasslawCasesHandlerRole
-timeout: 120 # 120 seconds ~ 2 minutes
+timeout: 30 # 30 seconds
 environment:
   deployed: true
   OPENAI_API_KEY: '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'

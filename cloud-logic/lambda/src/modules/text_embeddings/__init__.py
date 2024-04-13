@@ -1,0 +1,4 @@
+from ._generate_embeddings_for_text import generate_text_embeddings_suitable_for_masslaw_system
+
+
+__all__ = ["generate_text_embeddings_suitable_for_masslaw_system"]

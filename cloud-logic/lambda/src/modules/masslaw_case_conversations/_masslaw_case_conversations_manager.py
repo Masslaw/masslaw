@@ -8,6 +8,7 @@ from openai import OpenAI
 
 from src.modules.aws_clients.s3_client import S3BucketManager
 from src.modules.dictionary_utils import dictionary_utils
+from src.modules.masslaw_case_conversations._masslaw_case_conversations_message_factory import MasslawCaseConversationsMessageFactory
 from src.modules.masslaw_cases_config import storage_config
 
 conversations_bucket_manager = S3BucketManager(storage_config.CASES_CONVERSATIONS_BUCKET_ID)
@@ -62,16 +63,21 @@ class MasslawCaseConversationsManager:
         encoded_json_data = json_data.encode('utf-8')
         conversations_bucket_manager.put_object(key=conversation_key, body=encoded_json_data)
 
-    def send_message_to_conversation_as_user(self, user_id: str, conversation_id: str, message_content: str) -> dict:
+    def send_message_to_conversation_as_user(self, user_id: str, conversation_id: str, message_content: str, message_context: str = '') -> dict:
         conversation_data = self.get_conversation_data(user_id, conversation_id)
         if not conversation_data: return {}
         conversation_content = self.get_conversation_content(user_id, conversation_id)
         messages = conversation_content.get('messages', [])
+        message_sequence = messages[-10:]
+        message_builder = MasslawCaseConversationsMessageFactory(self.__case_instance, message_content)
+        message_builder.set_context(message_context)
+        formatted_message = message_builder.build_prompt()
+        message_sequence += [{'role': 'user', 'content': formatted_message}]
+        client = OpenAI(api_key=os.environ.get('OPENAI_API_KEY'))
+        response = client.chat.completions.create(model=model_name, messages=message_sequence)
+        response_message = response.choices[0].message
         messages.append({'role': 'user', 'content': message_content})
         conversation_content['messages'] = messages
-        client = OpenAI(api_key=os.environ.get('OPENAI_API_KEY'))
-        response = client.chat.completions.create(model=model_name, messages=messages[-10:])
-        response_message = response.choices[0].message
         messages.append({'role': response_message.role, 'content': response_message.content})
         conversation_content['messages'] = messages
         self.update_conversation_content(user_id, conversation_id, conversation_content)

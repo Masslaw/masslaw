@@ -3,3 +3,4 @@ timeout: 800 # 800 seconds ~ 13.5 minutes
 memorySize: 2048 # 2048MB-RAM ~ 2GB-RAM
 environment:
   deployed: true
+  OPENAI_API_KEY: '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'

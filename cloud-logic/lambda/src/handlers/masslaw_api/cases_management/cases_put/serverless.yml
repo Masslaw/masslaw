@@ -1,4 +1,5 @@
 role: arn:aws:iam::746826375642:role/LambdaMasslawCasesHandlerRole
+timeout: 30 # 30 seconds
 environment:
   deployed: true
 events:

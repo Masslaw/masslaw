@@ -140,7 +140,7 @@ export function CaseConversation(props) {
                             height={'48px'}
                             width={'calc(100% - 80px)'}
                             color={'white'}
-                            borderColor={'white'}
+                            borderColor={'#808080'}
                             backgroundColor={'none'}
                             hideValidIndicator={true}
                             fontSize={'16px'}

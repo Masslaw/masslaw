@@ -40,23 +40,6 @@ def get_case_file_data_base_format_from_db_item(item_data):
         'processing': dictionary_utils.get_from(item_data, ['processing', 'stage_information'], {}),
         'case_id': dictionary_utils.get_from(item_data, ['case_id'], {}),
         'description': f'{(description := dictionary_utils.get_from(item_data, ["description"], ""))[:50]}{len(description) > 50 and "..." or ""}',
-        'num_annotations': len(dictionary_utils.get_from(item_data, ['annotations'], [])),
-    }
-
-
-def get_case_file_annotations_full_format_from_db_item(item_data):
-    return {
-        'id': dictionary_utils.get_from(item_data, ['annotation_id'], ''),
-        'type': dictionary_utils.get_from(item_data, ['type'], ''),
-        'creator': dictionary_utils.get_from(item_data, ['creator'], ''),
-        'file_id': dictionary_utils.get_from(item_data, ['file_id'], ''),
-        'case_id': dictionary_utils.get_from(item_data, ['case_id'], ''),
-        'modified': dictionary_utils.get_from(item_data, ['last_modified'], ''),
-        'from_char': dictionary_utils.get_from(item_data, ['from_char'], 0),
-        'to_char': dictionary_utils.get_from(item_data, ['to_char'], 0),
-        'text': dictionary_utils.get_from(item_data, ['text'], 0),
-        'annotated_text': dictionary_utils.get_from(item_data, ['annotated_text'], 0),
-        'color': dictionary_utils.get_from(item_data, ['color'], ''),
     }
 
 

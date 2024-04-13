@@ -1,8 +1,10 @@
 import http.client
 import json
+
 import boto3
 from botocore.auth import SigV4Auth
 from botocore.awsrequest import AWSRequest
+
 from src.modules.aws_clients.open_search_client._exceptions import OpenSearchRequestFailedException
 
 
@@ -13,9 +15,8 @@ class OpenSearchIndexManager:
         self.index_name = index_name
         self.session = boto3.Session()
 
-    def ensure_exists(self):
-        if not self.index_exists():
-            self.create_index()
+    def ensure_exists(self, creation_configuration: dict = None):
+        if not self.index_exists(): self.create_index(creation_configuration or {})
 
     def index_exists(self):
         try:
@@ -24,8 +25,8 @@ class OpenSearchIndexManager:
         except OpenSearchRequestFailedException:
             return False
 
-    def create_index(self):
-        self.__execute_request('PUT', self.index_name)
+    def create_index(self, creation_configuration: dict = None):
+        self.__execute_request('PUT', self.index_name, creation_configuration or {})
 
     def add_document(self, document_id, document):
         url = self.index_name + f'/_doc/{document_id}'
@@ -53,19 +54,16 @@ class OpenSearchIndexManager:
     def __execute_request(self, method, path, payload=None):
         request = self.__sign_request(method, path, payload)
         conn = http.client.HTTPSConnection(self.endpoint_url)
-        conn.request(method, request.url, body=request.body,
-                     headers=request.headers)  # Change 'request.path' to 'request.url'
+        conn.request(method, request.url, body=request.body, headers=request.headers)  # Change 'request.path' to 'request.url'
         response = conn.getresponse()
         if response.status >= 400:
-            raise OpenSearchRequestFailedException(
-                f'Status: {response.status}, Reason: {response.reason}, Info: {response.read()}')
+            raise OpenSearchRequestFailedException(f'Status: {response.status}, Reason: {response.reason}, Info: {response.read()}')
         return response
 
     def __sign_request(self, method, path, payload=None):
         service = 'es'
         credentials = self.session.get_credentials()
         headers = {'Host': self.endpoint_url, 'Content-Type': 'application/json'}
-        request = AWSRequest(method=method, url=f"https://{self.endpoint_url}/{path}", data=json.dumps(payload or {}),
-                             headers=headers)
+        request = AWSRequest(method=method, url=f"https://{self.endpoint_url}/{path}", data=json.dumps(payload or {}), headers=headers)
         SigV4Auth(credentials, service, self.region).add_auth(request)
         return request.prepare()

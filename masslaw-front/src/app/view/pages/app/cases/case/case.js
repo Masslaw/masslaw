@@ -323,6 +323,7 @@ const CaseSidePanelFileHierarchyReloadButton = styled.div`
     align-items: center;
     justify-content: center;
     background: none;
+    background: #202020;
     pointer-events: ${({reloading}) => reloading ? 'none' : 'all'};
     cursor: ${({reloading}) => reloading ? 'normal' : 'pointer'};
     &:hover {

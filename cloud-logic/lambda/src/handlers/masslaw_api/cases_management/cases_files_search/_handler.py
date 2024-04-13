@@ -39,8 +39,9 @@ class SearchCaseFiles(MasslawCaseManagementApiCaseActionHandler):
             if file_id not in user_access_files: continue
             result_items.append({
                 'file_id': file_id,
-                'file_name': hit['_source']['name'],
-                'text_highlights': hit['highlight']['text'],
+                'file_name': hit['_source'].get('name', ''),
+                'paragraph_index': hit['_source'].get('par_idx', ''),
+                'text_highlights': hit['highlight'].get('text', ''),
                 'score': hit['_score']
             })
         self._set_response_attribute([lambda_constants.EventKeys.BODY, 'results'], result_items)
@@ -60,7 +61,7 @@ class SearchCaseFiles(MasslawCaseManagementApiCaseActionHandler):
                     },
                         {
                             "terms": {
-                                "_id": self.__search_files
+                                "file_id": self.__search_files
                             }
                         }
                     ]
@@ -70,7 +71,7 @@ class SearchCaseFiles(MasslawCaseManagementApiCaseActionHandler):
             "sort": [
                 {"_score": {"order": "desc"}}
             ],
-            "_source": ["file_id", "name"],
+            "_source": ["file_id", "name", "par_idx"],
             "highlight": {
                 "fields": {
                     field: {

@@ -21,7 +21,7 @@ class SearchUsers(HTTPInvokedLambdaFunctionHandler):
         HTTPInvokedLambdaFunctionHandler._execute(self)
         payload = self.construct_query_payload()
         users_index_manager = OpenSearchIndexManager(opensearch_config.MASSLAW_USERS_OPENSEARCH_ENDPOINT, opensearch_config.MASSLAW_USERS_OPENSEARCH_INDEX_NAME)
-        users_index_manager.ensure_exists()
+        users_index_manager.ensure_exists({})
         result = users_index_manager.execute_query(payload)
         self._log(f"Search result:\n{result}")
         result_items = [hit.get('_source', {})|{'score': hit.get('_score', 0)} for hit in result['hits']['hits']]
