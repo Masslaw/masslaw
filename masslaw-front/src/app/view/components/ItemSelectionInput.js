@@ -135,7 +135,7 @@ const ItemsListContainer = styled.div`
     top: 100%;
     left: 0;
     background: #303030;
-    border: 1px solid #808080;
+    border: 1px solid #505050;
     height: max-content;
     max-height: 256px;
     width: calc(100% - 2px);

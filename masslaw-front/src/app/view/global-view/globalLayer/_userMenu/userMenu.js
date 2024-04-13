@@ -25,9 +25,10 @@ const UserMenuContainer = styled.div`
     right: 0;
     margin: 16px;
     width: 256px;
-    max-height: calc(100% - 56px - 32px);
+    max-height: calc(100% - 56px - 32px - 2px);
     flex-direction: column;
-    background: #3b3b3b;
+    background: #202020;
+    border: 1px solid #505050;
     z-index: 91;
     overflow: hidden;
     border-radius: 12px;
@@ -60,7 +61,7 @@ const UserMenuItem = styled.button`
     letter-spacing: 1px;
     
     &:hover {
-        background: #4b4b4b;
+        background: #505050;
     }
 `
 
@@ -94,7 +95,7 @@ const LogoutPopupContainer = styled.div`
     flex-direction: column;
     width: 384px;
     height: 128px;
-    background: #303030;
+    background: #202020;
     border-radius: 12px;
     padding: 32px
 `

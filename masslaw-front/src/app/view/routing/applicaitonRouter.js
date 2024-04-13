@@ -1,5 +1,5 @@
 import {ApplicationRoutes} from "../../config/applicaitonRoutes";
-import {Route, Routes, BrowserRouter, useNavigate} from "react-router-dom";
+import {BrowserRouter, Route, Routes} from "react-router-dom";
 import {Home} from "../pages/public/home/home";
 import {Signup} from "../pages/identity/signup/singup";
 import {Login} from "../pages/identity/login/login";
@@ -15,9 +15,10 @@ import {CaseKnowledge} from "../pages/app/cases/case/knowledge/caseKnowledge";
 import {CaseDashboard} from "../pages/app/cases/case/dashboard/caseDashboard";
 import {CaseSubjects} from "../pages/app/cases/case/subjects/caseSubjects";
 import {CaseUsers} from "../pages/app/cases/case/users/caseUsers";
-import {CaseTimelineDisplay} from "../components/caseTimelineDisplay";
 import {CaseConversations} from "../pages/app/cases/case/conversations/caseConversations";
 import {CaseConversation} from "../pages/app/cases/case/conversations/caseConversation";
+import {CaseTimelineRender} from "../components/caseTimelineRender";
+import {CaseTimeline} from "../pages/app/cases/case/timeline/caseTimeline";
 
 const RedirectHome = () => {
     window.location.href = ApplicationRoutes.HOME;
@@ -44,9 +45,9 @@ export function ApplicationRouter(props) {
                         <Route path={ApplicationRoutes.CASE_SEARCH} element={<CaseSearch/>}/>
                         <Route path={ApplicationRoutes.CASE_KNOWLEDGE} element={<CaseKnowledge/>}/>
                         <Route path={ApplicationRoutes.CASE_SUBJECTS} element={<CaseSubjects/>}/>
-                        <Route path={ApplicationRoutes.CASE_TIMELINE} element={<CaseTimelineDisplay />}/>
+                        <Route path={ApplicationRoutes.CASE_TIMELINE} element={<CaseTimeline/>}/>
                         <Route path={ApplicationRoutes.CASE_KNOWLEDGE_ENTITY} element={<div></div>}/>
-                        <Route path={ApplicationRoutes.CASE_USERS} element={<CaseUsers />}/>
+                        <Route path={ApplicationRoutes.CASE_USERS} element={<CaseUsers/>}/>
                         <Route path={ApplicationRoutes.CASE_CONVERSATIONS} element={<CaseConversations/>}>
                             <Route path={ApplicationRoutes.CASE_CONVERSATION} element={<CaseConversation/>}/>
                         </Route>

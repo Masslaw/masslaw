@@ -23,9 +23,9 @@ const ConversationsListContainer = styled.div`
     flex-direction: column;
     height: 100%;
     width: 255px;
-    background: #202020;
+    background: #151515;
     flex-basis: 255px;
-    border-left: 1px solid #808080;
+    border-left: 1px solid #505050;
     flex-shrink: 0;
     flex-grow: 0;
 `
@@ -33,7 +33,7 @@ const ConversationsListContainer = styled.div`
 const ConversationContainer = styled.div`
     width: 100%;
     height: 100%;
-    background: #303030;
+    background: #202020;
     flex-basis: 100%;
     flex-shrink: 1;
     flex-grow: 1;
@@ -113,8 +113,8 @@ const ConversationItemContainer = styled.button`
     cursor: pointer;
     color: #ffffff;
     border: none;
-    background: ${({selected}) => selected ? '#404040' : 'none'};
-    &:hover { background: #505050; }
+    background: ${({selected}) => selected ? '#252525' : 'none'};
+    &:hover { background: #303030; }
 `
 
 function ConversationItem(props) {

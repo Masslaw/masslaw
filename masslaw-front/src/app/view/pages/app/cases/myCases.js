@@ -14,7 +14,7 @@ const PageContainer = styled.div`
     flex-direction: column;
     width: 100%;
     height: 100%;
-    background-color: #1f1f1f;
+    background-color: #101010;
     color: white;
     border-radius: 5px;
 `
@@ -111,7 +111,7 @@ const CaseItemContainer = styled.div`
     flex-direction: column;
     width: 320px;
     height: 175px;
-    background-color: #2f2f2f;
+    background-color: #202020;
     margin: 16px 8px;
     padding: 16px;
     border-radius: 12px;

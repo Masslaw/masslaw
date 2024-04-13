@@ -1,13 +1,12 @@
 import styled from "styled-components";
 import {useParams} from "react-router-dom";
-import {useCallback, useEffect, useMemo, useState} from "react";
+import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {useModelValueAsReactState} from "../../../../../../controller/functionality/model/modelReactHooks";
 import {LoadingIcon} from "../../../../../components/loadingIcon";
 import {model} from "../../../../../../model/model";
 import {SVG_PATHS} from "../../../../../config/svgPaths";
 import {LongTextInput} from "../../../../../components/longTextInput";
 import ReactMarkdown from "react-markdown";
-import {unixTimeToDateTimeString} from "../../../../../../controller/functionality/time-utils/dateTimeUtils";
 import {ProfilePicture} from "../../../../../components/profilePicture";
 
 
@@ -37,7 +36,7 @@ const ConversationInputContainer = styled.div`
     align-items: end;
     justify-content: center;
     width: 100%;
-    background: #303030;
+    background: #202020;
     padding: 16px 0;
     height: max-content;
     flex-basis: max-content;
@@ -81,13 +80,15 @@ const ConversationMessagesSeparator = styled.div`
     position: relative;
     width: 100%;
     height: 1px;
-    background: #303030;
-    background: linear-gradient(90deg, #303030 0%, #505050 20%, #505050 80%, #303030 100%);
+    background: #202020;
+    background: linear-gradient(90deg, #202020 0%, #505050 20%, #505050 80%, #202020 100%);
     margin: 0;
 `
 
 export function CaseConversation(props) {
     const {caseId, conversationId} = useParams();
+
+    const r_conversationRef = useRef(null);
 
     const {caseConversationsManager} = model.services;
 
@@ -95,9 +96,22 @@ export function CaseConversation(props) {
 
     const [s_loadingConversation, setLoadingConversation] = useState(true);
 
+    const c_scrollConversationToBottom = useCallback(() => {
+        setTimeout(() => {
+            if (!r_conversationRef.current) return;
+            r_conversationRef.current.scrollTo({
+                top: r_conversationRef.current.scrollHeight,
+                behavior: "smooth"
+            });
+        }, 500);
+    }, [r_conversationRef.current]);
+
     useEffect(() => {
         setLoadingConversation(true);
-        caseConversationsManager.fetchCaseConversationContent(conversationId, caseId).then(() => setLoadingConversation(false));
+        caseConversationsManager.fetchCaseConversationContent(conversationId, caseId).then(() => {
+            c_scrollConversationToBottom();
+            setLoadingConversation(false);
+        });
     }, [caseId, conversationId]);
 
     const m_conversationMessages = useMemo(() => {
@@ -123,7 +137,14 @@ export function CaseConversation(props) {
         if (s_messageInput.trim().length < 1) return;
         setSubmittingMessage(true);
         setMessageInput('');
-        await caseConversationsManager.sendConversationMessage(s_messageInput, conversationId, caseId);
+        const promise = caseConversationsManager.sendConversationMessage(s_messageInput, conversationId, caseId);
+        const conversationMessages = model.cases.currentOpen.conversations.content[conversationId].messages || [];
+        const newTemporaryMessage = {role: 'user', content: s_messageInput};
+        const newTemporaryAssistantMessage = {role: 'assistant', content: '[[LOADING]]'};
+        model.cases.currentOpen.conversations.content[conversationId].messages = [...conversationMessages, newTemporaryMessage, newTemporaryAssistantMessage];
+        c_scrollConversationToBottom();
+        await promise;
+        c_scrollConversationToBottom();
         setSubmittingMessage(false);
     }, [caseId, conversationId, s_submittingMessage, s_messageInput]);
 
@@ -140,7 +161,7 @@ export function CaseConversation(props) {
                             height={'48px'}
                             width={'calc(100% - 80px)'}
                             color={'white'}
-                            borderColor={'#808080'}
+                            borderColor={'#505050'}
                             backgroundColor={'none'}
                             hideValidIndicator={true}
                             fontSize={'16px'}
@@ -150,7 +171,7 @@ export function CaseConversation(props) {
                             {s_submittingMessage ? <LoadingIcon width={'20px'} height={'20px'} color={'black'}/> : <svg viewBox={'0 0 1000 1000'}><path d={SVG_PATHS.send}/></svg>}
                         </ConversationMessageSubmitButton>
                     </ConversationInputContainer>
-                    <ConversationMessagesContainer>
+                    <ConversationMessagesContainer ref={r_conversationRef}>
                         {m_conversationMessageElements}
                     </ConversationMessagesContainer>
                 </ConversationContainer>
@@ -165,7 +186,7 @@ const ConversationMessageContainer = styled.div`
     width: 100%;
     height: max-content;
     padding: 8px 0 ;
-    background: #303030;
+    background: #202020;
 `
 
 const ConversationMessageHeaderContainer = styled.div`
@@ -184,7 +205,7 @@ const ConversationMessageImageContainer = styled.div`
     flex-basis: 32px;
     flex-shrink: 0;
     flex-grow: 0;
-    border: 1px solid #808080;
+    border: 1px solid #505050;
     background: black;
 `
 
@@ -196,6 +217,7 @@ const ConversationMessageNameContainer = styled.div`
 `
 
 const ConversationMessageContentContainer = styled.div`
+    position: relative;
     margin: 8px 0;
     color: white;
     font-size: 16px;
@@ -224,9 +246,13 @@ function ConversationMessage(props) {
                     {props.message.role === 'user' ? 'You' : props.message.role === 'assistant' ? 'MassBot' : ''}
                 </ConversationMessageNameContainer>
             </ConversationMessageHeaderContainer>
-            <ConversationMessageContentContainer>{
-                <ReactMarkdown>{props.message.content}</ReactMarkdown>
-            }</ConversationMessageContentContainer>
+            <ConversationMessageContentContainer>
+                {props.message.role === 'assistant' && props.message.content === '[[LOADING]]' ? <>
+                    <LoadingIcon width={'20px'} height={'20px'} />
+                </> : <>
+                    <ReactMarkdown>{props.message.content}</ReactMarkdown>
+                </>}
+            </ConversationMessageContentContainer>
         </ConversationMessageContainer>
     </>
 }

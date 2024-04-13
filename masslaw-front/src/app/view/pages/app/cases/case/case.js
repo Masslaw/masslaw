@@ -40,8 +40,8 @@ const CaseSidePanelContainer = styled.div`
     display: block;
     width: 256px;
     height: 100%;
-    background-color: #202020;
-    border-right: 1px solid #808080;
+    background-color: #151515;
+    border-right: 1px solid #505050;
     color: white;
     overflow-x: hidden;
     overflow-y: auto;
@@ -60,6 +60,7 @@ const CaseDisplayOutletWrapper = styled.div`
     position: relative;
     height: 100%;
     max-height: 100%;
+    background: #202020;
 `
 
 export function Case(props) {
@@ -108,8 +109,8 @@ const CaseSidePanelSeparator = styled.div`
     position: relative;
     width: 100%;
     height: 1px;
-    background: #202020;
-    background: linear-gradient(90deg, #202020 0%, #505050 20%, #505050 80%, #202020 100%);
+    background: #151515;
+    background: linear-gradient(90deg, #151515 0%, #505050 20%, #505050 80%, #151515 100%);
     margin: 0;
 `
 
@@ -126,10 +127,10 @@ const CaseSidePanelButton = styled.button`
     border-radius: 8px;
     text-align: left;
     font-size: 16px;
-    background: ${({open}) => open ? '#404040' : 'none'};
+    background: ${({open}) => open ? '#303030' : 'none'};
 
     &:hover {
-        background: #505050;
+        background: #353535;
     }
     
     svg { 
@@ -147,7 +148,7 @@ const CaseSidePanelTitle = styled.div`
     z-index: 1;
     top: 0;
     border-bottom: 1px solid #505050;
-    background: #202020;
+    background: #151515;
     span {
         color: white;
         padding: 16px;
@@ -209,7 +210,7 @@ function CaseSidePanel(props) {
         <RedirectButtonWrapper href={constructUrl(ApplicationRoutes.CASE_CONVERSATIONS, {caseId: s_caseId})}>
             <CaseSidePanelButton open={s_currentPage === 'CaseConversations'}>
                 <svg viewBox={'0 0 1000 1000'}><path d={SVG_PATHS.conversations}/></svg>
-                Conversations
+                MassBot
             </CaseSidePanelButton>
         </RedirectButtonWrapper>
         <VerticalGap gap={'8px'}/>
@@ -263,7 +264,7 @@ const CaseSidePanelFilesSectionUploadButton = styled.button`
     align-items: center;
     margin: 8px 10px 4px 6px;
     width: calc(100% - 16px);
-    border: 1px solid #808080;
+    border: 1px solid #505050;
     background: none;
     color: white;
     border-radius: 12px;
@@ -323,11 +324,11 @@ const CaseSidePanelFileHierarchyReloadButton = styled.div`
     align-items: center;
     justify-content: center;
     background: none;
-    background: #202020;
+    background: #151515;
     pointer-events: ${({reloading}) => reloading ? 'none' : 'all'};
     cursor: ${({reloading}) => reloading ? 'normal' : 'pointer'};
     &:hover {
-        background: ${({reloading}) => reloading ? 'none' : '#505050'};
+        background: ${({reloading}) => reloading ? 'none' : '#303030'};
     }
     svg {
         width: 100%;

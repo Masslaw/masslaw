@@ -11,7 +11,7 @@ const UploadCaseFilesPopupContainer = styled.div`
     display: flex;
     flex-direction: column;
     width: 640px;
-    background-color: #303030;
+    background-color: #202020;
     color: white;
     border-radius: 12px;
     z-index: 100;
@@ -34,7 +34,7 @@ const UploadCaseFilesPopupSubTitle = styled.div`
 
 const UploadCaseFilesSectionContainer = styled.div`
     border-radius: 8px;
-    border: 1px solid #808080;
+    border: 1px solid #505050;
     padding: 16px;
     width: calc(100% - 32px);
 `
@@ -144,7 +144,7 @@ const DirectorySelectionContainer = styled.div`
     flex-direction: column;
     width: calc(100% - 32px);
     padding: 16px;
-    background: #505050;
+    background: #303030;
     border-radius: 12px;
 `
 
@@ -157,7 +157,7 @@ const SelectedDirectoryContainer = styled.div`
     line-height: 16px;
     font-size: 14px;
     padding: 8px;
-    background: #505050;
+    background: #303030;
     border-radius: 12px;
 `
 
@@ -179,7 +179,7 @@ const NewDirectoryContainer = styled.div`
     line-height: 20px;
     font-size: 14px;
     padding: 8px;
-    background: #505050;
+    background: #303030;
     border-radius: 12px;
 `
 
@@ -197,7 +197,7 @@ const NewDirectoryInput = styled.input`
     margin: 0 8px 0 4px;
     background: none;
     border: 0 solid white;
-    border-bottom: 1px solid white;
+    border-bottom: 1px solid #505050;
     flex-grow: 1;
     flex-shrink: 0;
     flex-basis: 0;
@@ -306,7 +306,7 @@ const HierarchyLevelDisplayContainer = styled.div`
     position: relative;
     display: flex;
     flex-direction: column;
-    border-left: 1px solid #808080;
+    border-left: 1px solid #505050;
     padding: 4px 0 4px 4px;
 `
 
@@ -322,10 +322,10 @@ const HierarchyLevelDisplayLevelNameContainer = styled.div`
     padding: 4px;
     cursor: pointer;
     border-radius: 4px;
-    background: ${({open}) => open ? '#808080' : 'none'};
+    background: ${({open}) => open ? '#404040' : 'none'};
 
     &:hover {
-        background: #404040;
+        background: #505050;
     }
 `
 
@@ -395,7 +395,7 @@ const SelectFilesContainer = styled.div`
     display: flex;
     flex-direction: column;
     width: calc(100%);
-    background: #505050;
+    background: #303030;
     border-radius: 12px;
 `
 
@@ -408,7 +408,7 @@ const SelectedFilesHeader = styled.div`
     line-height: 24px;
     font-size: 16px;
     padding: 16px;
-    background: #505050;
+    background: #303030;
     border-radius: 12px;
 `
 
@@ -503,7 +503,7 @@ const SelectedFileItemContainer = styled.div`
     line-height: 24px;
     font-size: 14px;
     padding: 8px;
-    background: #707070;
+    background: #404040;
     border-radius: 12px;
     margin: 4px 0;
     border: 1px solid ${({invalidType, duplicate, finished}) => invalidType ? "red" : duplicate ? 'yellow' : finished ? 'green' : 'white'};

@@ -30,8 +30,8 @@ const CaseContentPathInputContainer = styled.div`
     width: calc(100% - 16px - 2px);
     margin: 8px;
     background: #303030;
-    border: 1px solid #808080;
-    border-radius: 4px;
+    border: 1px solid #505050;
+    border-radius: 8px;
     display: flex;
     flex-direction: row-reverse;
     align-items: center;
@@ -84,7 +84,7 @@ const CaseContentPathInputAddButton = styled.button`
     svg {
         width: 100%;
         height: 100%;
-        fill: #808080;
+        fill: #a0a0a0;
     }
 `
 
@@ -121,7 +121,7 @@ const CaseContentPathNextFolderList = styled.div`
     margin: 8px;
     display: flex;
     flex-direction: column;
-    background: #505050;
+    background: #303030;
     height: 144px;
     overflow: auto;
     border-radius: 8px;
@@ -135,7 +135,7 @@ const CaseContentPathNextFolderListItem = styled.div`
     align-items: center;
     padding: 6px;
     cursor: pointer;
-    &:hover { background: #606060; }
+    &:hover { background: #404040; }
     svg {
         fill: white;
         width: 12px;
@@ -165,7 +165,7 @@ const SelectedPathItem = styled.div`
     align-items: center;
     background: #303030;
     border-radius: 8px;
-    border: 1px solid white;
+    border: 1px solid #505050;
 `
 
 const SelectedPathRemoveButton = styled.button`
@@ -181,10 +181,9 @@ const SelectedPathRemoveButton = styled.button`
     flex-shrink: 0;
     flex-grow: 0;
     color: white;
-    border: 1px solid white;
+    border: 1px solid #808080;
     &:hover { 
-        background: white; 
-        color: black;
+        background: #505050; 
     }
 `
 

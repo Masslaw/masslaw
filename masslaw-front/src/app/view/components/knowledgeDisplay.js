@@ -1,7 +1,6 @@
 import {KnowledgeGraphRenderer} from "./knowledgeGraphRenderer";
 import {useEffect, useMemo, useRef, useState} from "react";
 import styled from "styled-components";
-import {Color} from "../../controller/functionality/visual-utils/color";
 import {KnowledgeItemsConfig} from "../config/knowledgeItemsConfig";
 import {setColorSV, stringToColor} from "../../controller/functionality/visual-utils/colorUtils";
 
@@ -22,8 +21,8 @@ const KnowledgeDisplayContainer = styled.div`
     & > div:nth-child(2) {
         width: ${({orientation}) => orientation === 'vertical' ? '100%' : 'calc(30% - 1px)'};
         height: ${({orientation}) => orientation === 'vertical' ? 'calc(30% - 1px)' : '100%'};
-        border-left: ${({orientation}) => orientation === 'vertical' ? 'none' : '1px solid #808080'};
-        border-top: ${({orientation}) => orientation === 'vertical' ? '1px solid #808080' : 'none'};
+        border-left: ${({orientation}) => orientation === 'vertical' ? 'none' : '1px solid #505050'};
+        border-top: ${({orientation}) => orientation === 'vertical' ? '1px solid #505050' : 'none'};
     }
 `
 
@@ -46,6 +45,7 @@ const KnowledgeEntitiesList = styled.div`
     height: 100%;
     overflow-y: auto;
     overflow-x: hidden;
+    background: #202020;
 `
 
 const KnowledgeEntitiesListTitle = styled.div`

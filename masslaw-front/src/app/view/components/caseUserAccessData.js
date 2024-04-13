@@ -41,7 +41,7 @@ const AccessLevelDropDownContainer = styled.div`
         position: relative;
         overflow: hidden;
         background-color: #404040;
-        border: 1px solid #ccc;
+        border: 1px solid #505050;
         box-sizing: border-box;
         color: white;
         border-radius: 8px;
@@ -54,6 +54,7 @@ const AccessLevelDropDownContainer = styled.div`
     .Dropdown-menu {
         border-radius: 8px;
         margin-top: 6px;
+        border: 1px solid #808080;
     }
     .Dropdown-option {
         box-sizing: border-box;
@@ -61,15 +62,15 @@ const AccessLevelDropDownContainer = styled.div`
         cursor: pointer;
         display: block;
         padding: 6px 8px;
-        background: #404040;
+        background: #303030;
         font-size: 13px;
     }
     .Dropdown-option:hover {
-        background: #505050;
+        background: #454545;
         color: white;
     }
     .Dropdown-option.is-selected {
-        background: #606060;
+        background: #404040;
         color: white;
     }
 `
@@ -84,10 +85,10 @@ const AccessLevelComment = styled.div`
 const CaseContentPathSelectionContainer = styled.div`
     width: calc(100% - 32px);
     margin: 8px 16px;
-    background: #303030;
+    background: #282828;
     border-radius: 8px;
     overflow: hidden;
-    border: 1px solid #808080;
+    border: 1px solid #505050;
 `
 
 export function CaseUserAccessData(props) {

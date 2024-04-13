@@ -13,7 +13,7 @@ const CreateCasePopupContainer = styled.div`
     display: flex;
     flex-direction: column;
     width: 512px;
-    background: #303030;
+    background: #202020;
     color: white;
     border-radius: 12px;
     z-index: 100;

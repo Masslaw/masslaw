@@ -3,8 +3,7 @@ import {useParams} from "react-router-dom";
 import {useModelValueAsReactState} from "../../controller/functionality/model/modelReactHooks";
 import {LoadingIcon} from "./loadingIcon";
 import {model} from "../../model/model";
-import {CaseTimeline} from "./caseTimeline";
-import {ApplicationRoutes} from "../../config/applicaitonRoutes";
+import {CaseTimelineRender} from "./caseTimelineRender";
 
 
 export function CaseTimelineDisplay(props) {
@@ -46,7 +45,6 @@ export function CaseTimelineDisplay(props) {
             let entity_label = entity.label;
             if (!["DATE"].includes(entity_label)) continue;
             let entity_id = entity.id;
-            let entity_title = entity.properties.title;
             let entity_date = entity.properties.datetime;
             if (!entity_date) continue;
             if (!entity_date.Y) continue;
@@ -57,7 +55,7 @@ export function CaseTimelineDisplay(props) {
             date.setHours(0);
             date.setMinutes(0);
             date.setSeconds(0);
-            events[entity_id] = { title: entity_title, onclick: () => model.application.navigate(ApplicationRoutes.CASE_KNOWLEDGE_ENTITY, {caseId: caseId || '', entityId: entity_id || ''}), date: date,};
+            events[entity_id] = { ...entity.properties, date: date};
         }
         console.log(events);
         return events;
@@ -67,7 +65,7 @@ export function CaseTimelineDisplay(props) {
         {s_loading ? <>
             <LoadingIcon width={'30px'} height={'30px'}/>
         </> : <>
-            <CaseTimeline events={m_events}/>
+            <CaseTimelineRender events={m_events}/>
         </>}
     </>
 }

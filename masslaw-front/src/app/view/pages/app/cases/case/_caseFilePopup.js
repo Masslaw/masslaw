@@ -13,7 +13,7 @@ const CaseFilePopupContainer = styled.div`
     display: flex;
     flex-direction: column;
     width: 512px;
-    background-color: #303030;
+    background-color: #202020;
     color: white;
     border-radius: 12px;
     z-index: 100;

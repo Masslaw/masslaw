@@ -17,6 +17,7 @@ const CaseUsersPageContainer = styled.div`
     width: 100%;
     height: 100%;
     overflow: auto;
+    background: #202020;
 `
 
 const CaseUsersTopSection = styled.div`
@@ -136,8 +137,8 @@ const CaseUserItemDisplayContainer = styled.div`
     flex-direction: column;
     width: 512px;
     height: max-content;
-    background: #202020;
-    border: 1px solid #808080;
+    background: #282828;
+    border: 1px solid #505050;
     margin: 16px 8px;
     padding: 8px;
     border-radius: 12px;

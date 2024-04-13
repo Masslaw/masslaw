@@ -19,7 +19,7 @@ const CaseUserDataProfilePictureContainer = styled.div`
     height: 32px;
     border-radius: 8px;
     overflow: hidden;
-    border: 1px solid white;
+    border: 1px solid #808080;
 `
 
 const CaseUserDataTopSection = styled.div`

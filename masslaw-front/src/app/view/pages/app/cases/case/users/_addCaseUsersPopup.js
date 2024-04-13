@@ -10,7 +10,7 @@ import {LoadingIcon} from "../../../../../components/loadingIcon";
 const AddCaseUserPopupContainer = styled.div`
     width: 512px;
     padding: 16px;
-    background: #303030;
+    background: #202020;
     overflow: auto;
     &::-webkit-scrollbar { display: none; }
 `

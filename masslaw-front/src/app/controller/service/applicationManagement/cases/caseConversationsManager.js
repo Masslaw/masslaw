@@ -31,9 +31,6 @@ export class CaseConversationsManager extends BaseService {
 
     async sendConversationMessage(message, conversationId, caseId=null) {
         caseId = caseId || this.model.cases.currentOpen.id;
-        const conversationMessages = model.cases.currentOpen.conversations.content[conversationId].messages || [];
-        const newTemporaryMessage = {role: 'user', content: message};
-        model.cases.currentOpen.conversations.content[conversationId].messages = [...conversationMessages, newTemporaryMessage];
         model.cases.currentOpen.conversations.data[conversationId].last_message = Math.floor(Date.now() / 1000).toString();
         const request = await this.masslawHttpApiClient.makeApiHttpRequest({
             call: MasslawApiCalls.POST_CASE_CONVERSATION_MESSAGE,
