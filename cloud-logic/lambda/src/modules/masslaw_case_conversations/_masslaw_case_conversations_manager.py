@@ -8,14 +8,11 @@ from openai import OpenAI
 
 from src.modules.aws_clients.s3_client import S3BucketManager
 from src.modules.dictionary_utils import dictionary_utils
-from src.modules.masslaw_case_conversations._masslaw_case_conversations_message_factory import MasslawCaseConversationsMessageFactory
+from src.modules.masslaw_case_conversations._masslaw_case_conversations_message_factory import build_prompt
 from src.modules.masslaw_cases_config import storage_config
+from src.modules.masslaw_cases_config import openai_config
 
 conversations_bucket_manager = S3BucketManager(storage_config.CASES_CONVERSATIONS_BUCKET_ID)
-
-model_name = "gpt-3.5-turbo"
-
-error_message = {'role': 'assistant', 'content': 'An error occurred while processing your message. Please try again.'}
 
 
 class MasslawCaseConversationsManager:
@@ -69,12 +66,10 @@ class MasslawCaseConversationsManager:
         conversation_content = self.get_conversation_content(user_id, conversation_id)
         messages = conversation_content.get('messages', [])
         message_sequence = messages[-10:]
-        message_builder = MasslawCaseConversationsMessageFactory(self.__case_instance, message_content)
-        message_builder.set_context(message_context)
-        formatted_message = message_builder.build_prompt()
+        formatted_message = build_prompt(message_content, message_context)
         message_sequence += [{'role': 'user', 'content': formatted_message}]
         client = OpenAI(api_key=os.environ.get('OPENAI_API_KEY'))
-        response = client.chat.completions.create(model=model_name, messages=message_sequence)
+        response = client.chat.completions.create(model=openai_config.CHATBOT_MODEL, messages=message_sequence)
         response_message = response.choices[0].message
         messages.append({'role': 'user', 'content': message_content})
         conversation_content['messages'] = messages

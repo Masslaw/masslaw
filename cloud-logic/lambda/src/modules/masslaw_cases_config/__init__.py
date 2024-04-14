@@ -4,6 +4,7 @@ from . import _files_config as files_config
 from . import _opensearch_config as opensearch_config
 from . import _security_config as security_config
 from . import _storage_config as storage_config
+from . import _openai_config as openai_config
 
 
 __all__ = [
@@ -13,4 +14,5 @@ __all__ = [
     'opensearch_config',
     'security_config',
     'storage_config',
+    'openai_config',
 ]
