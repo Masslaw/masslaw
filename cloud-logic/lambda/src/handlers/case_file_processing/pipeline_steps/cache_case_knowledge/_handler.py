@@ -6,7 +6,6 @@ from src.modules.aws_clients.neptune_client import NeptuneConnection
 from src.modules.aws_clients.neptune_client import NeptuneEdge
 from src.modules.aws_clients.neptune_client import NeptuneNode
 from src.modules.aws_clients.s3_client import S3BucketManager
-from src.modules.dictionary_utils import dictionary_utils
 from src.modules.lambda_handler_template_step_functions_lambda_node_case_file_pipiline import MasslawStepFunctionCaseFilePipelineNodeHandler
 from src.modules.masslaw_cases_config import storage_config
 from src.modules.neptune_endpoints import get_neptune_read_endpoint_for_stage
@@ -21,6 +20,9 @@ _neptune_client = NeptuneClient(read_connection=NeptuneConnection(connection_end
     write_connection=NeptuneConnection(connection_endpoint=neptune_write_endpoint, connection_port=8182, connection_protocol=neptune_connection_protocol, connection_type='gremlin'))
 
 _s3_bucket_manager = S3BucketManager(storage_config.CASES_KNOWLEDGE_BUCKET_ID)
+
+UNCACHED_ENTITY_PROPERTIES = []
+UNCACHED_CONNECTION_PROPERTIES = []
 
 
 class CacheCaseKnowledge(MasslawStepFunctionCaseFilePipelineNodeHandler):
@@ -43,6 +45,7 @@ class CacheCaseKnowledge(MasslawStepFunctionCaseFilePipelineNodeHandler):
             entity_id = neptune_node.get_id()
             entity_label = neptune_node.get_label()
             entity_properties = neptune_node.get_properties()
+            # dictionary_utils.delete_keys(entity_properties, UNCACHED_ENTITY_PROPERTIES)
             entity_data = {
                 'id': entity_id,
                 'label': entity_label,
@@ -63,6 +66,7 @@ class CacheCaseKnowledge(MasslawStepFunctionCaseFilePipelineNodeHandler):
             connection_id = neptune_edge.get_id()
             connection_label = neptune_edge.get_label()
             connection_properties = neptune_edge.get_properties()
+            # dictionary_utils.delete_keys(connection_properties, UNCACHED_CONNECTION_PROPERTIES)
             connection_data = {
                 'id': connection_id,
                 'label': connection_label,

@@ -136,16 +136,13 @@ class MasslawCaseKnowledgeManager:
     def _clean_knowledge_entity_data(self, entity: dict, files: list[str]):
         entity_files = set(dictionary_utils.get_from(entity, ['properties', 'files', 'list'], []))
         dictionary_utils.set_at(entity, ['properties', 'files', 'list'], list(entity_files & set(files)))
-        information_items = dictionary_utils.get_from(entity, ['properties', 'information_items'], {})
-        filtered_information_items = dictionary_utils.select_keys(information_items, files)
-        dictionary_utils.set_at(entity, ['properties', 'information_items'], filtered_information_items)
-        appearances = dictionary_utils.get_from(entity, ['properties', 'appearances'], {})
-        filtered_appearances = dictionary_utils.select_keys(appearances, files)
-        dictionary_utils.set_at(entity, ['properties', 'appearances'], filtered_appearances)
+        text_data = dictionary_utils.get_from(entity, ['properties', 'text'], {})
+        text_data = dictionary_utils.select_keys(text_data, files)
+        dictionary_utils.set_at(entity, ['properties', 'text'], text_data)
 
     def _clean_knowledge_connection_data(self, connection: dict, files: list[str]):
         connection_files = set(dictionary_utils.get_from(connection, ['properties', 'files', 'list'], []))
         dictionary_utils.set_at(connection, ['properties', 'files', 'list'], list(connection_files & set(files)))
-        evidence = dictionary_utils.get_from(connection, ['properties', 'evidence'], {})
-        filtered_evidence = dictionary_utils.select_keys(evidence, files)
-        dictionary_utils.set_at(connection, ['properties', 'evidence'], filtered_evidence)
+        text_data = dictionary_utils.get_from(connection, ['properties', 'text'], {})
+        text_data = dictionary_utils.select_keys(text_data, files)
+        dictionary_utils.set_at(connection, ['properties', 'text'], text_data)

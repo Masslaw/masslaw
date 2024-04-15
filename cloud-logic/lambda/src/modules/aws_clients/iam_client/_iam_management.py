@@ -33,7 +33,6 @@ def put_role_policy(role_name, policy_name, policy):
 def delete_role(role_name):
     try:
         response = iam.delete_role(RoleName=role_name)
-        print('Role deleted successfully')
     except ClientError as e:
         return None
 
@@ -58,7 +57,6 @@ def check_role_exists(role_name):
         if e.response['Error']['Code'] == 'NoSuchEntity':
             return False
         else:
-            print(e)
             return False
 
 
