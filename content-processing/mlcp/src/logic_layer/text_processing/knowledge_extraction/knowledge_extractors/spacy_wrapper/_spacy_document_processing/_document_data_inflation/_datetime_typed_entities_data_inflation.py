@@ -1,3 +1,4 @@
+import datetime
 import re
 from typing import List
 from typing import Set
@@ -6,10 +7,21 @@ from dateutil import parser
 
 from logic_layer.text_processing.knowledge_extraction.knowledge_extractors.spacy_wrapper._spacy._common import get_token_dependency_chain
 from logic_layer.text_processing.knowledge_extraction.knowledge_extractors.spacy_wrapper._spacy_document_processing._structures import DocumentEntity
+from shared_layer.mlcp_logger import logger
+from shared_layer.mlcp_logger import common_formats
+
+common_unparseable_expressions_to_parseable_representations = {'morning': '6:00', 'evening': '18:00', 'night': '21:00', 'noon': '12:00', 'afternoon': '16:00', 'midnight': '00:00', 'spring': 'March', 'summer': 'June', 'autumn': 'September', 'winter': 'December', }
+
+inferable_datetime_units = {'morning': {'h': 6}, 'evening': {'h': 18}, 'night': {'h': 21}, 'noon': {'h': 12}, 'afternoon': {'h': 16}, 'midnight': {'h': 0}, 'spring': {'M': 3}, 'summer': {'M': 6}, 'autumn': {'M': 9}, 'winter': {'M': 12}, 'jan': {'M': 1},
+                            'january': {'M', 1}, 'feb': {'M': 2}, 'february': {'M': 2}, 'mar': {'M': 3}, 'march': {'M': 3}, 'apr': {'M': 4}, 'april': {'M': 4}, 'may': {'M': 5}, 'jun': {'M': 6}, 'june': {'M': 6}, 'jul': {'M': 7},
+                            'july': {'M': 7}, 'aug': {'M': 8}, 'august': {'M': 8}, 'sep': {'M': 9}, 'september': {'M': 9}, 'oct': {'M': 10}, 'october': {'M': 10}, 'nov': {'M': 11}, 'november': {'M': 11}, 'dec': {'M': 12},
+                            'december': {'M': 12}}
 
 
+@logger.process_function("Inflating datetime typed entities data")
 def inflate_datetime_entity_data(entities: List[DocumentEntity] | Set[DocumentEntity]):
     date_typed_entities = [entity for entity in entities if entity.entity_span.label_ in ("DATE", "TIME",)]
+    logger.debug(f"Inflating {common_formats.value(len(date_typed_entities))} datetime typed entities data")
     _load_entity_titles(date_typed_entities)
     _parse_datetimes(date_typed_entities)
 
@@ -18,54 +30,70 @@ def _load_entity_titles(date_entities: List[DocumentEntity]):
     for entity in date_entities:
         entity_span = entity.entity_span
         chain = get_token_dependency_chain(entity_span.root, ['compound', 'nummod', 'nmod'])
-        span_tokens = entity_span.doc[min(chain[0].i, entity_span.start):max(entity_span[-1].i + 1, entity_span.end)]
+        span_tokens = entity_span.doc[min(chain[0].i, entity_span[0].i):max(chain[-1].i + 1, entity_span[-1].i + 1)]
         entity_title = ' '.join([token.text for token in span_tokens])
+        entity_title = entity_title.replace('\n', ' ')
+        entity_title = re.sub(r'\s+', ' ', entity_title)
         entity.entity_data['title'] = entity_title
 
 
+@logger.process_function("Parsing datetime strings")
 def _parse_datetimes(datetime_entities: List[DocumentEntity]):
+    datetime_entities.sort(key=lambda entity: entity.entity_span.root.i)
+    last_date = {}
     for entity in datetime_entities:
         entity_title = entity.entity_data.get('title')
-        datetime_string = _replace_common_unparseable_expressions_with_parsable_text(entity_title)
-        try:
-            parsed_datetime_iso = _parse_datetime(datetime_string)
-            entity.entity_data['datetime'] = parsed_datetime_iso
-        except parser.ParserError:
-            continue
+        logger.debug(f"datetime entity title: {common_formats.value(entity_title)}")
+        parsed_datetime_data = _parse_datetime(entity_title)
+        logger.debug(f"parsed datetime data: {common_formats.value(parsed_datetime_data)}")
+        if not (parsed_datetime_data.keys() & {'Y', 'M', 'D'}): continue
+        _attempt_to_fill_current_date_with_last(parsed_datetime_data, last_date)
+        logger.debug(f"parsed datetime data after filling: {common_formats.value(parsed_datetime_data)}")
+        entity.entity_data['datetime'] = parsed_datetime_data
+        last_date = parsed_datetime_data
 
 
 def _parse_datetime(datetime_string: str) -> dict:
-    parsed_datetime = parser.parse(datetime_string)
-    date_time_data = {
-        'Y': parsed_datetime.year,
-        'M': parsed_datetime.month,
-        'D': parsed_datetime.day,
-        'h': parsed_datetime.hour,
-        'm': parsed_datetime.minute,
-        's': parsed_datetime.second,
-    }
-    if not _search_in_string_as_whole(str(parsed_datetime.year), datetime_string) and not _search_in_string_as_whole(str(parsed_datetime.year)[-2:], datetime_string):
-        date_time_data.pop('Y')
+    parsable_string = _construct_parsable_string(datetime_string)
+    logger.debug(f"parseable string: {common_formats.value(parsable_string)}")
+    date_time_data = {}
+    try:
+        parsed_datetime = parser.parse(parsable_string, fuzzy=True)
+        if parsed_datetime.year: date_time_data['Y'] = parsed_datetime.year
+        if parsed_datetime.month: date_time_data['M'] = parsed_datetime.month
+        if parsed_datetime.day: date_time_data['D'] = parsed_datetime.day
+        if parsed_datetime.hour: date_time_data['h'] = parsed_datetime.hour
+        if parsed_datetime.minute: date_time_data['m'] = parsed_datetime.minute
+        if parsed_datetime.second: date_time_data['s'] = parsed_datetime.second
+    except parser.ParserError: pass
+    easily_inferable_datetime_units = _get_easily_inferable_datetime_units(datetime_string)
+    date_time_data.update(easily_inferable_datetime_units)
     return date_time_data
 
 
-def _search_in_string_as_whole(substring: str, string: str) -> bool:
-    return re.search(r'\b' + re.escape(substring) + r'\b', string) is not None
+def _construct_parsable_string(datetime_string: str) -> str:
+    parsable_string = datetime_string.lower()
+    parsable_string = _replace_common_unparseable_expressions_with_parsable_text(parsable_string)
+    return parsable_string
 
 
 def _replace_common_unparseable_expressions_with_parsable_text(text: str) -> str:
-    common_unparseable_expressions_to_parseable_representations = {
-        'morning': '6:00',
-        'evening': '18:00',
-        'night': '21:00',
-        'noon': '12:00',
-        'midnight': '00:00',
-        'spring': 'March',
-        'summer': 'June',
-        'autumn': 'September',
-        'winter': 'December',
-    }
     text = text.lower()
     for unparseable_expression, parseable_representation in common_unparseable_expressions_to_parseable_representations.items():
-        text = text.replace(unparseable_expression, parseable_representation)
+        text = re.sub(r'\b' + re.escape(unparseable_expression) + r'\b', parseable_representation, text)
     return text
+
+
+def _get_easily_inferable_datetime_units(text: str):
+    text = text.lower()
+    datetime_data = {}
+    for expression, datetime_data_update in inferable_datetime_units.items():
+        if expression in text: datetime_data.update(datetime_data_update)
+    return datetime_data
+
+
+def _attempt_to_fill_current_date_with_last(date_time_data: dict, last_date: dict) -> dict:
+    for key in ['Y', 'M', 'D', 'h', 'm', 's']:
+        if key in date_time_data: break;
+        if key not in last_date: break;
+        date_time_data[key] = last_date[key]

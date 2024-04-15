@@ -4,10 +4,6 @@ FROM --platform=linux/amd64 python:3.10
 # Update the package repository
 RUN apt-get update
 
-# Clean the package repository
-RUN apt-get clean
-RUN apt-get autoremove
-
 # Install necessary packages
 # --
 

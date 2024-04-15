@@ -8,6 +8,7 @@ from spacy.tokens.doc import Doc
 from logic_layer.knowledge_record import KnowledgeRecord
 from logic_layer.text_processing.knowledge_extraction._knowledge_extractor import KnowledgeExtractor
 from logic_layer.text_processing.knowledge_extraction.knowledge_extractors.spacy_wrapper._models import load_spacy_model_for_language
+from logic_layer.text_processing.knowledge_extraction.knowledge_extractors.spacy_wrapper._spacy_custom_entity_matching._spacy_custom_entity_matching import load_custom_entity_matcher_to_spacy_model
 from logic_layer.text_processing.knowledge_extraction.knowledge_extractors.spacy_wrapper._spacy_document_processing import SpacyDocumentProcessor
 from logic_layer.text_structures.extracted_optical_text_structure import ExtractedOpticalTextDocument
 from logic_layer.text_structures.extracted_optical_text_structure import OpticalStructureHierarchyLevel
@@ -29,17 +30,18 @@ class SpacyWrapper(KnowledgeExtractor):
 
     @logger.process_function("Loading spacy models")
     def _load_models(self):
-        for language in self._languages:
-            logger.info(f'Loading model for language {common_formats.value(language)}.')
-            spacy_model = load_spacy_model_for_language(language)
-            if spacy_model is None:
-                logger.warn(f'No model found for language {common_formats.value(language)}.')
-                continue
-            self._prepare_model(spacy_model)
-            self._spacy_models[language] = spacy_model
+        for language in self._languages: self._load_model_for_language(language)
+
+    def _load_model_for_language(self, language):
+        logger.info(f'Loading model for language {common_formats.value(language)}.')
+        spacy_model = load_spacy_model_for_language(language)
+        if spacy_model is None: return
+        self._prepare_model(spacy_model)
+        self._spacy_models[language] = spacy_model
 
     @logger.process_function("Preparing spacy model")
     def _prepare_model(self, spacy_model):
+        load_custom_entity_matcher_to_spacy_model(spacy_model)
         spacy_model.add_pipe('coreferee')
 
     @logger.process_function("Spacy Wrapper - Processing text")
@@ -63,7 +65,7 @@ class SpacyWrapper(KnowledgeExtractor):
         if not spacy_documents: return
         logger.info(f'Processing text for language {common_formats.value(language)}.')
         document_processors = [SpacyDocumentProcessor(spacy_document) for spacy_document in spacy_documents]
-        knowledge_records = [document_processor.process_document() for document_processor in document_processors]
+        knowledge_records = [document_processor.process_document() for document_processor in document_processors]  # TODO - implement concurrent processing
         knowledge_records = [knowledge_record for knowledge_record in knowledge_records if knowledge_record is not None]
         return knowledge_records
 

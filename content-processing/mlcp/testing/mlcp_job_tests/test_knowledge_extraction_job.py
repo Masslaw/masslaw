@@ -11,7 +11,7 @@ from mlcp.testing.stubs.s3_stub import S3StubTestLoader
 from shared_layer.file_system_utils._file_system_utils import clear_directory
 from shared_layer.file_system_utils._file_system_utils import join_paths
 
-file_name = "two_columns.xml"
+file_name = "mocktrial.xml"
 
 bucket_name = "mlcp-test-bucket"
 
@@ -23,7 +23,7 @@ file_id = file_name
 
 parent_output_directory = './output/knowledge_extraction_job'
 
-reset_database = False
+reset_database = True
 
 
 class MLCPKnowledgeExtractionJobTest(unittest.TestCase, MLCPJobTest):
@@ -134,6 +134,12 @@ class MLCPKnowledgeExtractionJobTest(unittest.TestCase, MLCPJobTest):
         all_edges = db_manager.get_edges_by_properties({})
         print(f"Number of nodes: {len(all_nodes)}")
         print(f"Number of edges: {len(all_edges)}")
+
+        for node in sorted(all_nodes, key=lambda node: node.get_label()):
+            print(node.get_label(), node.get_properties())
+
+        for edge in all_edges:
+            print(edge.get_properties())
 
         if reset_database:
             db_manager.delete_nodes_if_exist([node.get_id() for node in all_nodes])

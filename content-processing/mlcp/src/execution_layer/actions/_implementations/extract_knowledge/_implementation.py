@@ -1,11 +1,10 @@
 from execution_layer.actions._application_action import ApplicationAction
 from logic_layer.knowledge_record import KnowledgeRecord
 from logic_layer.knowledge_record.database_sync import RecordDatabaseSyncManager
-from logic_layer.knowledge_record.record_merging import RecordMergingConfiguration
 from logic_layer.remote_graph_database.neptune_manager import NeptuneDatabaseManager
-from logic_layer.text_processing.knowledge_extraction._knowledge_extractor import KnowledgeExtractor
+from logic_layer.text_processing.knowledge_extraction import execute_knowledge_extraction_with_extractors_on_file
 from logic_layer.text_processing.knowledge_extraction.knowledge_extractors.spacy_wrapper import SpacyWrapper
-from logic_layer.text_processing.knowledge_extraction.knowledge_extractors.spacy_wrapper._knowledge_merging_logic import SpacyKnowledgeMergingConfiguration
+from logic_layer.text_processing.knowledge_extraction.knowledge_extractors.spacy_wrapper import SpacyKnowledgeMergingConfiguration
 from shared_layer.mlcp_logger import common_formats
 from shared_layer.mlcp_logger import logger
 
@@ -29,6 +28,7 @@ class ExtractKnowledge(ApplicationAction):
     @logger.process_function('Extracting knowledge from file')
     def __process_file(self, file_data):
         logger.debug(f"File data: {common_formats.value(file_data)}")
+        file_id = file_data.get("file_id")
         file_name = file_data.get("file_name")
         languages = file_data.get("languages")
         neptune_endpoints = file_data.get("neptune_endpoints", {})
@@ -42,10 +42,7 @@ class ExtractKnowledge(ApplicationAction):
 
         merging_configuration = SpacyKnowledgeMergingConfiguration()
 
-        extractor: KnowledgeExtractor = SpacyWrapper(languages)
-        extractor.set_knowledge_merging_configuration(merging_configuration)
-        extractor.load_file(file_name)
-        knowledge_record: KnowledgeRecord = extractor.get_record()
+        knowledge_record = execute_knowledge_extraction_with_extractors_on_file([SpacyWrapper], file_name, languages, merging_configuration)
 
         logger.debug(f"{common_formats.value(str(len(knowledge_record.get_entities())))} entities have been extracted.")
         logger.debug(f"{common_formats.value(str(len(knowledge_record.get_connections())))} connections have been extracted.")
@@ -53,8 +50,7 @@ class ExtractKnowledge(ApplicationAction):
         knowledge_record.batch_update_entity_properties(knowledge_record_data.get("node_properties", {}))
         knowledge_record.batch_update_connection_properties(knowledge_record_data.get("edge_properties", {}))
 
-        file_id = knowledge_record_data.get("file_id")
-        if file_id: self.prefrom_custom_knowledge_items_properties_manipulation_for_file(knowledge_record, file_id)
+        if file_id: self.preform_custom_knowledge_items_properties_manipulation_for_file(knowledge_record, file_id)
 
         logger.info(f"Proceeding to sync extracted knowledge with neptune database")
         graph_database_sync_manager = RecordDatabaseSyncManager(knowledge_record, merging_configuration)
@@ -71,18 +67,14 @@ class ExtractKnowledge(ApplicationAction):
         return True
 
     @logger.process_function('Performing custom knowledge items properties manipulation for file')
-    def prefrom_custom_knowledge_items_properties_manipulation_for_file(self, knowledge_record: KnowledgeRecord, file_id: str):
+    def preform_custom_knowledge_items_properties_manipulation_for_file(self, knowledge_record: KnowledgeRecord, file_id: str):
         for entity in knowledge_record.get_entities():
             entity_properties = entity.get_properties()
-            information_items = entity_properties.get("information_items", [])
-            entity_properties['information_items'] = {
-                file_id: information_items
-            }
+            text_data = entity_properties.get("text", {})
+            entity_properties['text'] = {file_id: text_data}
             entity.set_properties(entity_properties)
         for connection in knowledge_record.get_connections():
             connection_properties = connection.get_properties()
-            evidence = connection_properties.get("evidence", [])
-            connection_properties['evidence'] = {
-                file_id: evidence
-            }
+            text_data = connection_properties.get("text", {})
+            connection_properties['text'] = {file_id: text_data}
             connection.set_properties(connection_properties)

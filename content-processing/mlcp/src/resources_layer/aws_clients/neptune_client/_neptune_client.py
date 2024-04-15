@@ -108,8 +108,6 @@ class NeptuneClient:
 
     def load_properties_to_nodes(self, node_properties: Dict[long | str, Dict]):
         for node_id, properties in node_properties.items():
-            print(node_id)
-            print(properties)
             g = self._get_write_traversal_source()
             t = g.V(get_id_in_correct_type(node_id))
             properties = properties.copy()

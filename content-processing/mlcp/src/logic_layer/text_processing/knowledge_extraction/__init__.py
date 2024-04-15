@@ -1,0 +1,4 @@
+from ._knowledge_extraction_sequence import execute_knowledge_extraction_with_extractors_on_file
+
+
+__all__ = ['execute_knowledge_extraction_with_extractors_on_file']

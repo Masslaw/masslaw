@@ -18,12 +18,12 @@ class DocumentDataFilterer:
         logger.info(f"{common_formats.value(len(self._document_data.document_entities))} entities left after filtering.")
 
     def _determine_entitiy_useless(self, entity: DocumentEntity) -> bool:
-        entity_title = entity.entity_data.get('title', '').lower()
-        if not entity_title: return True
-        if entity.entity_span.label_ in ('LANGUAGE', ): return True
-        if entity.entity_span.label_ in ('DATE', ) and 'old' in entity_title: return True
-        if entity.entity_span.label_ in ('ORDINAL', 'PERCENT', ) and len(entity_title.split(' ')) < 1: return True
-        if entity.entity_span.label_ in ('CARDINAL', 'QUANTITY', 'MONEY', ) and sum(c.isdigit() for c in entity_title) < 4: return True
+        # entity_title = entity.entity_data.get('title', '').lower()
+        # if not entity_title: return True
+        # if entity.entity_span.label_ in ('LANGUAGE', ): return True
+        # if entity.entity_span.label_ in ('DATE', 'TIME', ) and not entity.entity_data.get('datetime', {}) < 1: return True
+        # if entity.entity_span.label_ in ('ORDINAL', 'PERCENT', ) and len(entity_title.split(' ')) < 2: return True
+        # if entity.entity_span.label_ in ('CARDINAL', 'QUANTITY', 'MONEY', ) and sum(c.isdigit() for c in entity_title) < 4: return True
         return False
 
     def filter_relations(self):
