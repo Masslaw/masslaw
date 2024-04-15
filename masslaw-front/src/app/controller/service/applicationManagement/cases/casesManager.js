@@ -1,7 +1,6 @@
 import {BaseService} from "../../_baseService";
 import {MasslawApiCalls} from "../../../../config/masslawAPICalls";
 import {UserStatus} from "../../../../config/userStatus";
-import {caseAccessLevels} from "../../../../config/caseConsts";
 
 export class CasesManager extends BaseService{
     start() {
@@ -24,16 +23,14 @@ export class CasesManager extends BaseService{
         const request = await this.masslawHttpApiClient.makeApiHttpRequest({call: MasslawApiCalls.GET_CASES});
         const responsePayload = request.getResponsePayload() || {};
         const cases = responsePayload.cases || [];
+        const casesCopy = {...this.model.cases.all};
         this.model.cases.all = {};
-        for (const caseData of cases) this.model.cases.all[caseData.case_id] = caseData;
+        for (const caseData of cases) this.model.cases.all[caseData.case_id] = {...(casesCopy[caseData.case_id] || {}), ...caseData};
         return request;
     }
 
     async onCaseOpen(caseId) {
-        if (!caseId) {
-            this.modelResetsManager.resetModelStateAtPath('$.cases.currentOpen');
-            return;
-        }
+        if (!caseId) return this.modelResetsManager.resetModelStateAtPath('$.cases.currentOpen');
         await this.fetchCaseData();
         await this.fetchCaseContentHierarchy();
     }
@@ -49,7 +46,7 @@ export class CasesManager extends BaseService{
         });
         const responsePayload = request.getResponsePayload() || {};
         const caseData = responsePayload.case_data || {};
-        this.model.cases.all[caseId] = {...this.model.cases.all[caseId], ...caseData};
+        this.model.cases.all[caseId] = {...(this.model.cases.all[caseId] || {}), ...caseData};
         return request;
     }
 

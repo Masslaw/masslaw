@@ -17,7 +17,7 @@ const Application = styled.div`
     }
 
     & button {
-        transition: 0.3s ease-out background-color, 0.3s ease-out color, 0.3s ease-out border-color, 0.3s ease-out box-shadow, 0.3s ease-out fliter;
+        //transition: 0.3s ease-out background-color, 0.3s ease-out color, 0.3s ease-out border-color, 0.3s ease-out box-shadow, 0.3s ease-out fliter;
         cursor: pointer;
         outline: none;
         pointer-events: auto;

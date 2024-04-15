@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import React, {useEffect, useMemo} from "react";
+import React, {useCallback, useEffect, useMemo, useState} from "react";
 import {model} from "../../../../model/model";
 import {IdentityBackground} from "../_shared/background";
 import {IdentityForm} from "../_shared/form";
@@ -96,13 +96,13 @@ export function Login(props) {
     model.application.pages.currentPage.minimumUserStatus = null;
     model.application.pages.currentPage.name = 'Login';
 
-    const [s_email, setEmail] = React.useState(model.users.mine.authentication.login.email || "");
-    const [s_password, setPassword] = React.useState(model.users.mine.authentication.login.password || "");
-    const [s_rememberMe, setRememberMe] = React.useState(true);
+    const [s_email, setEmail] = useState(model.users.mine.authentication.login.email || "");
+    const [s_password, setPassword] = useState(model.users.mine.authentication.login.password || "");
+    const [s_rememberMe, setRememberMe] = useState(true);
 
-    const [s_errorMessage, setErrorMessage] = React.useState("");
+    const [s_errorMessage, setErrorMessage] = useState("");
 
-    const login = React.useCallback(async () => {
+    const login = useCallback(async () => {
         model.application.view.state.header.shown = false;
         model.application.view.state.loading['login'] = true;
         model.users.mine.authentication.login.email = s_email;
@@ -118,7 +118,6 @@ export function Login(props) {
                 default:
                     setErrorMessage("An error occurred trying to log you in.");
             }
-
             model.application.view.state.loading['login'] = false;
             return;
         }

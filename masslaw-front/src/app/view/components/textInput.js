@@ -64,6 +64,7 @@ const ValidIndicator = styled.div`
     align-items: center;
     justify-content: center;
     opacity: 0.75;
+    margin-left: 0.5em;
 
     svg {
         width: 100%;
@@ -123,8 +124,8 @@ export function TextInput(props) {
                     onKeyUp={e => e.key === "Enter" && props.onEnter && props.onEnter()}
                     list={props.id + "datalist"}
                 />
-                {props.hasIndicator && (<ValidIndicator size={props.height} logoColor={indicatorLogoColor}>
-                    <svg viewBox={"-1000 -1000 3000 3000"}>
+                {props.hasIndicator && (<ValidIndicator size={`calc(${props.height} * 0.33)`} logoColor={indicatorLogoColor}>
+                    <svg viewBox={"0 0 1000 1000"}>
                         <path d={indicatorLogoPath}/>
                     </svg>
                 </ValidIndicator>)}

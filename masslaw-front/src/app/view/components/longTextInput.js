@@ -79,6 +79,7 @@ const ValidIndicator = styled.div`
     padding: 0;
     margin: 4px;
     text-align: right;
+    font-size: 12px;
 `;
 
 export function LongTextInput(props) {
@@ -114,7 +115,7 @@ export function LongTextInput(props) {
                         }}
                     />
                     {props.hideValidIndicator ? <></> : <>
-                        <ValidIndicator color={(props.value || '').length > (props.maxLength || 0) ? 'red' : 'forestgreen'}>
+                        <ValidIndicator color={(props.value || '').length > (props.maxLength || 0) ? 'red' : 'white'}>
                             {`${(props.value || '').length}/${props.maxLength || 0}`}
                         </ValidIndicator>
                     </>}

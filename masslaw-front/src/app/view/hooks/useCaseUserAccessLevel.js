@@ -1,6 +1,5 @@
 import {model} from "../../model/model";
 import {useEffect, useMemo, useState} from "react";
-import {caseAccessLevels} from "../../config/caseConsts";
 import {useModelValueAsReactState} from "../../controller/functionality/model/modelReactHooks";
 
 export function useCaseUserAccessLevel(caseId = null, userId = null) {

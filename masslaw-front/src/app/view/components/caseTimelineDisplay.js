@@ -20,7 +20,7 @@ export function CaseTimelineDisplay(props) {
 
     useEffect(() => {
         setLoading(true);
-        casesKnowledgeManager.fetchCaseKnowledge(caseId).then(() => setLoading(false));
+        casesKnowledgeManager.fetchCaseKnowledge().then(() => setLoading(false));
     }, []);
 
     useEffect(() => {
@@ -42,22 +42,21 @@ export function CaseTimelineDisplay(props) {
         if (!(s_displayKnowledge || {}).entities) return;
         for (let entity of s_displayKnowledge.entities) {
             if (!entity) continue;
-            let entity_label = entity.label;
-            if (!["DATE"].includes(entity_label)) continue;
+            let entityLabel = entity.label;
+            if (!["DATE", "TIME"].includes(entityLabel)) continue;
             let entity_id = entity.id;
-            let entity_date = entity.properties.datetime;
-            if (!entity_date) continue;
-            if (!entity_date.Y) continue;
+            let entityDate = entity.properties.datetime;
+            if (!entityDate) continue;
+            if (!(entityDate.Y && entityDate.M && entityDate.D)) continue;
             let date = new Date();
-            date.setFullYear(parseInt(entity_date.Y));
-            if (entity_date.M) date.setMonth((parseInt(entity_date.M || '') || 1) - 1);
-            if (entity_date.D) date.setDate((parseInt(entity_date.D || '') || 1) - 1);
-            date.setHours(0);
-            date.setMinutes(0);
-            date.setSeconds(0);
-            events[entity_id] = { ...entity.properties, date: date};
+            date.setFullYear(parseInt(entityDate.Y));
+            date.setMonth((parseInt(entityDate.M || '') || 1) - 1);
+            date.setDate((parseInt(entityDate.D || '') || 1));
+            date.setHours((parseInt(entityDate.h || '') || 0));
+            date.setMinutes((parseInt(entityDate.m || '') || 0));
+            date.setSeconds((parseInt(entityDate.s || '') || 0));
+            events[entity_id] = {title: entity.properties.title, date: date, dateData: entityDate};
         }
-        console.log(events);
         return events;
     }, [s_displayKnowledge])
 

@@ -6,6 +6,7 @@ import {TextInput} from "../../../components/textInput";
 import {LongTextInput} from "../../../components/longTextInput";
 import {ItemSelectionInput} from "../../../components/ItemSelectionInput";
 import {CASE_LANGUAGES} from "../../../../config/caseLanguages";
+import {LoadingIcon} from "../../../components/loadingIcon";
 
 
 const CreateCasePopupContainer = styled.div`
@@ -85,8 +86,12 @@ export function CreateCasePopup(props) {
             (s_selectedLanguages.length > 0);
     }, [s_caseName, s_caseDescription, s_selectedLanguages]);
 
+    const [s_creatingCase, setCreatingCase] = useState(false);
+
     const c_createCase = useCallback(async () => {
+        if (s_creatingCase) return;
         if (!m_canCreateCase) return;
+        setCreatingCase(true);
         const caseData = {
             title: s_caseName.trim(),
             description: s_caseDescription.trim(),
@@ -95,11 +100,13 @@ export function CreateCasePopup(props) {
         const res = await casesManager.createCase(caseData);
         if (!res.getResponseSuccess()) {
             setErrorMessage("Could not create case.");
+            setCreatingCase(false);
             return;
         }
         await casesManager.fetchCases();
+        setCreatingCase(false);
         props.dismiss();
-    }, [m_canCreateCase, props.dismiss, s_caseName, s_caseDescription, s_selectedLanguages]);
+    }, [m_canCreateCase, props.dismiss, s_caseName, s_caseDescription, s_selectedLanguages, s_creatingCase]);
 
     return <>
         <CreateCasePopupContainer>
@@ -151,7 +158,11 @@ export function CreateCasePopup(props) {
             <FinishCreateCaseButton
                 onClick={() => c_createCase()}
                 isclickable={m_canCreateCase}
-            >Create</FinishCreateCaseButton>
+            >
+                {s_creatingCase ? <>
+                    <LoadingIcon width={'20px'} height={'20px'} color={'black'}/>
+                </> : 'Create'}
+            </FinishCreateCaseButton>
         </CreateCasePopupContainer>
     </>
 }

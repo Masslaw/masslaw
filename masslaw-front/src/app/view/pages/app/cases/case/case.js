@@ -315,9 +315,9 @@ const CaseSidePanelFileHierarchyReloadButton = styled.div`
     position: absolute;
     right: 0;
     top: 0;
-    width: 20px;
-    height: 20px;
-    margin: 2px 4px;
+    width: 18px;
+    height: 18px;
+    margin: 2px;
     padding: 4px;
     border-radius: 8px;
     display: flex;
@@ -325,6 +325,9 @@ const CaseSidePanelFileHierarchyReloadButton = styled.div`
     justify-content: center;
     background: none;
     background: #151515;
+    border: 4px solid #151515;
+    border-bottom: 0;
+    border-top: 0;
     pointer-events: ${({reloading}) => reloading ? 'none' : 'all'};
     cursor: ${({reloading}) => reloading ? 'normal' : 'pointer'};
     &:hover {
@@ -356,13 +359,18 @@ function CaseSidePanelFileHierarchy(props) {
 
     return <>
         <CaseSidePanelFileHierarchyContainer>
-            <CaseSidePanelFileHierarchyFolder name={m_caseData.title} hierarchy={m_caseData.contentHierarchy}/>
+            <CaseSidePanelFileHierarchyFolder
+                name={m_caseData.title}
+                hierarchy={m_caseData.contentHierarchy}
+                open={true}
+                loading={s_reloadingContentHierarchy}
+            />
             <CaseSidePanelFileHierarchyReloadButton
                 reloading={s_reloadingContentHierarchy}
                 onClick={c_reloadHierarchy}
             >
                 {s_reloadingContentHierarchy ? <>
-                    <LoadingIcon width={'20px'} height={'20px'} />
+                    <LoadingIcon width={'16px'} height={'16px'} />
                 </> : <>
                     <svg viewBox={'0 0 1000 1000'}><path d={SVG_PATHS.circleArrow}/></svg>
                 </>}
@@ -392,7 +400,7 @@ const CaseSidePanelFileHierarchyTitleContainer = styled.div`
 
 const CaseSidePanelFileHierarchyArrowIcon = styled.div`
     position: relative;
-    width: 12px;
+    width: 18px;
 
     svg {
         width: 100%;
@@ -430,27 +438,30 @@ const CaseSidePanelFileHierarchyFolderContentContainer = styled.div`
     margin: 0 0 0 8px;
     padding: 0 0 0 8px;
     border-left: 1px solid #404040;
+    height: max-content;
+`
+
+const EmptyFolderContainer = styled.div`
+    position: relative;
+    color: #808080;
+    font-size: 12px;
+    padding: 4px;
 `
 
 function CaseSidePanelFileHierarchyFolder(props) {
-    const [s_open, setOpen] = useState(false);
+    const [s_open, setOpen] = useState(props.open);
 
     const m_content = useMemo(() => {
-
         const folderItems = [];
         const fileItems = [];
         for (const item in props.hierarchy) {
             const itemData = props.hierarchy[item];
-            if (typeof itemData === 'object') {
-                folderItems.push(item);
-            } else {
-                fileItems.push(item);
-            }
+            if (typeof itemData === 'object') folderItems.push(item);
+            else fileItems.push(item);
         }
-
+        if (folderItems.length === 0 && fileItems.length === 0) return <EmptyFolderContainer>Empty Folder</EmptyFolderContainer>
         folderItems.sort();
         fileItems.sort();
-
         return <>
             {folderItems.map((folderName, index) => <CaseSidePanelFileHierarchyFolder key={folderName} name={folderName} hierarchy={props.hierarchy[folderName]}/>)}
             {fileItems.map((fileName, index) => <CaseSidePanelFileHierarchyFile key={fileName} name={fileName} fileId={props.hierarchy[fileName]}/>)}
@@ -474,7 +485,11 @@ function CaseSidePanelFileHierarchyFolder(props) {
                     {props.name}
                 </CaseSidePanelFileHierarchyFolderTitle>
             </CaseSidePanelFileHierarchyTitleContainer>
-            <CaseSidePanelFileHierarchyFolderContentContainer>{s_open ? m_content : <></>}</CaseSidePanelFileHierarchyFolderContentContainer>
+            <CaseSidePanelFileHierarchyFolderContentContainer>
+                {s_open ? props.loading ? <>
+                    <VerticalGap gap={'24px'}/><LoadingIcon width={'20px'} height={'20px'} />
+                </> : m_content : <></>}
+            </CaseSidePanelFileHierarchyFolderContentContainer>
         </CaseSidePanelFileHierarchyFolderContainer>
     </>
 }
@@ -630,7 +645,7 @@ function FilesUploading(props) {
             setUploadingFile({name: fileToUpload.file.name, progress: progress});
         }).then(() => {
             setCaseFilesToUpload(p => ({...p, ...{[caseId]: caseFilesToUpload.slice(1)}}));
-            casesManager.fetchCaseContentHierarchy().then();
+            casesManager.fetchCaseContentHierarchy(caseId, true).then();
         });
     }, [s_caseFilesToUpload]);
 

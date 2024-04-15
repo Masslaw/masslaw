@@ -139,7 +139,7 @@ export function Signup(props) {
         model.users.mine.authentication.login.password = "";
     }, [s_email, s_password, s_repeatPassword]);
 
-    const inputWidth = "33vh";
+    const inputWidth = "calc(33vh + 3em)";
     const inputHeight = "3em";
 
     return <>

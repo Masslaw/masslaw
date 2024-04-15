@@ -19,6 +19,7 @@ const PageContainer = styled.div`
     align-items: center;
     width: 100%;
     height: 100%;
+    background: #101010;
 `
 
 const LayoutContainer = styled.div`
@@ -29,7 +30,6 @@ const LayoutContainer = styled.div`
     height: 100%;
     margin: 0;
     padding: 0;
-    border: 1px solid grey;
     border-top: 0;
     border-bottom: 0;
     overflow-y: scroll;
@@ -44,7 +44,6 @@ const Header = styled.div`
     top: 0;
     left: 0;
     width: 100%;
-    background-color: black;
     color: white;
     font-size: 24px;
     z-index: 50;
@@ -53,7 +52,8 @@ const Header = styled.div`
 const Title = styled.div`
     color: white;
     font-size: 24px;
-    margin: 16px 32px 16px 32px;
+    font-weight: bold;
+    margin: 32px;
 `
 
 const SubmitButton = styled.button`
@@ -79,8 +79,8 @@ const FormContainer = styled.div`
 const Separator = styled.div`
     width: 100%;
     height: 1px;
-    background: rgb(0, 0, 0);
-    background: linear-gradient(90deg, black 10%, grey 20%, grey 80%, black 90%);
+    background: #101010;
+    background: linear-gradient(90deg, #101010 10%, #505050 20%, #505050 80%, #101010 90%);
 `
 
 const LabelSpan = styled.span`

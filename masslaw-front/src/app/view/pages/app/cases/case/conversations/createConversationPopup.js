@@ -14,7 +14,7 @@ const CreateConversationPopupContainer = styled.div`
     display: flex;
     flex-direction: column;
     width: 384px;
-    background-color: #303030;
+    background-color: #202020;
     color: white;
     border-radius: 12px;
     z-index: 100;
@@ -48,7 +48,7 @@ const CreateConversationFinishButton = styled.button`
     background: ${({clickable}) => clickable ? 'white' : 'none'};
     color: ${({clickable}) => clickable ? 'black' : '#808080'};
     border: 1px solid white;
-    border-radius: 6px;
+    border-radius: 8px;
     font-size: 16px;
     cursor: ${({clickable}) => clickable ? 'pointer' : 'default'};
     pointer-events: ${({clickable}) => clickable ? 'auto' : 'none'};

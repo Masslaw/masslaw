@@ -20,7 +20,7 @@ export function CaseKnowledgeGraphDisplay(props) {
 
     useEffect(() => {
         setLoading(true);
-        casesKnowledgeManager.fetchCaseKnowledge(caseId).then(() => setLoading(false));
+        casesKnowledgeManager.fetchCaseKnowledge().then(() => setLoading(false));
     }, []);
 
     useEffect(() => {

@@ -90,7 +90,7 @@ export function CaseUserData(props) {
                     <CaseUserDataUserName>
                         {`${s_userData.first_name || ''} ${s_userData.last_name || ''}`.trim() || <LoadingIcon width={'8px'} height={'8px'} />}
                     </CaseUserDataUserName>
-                    <CaseUserRole caseId={props.caseId} userId={props.userId} />
+                    <CaseUserRole caseId={s_caseData.case_id} userId={props.userId} />
                 </CaseUserDataTopSection>
             </> : <>
                 <LoadingIcon width={'20px'} height={'20px'} />
