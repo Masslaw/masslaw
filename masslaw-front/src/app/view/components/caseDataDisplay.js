@@ -26,7 +26,6 @@ const CaseItemDescription = styled.div`
     max-height: 48px;
     font-size: 14px;
     line-height: 16px;
-    font-weight: 500;
     color: #808080;
     margin: 0;
 `
