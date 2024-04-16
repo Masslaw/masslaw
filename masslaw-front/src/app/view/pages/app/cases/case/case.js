@@ -400,7 +400,7 @@ const CaseSidePanelFileHierarchyTitleContainer = styled.div`
 
 const CaseSidePanelFileHierarchyArrowIcon = styled.div`
     position: relative;
-    width: 18px;
+    width: 12px;
 
     svg {
         width: 100%;
