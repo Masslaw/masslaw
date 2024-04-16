@@ -13,7 +13,7 @@ from shared_layer.mlcp_logger import common_formats
 common_unparseable_expressions_to_parseable_representations = {'morning': '6:00', 'evening': '18:00', 'night': '21:00', 'noon': '12:00', 'afternoon': '16:00', 'midnight': '00:00', 'spring': 'March', 'summer': 'June', 'autumn': 'September', 'winter': 'December', }
 
 inferable_datetime_units = {'morning': {'h': 6}, 'evening': {'h': 18}, 'night': {'h': 21}, 'noon': {'h': 12}, 'afternoon': {'h': 16}, 'midnight': {'h': 0}, 'spring': {'M': 3}, 'summer': {'M': 6}, 'autumn': {'M': 9}, 'winter': {'M': 12}, 'jan': {'M': 1},
-                            'january': {'M', 1}, 'feb': {'M': 2}, 'february': {'M': 2}, 'mar': {'M': 3}, 'march': {'M': 3}, 'apr': {'M': 4}, 'april': {'M': 4}, 'may': {'M': 5}, 'jun': {'M': 6}, 'june': {'M': 6}, 'jul': {'M': 7},
+                            'january': {'M': 1}, 'feb': {'M': 2}, 'february': {'M': 2}, 'mar': {'M': 3}, 'march': {'M': 3}, 'apr': {'M': 4}, 'april': {'M': 4}, 'may': {'M': 5}, 'jun': {'M': 6}, 'june': {'M': 6}, 'jul': {'M': 7},
                             'july': {'M': 7}, 'aug': {'M': 8}, 'august': {'M': 8}, 'sep': {'M': 9}, 'september': {'M': 9}, 'oct': {'M': 10}, 'october': {'M': 10}, 'nov': {'M': 11}, 'november': {'M': 11}, 'dec': {'M': 12},
                             'december': {'M': 12}}
 
