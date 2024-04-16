@@ -109,7 +109,6 @@ const CaseKnowledgeGraphInfoText = styled.div`
     color: grey;
     font-size: 14px;
     line-height: 20px;
-    font-weight: 500;
 `
 
 
