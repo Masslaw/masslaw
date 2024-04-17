@@ -3,6 +3,8 @@ import {useEffect, useMemo, useRef, useState} from "react";
 import styled from "styled-components";
 import {KnowledgeItemsConfig} from "../config/knowledgeItemsConfig";
 import {setColorSV, stringToColor} from "../../controller/functionality/visual-utils/colorUtils";
+import {CaseKnowledgeEntityDataDisplay} from "./caseKnowledgeEntityDataDisplay";
+import {pushPopup} from "../global-view/globalLayer/_global-layer-components/popups";
 
 
 const KnowledgeDisplayContainer = styled.div`
@@ -14,8 +16,8 @@ const KnowledgeDisplayContainer = styled.div`
     flex-direction: ${({orientation}) => orientation === 'vertical' ? 'column' : 'row'};
     
     & > div:nth-child(1) {
-        width: ${({orientation}) => orientation === 'vertical' ? '100%' : '70%'};
-        height: ${({orientation}) => orientation === 'vertical' ? '70%' : '100%'};
+        width: ${({hideInfo, orientation}) => hideInfo ? '100%' : orientation === 'vertical' ? '100%' : '70%'};
+        height: ${({hideInfo, orientation}) => hideInfo ? '100%' : orientation === 'vertical' ? '70%' : '100%'};
     }
     
     & > div:nth-child(2) {
@@ -45,7 +47,7 @@ const KnowledgeEntitiesList = styled.div`
     height: 100%;
     overflow-y: auto;
     overflow-x: hidden;
-    background: #202020;
+    background: #151515;
 `
 
 const KnowledgeEntitiesListTitle = styled.div`
@@ -60,11 +62,12 @@ const KnowledgeEntityInfoItem = styled.div`
     flex-direction: column;
     padding: 8px;
     margin: 2px 8px;
-    width: calc(100% - 16px - 16px - 4px);
-    background: #303030;
+    width: calc(100% - 16px - 16px - 5px);
+    background: #252525;
     border-radius: 4px;
     color: white;
     cursor: pointer;
+    border: 1px solid #505050;
     border-left: 4px solid ${({color}) => color}80;
     &:hover { background: #404040; }
 `
@@ -106,8 +109,8 @@ const CaseKnowledgeGraphInfoText = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-    color: grey;
-    font-size: 14px;
+    color: #505050;
+    font-size: 12px;
     line-height: 20px;
 `
 
@@ -167,8 +170,11 @@ export function KnowledgeDisplay(props) {
                 onMouseEnter={e =>  r_graphRef.current.setNodeState(entityData.id, 'highlight')}
                 onMouseLeave={e => r_graphRef.current.setNodeState(entityData.id, 'idle')}
                 color={setColorSV(stringToColor(entityData.label), 1 ,1).getHex()}
+                onClick={() => {
+                    pushPopup({component: EntityDataPopup, componentProps: {entityId: entityData.id}});
+                }}
             >
-                <KnowledgeEntityInfoItemTitle>{entityData.properties.title}<span>({KnowledgeItemsConfig[entityData.label].trueLabel})</span></KnowledgeEntityInfoItemTitle>
+                <KnowledgeEntityInfoItemTitle>"{entityData.properties.title}"<span>({KnowledgeItemsConfig[entityData.label].trueLabel})</span></KnowledgeEntityInfoItemTitle>
                 <KnowledgeEntityInfoItemInfo>Contribution:<span>{s_entityContributions[entityData.id] || 0}</span></KnowledgeEntityInfoItemInfo>
                 <KnowledgeEntityInfoItemInfo>Occurrences across files:<span>{entityData.properties.files.list.length}</span></KnowledgeEntityInfoItemInfo>
             </KnowledgeEntityInfoItem>
@@ -179,6 +185,7 @@ export function KnowledgeDisplay(props) {
         <KnowledgeDisplayContainer 
             ref={r_container}
             orientation={s_displayOrientation}
+            hideInfo={props.hideInfo}
         >
             <KnowledgeGraphSection>
                 <KnowledgeGraphRenderer
@@ -190,12 +197,28 @@ export function KnowledgeDisplay(props) {
                 />
                 <CaseKnowledgeGraphInfoText>Only the 40 most relevant items are displayed</CaseKnowledgeGraphInfoText>
             </KnowledgeGraphSection>
-            <KnowledgeInfoSection>
+            {!props.hideInfo && <KnowledgeInfoSection>
                 <KnowledgeEntitiesList>
                     <KnowledgeEntitiesListTitle>Entities:</KnowledgeEntitiesListTitle>
                     {m_nodesInfoList}
                 </KnowledgeEntitiesList>
-            </KnowledgeInfoSection>
+            </KnowledgeInfoSection>}
         </KnowledgeDisplayContainer>
+    </>
+}
+
+const EntityDataPopupContainer = styled.div`
+    width: 512px;
+    height: 512px;
+    background: #202020;
+    border-radius: 8px;
+    padding: 32px;
+`
+
+function EntityDataPopup(props) {
+    return <>
+        <EntityDataPopupContainer>
+            <CaseKnowledgeEntityDataDisplay entityId={props.entityId} />
+        </EntityDataPopupContainer>
     </>
 }

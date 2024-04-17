@@ -61,7 +61,8 @@ export class CasesManager extends BaseService{
         });
         const responsePayload = request.getResponsePayload() || {};
         const caseContentHierarchy = responsePayload.hierarchy || {};
-        this.model.cases.all[caseId] = {...(this.model.cases.all[caseId] || {}), ...{contentHierarchy: caseContentHierarchy}};
+        const caseFilesData = this.getCaseFilesDataFromHierarchy(caseContentHierarchy);
+        this.model.cases.all[caseId] = {...(this.model.cases.all[caseId] || {}), ...{contentHierarchy: caseContentHierarchy}, ...{filesData: caseFilesData}};
         return request;
     }
 
@@ -83,5 +84,24 @@ export class CasesManager extends BaseService{
             body: {case_data: caseData}
         });
         return request;
+    }
+
+    getCaseFilesDataFromHierarchy(hierarhchy, currentPath=null) {
+        currentPath = currentPath || [];
+        let caseFilesData = {};
+        for (const key in hierarhchy) {
+            const value = hierarhchy[key];
+            if (typeof value === 'object') {
+                const newPath = [...currentPath, key];
+                const newFilesData = this.getCaseFilesDataFromHierarchy(value, newPath);
+                caseFilesData = {...caseFilesData, ...newFilesData};
+                continue;
+            }
+            caseFilesData[value] = {
+                'name': key,
+                'path': currentPath,
+            }
+        }
+        return caseFilesData;
     }
 }

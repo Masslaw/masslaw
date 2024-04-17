@@ -39,13 +39,13 @@ const Application = styled.div`
     }
 
     &::-webkit-scrollbar-thumb {
-        background-color: #ccc;
+        background-color: #101010;
         border-radius: 5px;
         z-index: 50;
     }
 
     &::-webkit-scrollbar-thumb:hover {
-        background-color: #aaa;
+        background-color: #202020;
         z-index: 50;
     }
 

@@ -57,6 +57,7 @@ const CaseDisplayOutletWrapper = styled.div`
     flex-grow: 1;
     flex-shrink: 0;
     flex-basis: 0;
+    min-width: 0;
     position: relative;
     height: 100%;
     max-height: 100%;

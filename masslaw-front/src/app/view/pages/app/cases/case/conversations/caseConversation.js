@@ -160,7 +160,7 @@ export function CaseConversation(props) {
                             value={s_messageInput}
                             setValue={setMessageInput}
                             height={'48px'}
-                            width={'calc(100% - 80px)'}
+                            width={'calc(100% - 70px)'}
                             color={'white'}
                             borderColor={'#505050'}
                             backgroundColor={'none'}
@@ -223,6 +223,8 @@ const ConversationMessageContentContainer = styled.div`
     color: white;
     font-size: 16px;
     width: 100%;
+    line-height: 24px;
+    letter-spacing: 0.5px;
 `
 
 const ConversationMessageMassbotImageSvg = styled.svg`

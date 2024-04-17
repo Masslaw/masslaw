@@ -8,9 +8,10 @@ const MIN_TIME = -2208988800000;
 
 const Timeline = styled.div`
     position: relative;
-    width: 100%;
-    height: 100%;
-    background: #202020;
+    width: max-content;
+    height: max-content;
+    min-height: 100%;
+    overflow-x: visible;
 `
 
 const TimelineVisualLine = styled.div`
@@ -19,7 +20,7 @@ const TimelineVisualLine = styled.div`
     height: 100%;
     background: #b0b0b0;
     top: 0;
-    left: 29px;
+    left: calc(6px - 1px + 8px);
 `
 
 const TimelineEventElement = styled.div`
@@ -30,7 +31,7 @@ const TimelineEventElement = styled.div`
     font-size: 16px;
     font-weight: bold;
     color: white;
-    margin-left: 24px;
+    margin-left: 8px;
 
     & > span:nth-child(1) {
         margin-right: 8px;
@@ -46,6 +47,7 @@ const TimelineEventElement = styled.div`
         background: none;
         border-radius: 8px;
         cursor: pointer;
+        background: ${({highlighted}) => highlighted ? '#303030' : 'none'};
         > span:nth-child(2) {
             font-size: 14px;
             font-weight: normal;
@@ -53,27 +55,15 @@ const TimelineEventElement = styled.div`
             margin-left: 8px;
         }
     }
-
+    
     & > span:nth-child(2):hover {
-        background: #303030;
+        background: #353535;
     }
-`
-
-const NoEventsToShow = styled.div`
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 16px;
-    font-weight: bold;
-    color: #808080;
 `
 
 export const CaseTimelineRender = function (props) {
 
-    const [s_gapMultiplier, setGapMultiplier] = useState(64);
+    const [s_gapMultiplier, setGapMultiplier] = useState(256);
 
     const m_events = useMemo(() => {
         const eventsAndTimes = [];
@@ -102,27 +92,25 @@ export const CaseTimelineRender = function (props) {
         const MIN_GAP = gaps.reduce((a, b) => Math.min(a, b), gaps[0]);
         const gapMeanRatio = (gapMean - MIN_GAP) / (MAX_GAP - MIN_GAP);
         const eventElements = [];
-        eventElements.push(<VerticalGap key={`vg-${0}`} gap={`24px`}/>)
-        eventElements.push(<EventElement key={`evt-${0}`} event={eventsAndTimes[0][0]}/>)
+        eventElements.push(<VerticalGap key={`g-${0}`} gap={`64px`}/>);
+        eventElements.push(<EventElement key={`evt-${0}`} event={eventsAndTimes[0][0]}/>);
         for (let idx = 0; idx < gaps.length; idx++) {
             const eventGap = gaps[idx];
             const eventGapRatio = (eventGap - MIN_GAP) / (MAX_GAP - MIN_GAP);
             const distanceFromMean = gapMeanRatio - eventGapRatio;
             const gapMultiplier = Math.exp(distanceFromMean);
-            eventElements.push(<VerticalGap key={`vg-${idx+1}`} gap={`${gapMultiplier * Math.sqrt(eventGapRatio) * s_gapMultiplier}px`}/>)
+            eventElements.push(<VerticalGap key={`g-${idx}`} gap={`16px`}/>)
+            eventElements.push(<VerticalGap key={`dg-${idx+1}`} gap={`${gapMultiplier * Math.sqrt(eventGapRatio) * s_gapMultiplier}px`}/>)
             eventElements.push(<EventElement key={`evt-${idx+1}`} event={eventsAndTimes[idx+1][0]}/>)
         }
+        eventElements.push(<VerticalGap key={`g--1`} gap={`64px`}/>);
         return eventElements;
     }, [props.events, s_gapMultiplier]);
 
     return <>
         <Timeline>
-            {m_events.length ? <>
-                <TimelineVisualLine/>
-                {m_events}
-            </> : <>
-                <NoEventsToShow>No Events To Show</NoEventsToShow>
-            </>}
+            <TimelineVisualLine/>
+            {m_events}
         </Timeline>
     </>
 }
@@ -137,7 +125,10 @@ function EventElement(props) {
         return '';
     }, [props.event]);
     return <>
-        <TimelineEventElement>
+        <TimelineEventElement
+            highlighted={props.event.highlighted}
+            onClick={props.event.onClick}
+        >
             <span/>
             <span>
                 <span>{m_dateString}</span>

@@ -12,7 +12,7 @@ import {FileProcessingStage} from "./fileStage";
 import {useCaseUserAccessLevel} from "../hooks/useCaseUserAccessLevel";
 import {caseAccessLevels} from "../../config/caseConsts";
 
-const CaseFilePopupFileName = styled.div`
+const CaseFileDataFileName = styled.div`
     font-size: 24px;
     font-weight: bold;
     color: white;
@@ -23,7 +23,7 @@ const CaseFilePopupFileName = styled.div`
     white-space: nowrap;
 `
 
-const CaseFilePopupDirectory = styled.div`
+const CaseFileDataDirectory = styled.div`
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -40,7 +40,7 @@ const CaseFilePopupDirectory = styled.div`
     
 `
 
-const CaseFilePopupDirectoryLevel = styled.span`
+const CaseFileDataDirectoryLevel = styled.span`
     margin: 0 4px;
     color: #c0c0c0;
     font-weight: bold;
@@ -49,10 +49,10 @@ const CaseFilePopupDirectoryLevel = styled.span`
     white-space: nowrap;
 `
 
-const CaseFilePopupDirectorySeparator = styled.span`
+const CaseFileDataDirectorySeparator = styled.span`
 `
 
-const CaseFilePopupStageContainer = styled.div`
+const CaseFileDataStageContainer = styled.div`
     display: flex;
     flex-direction: column;
     margin: 0;
@@ -61,7 +61,7 @@ const CaseFilePopupStageContainer = styled.div`
     width: calc(100% - 64px);
 `
 
-const CaseFilePopupStageTitle = styled.div`
+const CaseFileDataStageTitle = styled.div`
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -111,7 +111,7 @@ const CaseFileProcessingStageReloading = styled.div`
     margin-left: 8px;
 `
 
-const CaseFilePopupDescriptionSection = styled.div`
+const CaseFileDataDescriptionSection = styled.div`
     display: flex;
     flex-direction: column;
     width: calc(100% - 64px);
@@ -119,7 +119,7 @@ const CaseFilePopupDescriptionSection = styled.div`
     font-size: 14px;
 `
 
-const CaseFilePopupDescriptionTitleSection = styled.div`
+const CaseFileDataDescriptionTitleSection = styled.div`
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -127,13 +127,13 @@ const CaseFilePopupDescriptionTitleSection = styled.div`
     margin-bottom: 8px;
 `
 
-const CaseFilePopupDescriptionTitle = styled.div`
+const CaseFileDataDescriptionTitle = styled.div`
     font-weight: bold;
     margin: 0;
     color: #c0c0c0;
 `
 
-const CaseFilePopupDescriptionEditIcon = styled.div`
+const CaseFileDataDescriptionEditIcon = styled.div`
     width: 20px;
     height: 20px;
     background: none;
@@ -162,13 +162,13 @@ const CaseFilePopupDescriptionEditIcon = styled.div`
     
 `
 
-const CaseFilePopupDescriptionEditButtons = styled.div`
+const CaseFileDataDescriptionEditButtons = styled.div`
     display: flex;
     flex-direction: row;
     align-items: center;
 `
 
-const CaseFilePopupDescriptionEditFinishButton = styled.button`
+const CaseFileDataDescriptionEditFinishButton = styled.button`
     width: 64px;
     height: 20px;
     font-size: 12px;
@@ -182,7 +182,7 @@ const CaseFilePopupDescriptionEditFinishButton = styled.button`
     }
 `
 
-const CaseFilePopupDescriptionEditCancelButton = styled.button`
+const CaseFileDataDescriptionEditCancelButton = styled.button`
     width: 64px;
     height: 20px;
     font-size: 12px;
@@ -197,23 +197,23 @@ const CaseFilePopupDescriptionEditCancelButton = styled.button`
     }
 `
 
-const CaseFilePopupDescriptionEditSubmittingLoadingContainer = styled.div`
+const CaseFileDataDescriptionEditSubmittingLoadingContainer = styled.div`
     position: relative;
     width: 20px;
     height: 20px;
     margin: 8px;
 `
 
-const CaseFilePopupDescriptionText = styled.div`
+const CaseFileDataDescriptionText = styled.div`
     margin: 0;
 `
 
-const CaseFilePopupNoDescriptionText = styled.div`
+const CaseFileDataNoDescriptionText = styled.div`
     margin: 0;
     color: #808080;
 `
 
-const CaseFilePopupTimeDisplay = styled.div`
+const CaseFileDataTimeDisplay = styled.div`
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -258,13 +258,13 @@ export function CaseFileData(props) {
         const caseId = model.cases.currentOpen.id || '';
         const caseData = model.cases.all[caseId] || {};
         directory = [caseData.title, ...directory];
-        return <CaseFilePopupDirectory>
+        return <CaseFileDataDirectory>
             {directory.map((d, i) => <>
-                <CaseFilePopupDirectoryLevel key={'level-' + i}>{d}</CaseFilePopupDirectoryLevel>
-                <CaseFilePopupDirectorySeparator key={'separator-' + i}> / </CaseFilePopupDirectorySeparator>
+                <CaseFileDataDirectoryLevel key={'level-' + i}>{d}</CaseFileDataDirectoryLevel>
+                <CaseFileDataDirectorySeparator key={'separator-' + i}> / </CaseFileDataDirectorySeparator>
             </>)}
-            <CaseFilePopupDirectoryLevel>{s_fileData.name}</CaseFilePopupDirectoryLevel>
-        </CaseFilePopupDirectory>
+            <CaseFileDataDirectoryLevel>{s_fileData.name}</CaseFileDataDirectoryLevel>
+        </CaseFileDataDirectory>
     }, [s_fileData]);
 
     useEffect(() => {
@@ -289,12 +289,12 @@ export function CaseFileData(props) {
     
     return <>
         {s_loading ? <LoadingIcon width={"32px"} height={"32px"}/> : <>
-            <CaseFilePopupFileName>{(s_fileData || {}).name}</CaseFilePopupFileName>
+            <CaseFileDataFileName>{(s_fileData || {}).name}</CaseFileDataFileName>
             <VerticalGap gap={'16px'} />
             {m_directory}
             <VerticalGap gap={'16px'} />
-            <CaseFilePopupStageContainer>
-                <CaseFilePopupStageTitle>
+            <CaseFileDataStageContainer>
+                <CaseFileDataStageTitle>
                     <span>Processing Stage</span>
                     {s_reloadingStage ? <>
                         <CaseFileProcessingStageReloading>
@@ -305,18 +305,18 @@ export function CaseFileData(props) {
                             <svg viewBox={'0 0 1000 1000'}><path d={SVG_PATHS.circleArrow}/></svg>
                         </CaseFileProcessingStageReloadButton>
                     </>}
-                </CaseFilePopupStageTitle>
+                </CaseFileDataStageTitle>
                 <VerticalGap gap={'8px'} />
                 <FileProcessingStage fileData={s_fileData}/>
-            </CaseFilePopupStageContainer>
+            </CaseFileDataStageContainer>
             <VerticalGap gap={'16px'} />
-            <CaseFilePopupDescriptionSection>
-                <CaseFilePopupDescriptionTitleSection>
-                    <CaseFilePopupDescriptionTitle>Description</CaseFilePopupDescriptionTitle>
+            <CaseFileDataDescriptionSection>
+                <CaseFileDataDescriptionTitleSection>
+                    <CaseFileDataDescriptionTitle>Description</CaseFileDataDescriptionTitle>
                     {[caseAccessLevels.owner, caseAccessLevels.manager, caseAccessLevels.editor].includes(m_myUserAccessLevel) && !s_editingDescription ? <>
-                        <CaseFilePopupDescriptionEditIcon onClick={() => setEditingDescription(true)}><svg viewBox={'-200 -200 1400 1400'}><path d={SVG_PATHS.pen} /></svg></CaseFilePopupDescriptionEditIcon>
+                        <CaseFileDataDescriptionEditIcon onClick={() => setEditingDescription(true)}><svg viewBox={'-200 -200 1400 1400'}><path d={SVG_PATHS.pen} /></svg></CaseFileDataDescriptionEditIcon>
                     </> : <></>}
-                </CaseFilePopupDescriptionTitleSection>
+                </CaseFileDataDescriptionTitleSection>
                 <VerticalGap gap={'8px'} />
                 {s_editingDescription ? <>
                     <LongTextInput
@@ -327,29 +327,29 @@ export function CaseFileData(props) {
                         maxLength={1000}
                     />
                     {s_submittingDescription ? <>
-                        <CaseFilePopupDescriptionEditSubmittingLoadingContainer><LoadingIcon width={'20px'} height={'20px'} /></CaseFilePopupDescriptionEditSubmittingLoadingContainer>
+                        <CaseFileDataDescriptionEditSubmittingLoadingContainer><LoadingIcon width={'20px'} height={'20px'} /></CaseFileDataDescriptionEditSubmittingLoadingContainer>
                     </> : <>
-                        <CaseFilePopupDescriptionEditButtons>
-                            <CaseFilePopupDescriptionEditFinishButton onClick={() => c_updateDescription()}>Finish</CaseFilePopupDescriptionEditFinishButton>
-                            <CaseFilePopupDescriptionEditCancelButton onClick={() => {
+                        <CaseFileDataDescriptionEditButtons>
+                            <CaseFileDataDescriptionEditFinishButton onClick={() => c_updateDescription()}>Finish</CaseFileDataDescriptionEditFinishButton>
+                            <CaseFileDataDescriptionEditCancelButton onClick={() => {
                                 setEditingDescription(false);
                                 setDescriptionInput((s_fileData || {}).description || '')
-                            }}>Cancel</CaseFilePopupDescriptionEditCancelButton>
-                        </CaseFilePopupDescriptionEditButtons>
+                            }}>Cancel</CaseFileDataDescriptionEditCancelButton>
+                        </CaseFileDataDescriptionEditButtons>
                     </>
                     }
                     </> : <>
-                    {(s_fileData || {}).description ? <CaseFilePopupDescriptionText>{(s_fileData || {}).description}</CaseFilePopupDescriptionText> : <CaseFilePopupNoDescriptionText>No Description Yet...</CaseFilePopupNoDescriptionText>}
+                    {(s_fileData || {}).description ? <CaseFileDataDescriptionText>{(s_fileData || {}).description}</CaseFileDataDescriptionText> : <CaseFileDataNoDescriptionText>No Description Yet...</CaseFileDataNoDescriptionText>}
                 </>}
                 { s_fileData.uploaded && <>
                     <VerticalGap gap={'32px'}/>
-                    <CaseFilePopupTimeDisplay><span>Uploaded In:</span><span>{unixTimeToDayDateString(s_fileData.uploaded)}</span></CaseFilePopupTimeDisplay>
+                    <CaseFileDataTimeDisplay><span>Uploaded In:</span><span>{unixTimeToDayDateString(s_fileData.uploaded)}</span></CaseFileDataTimeDisplay>
                 </>}
                 { s_fileData.modified && <>
                     <VerticalGap gap={'16px'}/>
-                    <CaseFilePopupTimeDisplay><span>Last Modification:</span><span>{unixTimeToPastTimeString(s_fileData.modified)}</span></CaseFilePopupTimeDisplay>
+                    <CaseFileDataTimeDisplay><span>Last Modification:</span><span>{unixTimeToPastTimeString(s_fileData.modified)}</span></CaseFileDataTimeDisplay>
                 </>}
-            </CaseFilePopupDescriptionSection>
+            </CaseFileDataDescriptionSection>
         </>}
     </>
 }
