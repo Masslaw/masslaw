@@ -1,8 +1,6 @@
 import logging
-import os
 from typing import Dict
 from typing import List
-from typing import Optional
 
 from gremlin_python.driver.protocol import GremlinServerError
 from gremlin_python.process.anonymous_traversal import traversal
@@ -12,7 +10,6 @@ from gremlin_python.statics import long
 
 from src.modules.aws_clients.neptune_client._data_parsing import get_edge_object_from_edge
 from src.modules.aws_clients.neptune_client._data_parsing import get_edge_object_from_traversal
-from src.modules.aws_clients.neptune_client._data_parsing import get_id_in_correct_type
 from src.modules.aws_clients.neptune_client._data_parsing import get_multiple_edge_objects_from_traversal
 from src.modules.aws_clients.neptune_client._data_parsing import get_multiple_node_objects_from_traversal
 from src.modules.aws_clients.neptune_client._data_parsing import get_node_object_from_traversal
@@ -112,8 +109,8 @@ class NeptuneClient:
         properties = edge.get_properties()
         if not from_node or not to_node: return edge
         g = self._get_write_traversal_source()
-        t = g.add_e(edge_label).from_(__.V(get_id_in_correct_type(from_node))).to(__.V(to_node))
-        if edge_id: t = t.property(T.id, get_id_in_correct_type(edge_id))
+        t = g.add_e(edge_label).from_(__.V(from_node)).to(__.V(to_node))
+        if edge_id: t = t.property(T.id, edge_id)
         properties = properties.copy()
         dictionary_utils.ensure_flat(properties)
         for key, value in properties.items(): t = t.property(key, value)
@@ -127,7 +124,7 @@ class NeptuneClient:
     def load_properties_to_nodes(self, node_properties: Dict[long | str, Dict]):
         for node_id, properties in node_properties.items():
             g = self._get_write_traversal_source()
-            t = g.V(get_id_in_correct_type(node_id))
+            t = g.V(node_id)
             properties = properties.copy()
             dictionary_utils.ensure_flat(properties)
             for key, value in properties.items(): t = t.property(key, value)
@@ -136,7 +133,7 @@ class NeptuneClient:
     def load_properties_to_edges(self, edge_properties: Dict[long | str, Dict]):
         for edge_id, properties in edge_properties.items():
             g = self._get_write_traversal_source()
-            t = g.E(get_id_in_correct_type(edge_id))
+            t = g.E(edge_id)
             properties = properties.copy()
             dictionary_utils.ensure_flat(properties)
             for key, value in properties.items(): t = t.property(key, value)
@@ -144,18 +141,12 @@ class NeptuneClient:
 
     def delete_nodes_if_exist(self, node_ids: List[long | str]):
         g = self._get_write_traversal_source()
-        corrected_ids = [get_id_in_correct_type(node_id) for node_id in node_ids]
-        corrected_ids = [node_id for node_id in corrected_ids if node_id]
-        try:
-            g.V(corrected_ids).drop().iterate()
-        except StopIteration:
-            pass
+        try: g.V(node_ids).drop().iterate()
+        except StopIteration: pass
 
     def delete_edges_if_exist(self, edge_ids: List[long | str]):
         g = self._get_write_traversal_source()
-        corrected_ids = [get_id_in_correct_type(edge_id) for edge_id in edge_ids]
-        corrected_ids = [edge_id for edge_id in corrected_ids if edge_id]
-        try: g.E(corrected_ids).drop().iterate()
+        try: g.E(edge_ids).drop().iterate()
         except StopIteration: pass
 
     def get_nodes_by_ids(self, node_ids: List[long | str]) -> List[NeptuneNode]:
@@ -163,7 +154,7 @@ class NeptuneClient:
         for node_id in node_ids:
             g = self._get_read_traversal_source()
             try:
-                node = g.V(get_id_in_correct_type(node_id))
+                node = g.V(node_id)
                 node_object = get_node_object_from_traversal(node)
                 nodes.append(node_object)
             except StopIteration:
@@ -175,13 +166,12 @@ class NeptuneClient:
         for edge_id in edge_ids:
             g = self._get_read_traversal_source()
             try:
-                edge = g.E(get_id_in_correct_type(edge_id))
+                edge = g.E(edge_id)
                 edge_object = get_edge_object_from_traversal(edge)
                 edges.append(edge_object)
             except StopIteration:
                 edges.append(None)
         return edges
-
 
     def get_nodes_by_properties(self, properties: Dict, label=None) -> List[NeptuneNode]:
         g = self._get_read_traversal_source()
