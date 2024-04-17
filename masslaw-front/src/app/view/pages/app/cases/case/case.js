@@ -262,7 +262,7 @@ const CaseSidePanelFilesSectionUploadButton = styled.button`
     display: flex;
     flex-direction: row;
     align-items: center;
-    margin: 8px 10px 4px 6px;
+    margin: 8px 8px 4px 8px;
     width: calc(100% - 16px);
     border: 1px solid #505050;
     background: none;

@@ -7,6 +7,8 @@ import {LongTextInput} from "../../../components/longTextInput";
 import {ItemSelectionInput} from "../../../components/ItemSelectionInput";
 import {CASE_LANGUAGES} from "../../../../config/caseLanguages";
 import {LoadingIcon} from "../../../components/loadingIcon";
+import {constructUrl} from "../../../../controller/functionality/navigation/urlConstruction";
+import {ApplicationRoutes} from "../../../../config/applicaitonRoutes";
 
 
 const CreateCasePopupContainer = styled.div`
@@ -104,6 +106,8 @@ export function CreateCasePopup(props) {
             return;
         }
         await casesManager.fetchCases();
+        const newCaseId = res.getResponsePayload().caseId;
+        window.location.href = constructUrl(ApplicationRoutes.CASE_DASHBOARD, {caseId: newCaseId});
         setCreatingCase(false);
         props.dismiss();
     }, [m_canCreateCase, props.dismiss, s_caseName, s_caseDescription, s_selectedLanguages, s_creatingCase]);

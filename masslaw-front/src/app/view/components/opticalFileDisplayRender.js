@@ -249,6 +249,7 @@ export function OpticalFileDisplayRender(props) {
         if (!textStructureContent) return;
         const parser = new DOMParser();
         const structure = parser.parseFromString(textStructureContent, "text/xml");
+        OpticalFileDisplayRenderingUtils.fillHierarchyWithCharactersIfMissing(structure);
         setFileDisplayTextStructure(structure);
     }, [s_loading, s_fileData]);
 
@@ -688,7 +689,7 @@ function OpticalFileDisplayComment(props) {
 }
 
 class OpticalFileDisplayRenderingUtils {
-    static getCharacterElementBoundingRectangle(characterElement) {
+    static getElementBoundingRectangle(characterElement) {
         const r = characterElement.getAttribute('r') || '0-0-0-0';
         const rect_values = r.split('-');
         const x1 = parseFloat(rect_values[0]);
@@ -762,7 +763,7 @@ class OpticalFileDisplayRenderingUtils {
                     markedText += ' ';
                     currentSectionWordParent = characterWordParent;
                 }
-                markedText += character.getAttribute('v') || '';
+                markedText += character.getAttribute('v') || character.textContent || '';
             }
         }
         markedText = markedText.trim();
@@ -789,7 +790,7 @@ class OpticalFileDisplayRenderingUtils {
             let currentMarkingSectionCharacters = [];
             let currentSectionLineParent = null;
             const processSectionCharacters = (sectionCharacters) => {
-                const sectionCharactersBoundingRectangles = sectionCharacters.map(c => OpticalFileDisplayRenderingUtils.getCharacterElementBoundingRectangle(c));
+                const sectionCharactersBoundingRectangles = sectionCharacters.map(c => OpticalFileDisplayRenderingUtils.getElementBoundingRectangle(c));
                 const sectionBoundingRectangle = OpticalFileDisplayRenderingUtils.getBoundingRectangleForRectangles(sectionCharactersBoundingRectangles);
                 const normalizedSectionBoundingRectangle = OpticalFileDisplayRenderingUtils.normalizeRectangleForPageSize(sectionBoundingRectangle, OpticalFileDisplayRenderingUtils.getPageSize(textStructure, pageNum));
                 markingSectionRectanglesPerPage[pageNum].push(normalizedSectionBoundingRectangle);
@@ -830,7 +831,7 @@ class OpticalFileDisplayRenderingUtils {
             let startCharacterIndex;
             for (startCharacterIndex = 0; startCharacterIndex < startPageCharacters.length; startCharacterIndex++) {
                 const character = startPageCharacters[startCharacterIndex];
-                const characterRect = OpticalFileDisplayRenderingUtils.getCharacterElementBoundingRectangle(character);
+                const characterRect = OpticalFileDisplayRenderingUtils.getElementBoundingRectangle(character);
                 const normalizedCharacterRect = OpticalFileDisplayRenderingUtils.normalizeRectangleForPageSize(characterRect, startPageSize);
                 if (normalizedCharacterRect[1] > startInput.y || (normalizedCharacterRect[3] > startInput.y && normalizedCharacterRect[2] > startInput.x)) break;
             }
@@ -840,7 +841,7 @@ class OpticalFileDisplayRenderingUtils {
             let endCharacterIndex;
             for (endCharacterIndex = endPageCharacters.length - 1; endCharacterIndex >= 0; endCharacterIndex--) {
                 const character = endPageCharacters[endCharacterIndex];
-                const characterRect = OpticalFileDisplayRenderingUtils.getCharacterElementBoundingRectangle(character);
+                const characterRect = OpticalFileDisplayRenderingUtils.getElementBoundingRectangle(character);
                 const normalizedCharacterRect = OpticalFileDisplayRenderingUtils.normalizeRectangleForPageSize(characterRect, endPageSize);
                 if (normalizedCharacterRect[3] < endInput.y || (normalizedCharacterRect[1] < endInput.y && normalizedCharacterRect[0] < endInput.x)) break;
             }
@@ -876,7 +877,7 @@ class OpticalFileDisplayRenderingUtils {
             let searchIndex = 0;
             for (let characterIndex = character_index; characterIndex < document_characters.length; characterIndex++) {
                 let character = document_characters[characterIndex];
-                let characterValue = (character.textContent || character.getAttribute('v')) || '';
+                let characterValue = (character.textContent || character.getAttribute('v')) || character.textContent || '';
                 if (['\n', ' '].includes(characterValue)) continue;
                 const searchCharacter = searchString[searchIndex];
                 if (searchCharacter !== characterValue) break;
@@ -931,7 +932,7 @@ class OpticalFileDisplayRenderingUtils {
         const pageElement = document.getElementById(pageElementId);
         if (!pageElement) return;
         const structureCharacterElement = textStructure.getElementsByTagName('gr')[markingStartPage].getElementsByTagName('cr')[markingStartChar];
-        const structureCharacterRect = OpticalFileDisplayRenderingUtils.getCharacterElementBoundingRectangle(structureCharacterElement);
+        const structureCharacterRect = OpticalFileDisplayRenderingUtils.getElementBoundingRectangle(structureCharacterElement);
         const pageSize = OpticalFileDisplayRenderingUtils.getPageSize(textStructure, markingStartPage);
         const normalizedStructureCharacterRect = OpticalFileDisplayRenderingUtils.normalizeRectangleForPageSize(structureCharacterRect, pageSize);
         let characterElement = document.createElement('div');
@@ -943,5 +944,26 @@ class OpticalFileDisplayRenderingUtils {
         characterElement = pageElement.appendChild(characterElement);
         await centerChildInParent(characterElement, documentScrollableParnet);
         pageElement.removeChild(characterElement);
+    }
+
+    static fillHierarchyWithCharactersIfMissing(textStructure) {
+        const structureWords = Array.from(textStructure.getElementsByTagName('wd'));
+        for (const word of structureWords) {
+            const wordCharacters = Array.from(word.getElementsByTagName('cr'));
+            if (wordCharacters.length > 0) continue;
+            const wordRect = OpticalFileDisplayRenderingUtils.getElementBoundingRectangle(word);
+            const wordValue = word.textContent;
+            word.textContent = '';
+            const characterRectWidth = (wordRect[2] - wordRect[0]) / wordValue.length;
+            for (let i = 0; i < wordValue.length; i++) {
+                const character = textStructure.createElement('cr');
+                character.textContent = wordValue[i];
+                const newBoundingRectangle = [...wordRect];
+                newBoundingRectangle[0] += i * characterRectWidth;
+                newBoundingRectangle[2] = newBoundingRectangle[0] + characterRectWidth;
+                character.setAttribute('r', newBoundingRectangle.join('-'));
+                word.appendChild(character);
+            }
+        }
     }
 }

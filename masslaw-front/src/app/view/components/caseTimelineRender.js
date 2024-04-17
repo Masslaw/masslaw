@@ -102,6 +102,7 @@ export const CaseTimelineRender = function (props) {
         const MIN_GAP = gaps.reduce((a, b) => Math.min(a, b), gaps[0]);
         const gapMeanRatio = (gapMean - MIN_GAP) / (MAX_GAP - MIN_GAP);
         const eventElements = [];
+        eventElements.push(<VerticalGap key={`vg-${0}`} gap={`24px`}/>)
         eventElements.push(<EventElement key={`evt-${0}`} event={eventsAndTimes[0][0]}/>)
         for (let idx = 0; idx < gaps.length; idx++) {
             const eventGap = gaps[idx];

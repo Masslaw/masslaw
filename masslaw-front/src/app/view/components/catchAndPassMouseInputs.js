@@ -14,7 +14,7 @@ export function CatchAndPassMouseInputs({ children }) {
                         e.target.style.pointerEvents = 'none';
                         const belowElement = document.elementFromPoint(e.clientX, e.clientY);
                         e.target.style.pointerEvents = originalPointerEvents;
-                        if (belowElement) belowElement.dispatchEvent(new MouseEvent(e.type, e.nativeEvent));
+                        if (belowElement && !Array.from(children).includes(belowElement)) belowElement.dispatchEvent(new MouseEvent(e.type, e.nativeEvent));
                         if (originalEventHandler) originalEventHandler(e);
                     };
                 });
