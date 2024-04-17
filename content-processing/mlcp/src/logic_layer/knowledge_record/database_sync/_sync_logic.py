@@ -118,53 +118,13 @@ def _load_record_data_to_database(record: KnowledgeRecord, graph_database_manage
 
 @logger.process_function('Putting entities in database')
 def _put_entities_in_database(record_entities: List[KnowledgeRecordEntity], graph_database_manager: GraphDatabaseManager):
-    new_entities, existing_entities = _separate_entities_to_new_and_existing(record_entities)
-    _load_new_entities_to_database(new_entities, graph_database_manager)
-    _load_existing_entities_to_database(existing_entities, graph_database_manager)
+    graph_database_nodes = entities_to_graph_database_nodes(record_entities)
+    new_nodes = graph_database_manager.set_nodes(graph_database_nodes)
+    for idx, entity in enumerate(record_entities): entity.set_id(new_nodes[idx].get_id())
 
 
 @logger.process_function('Putting connections in database')
 def _put_connections_in_database(record_connections: List[KnowledgeRecordConnection], graph_database_manager: GraphDatabaseManager):
-    new_connections, existing_connections = _separate_connections_to_new_and_existing(record_connections)
-    _load_new_connections_to_database(new_connections, graph_database_manager)
-    _load_existing_connections_to_database(existing_connections, graph_database_manager)
-
-
-def _separate_entities_to_new_and_existing(entities: List[KnowledgeRecordEntity]) -> Tuple[List[KnowledgeRecordEntity], List[KnowledgeRecordEntity]]:
-    new_entities = []
-    existing_entities = []
-    for entity in entities:
-        if entity.get_id(): existing_entities.append(entity)
-        else: new_entities.append(entity)
-    return new_entities, existing_entities
-
-
-def _separate_connections_to_new_and_existing(connections: List[KnowledgeRecordConnection]) -> Tuple[List[KnowledgeRecordConnection], List[KnowledgeRecordConnection]]:
-    new_connections = []
-    existing_connections = []
-    for connection in connections:
-        if connection.get_id(): existing_connections.append(connection)
-        else: new_connections.append(connection)
-    return new_connections, existing_connections
-
-
-def _load_new_entities_to_database(new_entities: List[KnowledgeRecordEntity], graph_database_manager: GraphDatabaseManager) -> List[KnowledgeRecordEntity]:
-    graph_database_nodes = entities_to_graph_database_nodes(new_entities)
-    new_nodes = graph_database_manager.set_nodes(graph_database_nodes)
-    for idx, entity in enumerate(new_entities): entity.set_id(new_nodes[idx].get_id())
-
-
-def _load_new_connections_to_database(new_connections: List[KnowledgeRecordConnection], graph_database_manager: GraphDatabaseManager) -> List[KnowledgeRecordConnection]:
-    graph_database_edges = connections_to_graph_database_edges(new_connections)
+    graph_database_edges = connections_to_graph_database_edges(record_connections)
     new_edges = graph_database_manager.set_edges(graph_database_edges)
-    for idx, connection in enumerate(new_connections): connection.set_id(new_edges[idx].get_id())
-
-
-def _load_existing_entities_to_database(existing_entities: List[KnowledgeRecordEntity], graph_database_manager: GraphDatabaseManager):
-    entity_property_updates = {entity.get_id(): entity.get_properties() for entity in existing_entities}
-    graph_database_manager.load_properties_to_nodes(entity_property_updates)
-
-
-def _load_existing_connections_to_database(existing_connections: List[KnowledgeRecordConnection], graph_database_manager: GraphDatabaseManager):
-    connection_property_updates = {connection.get_id(): connection.get_properties() for connection in existing_connections}
-    graph_database_manager.load_properties_to_edges(connection_property_updates)
+    for idx, connection in enumerate(record_connections): connection.set_id(new_edges[idx].get_id())

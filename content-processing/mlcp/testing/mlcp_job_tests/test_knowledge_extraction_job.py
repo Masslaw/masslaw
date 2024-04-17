@@ -12,6 +12,7 @@ from shared_layer.file_system_utils._file_system_utils import clear_directory
 from shared_layer.file_system_utils._file_system_utils import join_paths
 
 file_name = "mocktrial.xml"
+# file_name = "criminal-mock-trial.xml"
 
 bucket_name = "mlcp-test-bucket"
 
@@ -102,10 +103,10 @@ class MLCPKnowledgeExtractionJobTest(unittest.TestCase, MLCPJobTest):
                                 },
                             },
                             "subgraph_node_properties": {
-                                "case_id": case_id + file_name
+                                "case_id": case_id
                             },
                             "subgraph_edge_properties": {
-                                "case_id": case_id + file_name
+                                "case_id": case_id
                             },
                         }
                     }]
@@ -136,7 +137,7 @@ class MLCPKnowledgeExtractionJobTest(unittest.TestCase, MLCPJobTest):
         print(f"Number of edges: {len(all_edges)}")
 
         for node in sorted(all_nodes, key=lambda node: node.get_label()):
-            print(node.get_label(), node.get_properties())
+            print(node.get_label(), node.get_id(), node.get_properties())
 
         for edge in all_edges:
             print(edge.get_properties())

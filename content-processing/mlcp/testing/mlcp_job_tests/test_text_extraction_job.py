@@ -8,7 +8,7 @@ from mlcp.testing.stubs.s3_stub import S3StubTestLoader
 from shared_layer.file_system_utils._file_system_utils import clear_directory
 from shared_layer.file_system_utils._file_system_utils import join_paths
 
-file_name = "mocktrial.pdf"
+file_name = "criminal-mock-trial.docx"
 
 bucket_name = "mlcp-test-bucket"
 
