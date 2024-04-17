@@ -43,8 +43,8 @@ def _xml_element_to_structure_root(xml_element: ET.Element) -> OpticalTextStruct
 def _xml_element_to_structure_element(xml_element: ET.Element) -> OpticalTextStructureElement:
     element_type = _determine_element_type_from_xml_element(xml_element)
     structure_element = element_type()
-    if 'v' in xml_element.attrib:
-        structure_element.set_children(list(xml_element.get('v', '')))
+    if not len(xml_element):
+        structure_element.set_children(list(xml_element.text or ''))
         bounding_rect = _extract_bounding_rect_from_attribute(xml_element.get('r', '0-0-0-0'))
         structure_element.set_bounding_rect(bounding_rect)
     else:

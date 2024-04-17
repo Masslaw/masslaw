@@ -9,9 +9,9 @@ class TestFunctionXmlElementToStructureElement(unittest.TestCase):
     def test_xml_element_to_structure_element(self):
         line_element = ET.Element('ln')
         word1_element = ET.Element('wd')
-        word1_element.set('v', 'hey')
+        word1_element.text ='hey'
         word2_element = ET.Element('wd')
-        word2_element.set('v', 'there!')
+        word2_element.text = 'there!'
         line_element.append(word1_element)
         line_element.append(word2_element)
 

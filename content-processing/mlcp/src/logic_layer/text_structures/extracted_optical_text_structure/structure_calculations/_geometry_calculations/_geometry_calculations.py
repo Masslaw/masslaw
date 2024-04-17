@@ -4,14 +4,12 @@ from typing import Tuple
 import numpy as np
 
 from logic_layer.text_structures.extracted_optical_text_structure._hierarchy_levels import hierarchy_level_to_element_class
-from logic_layer.text_structures.extracted_optical_text_structure.structure_calculations._geometry_calculations._rectangle_utils import get_average_dimensions_of_rectangles
-from logic_layer.text_structures.extracted_optical_text_structure.structure_calculations._geometry_calculations._rectangle_utils import get_rectangle_height
-from logic_layer.text_structures.extracted_optical_text_structure.structure_calculations._geometry_calculations._rectangle_utils import get_rectangle_width
-from logic_layer.text_structures.extracted_optical_text_structure.structure_calculations._geometry_calculations._rectangle_utils import get_rectangles_enclosing_rectangle
 from logic_layer.text_structures.extracted_optical_text_structure._structure_element import OpticalTextStructureElement
-from logic_layer.text_structures.extracted_optical_text_structure.structure_scanning import OpticalTextStructureScanner
 from logic_layer.text_structures.extracted_optical_text_structure._types import OpticalStructureElementBoundingRectangle
 from logic_layer.text_structures.extracted_optical_text_structure._types import OpticalStructureHierarchyLevel
+from logic_layer.text_structures.extracted_optical_text_structure.structure_calculations._geometry_calculations._rectangle_utils import get_average_dimensions_of_rectangles
+from logic_layer.text_structures.extracted_optical_text_structure.structure_calculations._geometry_calculations._rectangle_utils import get_rectangles_enclosing_rectangle
+from logic_layer.text_structures.extracted_optical_text_structure.structure_scanning import OpticalTextStructureScanner
 from shared_layer.concurrency_utils import run_thread_batch
 
 
@@ -59,8 +57,8 @@ def get_average_gap_between_elements(elements: List[OpticalTextStructureElement]
     def get_gap(elements: Tuple[OpticalTextStructureElement, OpticalTextStructureElement]):
         rect1 = get_element_bounding_rectangle(elements[0])
         rect2 = get_element_bounding_rectangle(elements[1])
-        return (max(0.0, rect2[0] - rect1[2], rect1[0] - rect2[2]),
-                max(0.0, rect2[1] - rect1[3], rect1[1] - rect2[3]))
+        return (max(0.0, rect2[0] - rect1[2], rect1[0] - rect2[2]), max(0.0, rect2[1] - rect1[3], rect1[1] - rect2[3]))
+
     if len(elements) < 2: return 0, 0
     element_pairs = [(elements[i], elements[i + 1]) for i in range(len(elements) - 1)]
     gaps = run_thread_batch(func=get_gap, batch_inputs=element_pairs)

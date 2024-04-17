@@ -15,7 +15,7 @@ class TestFunctionStructureElementToXmlElement(unittest.TestCase):
 
         self.assertIsInstance(result_element, ElementTree.Element)
         self.assertEqual(structure_element.__class__.get_label(), result_element.tag)
-        self.assertEqual(result_element.get('v'), structure_element.get_value())
+        self.assertEqual(result_element.text, structure_element.get_value())
         self.assertEqual(result_element.get('p-dummy-property'), 'dummy value')
         self.assertIsNone(result_element.get('dummy property'))
 
@@ -31,5 +31,5 @@ class TestFunctionStructureElementToXmlElement(unittest.TestCase):
         children_elements = list(result_element)
         self.assertEqual(1, len(children_elements))
         self.assertEqual(result_element.get('p-dummy-property'), 'dummy value')
-        self.assertEqual(child_structure_element.get_value(), children_elements[0].get('v'))
+        self.assertEqual(child_structure_element.get_value(), children_elements[0].text)
         self.assertEqual(children_elements[0].get('p-child-property'), 'child value')

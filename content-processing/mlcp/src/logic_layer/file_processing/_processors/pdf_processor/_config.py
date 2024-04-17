@@ -7,5 +7,4 @@ extracted_optical_text_structure_hierarchy_formation: OpticalStructureHierarchyF
     OpticalStructureHierarchyLevel.PARAGRAPH,
     OpticalStructureHierarchyLevel.LINE,
     OpticalStructureHierarchyLevel.WORD,
-    OpticalStructureHierarchyLevel.CHARACTER
 ]
