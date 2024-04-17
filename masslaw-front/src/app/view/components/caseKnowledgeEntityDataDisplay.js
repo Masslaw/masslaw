@@ -9,6 +9,7 @@ import {useModelValueAsReactState} from "../../controller/functionality/model/mo
 import {model} from "../../model/model";
 import {LoadingIcon} from "./loadingIcon";
 import {KnowledgeDisplay} from "./knowledgeDisplay";
+import {mergeDeep} from "../../controller/functionality/object-utils/objectMerging";
 
 const CaseKnowledgeEntityDataDisplayContainer = styled.div`
     position: relative;
@@ -106,9 +107,7 @@ export function CaseKnowledgeEntityDataDisplay(props) {
     const {casesKnowledgeManager} = model.services;
 
     const s_caseData = useCaseData();
-
-    const [s_caseKnowledge, setCaseKnowledge] = useModelValueAsReactState('$.cases.currentOpen.knowledge', {entities: [], connections: []});
-
+    
     const [s_loading, setLoading] = useState(false);
 
     const [s_entityKnowledge, setEntityKnowledge] = useState({});
@@ -126,14 +125,15 @@ export function CaseKnowledgeEntityDataDisplay(props) {
         setLoading(false);
     }, [props.entityId, s_loading]);
 
-    const m_entityData = useMemo(() => {
-        for (const entityData of s_caseKnowledge.entities || [])  if (entityData.id === props.entityId) return entityData;
-        return {};
-    }, [props.entityId, s_caseKnowledge])
+    const [s_entityData, setEntityData] = useState({});
+
+    useEffect(() => {
+        for (const entityData of s_entityKnowledge.entities || [])  if (entityData.id === props.entityId) setEntityData(entityData);
+    }, [props.entityId, s_entityKnowledge]);
 
     const m_appearances = useMemo(() => {
         if (!s_caseData) return [];
-        const entityData = m_entityData || {};
+        const entityData = s_entityData || {};
         const properties = entityData.properties || {};
         const entityTextData = (properties.text) || {};
         const appearanceItems = [];
@@ -158,23 +158,23 @@ export function CaseKnowledgeEntityDataDisplay(props) {
             }
             if (!fileAppearanceItems.length) continue;
             appearanceItems.push(<AppearanceItemContainer>
-                <RedirectButtonWrapper href={constructUrl(ApplicationRoutes.FILE_DISPLAY, {caseId: s_caseData.case_id, fileId: fileId})}>
-                    <AppearanceItemFileTitle>{fileData.name}</AppearanceItemFileTitle>
-                </RedirectButtonWrapper>
+                <AppearanceItemFileTitle onClick={() => model.application.navigate(constructUrl(ApplicationRoutes.FILE_DISPLAY, {caseId: s_caseData.case_id, fileId: fileId}))}>
+                    {fileData.name}
+                </AppearanceItemFileTitle>
                 {fileAppearanceItems}
             </AppearanceItemContainer>);
         }
         return appearanceItems;
-    }, [m_entityData, props.entityData, s_caseData])
+    }, [s_entityData, props.entityData, s_caseData])
 
     return <>
         <CaseKnowledgeEntityDataDisplayContainer>
             {s_loading ? <>
                 <LoadingIcon width={'20px'} height={'20px'} />
-            </> : !(m_entityData || {}).properties ? <>
+            </> : !(s_entityData || {}).properties ? <>
                 <ErrorDisplayingDataMessage>Data about this entity cannot be displayed</ErrorDisplayingDataMessage>
             </> : <>
-                <EntityTitle>"{m_entityData.properties.title}"</EntityTitle>
+                <EntityTitle>"{s_entityData.properties.title}"</EntityTitle>
                 <VerticalGap gap={'16px'}/>
                 <ItemKnowledgeDisplayContainer>
                     <KnowledgeDisplay knowledge={s_entityKnowledge} hideInfo={true}/>
