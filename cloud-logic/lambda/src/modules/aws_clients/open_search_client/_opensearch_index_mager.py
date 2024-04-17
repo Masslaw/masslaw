@@ -16,7 +16,10 @@ class OpenSearchIndexManager:
         self.session = boto3.Session()
 
     def ensure_exists(self, creation_configuration: dict = None):
-        if not self.index_exists(): self.create_index(creation_configuration or {})
+        try:
+            if not self.index_exists(): self.create_index(creation_configuration or {})
+        except OpenSearchRequestFailedException:
+            pass
 
     def index_exists(self):
         try:
@@ -56,8 +59,7 @@ class OpenSearchIndexManager:
         conn = http.client.HTTPSConnection(self.endpoint_url)
         conn.request(method, request.url, body=request.body, headers=request.headers)  # Change 'request.path' to 'request.url'
         response = conn.getresponse()
-        if response.status >= 400:
-            raise OpenSearchRequestFailedException(f'Status: {response.status}, Reason: {response.reason}, Info: {response.read()}')
+        if response.status >= 400: raise OpenSearchRequestFailedException(f'Status: {response.status}, Reason: {response.reason}, Info: {response.read()}')
         return response
 
     def __sign_request(self, method, path, payload=None):
