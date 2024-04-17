@@ -155,11 +155,8 @@ class NeptuneClient:
         g = self._get_write_traversal_source()
         corrected_ids = [get_id_in_correct_type(edge_id) for edge_id in edge_ids]
         corrected_ids = [edge_id for edge_id in corrected_ids if edge_id]
-        logger.debug(f"Deleting edges with ids: {common_formats.value(corrected_ids)}")
-        try:
-            g.E(corrected_ids).drop().iterate()
-        except StopIteration:
-            pass
+        try: g.E(corrected_ids).drop().iterate()
+        except StopIteration: pass
 
     def get_nodes_by_ids(self, node_ids: List[long | str]) -> List[NeptuneNode]:
         nodes = []
@@ -189,12 +186,10 @@ class NeptuneClient:
     def get_nodes_by_properties(self, properties: Dict, label=None) -> List[NeptuneNode]:
         g = self._get_read_traversal_source()
         t = g.V()
-        if label:
-            t = t.has_label(label)
+        if label: t = t.has_label(label)
         properties = properties.copy()
         dictionary_utils.ensure_flat(properties)
-        for key, value in properties.items():
-            t = t.has(key, value)
+        for key, value in properties.items(): t = t.has(key, value)
         node_objects = get_multiple_node_objects_from_traversal(traversal=t)
         return node_objects
 
@@ -203,26 +198,18 @@ class NeptuneClient:
         t = g.E()
         properties = properties.copy()
         dictionary_utils.ensure_flat(properties)
-        for key, value in properties.items():
-            t = t.has(key, value)
-        if label:
-            t = t.has_label(label)
-        if from_node:
-            t = t.where(__.out_v().hasId(from_node))
-        if to_node:
-            t = t.where(__.in_v().hasId(to_node))
+        for key, value in properties.items(): t = t.has(key, value)
+        if label: t = t.has_label(label)
+        if from_node: t = t.where(__.out_v().hasId(from_node))
+        if to_node: t = t.where(__.in_v().hasId(to_node))
         edge_objects = get_multiple_edge_objects_from_traversal(traversal=t)
         return edge_objects
 
     def get_edges_by_nodes_connection(self, from_node: long | str = None, to_node: long | str = None) -> List[NeptuneEdge]:
-        if (from_node, to_node).count(None) == 2:
-            raise ValueError('At least one of the nodes must be specified')
+        if (from_node, to_node).count(None) == 2: raise ValueError('At least one of the nodes must be specified')
         g = self._get_read_traversal_source()
-        if from_node and not to_node:
-            t = g.V(from_node).out_e()
-        elif to_node and not from_node:
-            t = g.V(to_node).in_e()
-        else:
-            t = g.V(from_node).out_e().where(__.in_v().has_id(to_node))
+        if from_node and not to_node: t = g.V(from_node).out_e()
+        elif to_node and not from_node: t = g.V(to_node).in_e()
+        else: t = g.V(from_node).out_e().where(__.in_v().has_id(to_node))
         edge_objects = get_multiple_edge_objects_from_traversal(traversal=t)
         return edge_objects

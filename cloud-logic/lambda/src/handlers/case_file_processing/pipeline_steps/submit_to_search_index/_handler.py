@@ -50,7 +50,7 @@ class SubmitToSearchIndex(MasslawStepFunctionCaseFilePipelineNodeHandler):
                     self.__documents.append(current_document)
                 current_document = {"par_idx": index + 1, **document_general_data}
             if child.tag == 'wd': current_document['text'] = current_document.get('text', '') + ' '
-            if child.tag == 'cr': current_document['text'] = current_document.get('text', '') + child.get('v', '')
+            if child.tag == 'cr': current_document['text'] = current_document.get('text', '') + child.text
         embeddings_vector = generate_text_embeddings_suitable_for_masslaw_system(str(current_document['text']))
         current_document['embedding'] = embeddings_vector
         self.__documents.append(current_document)

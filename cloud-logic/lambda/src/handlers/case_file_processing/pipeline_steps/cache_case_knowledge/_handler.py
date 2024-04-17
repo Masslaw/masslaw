@@ -45,7 +45,6 @@ class CacheCaseKnowledge(MasslawStepFunctionCaseFilePipelineNodeHandler):
             entity_id = neptune_node.get_id()
             entity_label = neptune_node.get_label()
             entity_properties = neptune_node.get_properties()
-            # dictionary_utils.delete_keys(entity_properties, UNCACHED_ENTITY_PROPERTIES)
             entity_data = {
                 'id': entity_id,
                 'label': entity_label,
@@ -66,7 +65,6 @@ class CacheCaseKnowledge(MasslawStepFunctionCaseFilePipelineNodeHandler):
             connection_id = neptune_edge.get_id()
             connection_label = neptune_edge.get_label()
             connection_properties = neptune_edge.get_properties()
-            # dictionary_utils.delete_keys(connection_properties, UNCACHED_CONNECTION_PROPERTIES)
             connection_data = {
                 'id': connection_id,
                 'label': connection_label,
@@ -77,8 +75,7 @@ class CacheCaseKnowledge(MasslawStepFunctionCaseFilePipelineNodeHandler):
             self.__knowledge['connections'].append(connection_data)
 
     def __validate_edge(self, neptune_edge: NeptuneEdge) -> bool:
-        if neptune_edge.get_properties().get('case_id', '') != self.__case_id:
-            return False
+        if neptune_edge.get_properties().get('case_id', '') != self.__case_id: return False
         return True
 
     def __save_to_s3(self):
