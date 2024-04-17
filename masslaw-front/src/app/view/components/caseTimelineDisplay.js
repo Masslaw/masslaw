@@ -34,7 +34,7 @@ const ReloadButton = styled.button`
     left: 16px;
     width: 32px;
     height: 32px;
-    background: #202020;
+    background: #101010;
     border: none;
     border-radius: 8px;
     cursor: pointer;
@@ -161,21 +161,21 @@ export function CaseTimelineDisplay(props) {
 
     return <>
         <DisplayContainer>
-            <ReloadButton onClick={() => c_loadKnowledge(true)}>
-                {s_loading ? <>
-                    <LoadingIcon width={'20px'} height={'20px'}/>
-                </> : <>
-                    <svg viewBox={'0 0 1000 1000'}><path d={SVG_PATHS.circleArrow}/></svg>
-                </>}
-            </ReloadButton>
             {s_loading ? <>
                 <LoadingIcon width={'30px'} height={'30px'}/>
-            </> : !(s_events && s_events.length) ? <>
-                <NoEventsToShow>No Events To Show</NoEventsToShow>
             </> : <>
-                <CaseTimelineContainer>
-                    <CaseTimelineRender events={s_events}/>
-                </CaseTimelineContainer>
+                <ReloadButton onClick={() => c_loadKnowledge(true)}>
+                    <svg viewBox={'0 0 1000 1000'}>
+                        <path d={SVG_PATHS.circleArrow}/>
+                    </svg>
+                </ReloadButton>
+                {!(s_events && s_events.length) ? <>
+                    <NoEventsToShow>No Events To Show</NoEventsToShow>
+                </> : <>
+                    <CaseTimelineContainer>
+                        <CaseTimelineRender events={s_events}/>
+                    </CaseTimelineContainer>
+                </>}
             </>}
             {s_entityDataTarget && <ItemDataContainer>
                 <CaseKnowledgeEntityDataDisplay entityId={s_entityDataTarget}/>

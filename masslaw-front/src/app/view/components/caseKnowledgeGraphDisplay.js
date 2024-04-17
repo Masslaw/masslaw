@@ -23,7 +23,7 @@ const ReloadButton = styled.button`
     left: 16px;
     width: 32px;
     height: 32px;
-    background: #202020;
+    background: #101010;
     border: none;
     border-radius: 8px;
     cursor: pointer;
@@ -88,20 +88,20 @@ export function CaseKnowledgeGraphDisplay(props) {
     }, [s_caseKnowledge, props.files, props.labels]);
 
     return <>
-        <ReloadButton onClick={() => c_loadKnowledge(true)}>
-            {s_loading ? <>
-                <LoadingIcon width={'20px'} height={'20px'}/>
-            </> : <>
-                <svg viewBox={'0 0 1000 1000'}><path d={SVG_PATHS.circleArrow}/></svg>
-            </>}
-        </ReloadButton>
         <DisplayContainer>
             {s_loading ? <>
                 <LoadingIcon width={'30px'} height={'30px'}/>
-            </> : !Object.keys(s_displayKnowledge).length ? <>
-                <NoKnowledgeToShow>No Knowledge To Show</NoKnowledgeToShow>
             </> : <>
-                <KnowledgeDisplay knowledge={s_displayKnowledge}/>
+                <ReloadButton onClick={() => c_loadKnowledge(true)}>
+                    <svg viewBox={'0 0 1000 1000'}>
+                        <path d={SVG_PATHS.circleArrow}/>
+                    </svg>
+                </ReloadButton>
+                {!Object.keys(s_displayKnowledge).length ? <>
+                    <NoKnowledgeToShow>No Knowledge To Show</NoKnowledgeToShow>
+                </> : <>
+                    <KnowledgeDisplay knowledge={s_displayKnowledge}/>
+                </>}
             </>}
         </DisplayContainer>
     </>
