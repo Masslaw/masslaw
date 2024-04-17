@@ -97,7 +97,7 @@ const LogoutPopupContainer = styled.div`
     height: 128px;
     background: #202020;
     border-radius: 12px;
-    padding: 32px
+    padding: 24px
 `
 
 const LogoutPopupTitle = styled.div`
