@@ -35,7 +35,7 @@ const PageSubTitle = styled.div`
 const CaseList = styled.div`
     position: relative;
     display: grid;
-    grid-template-columns: repeat(auto-fill, calc(320px + 32px + 16px));
+    grid-template-columns: repeat(auto-fill, calc(320px + 32px));
     justify-content: space-between;
     flex-grow: 1;
     border-radius: 12px;
@@ -111,7 +111,7 @@ const CaseItemContainer = styled.div`
     width: 320px;
     height: 175px;
     background-color: #202020;
-    margin: 16px 8px;
+    margin: 16px 0;
     padding: 16px;
     border-radius: 12px;
     transition: 0.5s linear;
