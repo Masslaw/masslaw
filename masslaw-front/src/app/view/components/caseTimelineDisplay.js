@@ -169,7 +169,7 @@ export function CaseTimelineDisplay(props) {
                         <path d={SVG_PATHS.circleArrow}/>
                     </svg>
                 </ReloadButton>
-                {!(s_events && s_events.length) ? <>
+                {!(s_events || []).length) ? <>
                     <NoEventsToShow>No Events To Show</NoEventsToShow>
                 </> : <>
                     <CaseTimelineContainer>
