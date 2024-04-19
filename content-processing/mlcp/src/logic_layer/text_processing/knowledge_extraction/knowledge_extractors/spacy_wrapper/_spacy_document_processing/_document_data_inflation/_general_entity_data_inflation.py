@@ -7,6 +7,8 @@ from typing import Tuple
 from spacy.tokens.span import Span
 from spacy.tokens.token import Token
 
+from logic_layer.text_processing.knowledge_extraction.knowledge_extractors.spacy_wrapper._spacy._common import sort_tokens
+from logic_layer.text_processing.knowledge_extraction.knowledge_extractors.spacy_wrapper._spacy._common import traverse_downward
 from logic_layer.text_processing.knowledge_extraction.knowledge_extractors.spacy_wrapper._spacy_document_processing._structures import DocumentEntity
 from shared_layer.dictionary_utils import dictionary_utils
 
@@ -20,8 +22,12 @@ def _load_entity_appearances(entity: DocumentEntity):
     appearances_data = {}
     for appearance in entity_appearances:
         sentence = appearance.sent
+        appearance_sub_tree = traverse_downward(appearance, lambda token: True)
+        sorted_subtree_tokens = sort_tokens(appearance_sub_tree)
+        appearance_start = sorted_subtree_tokens[0].idx
+        appearance_end = sorted_subtree_tokens[-1].idx+len(sorted_subtree_tokens[-1].text)
         appearances_data[sentence.text] = appearances_data.get(sentence.text, [])
-        appearances_data[sentence.text] += [appearance.idx-sentence.start_char, appearance.idx+len(appearance.text)-sentence.start_char]
+        appearances_data[sentence.text] += [appearance_start-sentence.start_char, appearance_end-sentence.start_char]
     dictionary_utils.set_at(entity.entity_data, ['text', 'aprs'], appearances_data)
 
 

@@ -16,7 +16,7 @@ CUSTOM_ENTITY_MATCHING = {
             {"IS_DIGIT": True, "IS_ALPHA": False},
         ],
         [
-            {"LOWER": {"IN": ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december", "jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"]}},
+            {"TEXT": {"IN": ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december", "jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"]}},
         ],
     ],
 }

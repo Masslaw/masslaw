@@ -1,6 +1,5 @@
 from typing import List
 
-from spacy.tokens.doc import Doc
 from spacy.tokens.span import Span
 from spacy.tokens.token import Token
 
@@ -31,19 +30,15 @@ def get_token_dependency_chain(token, dependencies, _visited=None):
 def traverse_upward(token: Token, stop_condition: callable) -> List[Token]:
     token_chain = [token]
     while True:
-        if stop_condition(token):
-            return token_chain
-        if token.head == token:
-            return token_chain
+        if stop_condition(token): return token_chain
+        if token.head == token: return token_chain
         return token_chain + traverse_upward(token.head, stop_condition)
 
 
 def traverse_downward(token: Token, stop_condition: callable) -> List[Token]:
     token_chain = [token]
-    if stop_condition(token):
-        return token_chain
-    for child in token.children:
-        token_chain += traverse_downward(child, stop_condition)
+    if stop_condition(token): return token_chain
+    for child in token.children: token_chain += traverse_downward(child, stop_condition)
     return token_chain
 
 

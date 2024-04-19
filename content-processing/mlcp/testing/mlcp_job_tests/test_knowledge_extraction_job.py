@@ -11,7 +11,7 @@ from mlcp.testing.stubs.s3_stub import S3StubTestLoader
 from shared_layer.file_system_utils._file_system_utils import clear_directory
 from shared_layer.file_system_utils._file_system_utils import join_paths
 
-file_name = "mocktrial.xml"
+file_name = "2024 ISBA Mock Trial Problem.xml"
 # file_name = "criminal-mock-trial.xml"
 
 bucket_name = "mlcp-test-bucket"
@@ -24,7 +24,7 @@ file_id = file_name
 
 parent_output_directory = './output/knowledge_extraction_job'
 
-reset_database = True
+reset_database = False
 
 
 class MLCPKnowledgeExtractionJobTest(unittest.TestCase, MLCPJobTest):
@@ -137,7 +137,7 @@ class MLCPKnowledgeExtractionJobTest(unittest.TestCase, MLCPJobTest):
         print(f"Number of edges: {len(all_edges)}")
 
         for node in sorted(all_nodes, key=lambda node: node.get_label()):
-            print(node.get_label(), node.get_id(), node.get_properties())
+            print(node.get_label(), node.get_id(), node.get_properties().get('title', ''), node.get_properties())
 
         for edge in all_edges:
             print(edge.get_properties())

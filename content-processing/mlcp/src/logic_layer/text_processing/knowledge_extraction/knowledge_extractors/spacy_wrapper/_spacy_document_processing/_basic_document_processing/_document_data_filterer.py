@@ -22,6 +22,7 @@ class DocumentDataFilterer:
         if not entity_title: return True
         if entity.entity_span.label_ in ('LANGUAGE', ): return True
         if entity.entity_span.label_ in ('DATE', 'TIME', ) and not entity.entity_data.get('datetime', {}): return True
+        if entity.entity_span.label_ in ('DATE', 'TIME', ) and 'old' in entity.entity_data.get('title', ''): return True
         if entity.entity_span.label_ in ('ORDINAL', 'PERCENT', ) and len(entity_title.split(' ')) < 2: return True
         if entity.entity_span.label_ in ('CARDINAL', 'QUANTITY', 'MONEY', ) and sum(c.isdigit() for c in entity_title) < 4: return True
         return False

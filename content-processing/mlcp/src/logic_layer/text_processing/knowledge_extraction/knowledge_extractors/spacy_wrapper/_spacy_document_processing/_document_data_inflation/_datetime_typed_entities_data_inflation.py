@@ -9,6 +9,7 @@ from logic_layer.text_processing.knowledge_extraction.knowledge_extractors.spacy
 from logic_layer.text_processing.knowledge_extraction.knowledge_extractors.spacy_wrapper._spacy_document_processing._structures import DocumentEntity
 from shared_layer.mlcp_logger import logger
 from shared_layer.mlcp_logger import common_formats
+from shared_layer.dictionary_utils import dictionary_utils
 
 common_unparseable_expressions_to_parseable_representations = {'morning': '6:00', 'evening': '18:00', 'night': '21:00', 'noon': '12:00', 'afternoon': '16:00', 'midnight': '00:00', 'spring': 'March', 'summer': 'June', 'autumn': 'September', 'winter': 'December', }
 
@@ -53,30 +54,30 @@ def _parse_datetimes(datetime_entities: List[DocumentEntity]):
         last_date = parsed_datetime_data
 
 
+@logger.process_function("Parsing a datetime string")
 def _parse_datetime(datetime_string: str) -> dict:
+    logger.debug(f"original string: {common_formats.value(datetime_string)}")
     parsable_string = _construct_parsable_string(datetime_string)
     logger.debug(f"parseable string: {common_formats.value(parsable_string)}")
-    date_time_data = {}
-    try:
-        parsed_datetime = parser.parse(parsable_string, fuzzy=True)
-        if parsed_datetime.year: date_time_data['Y'] = parsed_datetime.year
-        if parsed_datetime.month: date_time_data['M'] = parsed_datetime.month
-        if parsed_datetime.day: date_time_data['D'] = parsed_datetime.day
-        if parsed_datetime.hour: date_time_data['h'] = parsed_datetime.hour
-        if parsed_datetime.minute: date_time_data['m'] = parsed_datetime.minute
-        if parsed_datetime.second: date_time_data['s'] = parsed_datetime.second
-    except parser.ParserError: pass
+    date_time_data = _get_datetime_data_from_string(parsable_string)
+    logger.debug(f"raw datetime data: {common_formats.value(date_time_data)}")
+    _remove_nonexisting_numbers_from_date_time_data(datetime_string, date_time_data)
+    logger.debug(f"datetime data after removing nonexisting numbers: {common_formats.value(date_time_data)}")
     easily_inferable_datetime_units = _get_easily_inferable_datetime_units(datetime_string)
+    logger.debug(f"easily inferable datetime units: {common_formats.value(easily_inferable_datetime_units)}")
     date_time_data.update(easily_inferable_datetime_units)
+    logger.debug(f"final datetime data: {common_formats.value(date_time_data)}")
     return date_time_data
 
 
+@logger.process_function("Constructing a parsable datetime string")
 def _construct_parsable_string(datetime_string: str) -> str:
     parsable_string = datetime_string.lower()
     parsable_string = _replace_common_unparseable_expressions_with_parsable_text(parsable_string)
     return parsable_string
 
 
+@logger.process_function("Replacing common unparseable expressions with parsable text")
 def _replace_common_unparseable_expressions_with_parsable_text(text: str) -> str:
     text = text.lower()
     for unparseable_expression, parseable_representation in common_unparseable_expressions_to_parseable_representations.items():
@@ -84,6 +85,32 @@ def _replace_common_unparseable_expressions_with_parsable_text(text: str) -> str
     return text
 
 
+@logger.process_function("Getting datetime data from a string")
+def _get_datetime_data_from_string(datetime_string: str) -> dict:
+    date_time_data = {}
+    try:
+        parsed_datetime = parser.parse(datetime_string, fuzzy=True)
+        if parsed_datetime.year: date_time_data['Y'] = parsed_datetime.year
+        if parsed_datetime.month: date_time_data['M'] = parsed_datetime.month
+        if parsed_datetime.day: date_time_data['D'] = parsed_datetime.day
+        if parsed_datetime.hour: date_time_data['h'] = parsed_datetime.hour
+        if parsed_datetime.minute: date_time_data['m'] = parsed_datetime.minute
+        if parsed_datetime.second: date_time_data['s'] = parsed_datetime.second
+    except parser.ParserError: pass
+    return date_time_data
+
+
+@logger.process_function("Removing nonexisting numbers from datetime data")
+def _remove_nonexisting_numbers_from_date_time_data(datetime_string: str, date_time_data: dict):
+    nonexisting_keys = []
+    for key, value in date_time_data.items():
+        value_string = str(value)
+        value_string = value_string[-2:]  # take only the last two digits
+        if value_string not in datetime_string: nonexisting_keys.append([key])
+    dictionary_utils.delete_keys(date_time_data, nonexisting_keys)
+
+
+@logger.process_function("Getting easily inferable datetime units from a string")
 def _get_easily_inferable_datetime_units(text: str):
     text = text.lower()
     datetime_data = {}
@@ -92,8 +119,9 @@ def _get_easily_inferable_datetime_units(text: str):
     return datetime_data
 
 
+@logger.process_function("Attempting to fill current date with last date")
 def _attempt_to_fill_current_date_with_last(date_time_data: dict, last_date: dict) -> dict:
-    for key in ['Y', 'M', 'D', 'h', 'm', 's']:
-        if key in date_time_data: break;
-        if key not in last_date: break;
+    for key in ['Y', 'M', 'D']:
+        if key in date_time_data: return;
+        if key not in last_date: return;
         date_time_data[key] = last_date[key]
