@@ -74,7 +74,7 @@ const ConversationMessagesContainer = styled.div`
     flex-shrink: 0;
     flex-grow: 1;
     overflow-y: auto;
-    
+    &::-webkit-scrollbar { display: none; }
 `
 
 const ConversationMessagesSeparator = styled.div`
