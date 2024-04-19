@@ -11,6 +11,7 @@ from src.modules.masslaw_users_config import opensearch_config
 
 cognitoManager = CognitoUserPoolManager("MasslawUsers")
 users_table_manager = DynamoDBTableManager('MasslawUsers')
+users_index_manager = OpenSearchIndexManager(opensearch_config.MASSLAW_USERS_OPENSEARCH_ENDPOINT, opensearch_config.MASSLAW_USERS_OPENSEARCH_INDEX_NAME)
 
 
 class MasslawUserInstance(DataHolder):
@@ -41,7 +42,6 @@ class MasslawUserInstance(DataHolder):
 
     def _save_data_to_opensearch(self):
         opensearch_document = self._get_opensearch_document()
-        users_index_manager = OpenSearchIndexManager(opensearch_config.MASSLAW_USERS_OPENSEARCH_ENDPOINT, opensearch_config.MASSLAW_USERS_OPENSEARCH_INDEX_NAME)
         users_index_manager.ensure_exists()
         users_index_manager.add_document(self.__user_id, opensearch_document)
 

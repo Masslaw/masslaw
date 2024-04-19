@@ -88,13 +88,11 @@ def delete_at(d: dict, path: list):
     if not path or len(path) == 0:
         return
     if len(path) == 1:
-        if path[0] in d:
-            del d[path[0]]
+        if path[0] in d: del d[path[0]]
         return
     parent_path = path[:-1]
     parent_value = get_from(d, parent_path)
-    if not parent_value or not isinstance(parent_value, dict):
-        return
+    if not parent_value or not isinstance(parent_value, dict): return
     last_key = path[-1]
     if last_key in parent_value:
         del parent_value[last_key]
@@ -104,12 +102,9 @@ def check_structure(d: dict, validation: dict):
     for key in list(validation.keys()):
         validation_value = validation[key]
         dict_value = d.get(key)
-
         if isinstance(validation_value, dict):
             if not check_structure(dict_value or {}, validation_value):
                 return False
-            continue
-
         if not isinstance(validation_value, list):
             validation_value = [validation_value]
         if dict_value is None:
