@@ -93,14 +93,14 @@ export function CaseKnowledgeGraphDisplay(props) {
                 <LoadingIcon width={'30px'} height={'30px'}/>
             </> : <>
                 <ReloadButton onClick={() => c_loadKnowledge(true)}>
-                    <svg viewBox={'0 0 1000 1000'}>
+                    <svg viewBox={'0 0 1 1'}>
                         <path d={SVG_PATHS.circleArrow}/>
                     </svg>
                 </ReloadButton>
                 {!Object.keys(s_displayKnowledge).length ? <>
                     <NoKnowledgeToShow>No Knowledge To Show</NoKnowledgeToShow>
                 </> : <>
-                    <KnowledgeDisplay knowledge={s_displayKnowledge}/>
+                    <KnowledgeDisplay knowledge={s_displayKnowledge} hideInfo={props.hideInfo}/>
                 </>}
             </>}
         </DisplayContainer>

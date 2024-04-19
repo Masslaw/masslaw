@@ -2,6 +2,7 @@ import styled from "styled-components";
 import React, {useCallback, useMemo, useState} from "react";
 import {SVG_PATHS} from "../config/svgPaths";
 import {VerticalGap} from "./verticalGap";
+import {Icon} from "./icon";
 
 const FormContainer = styled.div`
     width: ${({containerwidth}) => containerwidth || '100%'};
@@ -203,7 +204,7 @@ export function ItemSelectionInput(props) {
             >
                 {itemName}
                 <button onClick={() => c_removeItem(itemName)}>
-                    <svg viewBox={'0 0 1000 1000'}><path d={SVG_PATHS.crossMark}/></svg>
+                    <Icon>{SVG_PATHS.crossMark}</Icon>
                 </button>
             </ItemSelectionItem>
         </>)
@@ -224,7 +225,7 @@ export function ItemSelectionInput(props) {
             </>}
             <ItemSelectionContainer>
                 <ItemSelectionShowListButton onClick={() => setItemsListShown(p => !p)}>
-                    <svg viewBox={'0 0 1000 1000'}><path d={SVG_PATHS.arrowDown}/></svg>
+                    <Icon>{SVG_PATHS.arrowDown}</Icon>
                 </ItemSelectionShowListButton>
                 <ItemSelectionItemsArea>
                     {m_selectedItemsList}

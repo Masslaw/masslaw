@@ -63,8 +63,6 @@ const TimelineEventElement = styled.div`
 
 export const CaseTimelineRender = function (props) {
 
-    const [s_gapMultiplier, setGapMultiplier] = useState(256);
-
     const m_events = useMemo(() => {
         const eventsAndTimes = [];
         for (let eventId in props.events) {
@@ -100,12 +98,12 @@ export const CaseTimelineRender = function (props) {
             const distanceFromMean = gapMeanRatio - eventGapRatio;
             const gapMultiplier = Math.exp(distanceFromMean);
             eventElements.push(<VerticalGap key={`g-${idx}`} gap={`16px`}/>)
-            eventElements.push(<VerticalGap key={`dg-${idx+1}`} gap={`${gapMultiplier * Math.sqrt(eventGapRatio) * s_gapMultiplier}px`}/>)
+            eventElements.push(<VerticalGap key={`dg-${idx+1}`} gap={`${gapMultiplier * Math.sqrt(eventGapRatio) * (props.scale || 256)}px`}/>)
             eventElements.push(<EventElement key={`evt-${idx+1}`} event={eventsAndTimes[idx+1][0]}/>)
         }
         eventElements.push(<VerticalGap key={`g--1`} gap={`64px`}/>);
         return eventElements;
-    }, [props.events, s_gapMultiplier]);
+    }, [props.events, props.scale]);
 
     return <>
         <Timeline>

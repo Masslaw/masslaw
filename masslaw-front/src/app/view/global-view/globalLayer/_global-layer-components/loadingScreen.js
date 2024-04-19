@@ -3,6 +3,7 @@ import React, {useEffect} from "react";
 import {SVG_PATHS} from "../../../config/svgPaths";
 import {useModelValueAsReactState} from "../../../../controller/functionality/model/modelReactHooks";
 import {LoadingIcon} from "../../../components/loadingIcon";
+import {LogoSvg} from "../../../components/logoSvg";
 
 const LoadingScreenBackground = styled.div`
     display: ${({displaying}) => displaying === "true" ? "block" : "none"};
@@ -30,10 +31,9 @@ const LoadingScreenLogo = styled.div`
     }
     
     path {
-        stroke-width: 5;
         stroke: white;
         fill: white;
-        filter: drop-shadow(0 0 30px gold);
+        filter: drop-shadow(0 0 .03px gold);
     }
 `
 
@@ -58,9 +58,7 @@ export function LoadingScreen(props) {
 
     return <LoadingScreenBackground displaying={`${Object.values(s_loading).reduce((a, b) => a || b, false)}`}>
         <LoadingScreenLogo>
-            <svg viewBox={"0 0 1000 1000"}>
-                <path d={SVG_PATHS.logo}/>
-            </svg>
+            <LogoSvg />
         </LoadingScreenLogo>
         <LoadingIconContainer>
             <LoadingIcon/>

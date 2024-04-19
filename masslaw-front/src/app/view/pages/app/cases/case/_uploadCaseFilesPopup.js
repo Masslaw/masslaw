@@ -5,6 +5,7 @@ import {VerticalGap} from "../../../../components/verticalGap";
 import {caseSupportedFileTypes} from "../../../../../config/caseConsts";
 import {useModelValueAsReactState} from "../../../../../controller/functionality/model/modelReactHooks";
 import {SVG_PATHS} from "../../../../config/svgPaths";
+import {Icon} from "../../../../components/icon";
 
 const UploadCaseFilesPopupContainer = styled.div`
     position: relative;
@@ -370,7 +371,7 @@ function HierarchyLevelDisplay(props) {
         <HierarchyLevelDisplayContainer>
             <HierarchyLevelDisplayLevelNameContainer open={m_open} onClick={() => props.setOpenDirectory(m_open ? [] : [props.name])}>
                 <HierarchyLevelFolderIcon>
-                    <svg viewBox={"0 0 1000 800"}><path d={SVG_PATHS.folder}/></svg>
+                    <Icon>{SVG_PATHS.folder}</Icon>
                 </HierarchyLevelFolderIcon>
                 <HierarchyLevelDisplayLevelName>{props.name}</HierarchyLevelDisplayLevelName>
             </HierarchyLevelDisplayLevelNameContainer>

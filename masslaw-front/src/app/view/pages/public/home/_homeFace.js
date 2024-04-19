@@ -115,7 +115,7 @@ const FaceStartNowButton = styled.button`
 
 export function HomeFace(props) {
     return <>
-        <FaceSvg viewBox={"0 0 1000 1000"}>
+        <FaceSvg viewBox={"0 0 1 1"}>
             <FaceSvgGoldFilamentPath d={SVG_PATHS.homeFilament1}/>
             <FaceSvgHighlightFilamentPath d={SVG_PATHS.homeFilament1}/>
             <FaceSvgHighlightFilamentPath d={SVG_PATHS.homeFilament1}/>

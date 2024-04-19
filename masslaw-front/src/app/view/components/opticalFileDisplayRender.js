@@ -10,6 +10,7 @@ import {centerChildInParent, isElemVisibleWithinScrollableParent, smoothScroll} 
 import {CatchAndPassMouseInputs} from "./catchAndPassMouseInputs";
 import {SVG_PATHS} from "../config/svgPaths";
 import {CaseFileComment} from "./caseFileComment";
+import {Icon} from "./icon";
 
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
@@ -623,13 +624,13 @@ export function OpticalFileDisplayRender(props) {
         <OpticalFileDisplayContainer>
             <OpticalFileDisplayToolbarContainer>
                 <OpticalFileDisplayToolbarButton title={'copy'} enabled={m_isTextSelected} onClick={c_copy}>
-                    <svg viewBox={'0 0 1000 1000'}><path d={s_copiedText ? SVG_PATHS.checkMark : SVG_PATHS.copy}/></svg>
+                    <Icon>{s_copiedText ? SVG_PATHS.checkMark : SVG_PATHS.copy}</Icon>
                 </OpticalFileDisplayToolbarButton>
                 <OpticalFileDisplayToolbarButton title={'add comment'} enabled={m_isTextSelected && !s_addingComment} onClick={c_addComment}>
-                    {s_addingComment ? <LoadingIcon width={'20px'} height={'20px'}/> : <svg viewBox={'0 0 1000 1000'}><path d={SVG_PATHS.addComment}/></svg>}
+                    {s_addingComment ? <LoadingIcon width={'20px'} height={'20px'}/> : <Icon>{SVG_PATHS.addComment}</Icon>}
                 </OpticalFileDisplayToolbarButton>
                 <OpticalFileDisplayToolbarButton title={'search selected'} enabled={m_isTextSelected && !s_addingComment} onClick={c_searchSelected}>
-                    <svg viewBox={'0 0 1000 1000'}><path d={SVG_PATHS.search}/></svg>
+                    <Icon>{SVG_PATHS.search}</Icon>
                 </OpticalFileDisplayToolbarButton>
             </OpticalFileDisplayToolbarContainer>
             <OpticalFileDisplayRenderContainer ref={r_container}>

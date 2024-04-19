@@ -4,6 +4,7 @@ import {useEffect, useState} from "react";
 import styled from "styled-components";
 import {LoadingIcon} from "./loadingIcon";
 import {useCaseUserAccessLevel} from "../hooks/useCaseUserAccessLevel";
+import {accessLevelDescriptions} from "../config/accessLevelDescriptions";
 
 
 const CaseUserDataUserRole = styled.div`
@@ -26,6 +27,7 @@ export function CaseUserRole(props) {
 
     return <>
         <CaseUserDataUserRole
+            title={accessLevelDescriptions[m_accessLevel] || 'Loading...'}
             width={props.width}
             height={props.height}
             color={accessLevelDisplayColors[m_accessLevel] || '#808080'}

@@ -123,7 +123,7 @@ function Notification(props) {
             <NotificationDismissButton
                 onClick={() => props.dismissBehavior()}
             >
-                <svg viewBox={"0 0 1000 1000"}>
+                <svg viewBox={"0 0 1 1"}>
                     <path d={SVG_PATHS.crossMark} />
                 </svg>
             </NotificationDismissButton>

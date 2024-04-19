@@ -174,7 +174,7 @@ export function KnowledgeDisplay(props) {
                     pushPopup({component: EntityDataPopup, componentProps: {entityId: entityData.id}});
                 }}
             >
-                <KnowledgeEntityInfoItemTitle>"{entityData.properties.title}"<span>({KnowledgeItemsConfig[entityData.label].trueLabel})</span></KnowledgeEntityInfoItemTitle>
+                <KnowledgeEntityInfoItemTitle>“{entityData.properties.title}”<span>({KnowledgeItemsConfig[entityData.label].trueLabel})</span></KnowledgeEntityInfoItemTitle>
                 <KnowledgeEntityInfoItemInfo>Contribution:<span>{s_entityContributions[entityData.id] || 0}</span></KnowledgeEntityInfoItemInfo>
                 <KnowledgeEntityInfoItemInfo>Occurrences across files:<span>{entityData.properties.files.list.length}</span></KnowledgeEntityInfoItemInfo>
             </KnowledgeEntityInfoItem>

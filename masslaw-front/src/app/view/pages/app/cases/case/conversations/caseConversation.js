@@ -8,6 +8,7 @@ import {SVG_PATHS} from "../../../../../config/svgPaths";
 import {LongTextInput} from "../../../../../components/longTextInput";
 import ReactMarkdown from "react-markdown";
 import {ProfilePicture} from "../../../../../components/profilePicture";
+import {Icon} from "../../../../../components/icon";
 
 
 const PageContainer = styled.div`
@@ -169,7 +170,7 @@ export function CaseConversation(props) {
                             padding={'16px'}
                         />
                         <ConversationMessageSubmitButton onClick={c_sendMessage}>
-                            {s_submittingMessage ? <LoadingIcon width={'20px'} height={'20px'} color={'black'}/> : <svg viewBox={'0 0 1000 1000'}><path d={SVG_PATHS.send}/></svg>}
+                            {s_submittingMessage ? <LoadingIcon width={'20px'} height={'20px'} color={'black'}/> : <Icon>{SVG_PATHS.send}</Icon>}
                         </ConversationMessageSubmitButton>
                     </ConversationInputContainer>
                     <ConversationMessagesContainer ref={r_conversationRef}>
@@ -242,7 +243,7 @@ function ConversationMessage(props) {
                     {props.message.role === 'user' ? <>
                         <ProfilePicture userId={model.users.mine.data.User_ID} size={'small'} />
                     </> : <>
-                        <ConversationMessageMassbotImageSvg viewBox={'0 0 1000 1000'}><path d={SVG_PATHS.logo}/></ConversationMessageMassbotImageSvg>
+                        <ConversationMessageMassbotImageSvg viewBox={'0 0 1 1'}><path d={SVG_PATHS.logo}/></ConversationMessageMassbotImageSvg>
                     </>}
                 </ConversationMessageImageContainer>
                 <ConversationMessageNameContainer>

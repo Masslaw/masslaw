@@ -7,6 +7,7 @@ import {VerticalGap} from "./verticalGap";
 import {CaseContentPathSelection} from "./caseContentPathSelection";
 import {useModelValueAsReactState} from "../../controller/functionality/model/modelReactHooks";
 import {model} from "../../model/model";
+import {accessLevelDescriptions} from "../config/accessLevelDescriptions";
 
 
 const selectableAccessLevels = [
@@ -14,13 +15,6 @@ const selectableAccessLevels = [
     { value: caseAccessLevels.editor, label: accessLevelDisplayNames[caseAccessLevels.editor] },
     { value: caseAccessLevels.reader, label: accessLevelDisplayNames[caseAccessLevels.reader] },
 ]
-
-
-const accessLevelComments = {
-    [caseAccessLevels.manager]: "Managers have an administrative access to the case. They are exposed to the entirety of the case and its content. They have the ability to perform any action below the owner of the case.",
-    [caseAccessLevels.editor]: "Editors have the ability to make changes to the case. In the storage hierarchy configured as accessible by them, they can upload and make changes to any file or document.",
-    [caseAccessLevels.reader]: "Readers can only view the content of the case. In the storage hierarchy configured as accessible by them, they can view and comment on any file or document.",
-}
 
 const SectionLabel = styled.div`
     font-size: 14px;
@@ -120,7 +114,7 @@ export function CaseUserAccessData(props) {
                 onChange={o => setAccessData(p => ({...p, access_level: o.value}))}
             />
         </AccessLevelDropDownContainer>
-        <AccessLevelComment>{accessLevelComments[s_accessData.access_level || caseAccessLevels.manager]}</AccessLevelComment>
+        <AccessLevelComment>{accessLevelDescriptions[s_accessData.access_level || caseAccessLevels.manager]}</AccessLevelComment>
         {[caseAccessLevels.editor, caseAccessLevels.reader].includes(s_accessData.access_level) ? <>
             <VerticalGap gap={'8px'} />
             <SectionLabel>Accessible Folders</SectionLabel>

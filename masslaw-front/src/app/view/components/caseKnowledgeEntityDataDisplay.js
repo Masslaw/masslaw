@@ -2,14 +2,11 @@ import styled from "styled-components";
 import {useCallback, useEffect, useMemo, useState} from "react";
 import {useCaseData} from "../hooks/useCaseData";
 import {VerticalGap} from "./verticalGap";
-import {RedirectButtonWrapper} from "./redirectButtonWrapper";
 import {constructUrl} from "../../controller/functionality/navigation/urlConstruction";
 import {ApplicationRoutes} from "../../config/applicaitonRoutes";
-import {useModelValueAsReactState} from "../../controller/functionality/model/modelReactHooks";
 import {model} from "../../model/model";
 import {LoadingIcon} from "./loadingIcon";
 import {KnowledgeDisplay} from "./knowledgeDisplay";
-import {mergeDeep} from "../../controller/functionality/object-utils/objectMerging";
 
 const CaseKnowledgeEntityDataDisplayContainer = styled.div`
     position: relative;
@@ -65,7 +62,8 @@ const AppearanceItemText = styled.div`
     line-height: 20px;
     letter-spacing: 0.5px;
     border-radius: 8px;
-    &:hover { background: #303030; }
+    border: 1px solid transparent;
+    &:hover { border: 1px solid #404040; }
     button { opacity: 0; }
     &:hover button { opacity: 1; }
 `
@@ -77,19 +75,6 @@ const AppearanceItemTextOccurrenceSpan = styled.span`
     background: #303030;
     border-radius: 4px;
     border: 1px solid #505050;
-`
-
-const AppearanceItemTextGoToFileButton = styled.button`
-    position: relative;
-    background: white;
-    width: 64px;
-    font-size: 12px;
-    padding: 4px;
-    color: black;
-    border: none;
-    border-radius: 4px;
-    left: calc(100% - 64px);
-    &:hover { filter: drop-shadow(0 0 4px white); }
 `
 
 const ItemKnowledgeDisplayContainer = styled.div`
@@ -154,7 +139,7 @@ export function CaseKnowledgeEntityDataDisplay(props) {
                     previousPartEnd = occurrence;
                 }
                 sentenceParts.push(<span>{sentence.substring(previousPartEnd)}</span>);
-                fileAppearanceItems.push(<AppearanceItemText>"{sentenceParts}"</AppearanceItemText>);
+                fileAppearanceItems.push(<AppearanceItemText>“ {sentenceParts} ”</AppearanceItemText>);
             }
             if (!fileAppearanceItems.length) continue;
             appearanceItems.push(<AppearanceItemContainer>
@@ -174,10 +159,10 @@ export function CaseKnowledgeEntityDataDisplay(props) {
             </> : !(s_entityData || {}).properties ? <>
                 <ErrorDisplayingDataMessage>Data about this entity cannot be displayed</ErrorDisplayingDataMessage>
             </> : <>
-                <EntityTitle>"{s_entityData.properties.title}"</EntityTitle>
+                <EntityTitle>“{s_entityData.properties.title}”</EntityTitle>
                 <VerticalGap gap={'16px'}/>
                 <ItemKnowledgeDisplayContainer>
-                    <KnowledgeDisplay knowledge={s_entityKnowledge} hideInfo={true}/>
+                    <KnowledgeDisplay knowledge={s_entityKnowledge} hideInfo={true} />
                 </ItemKnowledgeDisplayContainer>
                 <VerticalGap gap={'16px'}/>
                 {m_appearances}

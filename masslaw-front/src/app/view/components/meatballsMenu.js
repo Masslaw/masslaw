@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import {useState} from "react";
 import {SVG_PATHS} from "../config/svgPaths";
+import {Icon} from "./icon";
 
 const MeatballsMenuButton = styled.div`
     position: relative;
@@ -52,7 +53,7 @@ export function MeatballsMenu(props) {
 
     return <>
         <MeatballsMenuButton onClick={() => setOpen(o=>!o)}>
-            <svg viewBox={'0 0 1000 1000'}><path d={SVG_PATHS.meatballs}/></svg>
+            <Icon>{SVG_PATHS.meatballs}</Icon>
             {s_open && <MeatballsMenuMenu
                 position={props.menuPosition}
                 width={props.menuWidth}

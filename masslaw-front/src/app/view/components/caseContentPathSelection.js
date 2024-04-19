@@ -4,6 +4,7 @@ import styled from "styled-components";
 import {SVG_PATHS} from "../config/svgPaths";
 import {model} from "../../model/model";
 import {VerticalGap} from "./verticalGap";
+import {Icon} from "./icon";
 
 const CaseContentPathSelectionContainer = styled.div`
     position: relative;
@@ -288,7 +289,7 @@ export function CaseContentPathSelection(props) {
             <Title>Select paths:</Title>
             <CaseContentPathInputContainer>
                 <CaseContentPathInputAddButton onClick={e => c_addPath()}>
-                    <svg viewBox={'0 0 1000 1000'}><path d={SVG_PATHS.plusSign}/></svg>
+                    <Icon>{SVG_PATHS.plusSign}</Icon>
                 </CaseContentPathInputAddButton>
                 {!s_isFocused ? <CaseContentPathInputClickableArea onClick={e => {
                     e.stopPropagation();
@@ -299,7 +300,7 @@ export function CaseContentPathSelection(props) {
                         <CaseContentPathInputPlaceHolder>{Object.keys(m_nextLevel).length ? 'Click to select a path' : 'No more paths to select...'}</CaseContentPathInputPlaceHolder>
                     </> : <></>}
                     {s_currentInputtedPath.map((folderName, index) => <>
-                        {index > 0 && <CaseContentPathSelectedHierarchySeparator viewBox={'0 0 1000 1000'}>
+                        {index > 0 && <CaseContentPathSelectedHierarchySeparator viewBox={'0 0 1 1'}>
                             <path d={SVG_PATHS.arrowRight}/>
                         </CaseContentPathSelectedHierarchySeparator>}
                         <CaseContentPathSelectedHierarchyElement
@@ -323,7 +324,7 @@ export function CaseContentPathSelection(props) {
                                 setCurrentInputtedPath(p => ([...p, nextFolder]));
                             }}
                         >
-                            <svg viewBox={'0 0 1000 1000'}><path d={typeof m_nextLevel[nextFolder] === 'object' ? SVG_PATHS.folder : SVG_PATHS.file}/></svg>
+                            <Icon>{typeof m_nextLevel[nextFolder] === 'object' ? SVG_PATHS.folder : SVG_PATHS.file}</Icon>
                             <span>{nextFolder}</span>
                         </CaseContentPathNextFolderListItem>
                     </>)}
@@ -334,7 +335,7 @@ export function CaseContentPathSelection(props) {
                     <SelectedPathRemoveButton onClick={() => c_removePath(path)}>Remove</SelectedPathRemoveButton>
                     <SelectedPathLevelsContainer>
                         {(['Entire Case', ...path]).map((pathLevelName, index) => <>
-                            {index > 0 && <SelectedPathLevelsSeparator viewBox={'0 0 1000 1000'}>
+                            {index > 0 && <SelectedPathLevelsSeparator viewBox={'0 0 1 1'}>
                                 <path d={SVG_PATHS.arrowRight}/>
                             </SelectedPathLevelsSeparator>}
                             <SelectedPathLevel key={index}>{pathLevelName}</SelectedPathLevel>

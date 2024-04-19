@@ -3,6 +3,7 @@ import {useMemo} from "react";
 import {model} from "../../model/model";
 import {caseFileProcessingStageDisplayNames, fileProcessingStages} from "../../config/caseConsts";
 import {SVG_PATHS} from "../config/svgPaths";
+import {Icon} from "./icon";
 
 const GlowingAnimation = keyframes`
     0% { filter: drop-shadow(0 0 1px yellow); }
@@ -52,7 +53,7 @@ export function FileProcessingStage(props) {
     return <>
         <FileProcessingStageDisplay readystage={m_processingStage === READY_STAGE ? 'true' : ''}>{
             m_processingStage === READY_STAGE ? <>
-                Ready <svg viewBox={'0 0 1000 1000'}><path d={SVG_PATHS.checkMark}/></svg>
+                Ready <Icon>{SVG_PATHS.checkMark}</Icon>
             </> : <>
                 {m_processingStage}
             </>

@@ -188,7 +188,7 @@ function CaseUserItemDisplay(props) {
                         open={s_permissionsShown}
                         onClick={() => setPermissionsShown(p => !p)}
                     >
-                        <svg viewBox={'0 0 1000 1000'}>
+                        <svg viewBox={'0 0 1 1'}>
                             <path d={SVG_PATHS.arrowDown}/>
                         </svg>
                         {s_permissionsShown ? 'Hide Permissions' : 'Show Permissions'}

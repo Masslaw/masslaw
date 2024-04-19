@@ -16,6 +16,8 @@ import {VerticalGap} from "../../../../components/verticalGap";
 import {LoadingIcon} from "../../../../components/loadingIcon";
 import {useCaseUserAccessLevel} from "../../../../hooks/useCaseUserAccessLevel";
 import {caseAccessLevels} from "../../../../../config/caseConsts";
+import {CaseFilesHierarchyDisplay} from "../../../../components/CaseFilesHierarchyDisplay";
+import {Icon} from "../../../../components/icon";
 
 const CaseContainer = styled.div`
     display: flex;
@@ -150,7 +152,7 @@ const CaseSidePanelTitle = styled.div`
     top: 0;
     border-bottom: 1px solid #505050;
     background: #151515;
-    span {
+    & > span {
         color: white;
         padding: 16px;
         font-size: 22px;
@@ -165,14 +167,13 @@ const CaseSidePanelTitle = styled.div`
         position: relative;
         top: 50%;
         transform: translateY(-50%);
-        height: 32px;
-        width: 32px;
         cursor: pointer;
         border: none;
         outline: none;
         background: none;
+        color: white;
         margin: 0 8px;
-        svg { fill: white; }
+        font-size: 20px;
     }
 `
 
@@ -185,23 +186,23 @@ function CaseSidePanel(props) {
 
     const m_caseData = useMemo(() => (s_casesData[s_caseId] || {}), [s_caseId, s_casesData]);
 
+    const s_myUserAccessLevel = useCaseUserAccessLevel(s_caseId);
+
     return <>
         <CaseSidePanelTitle>
             <span>{m_caseData.title}</span>
-            <RedirectButtonWrapper href={constructUrl(ApplicationRoutes.CASE_SETTINGS, {caseId: s_caseId})}>
-                <button>
-                    <svg viewBox={'0 0 1000 1000'}>
-                        <path d={SVG_PATHS.gear}/>
-                    </svg>
-                </button>
-            </RedirectButtonWrapper>
+            {[caseAccessLevels.owner, caseAccessLevels.manager].includes(s_myUserAccessLevel) ? <>
+                <RedirectButtonWrapper href={constructUrl(ApplicationRoutes.CASE_SETTINGS, {caseId: s_caseId})}>
+                    <button><Icon>{SVG_PATHS.gear}</Icon></button>
+                </RedirectButtonWrapper>
+            </> : <></>}
         </CaseSidePanelTitle>
         <FilesUploading/>
         <CaseSidePanelFilesSection/>
         <VerticalGap gap={'8px'}/>
         <RedirectButtonWrapper href={constructUrl(ApplicationRoutes.CASE_DASHBOARD, {caseId: s_caseId})}>
             <CaseSidePanelButton open={s_currentPage === 'CaseDashboard'}>
-                <svg viewBox={'0 0 1000 1000'}><path d={SVG_PATHS.dashboard}/></svg>
+                <Icon>{SVG_PATHS.dashboard}</Icon>
                 Dashboard
             </CaseSidePanelButton>
         </RedirectButtonWrapper>
@@ -210,7 +211,7 @@ function CaseSidePanel(props) {
         <VerticalGap gap={'8px'}/>
         <RedirectButtonWrapper href={constructUrl(ApplicationRoutes.CASE_CONVERSATIONS, {caseId: s_caseId})}>
             <CaseSidePanelButton open={s_currentPage === 'CaseConversations'}>
-                <svg viewBox={'0 0 1000 1000'}><path d={SVG_PATHS.conversations}/></svg>
+                <Icon>{SVG_PATHS.conversations}</Icon>
                 MassBot
             </CaseSidePanelButton>
         </RedirectButtonWrapper>
@@ -219,19 +220,19 @@ function CaseSidePanel(props) {
         <VerticalGap gap={'8px'}/>
         <RedirectButtonWrapper href={constructUrl(ApplicationRoutes.CASE_SEARCH, {caseId: s_caseId})}>
             <CaseSidePanelButton open={s_currentPage === 'CaseSearch'}>
-                <svg viewBox={'0 0 1000 1000'}><path d={SVG_PATHS.search}/></svg>
+                <Icon>{SVG_PATHS.search}</Icon>
                 Search
             </CaseSidePanelButton>
         </RedirectButtonWrapper>
         <RedirectButtonWrapper href={constructUrl(ApplicationRoutes.CASE_KNOWLEDGE, {caseId: s_caseId})}>
             <CaseSidePanelButton open={s_currentPage === 'CaseKnowledge'}>
-                <svg viewBox={'0 0 1000 1000'}><path d={SVG_PATHS.knowledge}/></svg>
+                <Icon>{SVG_PATHS.knowledge}</Icon>
                 Knowledge
             </CaseSidePanelButton>
         </RedirectButtonWrapper>
         <RedirectButtonWrapper href={constructUrl(ApplicationRoutes.CASE_TIMELINE, {caseId: s_caseId})}>
             <CaseSidePanelButton open={s_currentPage === 'CaseTimeline'}>
-                <svg viewBox={'0 0 1000 1000'}><path d={SVG_PATHS.timeline}/></svg>
+                <Icon>{SVG_PATHS.timeline}</Icon>
                 Timeline
             </CaseSidePanelButton>
         </RedirectButtonWrapper>
@@ -240,7 +241,7 @@ function CaseSidePanel(props) {
         <VerticalGap gap={'8px'}/>
         <RedirectButtonWrapper href={constructUrl(ApplicationRoutes.CASE_USERS, {caseId: s_caseId})}>
             <CaseSidePanelButton open={s_currentPage === 'CaseUsers'}>
-                <svg viewBox={'0 0 1000 1000'}><path d={SVG_PATHS.person}/></svg>
+                <Icon>{SVG_PATHS.person}</Icon>
                 Participants
             </CaseSidePanelButton>
         </RedirectButtonWrapper>
@@ -293,272 +294,15 @@ function CaseSidePanelFilesSection(props) {
         <CaseSidePanelFilesSectionContainer>
             {[caseAccessLevels.owner, caseAccessLevels.manager, caseAccessLevels.editor].includes(m_myUserAccessLevel) ? <>
                 <CaseSidePanelFilesSectionUploadButton onClick={() => pushPopup({component: UploadCaseFilesPopup})}>
-                    <svg viewBox={'0 0 1050 1050'}>
-                        <path d={SVG_PATHS.addFile}/>
-                    </svg>
+                    <Icon>{SVG_PATHS.addFile}</Icon>
                     Upload Files
                 </CaseSidePanelFilesSectionUploadButton>
             </> : <></>}
             <VerticalGap gap={'8px'}/>
-            <CaseSidePanelFileHierarchy/>
+            <CaseFilesHierarchyDisplay/>
             <VerticalGap gap={'8px'}/>
             <CaseSidePanelSeparator/>
         </CaseSidePanelFilesSectionContainer>
-    </>
-}
-
-const CaseSidePanelFileHierarchyContainer = styled.div`
-    position: relative;
-    width: 100%;
-`
-
-const CaseSidePanelFileHierarchyReloadButton = styled.div`
-    position: absolute;
-    right: 0;
-    top: 0;
-    width: 18px;
-    height: 18px;
-    margin: 2px;
-    padding: 4px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: none;
-    background: #151515;
-    border: 4px solid #151515;
-    border-bottom: 0;
-    border-top: 0;
-    pointer-events: ${({reloading}) => reloading ? 'none' : 'all'};
-    cursor: ${({reloading}) => reloading ? 'normal' : 'pointer'};
-    &:hover {
-        background: ${({reloading}) => reloading ? 'none' : '#303030'};
-    }
-    svg {
-        width: 100%;
-        height: 100%;
-        fill: white;
-    }
-`
-
-function CaseSidePanelFileHierarchy(props) {
-
-    const {casesManager} = model.services
-
-    const [s_caseId, setCaseId] = useModelValueAsReactState("$.cases.currentOpen.id", '');
-    const [s_casesData, setCaseData] = useModelValueAsReactState("$.cases.all", {});
-
-    const m_caseData = useMemo(() => (s_casesData[s_caseId] || {}), [s_caseId, s_casesData]);
-
-    const [s_reloadingContentHierarchy, setReloadingContentHierarchy] = useState(false);
-
-    const c_reloadHierarchy = useCallback(() => {
-        if (s_reloadingContentHierarchy) return;
-        setReloadingContentHierarchy(true);
-        casesManager.fetchCaseContentHierarchy(null, true).then(() => setReloadingContentHierarchy(false));
-    }, [s_reloadingContentHierarchy]);
-
-    return <>
-        <CaseSidePanelFileHierarchyContainer>
-            <CaseSidePanelFileHierarchyFolder
-                name={m_caseData.title}
-                hierarchy={m_caseData.contentHierarchy}
-                open={true}
-                loading={s_reloadingContentHierarchy}
-            />
-            <CaseSidePanelFileHierarchyReloadButton
-                reloading={s_reloadingContentHierarchy}
-                onClick={c_reloadHierarchy}
-            >
-                {s_reloadingContentHierarchy ? <>
-                    <LoadingIcon width={'16px'} height={'16px'} />
-                </> : <>
-                    <svg viewBox={'0 0 1000 1000'}><path d={SVG_PATHS.circleArrow}/></svg>
-                </>}
-            </CaseSidePanelFileHierarchyReloadButton>
-        </CaseSidePanelFileHierarchyContainer>
-    </>
-}
-
-const CaseSidePanelFileHierarchyFolderContainer = styled.div`
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    padding: 4px 0 0 4px;
-`
-
-const CaseSidePanelFileHierarchyTitleContainer = styled.div`
-    position: relative;
-    height: 20px;
-    line-height: 20px;
-    font-size: 14px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    padding: 2px 4px;
-    cursor: pointer;
-`
-
-const CaseSidePanelFileHierarchyArrowIcon = styled.div`
-    position: relative;
-    width: 12px;
-
-    svg {
-        width: 100%;
-        height: 100%;
-        fill: #808080;
-    }
-`
-
-const CaseSidePanelFileHierarchyFolderIcon = styled.div`
-    position: relative;
-    width: 16px;
-    min-width: 16px;
-    height: 16px;
-    margin-left: 8px;
-
-    svg {
-        width: 100%;
-        height: 100%;
-        fill: #a0a0a0;
-    }
-`
-
-const CaseSidePanelFileHierarchyFolderTitle = styled.div`
-    position: relative;
-    margin-left: 8px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-`
-
-const CaseSidePanelFileHierarchyFolderContentContainer = styled.div`
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    margin: 0 0 0 8px;
-    padding: 0 0 0 8px;
-    border-left: 1px solid #404040;
-    height: max-content;
-`
-
-const EmptyFolderContainer = styled.div`
-    position: relative;
-    color: #808080;
-    font-size: 12px;
-    padding: 4px;
-`
-
-function CaseSidePanelFileHierarchyFolder(props) {
-    const [s_open, setOpen] = useState(props.open);
-
-    const m_content = useMemo(() => {
-        const folderItems = [];
-        const fileItems = [];
-        for (const item in props.hierarchy) {
-            const itemData = props.hierarchy[item];
-            if (typeof itemData === 'object') folderItems.push(item);
-            else fileItems.push(item);
-        }
-        if (folderItems.length === 0 && fileItems.length === 0) return <EmptyFolderContainer>Empty Folder</EmptyFolderContainer>
-        folderItems.sort();
-        fileItems.sort();
-        return <>
-            {folderItems.map((folderName, index) => <CaseSidePanelFileHierarchyFolder key={folderName} name={folderName} hierarchy={props.hierarchy[folderName]}/>)}
-            {fileItems.map((fileName, index) => <CaseSidePanelFileHierarchyFile key={fileName} name={fileName} fileId={props.hierarchy[fileName]}/>)}
-        </>
-    }, [props.hierarchy]);
-
-    return <>
-        <CaseSidePanelFileHierarchyFolderContainer>
-            <CaseSidePanelFileHierarchyTitleContainer onClick={() => setOpen(_ => !_)} title={props.name}>
-                <CaseSidePanelFileHierarchyArrowIcon>
-                    <svg viewBox={s_open ? "0 0 1000 1000" : "0 0 1000 1000"}>
-                        <path d={s_open ? SVG_PATHS.arrowDown : SVG_PATHS.arrowRight}/>
-                    </svg>
-                </CaseSidePanelFileHierarchyArrowIcon>
-                <CaseSidePanelFileHierarchyFolderIcon>
-                    <svg viewBox={"0 0 1000 800"}>
-                        <path d={SVG_PATHS.folder}/>
-                    </svg>
-                </CaseSidePanelFileHierarchyFolderIcon>
-                <CaseSidePanelFileHierarchyFolderTitle>
-                    {props.name}
-                </CaseSidePanelFileHierarchyFolderTitle>
-            </CaseSidePanelFileHierarchyTitleContainer>
-            <CaseSidePanelFileHierarchyFolderContentContainer>
-                {s_open ? props.loading ? <>
-                    <VerticalGap gap={'24px'}/><LoadingIcon width={'20px'} height={'20px'} />
-                </> : m_content : <></>}
-            </CaseSidePanelFileHierarchyFolderContentContainer>
-        </CaseSidePanelFileHierarchyFolderContainer>
-    </>
-}
-
-const CaseSidePanelFileHierarchyFileContainer = styled.div`
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    padding: 4px;
-
-    &:hover {
-        background: #404040;
-    }
-`
-
-const CaseSidePanelFileHierarchyFileNameContainer = styled.div`
-    position: relative;
-    height: 20px;
-    line-height: 20px;
-    font-size: 14px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    padding: 2px 4px;
-    cursor: pointer;
-`
-
-const CaseSidePanelFileHierarchyFileIcon = styled.div`
-    position: relative;
-    width: 16px;
-    min-width: 16px;
-    height: 16px;
-    margin-left: 16px;
-
-    svg {
-        width: 100%;
-        height: 100%;
-        fill: #a0a0a0;
-    }
-`
-
-const CaseSidePanelFileHierarchyFileTitle = styled.div`
-    position: relative;
-    margin-left: 8px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-`
-
-function CaseSidePanelFileHierarchyFile(props) {
-
-    const {caseId} = useParams();
-
-    return <>
-        <CaseSidePanelFileHierarchyFileContainer>
-            <CaseSidePanelFileHierarchyFileNameContainer onClick={() => {
-                pushPopup({component: CaseFilePopup, componentProps: {caseId: caseId, fileId: props.fileId}})
-            }} title={props.name}>
-                <CaseSidePanelFileHierarchyFileIcon>
-                    <svg viewBox={"0 0 1000 1000"}>
-                        <path d={SVG_PATHS.file}/>
-                    </svg>
-                </CaseSidePanelFileHierarchyFileIcon>
-                <CaseSidePanelFileHierarchyFileTitle>
-                    {props.name}
-                </CaseSidePanelFileHierarchyFileTitle>
-            </CaseSidePanelFileHierarchyFileNameContainer>
-        </CaseSidePanelFileHierarchyFileContainer>
     </>
 }
 

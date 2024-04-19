@@ -88,7 +88,7 @@ export function DefaultPicture(props) {
 
     return <>
         <UserDefaultPicture background={m_backgroundColor}>
-            <svg viewBox={"0 0 1000 1000"}>
+            <svg viewBox={"0 0 1 1"}>
                 <path d={SVG_PATHS.person}/>
             </svg>
         </UserDefaultPicture>

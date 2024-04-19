@@ -9,6 +9,7 @@ import {CaseDisplayPopup} from "./_caseDisplayPopup";
 import {LoadingIcon} from "../../../components/loadingIcon";
 import {CaseDataDisplay} from "../../../components/caseDataDisplay";
 import {SVG_PATHS} from "../../../config/svgPaths";
+import {Icon} from "../../../components/icon";
 
 const PageContainer = styled.div`
     display: flex;
@@ -36,7 +37,8 @@ const PageSubTitle = styled.div`
 const CaseList = styled.div`
     position: relative;
     display: grid;
-    grid-template-columns: repeat(auto-fill, calc(320px + 32px));
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 16px;
     justify-content: space-between;
     flex-grow: 1;
     border-radius: 12px;
@@ -119,13 +121,13 @@ export function MyCases(props) {
             <PageSubTitle>The Cases You Participate In</PageSubTitle>
             <ButtonsSection>
                 <ButtonInButtonsSection onClick={() => pushPopup({component: CreateCasePopup})}>
-                    <svg viewBox={'0 0 1000 1000'}><path d={SVG_PATHS.plusSign}/></svg>
+                    <Icon>{SVG_PATHS.plusSign}</Icon>
                 </ButtonInButtonsSection>
                 <ButtonInButtonsSection onClick={() => c_loadList()}>
                     {s_loadingList ? <>
                         <LoadingIcon width={"32px"} height={"32px"}/>
                     </> : <>
-                        <svg viewBox={'0 0 1000 1000'}><path d={SVG_PATHS.circleArrow}/></svg>
+                        <Icon>{SVG_PATHS.circleArrow}</Icon>
                     </>}
                 </ButtonInButtonsSection>
             </ButtonsSection>
@@ -137,7 +139,7 @@ export function MyCases(props) {
 const CaseItemContainer = styled.div`
     display: flex;
     flex-direction: column;
-    width: 320px;
+    width: calc(100% - 32px);
     height: 175px;
     background-color: #202020;
     margin: 16px 0;

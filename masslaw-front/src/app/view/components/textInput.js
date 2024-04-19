@@ -125,7 +125,7 @@ export function TextInput(props) {
                     list={props.id + "datalist"}
                 />
                 {props.hasIndicator && (<ValidIndicator size={`calc(${props.height} * 0.33)`} logoColor={indicatorLogoColor}>
-                    <svg viewBox={"0 0 1000 1000"}>
+                    <svg viewBox={"0 0 1 1"}>
                         <path d={indicatorLogoPath}/>
                     </svg>
                 </ValidIndicator>)}

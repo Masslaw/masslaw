@@ -11,6 +11,7 @@ import {VerticalGap} from "./verticalGap";
 import {FileProcessingStage} from "./fileStage";
 import {useCaseUserAccessLevel} from "../hooks/useCaseUserAccessLevel";
 import {caseAccessLevels} from "../../config/caseConsts";
+import {Icon} from "./icon";
 
 const CaseFileDataFileName = styled.div`
     font-size: 24px;
@@ -302,7 +303,7 @@ export function CaseFileData(props) {
                         </CaseFileProcessingStageReloading>
                     </> : <>
                         <CaseFileProcessingStageReloadButton onClick={() => c_reloadStage()}>
-                            <svg viewBox={'0 0 1000 1000'}><path d={SVG_PATHS.circleArrow}/></svg>
+                            <Icon>{SVG_PATHS.circleArrow}</Icon>
                         </CaseFileProcessingStageReloadButton>
                     </>}
                 </CaseFileDataStageTitle>

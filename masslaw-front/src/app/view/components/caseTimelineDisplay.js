@@ -165,7 +165,7 @@ export function CaseTimelineDisplay(props) {
                 <LoadingIcon width={'30px'} height={'30px'}/>
             </> : <>
                 <ReloadButton onClick={() => c_loadKnowledge(true)}>
-                    <svg viewBox={'0 0 1000 1000'}>
+                    <svg viewBox={'0 0 1 1'}>
                         <path d={SVG_PATHS.circleArrow}/>
                     </svg>
                 </ReloadButton>
@@ -173,11 +173,11 @@ export function CaseTimelineDisplay(props) {
                     <NoEventsToShow>No Events To Show</NoEventsToShow>
                 </> : <>
                     <CaseTimelineContainer>
-                        <CaseTimelineRender events={s_events || []}/>
+                        <CaseTimelineRender events={s_events || []} scale={props.scale}/>
                     </CaseTimelineContainer>
                 </>}
             </>}
-            {s_entityDataTarget && <ItemDataContainer>
+            {!props.hideInfo && s_entityDataTarget && <ItemDataContainer>
                 <CaseKnowledgeEntityDataDisplay entityId={s_entityDataTarget}/>
             </ItemDataContainer>}
         </DisplayContainer>
