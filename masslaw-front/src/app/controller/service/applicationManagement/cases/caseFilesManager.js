@@ -1,6 +1,7 @@
 import {BaseService} from "../../_baseService";
 import {MasslawApiCalls} from "../../../../config/masslawAPICalls";
 import {caseFileProcessingStagesOrder, fileProcessingStages} from "../../../../config/caseConsts";
+import {UserStatus} from "../../../../config/userStatus";
 
 export class CaseFilesManager extends BaseService {
     start() {
@@ -10,6 +11,7 @@ export class CaseFilesManager extends BaseService {
     async fetchFileData(fileId, caseId=null, force=false) {
         const fileData = this.model.cases.currentOpen.files.all[fileId] || {};
         if (!force && fileData.name) return;
+        if (this.model.users.mine.authentication.status < UserStatus.FULLY_APPROVED) return;
         caseId = caseId || this.model.cases.currentOpen.id || '';
         const request = await this.masslawHttpApiClient.makeApiHttpRequest({
             call: MasslawApiCalls.GET_CASE_FILE_DATA,
@@ -23,6 +25,7 @@ export class CaseFilesManager extends BaseService {
 
     async setCaseFileDescription(newDescription, fileId, caseId = null) {
         caseId = caseId || this.model.cases.currentOpen.id || '';
+        if (this.model.users.mine.authentication.status < UserStatus.FULLY_APPROVED) return;
         const request = await this.masslawHttpApiClient.makeApiHttpRequest({
             call: MasslawApiCalls.POST_CASE_FILE_DATA,
             queryStringParameters: {
@@ -41,6 +44,7 @@ export class CaseFilesManager extends BaseService {
     async fetchFileContent(contentPaths, fileId, caseId, force=false) {
         await this.fetchFileData(fileId, caseId, force);
         caseId = caseId || this.model.cases.currentOpen.id || '';
+        if (this.model.users.mine.authentication.status < UserStatus.FULLY_APPROVED) return;
         await this.fetchFileContentDownloadURLs(contentPaths, fileId, caseId, force);
         const fileData = this.model.cases.currentOpen.files.all[fileId] || {};
         const currentContent = (fileData.content || {});
@@ -63,6 +67,7 @@ export class CaseFilesManager extends BaseService {
     }
 
     async fetchFileContentDownloadURLs(contentPaths, fileId, caseId, force=false) {
+        if (this.model.users.mine.authentication.status < UserStatus.FULLY_APPROVED) return;
         await this.fetchFileData(fileId, caseId, force);
         const fileData = this.model.cases.currentOpen.files.all[fileId] || {};
         const currentContent = fileData.content || {};

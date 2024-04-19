@@ -1,5 +1,6 @@
 import {BaseService} from "../../_baseService";
 import {MasslawApiCalls} from "../../../../config/masslawAPICalls";
+import {UserStatus} from "../../../../config/userStatus";
 
 export class CaseCommentsManager extends BaseService {
     start() {
@@ -7,6 +8,7 @@ export class CaseCommentsManager extends BaseService {
     }
 
     async fetchFileComments(fileId=null) {
+        if (this.model.users.mine.authentication.status < UserStatus.FULLY_APPROVED) return;
         const caseId = this.model.cases.currentOpen.id;
         fileId = fileId || this.model.cases.currentOpen.files.currentOpen.id;
         const request = await this.masslawHttpApiClient.makeApiHttpRequest({
@@ -23,6 +25,7 @@ export class CaseCommentsManager extends BaseService {
     }
 
     async putFileComment(comment, fileId=null) {
+        if (this.model.users.mine.authentication.status < UserStatus.FULLY_APPROVED) return;
         const caseId = this.model.cases.currentOpen.id;
         fileId = fileId || this.model.cases.currentOpen.files.currentOpen.id;
         const request = await this.masslawHttpApiClient.makeApiHttpRequest({
@@ -34,6 +37,7 @@ export class CaseCommentsManager extends BaseService {
     }
 
     async editFileComment(comment, commentId, fileId=null) {
+        if (this.model.users.mine.authentication.status < UserStatus.FULLY_APPROVED) return;
         const caseId = this.model.cases.currentOpen.id;
         fileId = fileId || this.model.cases.currentOpen.files.currentOpen.id;
         const request = await this.masslawHttpApiClient.makeApiHttpRequest({
@@ -48,6 +52,7 @@ export class CaseCommentsManager extends BaseService {
     }
 
     async fetchComment(commentId, fileId=null) {
+        if (this.model.users.mine.authentication.status < UserStatus.FULLY_APPROVED) return;
         const caseId = this.model.cases.currentOpen.id;
         fileId = fileId || this.model.cases.currentOpen.files.currentOpen.id;
         const request = await this.masslawHttpApiClient.makeApiHttpRequest({
@@ -60,6 +65,7 @@ export class CaseCommentsManager extends BaseService {
     }
 
     async deleteFileComment(commentId, caseId=null, fileId=null) {
+        if (this.model.users.mine.authentication.status < UserStatus.FULLY_APPROVED) return;
         caseId = caseId || this.model.cases.currentOpen.id;
         fileId = fileId || this.model.cases.currentOpen.files.currentOpen.id;
         const request = await this.masslawHttpApiClient.makeApiHttpRequest({
@@ -70,6 +76,7 @@ export class CaseCommentsManager extends BaseService {
     }
 
     async fetchCommentReplies(commentId, fileId=null, force=false) {
+        if (this.model.users.mine.authentication.status < UserStatus.FULLY_APPROVED) return;
         if (!force && this.model.cases.currentOpen.comments.data[commentId].replies) return;
         const caseId = this.model.cases.currentOpen.id;
         fileId = fileId || this.model.cases.currentOpen.files.currentOpen.id;

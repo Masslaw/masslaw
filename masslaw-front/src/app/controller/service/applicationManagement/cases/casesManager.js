@@ -87,6 +87,7 @@ export class CasesManager extends BaseService{
     }
 
     getCaseFilesDataFromHierarchy(hierarhchy, currentPath=null) {
+        if (this.model.users.mine.authentication.status < UserStatus.FULLY_APPROVED) return;
         currentPath = currentPath || [];
         let caseFilesData = {};
         for (const key in hierarhchy) {

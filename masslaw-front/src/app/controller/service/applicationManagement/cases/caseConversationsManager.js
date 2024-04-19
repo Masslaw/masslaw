@@ -1,6 +1,7 @@
 import {BaseService} from "../../_baseService";
 import {MasslawApiCalls} from "../../../../config/masslawAPICalls";
 import {model} from "../../../../model/model";
+import {UserStatus} from "../../../../config/userStatus";
 
 export class CaseConversationsManager extends BaseService {
     start() {
@@ -8,6 +9,7 @@ export class CaseConversationsManager extends BaseService {
     }
 
     async fetchCaseConversations(caseId=null) {
+        if (this.model.users.mine.authentication.status < UserStatus.FULLY_APPROVED) return;
         caseId = caseId || this.model.cases.currentOpen.id;
         const request = await this.masslawHttpApiClient.makeApiHttpRequest({
             call: MasslawApiCalls.GET_CASE_CONVERSATIONS,
@@ -19,6 +21,7 @@ export class CaseConversationsManager extends BaseService {
     }
 
     async fetchCaseConversationContent(conversationId, caseId=null) {
+        if (this.model.users.mine.authentication.status < UserStatus.FULLY_APPROVED) return;
         caseId = caseId || this.model.cases.currentOpen.id;
         const request = await this.masslawHttpApiClient.makeApiHttpRequest({
             call: MasslawApiCalls.GET_CASE_CONVERSATION_MESSAGES,
@@ -30,6 +33,7 @@ export class CaseConversationsManager extends BaseService {
     }
 
     async sendConversationMessage(message, conversationId, caseId=null) {
+        if (this.model.users.mine.authentication.status < UserStatus.FULLY_APPROVED) return;
         caseId = caseId || this.model.cases.currentOpen.id;
         model.cases.currentOpen.conversations.data[conversationId].last_message = Math.floor(Date.now() / 1000).toString();
         const request = await this.masslawHttpApiClient.makeApiHttpRequest({
@@ -43,6 +47,7 @@ export class CaseConversationsManager extends BaseService {
     }
 
     async createNewConversation(conversationName, caseId=null) {
+        if (this.model.users.mine.authentication.status < UserStatus.FULLY_APPROVED) return;
         caseId = caseId || this.model.cases.currentOpen.id;
         const request = await this.masslawHttpApiClient.makeApiHttpRequest({
             call: MasslawApiCalls.PUT_CASE_CONVERSATION,

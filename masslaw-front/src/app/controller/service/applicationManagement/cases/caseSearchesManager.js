@@ -1,5 +1,6 @@
 import {BaseService} from "../../_baseService";
 import {MasslawApiCalls} from "../../../../config/masslawAPICalls";
+import {UserStatus} from "../../../../config/userStatus";
 
 const RESULT_PRE_TAG = '<search_result>';
 const ESCAPED_PRE_TAG = RESULT_PRE_TAG.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
@@ -13,6 +14,7 @@ export class CaseSearchesManager extends BaseService {
     }
 
     async searchFilesText(searchText, files=null, force=false) {
+        if (this.model.users.mine.authentication.status < UserStatus.FULLY_APPROVED) return;
         searchText = searchText.trim();
         const caseId = this.model.cases.currentOpen.id || '';
         if (!force && (this.model.cases.currentOpen.search.results[searchText] || []).length) return;
