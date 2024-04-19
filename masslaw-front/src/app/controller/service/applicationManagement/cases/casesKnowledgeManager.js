@@ -27,7 +27,6 @@ export class CasesKnowledgeManager extends BaseService{
             pathParameters: {case_id: caseId, item_type: itemType, item_id: itemId},
         });
         const responseData = request.getResponsePayload();
-        this.model.cases.currentOpen.knowledge = mergeDeep(this.model.cases.currentOpen.knowledge, responseData.knowledge);
         return responseData.knowledge;
     }
 }
