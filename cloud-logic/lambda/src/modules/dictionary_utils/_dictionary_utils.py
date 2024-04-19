@@ -99,12 +99,10 @@ def delete_at(d: dict, path: list):
 
 
 def check_structure(d: dict, validation: dict):
-    for key in list(validation.keys()):
-        validation_value = validation[key]
-        dict_value = d.get(key)
+    for validation_key, validation_value in validation.items():
+        dict_value = d.get(validation_key)
         if isinstance(validation_value, dict):
-            if not check_structure(dict_value or {}, validation_value):
-                return False
+            return check_structure(dict_value or {}, validation_value)
         if not isinstance(validation_value, list):
             validation_value = [validation_value]
         if dict_value is None:
