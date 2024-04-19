@@ -8,6 +8,7 @@ import {CreateCasePopup} from "./_caseCreatePopup";
 import {CaseDisplayPopup} from "./_caseDisplayPopup";
 import {LoadingIcon} from "../../../components/loadingIcon";
 import {CaseDataDisplay} from "../../../components/caseDataDisplay";
+import {SVG_PATHS} from "../../../config/svgPaths";
 
 const PageContainer = styled.div`
     display: flex;
@@ -46,23 +47,35 @@ const CaseList = styled.div`
     &::-webkit-scrollbar { display: none; }
 `
 
-const CreateCaseButton = styled.button`
+const ButtonsSection = styled.div`
     position: absolute;
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
     top: 0;
     right: 0;
     margin: 32px;
     background: none;
-    width: 128px;
     height: 48px;
-    border: 1px solid white;
-    color: white;
-    border-radius: 12px;
-    font-size: 14px;
-    letter-spacing: .5px;
-    
-    &:hover {
-        background: white;
-        color: black;
+`
+
+const ButtonInButtonsSection = styled.button`
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 32px;
+    width: 32px;
+    margin-left: 16px;
+    border-radius: 8px;
+    background: none;
+    border: none;
+    padding: 0;
+    &:hover { background: #505050; }
+    svg {
+        fill: white;
+        width: 75%;
+        height: 75%;
     }
 `
 
@@ -82,11 +95,16 @@ export function MyCases(props) {
 
     const [s_loadingList, setLoadingList] = useState(false);
 
-    useEffect(() => {
+    const c_loadList = useCallback(async () => {
         if (s_userStatus < UserStatus.FULLY_APPROVED) return;
-        if (Object.keys(s_casesList || {}).length > 0) return;
+        if (s_loadingList) return;
         setLoadingList(true);
-        casesManager.fetchCases().then(() => setLoadingList(false));
+        await casesManager.fetchCases();
+        setLoadingList(false);
+    }, [s_loadingList, s_userStatus, s_casesList]);
+
+    useEffect(() => {
+        c_loadList();
     }, [s_userStatus, s_casesList]);
     
     const m_caseItems = useMemo(() => {
@@ -99,8 +117,19 @@ export function MyCases(props) {
         <PageContainer>
             <PageTitle>Your Cases</PageTitle>
             <PageSubTitle>The Cases You Participate In</PageSubTitle>
-            <CreateCaseButton onClick={() => pushPopup({component: CreateCasePopup})}>New Case</CreateCaseButton>
-            <CaseList>{s_loadingList ? <LoadingIcon width={"32px"} height={"32px"}/> : m_caseItems}</CaseList>
+            <ButtonsSection>
+                <ButtonInButtonsSection onClick={() => pushPopup({component: CreateCasePopup})}>
+                    <svg viewBox={'0 0 1000 1000'}><path d={SVG_PATHS.plusSign}/></svg>
+                </ButtonInButtonsSection>
+                <ButtonInButtonsSection onClick={() => c_loadList()}>
+                    {s_loadingList ? <>
+                        <LoadingIcon width={"32px"} height={"32px"}/>
+                    </> : <>
+                        <svg viewBox={'0 0 1000 1000'}><path d={SVG_PATHS.circleArrow}/></svg>
+                    </>}
+                </ButtonInButtonsSection>
+            </ButtonsSection>
+            <CaseList>{s_loadingList ? <LoadingIcon width={"24px"} height={"24px"}/> : m_caseItems}</CaseList>
         </PageContainer>
     </>
 }
