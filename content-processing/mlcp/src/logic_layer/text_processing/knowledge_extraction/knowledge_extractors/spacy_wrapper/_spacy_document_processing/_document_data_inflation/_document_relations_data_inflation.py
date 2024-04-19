@@ -30,7 +30,7 @@ def _set_relation_sentence_data(relation: DocumentEntityRelation):
 
     
 def _get_token_start_and_end_indices(token):
-    token_sub_tree = traverse_downward(token, lambda token: True)
+    token_sub_tree = traverse_downward(token, lambda _: False)
     sorted_subtree_tokens = sort_tokens(token_sub_tree)
     token_start = sorted_subtree_tokens[0].idx
     token_end = sorted_subtree_tokens[-1].idx+len(sorted_subtree_tokens[-1].text)

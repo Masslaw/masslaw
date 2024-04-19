@@ -22,7 +22,7 @@ def _load_entity_appearances(entity: DocumentEntity):
     appearances_data = {}
     for appearance in entity_appearances:
         sentence = appearance.sent
-        appearance_sub_tree = traverse_downward(appearance, lambda token: True)
+        appearance_sub_tree = traverse_downward(appearance, lambda _: False)
         sorted_subtree_tokens = sort_tokens(appearance_sub_tree)
         appearance_start = sorted_subtree_tokens[0].idx
         appearance_end = sorted_subtree_tokens[-1].idx+len(sorted_subtree_tokens[-1].text)
