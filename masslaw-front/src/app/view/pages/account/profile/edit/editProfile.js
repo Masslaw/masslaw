@@ -32,7 +32,8 @@ const LayoutContainer = styled.div`
     padding: 0;
     border-top: 0;
     border-bottom: 0;
-    overflow-y: scroll;
+    overflow-y: auto;
+    &::-webkit-scrollbar { display: none; }
 `
 
 const Header = styled.div`

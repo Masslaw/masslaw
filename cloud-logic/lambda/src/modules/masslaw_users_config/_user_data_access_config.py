@@ -4,6 +4,7 @@ USER_OWN_CLIENT_KEYS = [
     'last_name',
     'email',
     'phone',
+    'cases',
     'client_extra_data',
 ]
 
