@@ -3,8 +3,6 @@ import {useEffect, useMemo, useRef, useState} from "react";
 import styled from "styled-components";
 import {KnowledgeItemsConfig} from "../config/knowledgeItemsConfig";
 import {setColorSV, stringToColor} from "../../controller/functionality/visual-utils/colorUtils";
-import {CaseKnowledgeEntityDataDisplay} from "./caseKnowledgeEntityDataDisplay";
-import {pushPopup} from "../global-view/globalLayer/_global-layer-components/popups";
 
 
 const KnowledgeDisplayContainer = styled.div`
@@ -170,16 +168,14 @@ export function KnowledgeDisplay(props) {
                 onMouseEnter={e =>  r_graphRef.current.setNodeState(entityData.id, 'highlight')}
                 onMouseLeave={e => r_graphRef.current.setNodeState(entityData.id, 'idle')}
                 color={setColorSV(stringToColor(entityData.label), 1 ,1).getHex()}
-                onClick={() => {
-                    pushPopup({component: EntityDataPopup, componentProps: {entityId: entityData.id}});
-                }}
+                onClick={() => {props.nodeClickCallback && props.nodeClickCallback(entityData.id)}}
             >
                 <KnowledgeEntityInfoItemTitle>“{entityData.properties.title}”<span>({KnowledgeItemsConfig[entityData.label].trueLabel})</span></KnowledgeEntityInfoItemTitle>
                 <KnowledgeEntityInfoItemInfo>Contribution:<span>{s_entityContributions[entityData.id] || 0}</span></KnowledgeEntityInfoItemInfo>
                 <KnowledgeEntityInfoItemInfo>Occurrences across files:<span>{entityData.properties.files.list.length}</span></KnowledgeEntityInfoItemInfo>
             </KnowledgeEntityInfoItem>
         </>);
-    }, [r_graphRef, props.knowledge.entities, s_entityContributions]);
+    }, [r_graphRef, props.knowledge.entities, s_entityContributions, props.nodeClickCallback]);
 
     return <>
         <KnowledgeDisplayContainer 
@@ -204,21 +200,5 @@ export function KnowledgeDisplay(props) {
                 </KnowledgeEntitiesList>
             </KnowledgeInfoSection>}
         </KnowledgeDisplayContainer>
-    </>
-}
-
-const EntityDataPopupContainer = styled.div`
-    width: 512px;
-    height: 512px;
-    background: #202020;
-    border-radius: 8px;
-    padding: 32px;
-`
-
-function EntityDataPopup(props) {
-    return <>
-        <EntityDataPopupContainer>
-            <CaseKnowledgeEntityDataDisplay entityId={props.entityId} />
-        </EntityDataPopupContainer>
     </>
 }

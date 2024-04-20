@@ -79,7 +79,7 @@ export function CreateConversationPopup(props) {
 
     return <>
         <CreateConversationPopupContainer>
-            <CreateConversationPopupTitle>Create A Conversation</CreateConversationPopupTitle>
+            <CreateConversationPopupTitle>Create A New MassBot Conversation</CreateConversationPopupTitle>
             <VerticalGap gap={'8px'}/>
             <CreateConversationPopupSubTitle>Create a new conversation with Masslaw's AI chat bot</CreateConversationPopupSubTitle>
             <VerticalGap gap={'32px'}/>

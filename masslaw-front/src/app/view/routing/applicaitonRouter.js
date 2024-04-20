@@ -19,6 +19,7 @@ import {CaseConversations} from "../pages/app/cases/case/conversations/caseConve
 import {CaseConversation} from "../pages/app/cases/case/conversations/caseConversation";
 import {CaseTimelineRender} from "../components/caseTimelineRender";
 import {CaseTimeline} from "../pages/app/cases/case/timeline/caseTimeline";
+import {CaseSettings} from "../pages/app/cases/case/settings/caseSettings";
 
 const RedirectHome = () => {
     window.location.href = ApplicationRoutes.HOME;
@@ -39,7 +40,7 @@ export function ApplicationRouter(props) {
                     <Route path={ApplicationRoutes.EDIT_PROFILE} element={<EditProfile/>}/>
                     <Route path={ApplicationRoutes.MY_CASES} element={<MyCases/>}/>
                     <Route path={ApplicationRoutes.CASE} element={<Case/>}>
-                        <Route path={ApplicationRoutes.CASE_SETTINGS} element={<div></div>}/>
+                        <Route path={ApplicationRoutes.CASE_SETTINGS} element={<CaseSettings />}/>
                         <Route path={ApplicationRoutes.CASE_DASHBOARD} element={<CaseDashboard/>}/>
                         <Route path={ApplicationRoutes.FILE_DISPLAY} element={<CaseFileDisplay/>}/>
                         <Route path={ApplicationRoutes.CASE_SEARCH} element={<CaseSearch/>}/>

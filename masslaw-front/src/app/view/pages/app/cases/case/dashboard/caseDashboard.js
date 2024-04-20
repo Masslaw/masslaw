@@ -20,6 +20,10 @@ import {useModelValueAsReactState} from "../../../../../../controller/functional
 import {KnowledgeDisplay} from "../../../../../components/knowledgeDisplay";
 import {CaseKnowledgeGraphDisplay} from "../../../../../components/caseKnowledgeGraphDisplay";
 import {CaseTimelineDisplay} from "../../../../../components/caseTimelineDisplay";
+import {CaseTimeline} from "../timeline/caseTimeline";
+import {CaseTextSearch} from "../../../../../components/caseTextSearch";
+import {CaseConversationsList} from "../../../../../components/caseConversationsList";
+import {CreateConversationPopup} from "../conversations/createConversationPopup";
 
 
 const DashboardPageContainer = styled.div`
@@ -158,6 +162,7 @@ const DashboardDisplaySectionContent = styled.div`
     flex-basis: 0;
     overflow: auto;
     border-radius: 8px;
+    background: #101010;
     &::-webkit-scrollbar { display: none; }
 `
 
@@ -178,11 +183,13 @@ export function CaseDashboard(props) {
                     {s_caseData.title}
                 </DashboardPageCaseTitle>
                 {[caseAccessLevels.owner, caseAccessLevels.manager].includes(s_myUserAccessLevel) ? <>
-                    <DashboardGoToSettingsButton>
-                        <Icon>{SVG_PATHS.gear}</Icon>
-                        <HorizontalGap gap={'4px'} />
-                        Case Settings
-                    </DashboardGoToSettingsButton>
+                    <RedirectButtonWrapper href={constructUrl(ApplicationRoutes.CASE_SETTINGS, {caseId})}>
+                        <DashboardGoToSettingsButton>
+                            <Icon>{SVG_PATHS.gear}</Icon>
+                            <HorizontalGap gap={'8px'} />
+                            Case Settings
+                        </DashboardGoToSettingsButton>
+                    </RedirectButtonWrapper>
                 </> : <></>}
             </DashboardPageTitleSection>
             <VerticalGap gap={'16px'} />
@@ -191,12 +198,16 @@ export function CaseDashboard(props) {
             </DashboardPageCaseDescription>
             <VerticalGap gap={'32px'} />
             <DashboardDisplaySectionsRow>
-                <DashboardDisplaySection width={'calc(20% - 8px)'}>
+                <DashboardDisplaySection width={'calc(40% - 8px)'}>
                     <DashBoardDisplaySectionTitleSection>
-                        <DashboardDisplaySectionTitle>Case Files</DashboardDisplaySectionTitle>
+                        <DashboardDisplaySectionTitle>
+                            <Icon>{SVG_PATHS.file}</Icon>
+                            <HorizontalGap gap={'8px'} />
+                            Case Files
+                        </DashboardDisplaySectionTitle>
                         <DashboardDisplaySectionTitleButton onClick={() => pushPopup({component: UploadCaseFilesPopup})}>
                             <Icon>{SVG_PATHS.addFile}</Icon>
-                            <HorizontalGap gap={'4px'} />
+                            <HorizontalGap gap={'8px'} />
                             Upload Files
                         </DashboardDisplaySectionTitleButton>
                     </DashBoardDisplaySectionTitleSection>
@@ -205,11 +216,11 @@ export function CaseDashboard(props) {
                         <CaseFilesContent />
                     </DashboardDisplaySectionContent>
                 </DashboardDisplaySection>
-                <DashboardDisplaySection width={'calc(80% - 8px)'}>
+                <DashboardDisplaySection width={'calc(60% - 8px)'}>
                     <DashBoardDisplaySectionTitleSection>
                         <DashboardDisplaySectionTitle>
                             <Icon>{SVG_PATHS.person}</Icon>
-                            <HorizontalGap gap={'4px'} />
+                            <HorizontalGap gap={'8px'} />
                             Case Participants
                         </DashboardDisplaySectionTitle>
                         <RedirectButtonWrapper href={constructUrl(ApplicationRoutes.CASE_USERS, {caseId})}>
@@ -229,8 +240,70 @@ export function CaseDashboard(props) {
                 <DashboardDisplaySection width={'calc(60% - 8px)'}>
                     <DashBoardDisplaySectionTitleSection>
                         <DashboardDisplaySectionTitle>
+                            <Icon>{SVG_PATHS.search}</Icon>
+                            <HorizontalGap gap={'8px'} />
+                            Case Search
+                        </DashboardDisplaySectionTitle>
+                        <RedirectButtonWrapper href={constructUrl(ApplicationRoutes.CASE_SEARCH, {caseId})}>
+                            <DashboardDisplaySectionTitleButton>
+                                <Icon>{SVG_PATHS.redirect}</Icon>
+                            </DashboardDisplaySectionTitleButton>
+                        </RedirectButtonWrapper>
+                    </DashBoardDisplaySectionTitleSection>
+                    <DashboardDisplaySectionSubTitle>Search the text of your entire case</DashboardDisplaySectionSubTitle>
+                    <DashboardDisplaySectionContent>
+                        <CaseSearchContent />
+                    </DashboardDisplaySectionContent>
+                </DashboardDisplaySection>
+                <DashboardDisplaySection width={'calc(40% - 8px)'}>
+                    <DashBoardDisplaySectionTitleSection>
+                        <DashboardDisplaySectionTitle>
+                            <Icon>{SVG_PATHS.conversations}</Icon>
+                            <HorizontalGap gap={'8px'} />
+                            MassBot Conversations
+                        </DashboardDisplaySectionTitle>
+                        <RedirectButtonWrapper href={constructUrl(ApplicationRoutes.CASE_CONVERSATIONS, {caseId})}>
+                            <DashboardDisplaySectionTitleButton>
+                                <Icon>{SVG_PATHS.redirect}</Icon>
+                            </DashboardDisplaySectionTitleButton>
+                        </RedirectButtonWrapper>
+                        <DashboardDisplaySectionTitleButton onClick={() => pushPopup({component: CreateConversationPopup})}>
+                            <Icon>{SVG_PATHS.plusSign}</Icon>
+                            <HorizontalGap gap={'8px'} />
+                            New Conversation
+                        </DashboardDisplaySectionTitleButton>
+                    </DashBoardDisplaySectionTitleSection>
+                    <DashboardDisplaySectionSubTitle>Have conversations with MassBot, MassLaw's most talented AI assistant who knows everything about your case.</DashboardDisplaySectionSubTitle>
+                    <DashboardDisplaySectionContent>
+                        <CaseConversationsContent />
+                    </DashboardDisplaySectionContent>
+                </DashboardDisplaySection>
+            </DashboardDisplaySectionsRow>
+            <VerticalGap gap={'16px'} />
+            <DashboardDisplaySectionsRow>
+                <DashboardDisplaySection width={'calc(40% - 8px)'}>
+                    <DashBoardDisplaySectionTitleSection>
+                        <DashboardDisplaySectionTitle>
+                            <Icon>{SVG_PATHS.timeline}</Icon>
+                            <HorizontalGap gap={'8px'} />
+                            Case Timeline
+                        </DashboardDisplaySectionTitle>
+                        <RedirectButtonWrapper href={constructUrl(ApplicationRoutes.CASE_TIMELINE, {caseId})}>
+                            <DashboardDisplaySectionTitleButton>
+                                <Icon>{SVG_PATHS.redirect}</Icon>
+                            </DashboardDisplaySectionTitleButton>
+                        </RedirectButtonWrapper>
+                    </DashBoardDisplaySectionTitleSection>
+                    <DashboardDisplaySectionSubTitle>The Dates and Tiles MassLaw managed to extract from the case's text</DashboardDisplaySectionSubTitle>
+                    <DashboardDisplaySectionContent>
+                        <CaseTimelineContent />
+                    </DashboardDisplaySectionContent>
+                </DashboardDisplaySection>
+                <DashboardDisplaySection width={'calc(60% - 8px)'}>
+                    <DashBoardDisplaySectionTitleSection>
+                        <DashboardDisplaySectionTitle>
                             <Icon>{SVG_PATHS.knowledge}</Icon>
-                            <HorizontalGap gap={'4px'} />
+                            <HorizontalGap gap={'8px'} />
                             Case Knowledge
                         </DashboardDisplaySectionTitle>
                         <RedirectButtonWrapper href={constructUrl(ApplicationRoutes.CASE_KNOWLEDGE, {caseId})}>
@@ -242,24 +315,6 @@ export function CaseDashboard(props) {
                     <DashboardDisplaySectionSubTitle>Entities and Relations MassLaw managed to extract from the case's text</DashboardDisplaySectionSubTitle>
                     <DashboardDisplaySectionContent>
                         <CaseKnowledgeContent />
-                    </DashboardDisplaySectionContent>
-                </DashboardDisplaySection>
-                <DashboardDisplaySection width={'calc(40% - 8px)'}>
-                    <DashBoardDisplaySectionTitleSection>
-                        <DashboardDisplaySectionTitle>
-                            <Icon>{SVG_PATHS.timeline}</Icon>
-                            <HorizontalGap gap={'4px'} />
-                            Case Timeline
-                        </DashboardDisplaySectionTitle>
-                        <RedirectButtonWrapper href={constructUrl(ApplicationRoutes.CASE_TIMELINE, {caseId})}>
-                            <DashboardDisplaySectionTitleButton>
-                                <Icon>{SVG_PATHS.redirect}</Icon>
-                            </DashboardDisplaySectionTitleButton>
-                        </RedirectButtonWrapper>
-                    </DashBoardDisplaySectionTitleSection>
-                    <DashboardDisplaySectionSubTitle>The Dates and Tiles MassLaw managed to extract from the case's text</DashboardDisplaySectionSubTitle>
-                    <DashboardDisplaySectionContent>
-                        <CaseKnowledgeTimeline />
                     </DashboardDisplaySectionContent>
                 </DashboardDisplaySection>
             </DashboardDisplaySectionsRow>
@@ -321,6 +376,29 @@ function CaseUsersContent(props) {
     </>
 }
 
+function CaseSearchContent(props) {
+
+    return <>
+        <CaseTextSearch />
+    </>
+}
+
+const CaseConversationsListContainer = styled.div`
+    width: 100%;
+    height: calc(100% - 32px);
+    overflow: auto;
+    padding: 16px 0;
+`
+
+function CaseConversationsContent(props) {
+
+    return <>
+        <CaseConversationsListContainer>
+            <CaseConversationsList />
+        </CaseConversationsListContainer>
+    </>
+}
+
 function CaseKnowledgeContent(props) {
 
     return <>
@@ -328,7 +406,7 @@ function CaseKnowledgeContent(props) {
     </>
 }
 
-function CaseKnowledgeTimeline(props) {
+function CaseTimelineContent(props) {
 
     return <>
         <CaseTimelineDisplay hideInfo={true} scale={64}/>

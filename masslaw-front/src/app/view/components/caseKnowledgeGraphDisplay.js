@@ -6,6 +6,8 @@ import {LoadingIcon} from "./loadingIcon";
 import {model} from "../../model/model";
 import styled from "styled-components";
 import {SVG_PATHS} from "../config/svgPaths";
+import {pushPopup} from "../global-view/globalLayer/_global-layer-components/popups";
+import {EntityDataPopup} from "./entityDataPopup";
 
 
 const DisplayContainer = styled.div`
@@ -100,7 +102,11 @@ export function CaseKnowledgeGraphDisplay(props) {
                 {!Object.keys(s_displayKnowledge).length ? <>
                     <NoKnowledgeToShow>No Knowledge To Show</NoKnowledgeToShow>
                 </> : <>
-                    <KnowledgeDisplay knowledge={s_displayKnowledge} hideInfo={props.hideInfo}/>
+                    <KnowledgeDisplay
+                        knowledge={s_displayKnowledge}
+                        hideInfo={props.hideInfo}
+                        nodeClickCallback={entityId => pushPopup({component: EntityDataPopup, componentProps: {entityId: entityId}})}
+                    />
                 </>}
             </>}
         </DisplayContainer>

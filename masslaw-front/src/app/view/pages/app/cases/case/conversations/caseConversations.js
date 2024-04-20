@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import {model} from "../../../../../../model/model";
 import {Outlet, useParams} from "react-router-dom";
-import {useEffect, useMemo} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {useModelValueAsReactState} from "../../../../../../controller/functionality/model/modelReactHooks";
 import {LoadingIcon} from "../../../../../components/loadingIcon";
 import {ApplicationRoutes} from "../../../../../../config/applicaitonRoutes";
@@ -9,6 +9,7 @@ import {constructUrl} from "../../../../../../controller/functionality/navigatio
 import {VerticalGap} from "../../../../../components/verticalGap";
 import {pushPopup} from "../../../../../global-view/globalLayer/_global-layer-components/popups";
 import {CreateConversationPopup} from "./createConversationPopup";
+import {CaseConversationsList} from "../../../../../components/caseConversationsList";
 
 const PageContainer = styled.div`
     display: flex;
@@ -39,13 +40,6 @@ const ConversationContainer = styled.div`
     flex-grow: 1;
 `
 
-const NoConversationsMessage = styled.div`
-    width: 100%;
-    font-size: 14px;
-    color: #808080;
-    text-align: center;
-`
-
 const CreateConversationButton = styled.button`
     width: calc(100% - 16px - 2px);
     margin: 0 8px;
@@ -65,22 +59,12 @@ export function CaseConversations(props) {
 
     const {caseConversationsManager} = model.services;
 
-    const [s_loadingList, setLoadingList] = useModelValueAsReactState('$.cases.currentOpen.conversations.loadingList')
+    const [s_loadingList, setLoadingList] = useState(false);
 
     useEffect(() => {
         setLoadingList(true);
         caseConversationsManager.fetchCaseConversations(caseId).then(() => setLoadingList(false));
     }, []);
-
-    const [s_conversationsData, setConversationsData] = useModelValueAsReactState('$.cases.currentOpen.conversations.data')
-
-    const m_conversationsList = useMemo(() => {
-        if (!s_conversationsData || Object.keys(s_conversationsData).length === 0) return <NoConversationsMessage>No Conversations</NoConversationsMessage>
-        const conversations = [];
-        for (const conversationId in s_conversationsData) conversations.push({id: conversationId, ...s_conversationsData[conversationId]})
-        conversations.sort((a, b) => (parseInt(b.last_message) || 0) - (parseInt(a.last_message) || 0))
-        return conversations.map((conversaion, index) => <ConversationItem conversationData={conversaion} key={index}/>);
-    }, [s_conversationsData])
 
     return <>
         <PageContainer>
@@ -93,43 +77,13 @@ export function CaseConversations(props) {
                         Create A New Conversation
                     </CreateConversationButton>
                     <VerticalGap gap={'16px'}/>
-                    {m_conversationsList}
+                    <CaseConversationsList />
                 </ConversationsListContainer>
                 <ConversationContainer>
                     {conversationId ? <Outlet/> : <NoConversationContent />}
                 </ConversationContainer>
             </>}
         </PageContainer>
-    </>
-}
-
-const ConversationItemContainer = styled.button`
-    text-align: left;
-    width: calc(100% - 16px);
-    margin: 0 8px;
-    padding: 12px;
-    border-radius: 8px;
-    font-size: 14px;
-    cursor: pointer;
-    color: #ffffff;
-    border: none;
-    background: ${({selected}) => selected ? '#252525' : 'none'};
-    &:hover { background: #303030; }
-`
-
-function ConversationItem(props) {
-    const {caseId, conversationId} = useParams();
-
-    return <>
-        <ConversationItemContainer
-            selected={conversationId === props.conversationData.id}
-            onClick={() => model.application.navigate(constructUrl(
-                ApplicationRoutes.CASE_CONVERSATION,
-                {caseId: caseId, conversationId: props.conversationData.id}
-            ))}
-        >
-            {props.conversationData.name}
-        </ConversationItemContainer>
     </>
 }
 

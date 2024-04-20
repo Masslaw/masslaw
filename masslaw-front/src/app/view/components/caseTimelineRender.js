@@ -9,6 +9,7 @@ const MIN_TIME = -2208988800000;
 const Timeline = styled.div`
     position: relative;
     width: max-content;
+    max-width: 100%;
     height: max-content;
     min-height: 100%;
     overflow-x: visible;

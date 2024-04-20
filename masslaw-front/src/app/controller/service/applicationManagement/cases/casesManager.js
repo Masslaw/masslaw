@@ -83,6 +83,9 @@ export class CasesManager extends BaseService{
             pathParameters: {case_id: caseId},
             body: {case_data: caseData}
         });
+        if (request.getResponseSuccess()) {
+            this.model.cases.all[caseId] = {...(this.model.cases.all[caseId] || {}), ...caseData};
+        }
         return request;
     }
 

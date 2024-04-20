@@ -7,6 +7,8 @@ import {CaseTimelineRender} from "./caseTimelineRender";
 import styled from "styled-components";
 import {SVG_PATHS} from "../config/svgPaths";
 import {CaseKnowledgeEntityDataDisplay} from "./caseKnowledgeEntityDataDisplay";
+import {pushPopup} from "../global-view/globalLayer/_global-layer-components/popups";
+import {EntityDataPopup} from "./entityDataPopup";
 
 const DisplayContainer = styled.div`
     position: relative;
@@ -18,6 +20,7 @@ const DisplayContainer = styled.div`
 const CaseTimelineContainer = styled.div`
     position: relative;
     width: max-content;
+    max-width: 100%;
     height: 100%;
     margin-left: 64px;
     overflow-y: auto;
@@ -126,6 +129,13 @@ export function CaseTimelineDisplay(props) {
             return newEvents;
         });
     }, [s_displayKnowledge]);
+
+    useEffect(() => {
+        if (!props.hideInfo) return;
+        if (!s_entityDataTarget) return;
+        if (!s_entityDataTarget.id) return;
+        pushPopup({component: EntityDataPopup, componentProps: {entityId: s_entityDataTarget.id}})
+    }, [props.hideInfo, s_entityDataTarget]);
 
     const m_eventEntities = useMemo(() => {
         const events = {};

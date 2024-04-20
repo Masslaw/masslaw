@@ -336,20 +336,45 @@ export const KnowledgeGraphRenderer = forwardRef((props, ref) => {
         });
     }, []);
 
-    const svgRef = React.createRef();
+    const r_svgRef = useRef();
+
+    useEffect(() => {
+        if (!r_svgRef.current) return;
+        const handleWheel = (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            event.preventDefault();
+            event.stopPropagation();
+            let delta = event.deltaY;
+            setViewport((viewport) => {
+                const newViewport = [...viewport];
+                if (s_viewport[2] + delta < 75 || s_viewport[3] + delta < 75) return;
+                newViewport[0] = newViewport[0] - delta;
+                newViewport[1] = newViewport[1] - delta;
+                newViewport[2] = newViewport[2] + delta * 2;
+                newViewport[3] = newViewport[3] + delta * 2;
+                return newViewport;
+            });
+        };
+        r_svgRef.current.addEventListener('wheel', handleWheel, { passive: false });
+        return () => {
+            if (!r_svgRef.current) return;
+            r_svgRef.current.removeEventListener('wheel', handleWheel);
+        };
+    }, [r_svgRef.current]);
 
     return <>
         <svg
-            ref={svgRef}
+            ref={r_svgRef}
             className="case-knowledge-graph"
             viewBox={`${s_viewport[0]} ${s_viewport[1]} ${s_viewport[2]} ${s_viewport[3]}`}
             style={{width: '100%', height: '100%'}}
             onMouseMove={(event) => {
-                if (!svgRef.current) return;
-                let svgPoint = svgRef.current.createSVGPoint();
+                if (!r_svgRef.current) return;
+                let svgPoint = r_svgRef.current.createSVGPoint();
                 svgPoint.x = event.clientX;
                 svgPoint.y = event.clientY;
-                let screenCTM = svgRef.current.getScreenCTM();
+                let screenCTM = r_svgRef.current.getScreenCTM();
                 if (!screenCTM) return;
                 svgPoint = svgPoint.matrixTransform(screenCTM.inverse());
                 if (s_mouseDown && !s_draggingNode) {
@@ -363,15 +388,6 @@ export const KnowledgeGraphRenderer = forwardRef((props, ref) => {
             onMouseUp={() => {
                 setDraggingNode(null);
                 setMouseDown(false);
-            }}
-            onWheel={(event) => {
-                let delta = event.deltaY;
-                if (s_viewport[2] + delta < 75 || s_viewport[3] + delta < 75) return;
-                s_viewport[0] = s_viewport[0] - delta;
-                s_viewport[1] = s_viewport[1] - delta;
-                s_viewport[2] = s_viewport[2] + delta * 2;
-                s_viewport[3] = s_viewport[3] + delta * 2;
-                event.stopPropagation();
             }}
             onMouseDown={() => {
                 setMouseDown(true);
