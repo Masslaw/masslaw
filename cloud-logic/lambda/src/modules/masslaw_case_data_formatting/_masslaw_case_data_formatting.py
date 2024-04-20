@@ -13,8 +13,8 @@ def get_case_data_base_format_from_db_item(item_data, user_id=''):
         'case_id': dictionary_utils.get_from(item_data, ['case_id'], ''),
         'title': dictionary_utils.get_from(item_data, ['information', 'title'], ''),
         'description': dictionary_utils.get_from(item_data, ['information', 'description'], ''),
-        'num_users': len(dictionary_utils.get_from(item_data, ['users'], {})),  # TODO: remove this when migrating to new website
         'users': dictionary_utils.get_from(item_data, ['users'], {}),
+        'languages': dictionary_utils.get_from(item_data, ['languages'], []),
         'creation_time': dictionary_utils.get_from(item_data, ['information', 'creation_time'], -1),
         'last_interaction': dictionary_utils.get_from(item_data, ['information', 'last_modified_time'], -1),
         'access_level': dictionary_utils.get_from(item_data, ['users', user_id, 'access_level'], access_config.CaseAccessEntities.EXTERNAL_CLIENT),

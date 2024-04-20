@@ -12,7 +12,6 @@ class PostCase(MasslawCaseManagementApiCaseActionHandler):
         MasslawCaseManagementApiCaseActionHandler.__init__(
             self,
             request_body_structure={'case_data': {'title': [str, None], 'description': [str, None], 'languages': [list, None]}},
-            default_response_body={'case_id': ''},
         )
         self.__case_data = {}
 
@@ -27,12 +26,17 @@ class PostCase(MasslawCaseManagementApiCaseActionHandler):
         user_access_level = case_user_access.get_user_access_level_name(user_id)
         if user_access_level not in (access_config.CaseAccessEntities.OWNER_CLIENT, access_config.CaseAccessEntities.MANAGER_CLIENT):
             raise masslaw_case_users_management_exceptions.MasslawCaseUnauthorizedUserActionException(f"An attempt to change the data of a case is made by an unauthorized user.")
-        update_object = {}
-        if new_title := dictionary_utils.get_from(self.__case_data, ['title']): dictionary_utils.set_at(update_object, ['information', 'title'], new_title)
-        if new_description := dictionary_utils.get_from(self.__case_data, ['description']): dictionary_utils.set_at(update_object, ['information', 'description'], new_description)
-        if new_language_list := dictionary_utils.get_from(self.__case_data, ['languages']): dictionary_utils.set_at(update_object, ['languages'], new_language_list)
-        self._case_instance.update_data(update_object, create_new_keys=False)
+        self._update_data_in_case()
         self._case_instance.save_data()
+
+    def _update_data_in_case(self):
+        if new_title := dictionary_utils.get_from(self.__case_data, ['title']):
+            self._case_instance.set_data_property(['information', 'title'], new_title)
+        if new_description := dictionary_utils.get_from(self.__case_data, ['description']):
+            self._case_instance.set_data_property(['information', 'description'], new_description)
+        if new_language_list := dictionary_utils.get_from(self.__case_data, ['languages']):
+            self._case_instance.set_data_property(['languages'], new_language_list)
+
 
 
 def handler(event, context):

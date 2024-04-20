@@ -35,8 +35,10 @@ class MasslawCaseManagementApiCaseActionHandler(AuthenticatedMasslawUserHttpInvo
 
     def __assert_user_access_to_case(self):
         user_id = self._caller_user_instance.get_user_id()
+        self._log(f'asserting case access for user {user_id} to case {self._case_id}')
         case_user_access = MasslawCaseUserAccessManager(case_instance=self._case_instance)
         user_access_level = case_user_access.get_user_access_level_name(user_id)
+        self._log(f'user {user_id} has access level {user_access_level} to case {self._case_id}')
         if user_access_level == access_config.CaseAccessEntities.EXTERNAL_CLIENT: raise masslaw_case_users_management_exceptions.MasslawCaseUnauthorizedUserActionException(f"An attempt was made to perform an action on a case which is not included in a user's case permissions")
 
     def _handle_exception(self, exception: Exception):
