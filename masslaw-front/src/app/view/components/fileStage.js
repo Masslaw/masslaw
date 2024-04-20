@@ -4,6 +4,7 @@ import {model} from "../../model/model";
 import {caseFileProcessingStageDisplayNames, fileProcessingStages} from "../../config/caseConsts";
 import {SVG_PATHS} from "../config/svgPaths";
 import {Icon} from "./icon";
+import {HorizontalGap} from "./horizontalGap";
 
 const GlowingAnimation = keyframes`
     0% { filter: drop-shadow(0 0 1px yellow); }
@@ -28,13 +29,6 @@ const FileProcessingStageDisplay = styled.div`
     background: ${({readystage}) => readystage ? 'white' : 'none'};
     ${({readystage}) => readystage ? 'animation-iteration-count: 0' : `animation-iteration-count: infinite`};
     ${({readystage}) => readystage ? 'filter: drop-shadow(0 0 3px white)' : ``};
-
-    svg {
-        width: 16px;
-        height: 16px;
-        fill: black;
-        margin-left: 8px;
-    }
 `
 
 export function FileProcessingStage(props) {
@@ -53,7 +47,9 @@ export function FileProcessingStage(props) {
     return <>
         <FileProcessingStageDisplay readystage={m_processingStage === READY_STAGE ? 'true' : ''}>{
             m_processingStage === READY_STAGE ? <>
-                Ready <Icon>{SVG_PATHS.checkMark}</Icon>
+                Ready
+                <HorizontalGap gap={'4px'} />
+                <Icon>{SVG_PATHS.checkMark}</Icon>
             </> : <>
                 {m_processingStage}
             </>

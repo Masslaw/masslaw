@@ -83,20 +83,8 @@ const CaseFileProcessingStageReloadButton = styled.div`
     cursor: pointer;
     margin-left: 8px;
     border-radius: 5px;
-
-    svg {
-        width: 20px;
-        height: 20px;
-        fill: #c0c0c0;
-    }
-    
-    &:hover {
-        background: #c0c0c0;
-    }
-    
-    &:hover svg {
-        fill: #303030;
-    }
+    color: #c0c0c0;
+    &:hover { background: #505050; }
 `
 
 const CaseFileProcessingStageReloading = styled.div`
@@ -147,20 +135,8 @@ const CaseFileDataDescriptionEditIcon = styled.div`
     align-items: center;
     pointer-events: auto;
     cursor: pointer;
-    &:hover {
-        background: #c0c0c0;
-    }
-    
-    svg {
-        width: 100%;
-        height: 100%;
-        fill: #c0c0c0;
-    }
-
-    &:hover svg {
-        fill: #303030;
-    }
-    
+    color: #c0c0c0;
+    &:hover { background: #505050; }
 `
 
 const CaseFileDataDescriptionEditButtons = styled.div`
@@ -178,9 +154,6 @@ const CaseFileDataDescriptionEditFinishButton = styled.button`
     border: 1px solid white;
     border-radius: 5px;
     margin: 8px;
-    &:hover {
-        filter: drop-shadow(0 0 4px white);
-    }
 `
 
 const CaseFileDataDescriptionEditCancelButton = styled.button`
@@ -192,10 +165,6 @@ const CaseFileDataDescriptionEditCancelButton = styled.button`
     border: 1px solid white;
     border-radius: 5px;
     margin: 8px;
-    &:hover {
-        background: white;
-        color: #303030;
-    }
 `
 
 const CaseFileDataDescriptionEditSubmittingLoadingContainer = styled.div`
@@ -315,7 +284,9 @@ export function CaseFileData(props) {
                 <CaseFileDataDescriptionTitleSection>
                     <CaseFileDataDescriptionTitle>Description</CaseFileDataDescriptionTitle>
                     {[caseAccessLevels.owner, caseAccessLevels.manager, caseAccessLevels.editor].includes(m_myUserAccessLevel) && !s_editingDescription ? <>
-                        <CaseFileDataDescriptionEditIcon onClick={() => setEditingDescription(true)}><svg viewBox={'-200 -200 1400 1400'}><path d={SVG_PATHS.pen} /></svg></CaseFileDataDescriptionEditIcon>
+                        <CaseFileDataDescriptionEditIcon onClick={() => setEditingDescription(true)}>
+                            <Icon>{SVG_PATHS.pen}</Icon>
+                        </CaseFileDataDescriptionEditIcon>
                     </> : <></>}
                 </CaseFileDataDescriptionTitleSection>
                 <VerticalGap gap={'8px'} />
@@ -335,7 +306,9 @@ export function CaseFileData(props) {
                             <CaseFileDataDescriptionEditCancelButton onClick={() => {
                                 setEditingDescription(false);
                                 setDescriptionInput((s_fileData || {}).description || '')
-                            }}>Cancel</CaseFileDataDescriptionEditCancelButton>
+                            }}>
+                                Cancel
+                            </CaseFileDataDescriptionEditCancelButton>
                         </CaseFileDataDescriptionEditButtons>
                     </>
                     }

@@ -192,7 +192,6 @@ const NoConversationPromptCreateConversationButton = styled.button`
     cursor: pointer;
     height: 32px;
     width: 100%;
-    &:hover { filter: drop-shadow(0 0 5px white); }
 `
 
 function NoConversationContent(props) {

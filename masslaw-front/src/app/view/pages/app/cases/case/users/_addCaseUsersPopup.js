@@ -68,7 +68,6 @@ const AddUsersButton = styled.button`
     margin-right: 16px;
     float: right;
     padding: 8px 16px;
-    &:hover { filter: drop-shadow(0 0 5px white); }
 `
 
 export function AddCaseUsersPopup(props) {

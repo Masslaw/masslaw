@@ -1,4 +1,4 @@
-import {useEffect, useMemo, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import {model} from "../../../../../model/model";
 import styled from "styled-components";
 import {CaseFileData} from "../../../../components/caseFileData";
@@ -6,6 +6,9 @@ import {constructUrl} from "../../../../../controller/functionality/navigation/u
 import {ApplicationRoutes} from "../../../../../config/applicaitonRoutes";
 import {useModelValueAsReactState} from "../../../../../controller/functionality/model/modelReactHooks";
 import {fileProcessingStages} from "../../../../../config/caseConsts";
+import {Icon} from "../../../../components/icon";
+import {SVG_PATHS} from "../../../../config/svgPaths";
+import {HorizontalGap} from "../../../../components/horizontalGap";
 
 
 const CaseFilePopupContainer = styled.div`
@@ -76,7 +79,11 @@ export function CaseFilePopup(props) {
                     model.application.navigate(constructUrl(ApplicationRoutes.FILE_DISPLAY, {caseId: props.caseId, fileId: props.fileId}));
                     props.dismiss();
                 }}
-            >View</CaseFilePopupOpenFileButton>
+            >
+                <Icon>{SVG_PATHS.redirect}</Icon>
+                <HorizontalGap gap={'4px'} />
+                View
+            </CaseFilePopupOpenFileButton>
         </CaseFilePopupContainer>
     </>
 }

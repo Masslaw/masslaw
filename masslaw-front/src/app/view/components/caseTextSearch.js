@@ -28,10 +28,6 @@ const SearchButton = styled.button`
     pointer-events: ${({enabled}) => enabled ? "all" : "none"};
     font-size: 14px;
     cursor: pointer;
-    &:hover {
-        ${({enabled}) => enabled ? "filter: drop-shadow(0 0 5px white)" : ""}
-    }
-}
 `
 
 const SearchResultsStickySection = styled.div`

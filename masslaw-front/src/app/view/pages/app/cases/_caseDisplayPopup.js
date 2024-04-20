@@ -5,6 +5,9 @@ import {constructUrl} from "../../../../controller/functionality/navigation/urlC
 import {ApplicationRoutes} from "../../../../config/applicaitonRoutes";
 import {CaseDataDisplay} from "../../../components/caseDataDisplay";
 import {VerticalGap} from "../../../components/verticalGap";
+import {Icon} from "../../../components/icon";
+import {SVG_PATHS} from "../../../config/svgPaths";
+import {HorizontalGap} from "../../../components/horizontalGap";
 
 
 const CaseDisplayPopupContainer = styled.div`
@@ -31,9 +34,6 @@ const OpenCaseDisplayButton = styled.button`
     font-size: 14px;
     letter-spacing: .5px;
     pointer-events: all;
-    &:hover {
-        filter: drop-shadow(0 0 5px white);
-    }
 `
 
 export function CaseDisplayPopup(props) {
@@ -47,7 +47,11 @@ export function CaseDisplayPopup(props) {
         <CaseDisplayPopupContainer>
             <VerticalGap gap={'8px'} />
             <CaseDataDisplay caseData={props.caseData} />
-            <OpenCaseDisplayButton onClick={() => c_openCase()}>Open</OpenCaseDisplayButton>
+            <OpenCaseDisplayButton onClick={() => c_openCase()}>
+                <Icon>{SVG_PATHS.redirect}</Icon>
+                <HorizontalGap gap={'4px'} />
+                Open
+            </OpenCaseDisplayButton>
         </CaseDisplayPopupContainer>
     </>
 }

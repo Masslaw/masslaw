@@ -57,7 +57,6 @@ const ConversationMessageSubmitButton = styled.button`
     border-radius: 8px;
     border: none;
     margin-left: auto;
-    &:hover { filter: drop-shadow(0 0 4px white); }
     svg {
         fill: black;
         width: 80%;

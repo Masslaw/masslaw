@@ -63,10 +63,6 @@ const UploadCaseFilesStartUploadingButton = styled.button`
     letter-spacing: .5px;
     pointer-events: ${({clickable}) => clickable ? "all" : "none"};
     cursor: ${({clickable}) => clickable ? "pointer" : "normal"};
-
-    &:hover {
-        ${({clickable}) => clickable ? "filter: drop-shadow(0 0 5px white)" : ""}
-    }
 `
 
 export function UploadCaseFilesPopup(props) {

@@ -56,10 +56,6 @@ const FinishCreateCaseButton = styled.button`
     font-size: 14px;
     letter-spacing: .5px;
     pointer-events: ${({isclickable}) => isclickable ? "all" : "none"};
-    
-    &:hover {
-        ${({isclickable}) => isclickable ? "filter: drop-shadow(0 0 5px white)" : ""}
-    }
 `
 
 const ErrorMessage = styled.div`
