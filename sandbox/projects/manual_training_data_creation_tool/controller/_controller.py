@@ -14,7 +14,7 @@ class Controller():
         with tempfile.TemporaryDirectory() as temp_dir:
             self._model['temp_dir'] = temp_dir
             self._model['loaded_file_data'] = {}
-            load_masslaw_file("99839ded8e0af1e1cc72009a45357243", "AKIA23YSSEHNKULCRGOJ", "2kglfrMjfhdpggmkN90T6o6BWcnBL+R8aTaML0a7", os.path.dirname(__file__), self._model['loaded_file_data'])
+            load_masslaw_file(_, _, _, os.path.dirname(__file__), self._model['loaded_file_data'])
 
     def update(self):
         pass
